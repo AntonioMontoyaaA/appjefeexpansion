@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="listener"
+            type="expansion.neto.com.mx.jefeapp.sorted.autoriza.AutorizaHolder.Listener"/>
+
+        <variable
+            name="autorizaModel"
+            type="expansion.neto.com.mx.jefeapp.modelView.autorizaModel.PorTerminar.Memoria"/>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/card_margin"
+            android:elevation="1dp"
+            card_view:cardCornerRadius="@dimen/card_album_radius">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:onClick="@{view -> listener.onAutorizaSelect(autorizaModel)}">
+
+                <LinearLayout
+                    android:gravity="bottom"
+                    android:background="@drawable/estilo_boton_blanco"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="110dp">
+
+                    <ImageView
+                        android:layout_marginBottom="4dp"
+
+                        android:layout_marginStart="6dp"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/clock"
+                        android:visibility="@{String.valueOf(autorizaModel.atrasada).equals(@string/atrasadas) ? View.VISIBLE : View.GONE}"
+                        />
+
+                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                        app:typeface="robotoRegular"
+                        android:id="@+id/nombre_md"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginStart="6dp"
+                        android:text="@{String.valueOf(autorizaModel.nombresitio)}"
+                        android:textColor="@{String.valueOf(autorizaModel.atrasada).equals(@string/atrasadas) ? @color/rojo :  @color/azul}"
+                        android:textSize="12dp" />
+
+                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                        app:typeface="robotoRegular"
+                        android:id="@+id/fechas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginStart="6dp"
+                        android:text="@{String.valueOf(autorizaModel.fechaCreacion)}"
+                        android:textColor="@{String.valueOf(autorizaModel.atrasada).equals(@string/atrasadas) ? @color/rojo :  @color/azul}"
+                        android:textSize="10dp" />
+
+                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                        app:typeface="robotoRegular"
+                        android:id="@+id/fechaVence"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginStart="6dp"
+                        android:text="@{String.valueOf(autorizaModel.fechaVencimiento)}"
+                        android:textColor="@{String.valueOf(autorizaModel.atrasada).equals(@string/atrasadas) ? @color/rojo :  @color/azul}"
+                        android:textSize="10dp" />
+
+                    <LinearLayout
+                        android:gravity="center|bottom"
+                        android:layout_width="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_height="wrap_content">
+
+
+                        <ProgressBar
+                            android:id="@+id/colaboradores"
+                            android:backgroundTint="@color/azultaco"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginStart="6dp"
+                            android:progressTint="@{String.valueOf(autorizaModel.atrasada).equals(@string/atrasadas) ? @color/rojo :  @color/azul}"
+                            android:max="@{autorizaModel.totales*10}"
+                            android:progress="@{autorizaModel.parciales*10}"
+                            />
+
+                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                app:typeface="robotoRegular"
+                                android:id="@+id/totales"
+                                android:layout_marginTop="4dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                tools:text="1=1"
+                                android:text="@{String.valueOf(autorizaModel.parciales)+`/`+String.valueOf(autorizaModel.totales)}"
+                                android:textColor="@{String.valueOf(autorizaModel.atrasada).equals(@string/atrasadas) ? @color/rojo :  @color/azul}"
+                                android:textSize="12dp" />
+
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</layout>

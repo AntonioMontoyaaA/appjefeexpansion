@@ -1,0 +1,11 @@
+<expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:textSize="12sp"
+    app:typeface="robotoRegular"
+    android:gravity="left"
+    android:background="@color/colorPrimary"
+    android:textColor="@color/blanco"
+    android:padding="5dp" />
+

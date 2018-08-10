@@ -1,0 +1,238 @@
+<resources>
+
+    <string name="app_name">Jefe de Expansión</string>
+
+
+    <!-- Splash Screen -->
+
+    <string name="tituloAnimacion">JEFE DE EXPANSIÓN</string>
+
+    <!-- activity login -->
+
+    <string name="tituloLogin">ADMINISTRA TUS MD</string>
+    <string name="usuarioLogin">Usuario</string>
+    <string name="contraLogin">Contraseña</string>
+    <string name="entrarLogin">Iniciar sesión</string>
+    <string name="administramd">Sistema de Expansión</string>
+
+    <string name="internet">Necesitas estar conectado a internet</string>
+    <string name="reintentar">Reintentar</string>
+    <string name="reintenta">Reintente más tarde</string>
+
+
+    <string name="usuarioIncorrecto">Tu usuario y contraseña no son correctos</string>
+    <string name="sizeContra">Usuario y contraseña debe tener más de 10 carácteres</string>
+    <string name="conexionInternet">Tu conexión a Internet es inestable</string>
+
+    <string name="mdnull">En este mes no existe ninguna MD por autorizar</string>
+    <string name="mdnT">En este mes no existe ninguna MD por terminar</string>
+
+    <!-- Dashboard Activity -->
+
+    <string name="nombreUsuario">GUADALUPE MARIANA\u0020</string>
+    <string name="cambiarContra">Cambiar contraseña\u0020</string>
+    <string name="salir">Salir\u0020</string>
+    <string name="intentaSalir">Presiona de nuevo para salir\u0020</string>
+
+    <string name="cancelar">Cancelar\u0020</string>
+
+    <!-- Activity Autoriza -->
+    <string name="apellidoP">Apellido Paterno</string>
+    <string name="apellidoM">Apellido Materno</string>
+    <string name="areaterreno">Área del terreno</string>
+    <string name="nombreBuscar">Nombre a buscar:</string>
+    <string name="favor">Favor de escribir un comentario</string>
+    <string name="sitiocreado">Nuevo sitio creado</string>
+    <string name="md">MD</string>
+    <string name="area">Área</string>
+    <string name="puntos">Puntos</string>
+    <string name="categoria">Categoría</string>
+    <string name="categorias">Categorías</string>
+    <string name="correctamente">Se envío correctamente el sitio</string>
+    <string name="obtuvo">Este sitio obtuvo</string>
+    <string name="direccion">Dirección</string>
+    <string name="frente">Frente</string>
+    <string name="profundidad">Profundidad</string>
+    <string name="total">Total</string>
+    <string name="frontal">Frontal</string>
+    <string name="lateral1">Lateral 1</string>
+    <string name="lateral2">Lateral 2</string>
+    <string name="soloterreno">Solo terreno</string>
+    <string name="localsolo">Local</string>
+    <string name="nombre">Nombre</string>
+    <string name="telefono">Teléfono</string>
+    <string name="email">Email</string>
+    <string name="coincidencias">Coincidencias:</string>
+    <string name="local">\u2022 Local</string>
+    <string name="bien">\u2022 </string>
+    <string name="bienl">Bien </string>
+    <string name="regular">Regular </string>
+    <string name="malo">Malo </string>
+    <string name="rentaneto">Renta a neto</string>
+    <string name="renta">Renta</string>
+    <string name="amortizacion">Amortización</string>
+    <string name="periodo">Período de gracia</string>
+    <string name="tiempode">Tiempo de amortización</string>
+    <string name="autorizado">Se a autorizado este punto</string>
+    <string name="rechazado">Se a rechazado este punto</string>
+    <string name="salirmd">Estás apunto de salir de está MD, para continuar editando entra a la opción "Por terminar" en tu menú.</string>
+    <string name="salirproceso">Deseas salir del detalle de esta MD</string>
+    <string name="guardarmd">Se guardo correctamente el sitio para editarlo, entra en la opción "Por terminar" en tu menú.</string>
+    <string name="disponibilidad">Disponibilidad</string>
+    <string name="inmediata">\u2022 Inmediata</string>
+    <string name="guardo">Se guardo correctamente el sitio para editarlo entra en la opción "Por terminar" en tu menú.</string>
+    <string name="autorizadas">Autorizadas</string>
+    <string name="porAutorizar">Por autorizar</string>
+    <string name="material_icon_point_empty">&#xe868;</string>
+    <string name="material_icon_point_full">&#xe869;</string>
+    <string name="autoriza">POR AUTORIZAR\u0020</string>
+    <string name="revisar">REVISAR\u0020</string>
+    <string name="siguiente">SIGUIENTE\u0020</string>
+    <string name="conteo">Conteo\u0020</string>
+    <string name="metros">\u0020 m2</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="volver">Volver a tomar la foto</string>
+    <string name="datossitio">1. Datos del sitio</string>
+    <string name="datospropietario">2. Datos del propietario</string>
+    <string name="datossuperficie">3. Superficie</string>
+    <string name="zonifica">4. Zonificación</string>
+    <string name="construccion">5. Construcción</string>
+    <string name="generalidades">6. Generalidades del sitio</string>
+    <string name="flujopeatonal">7. Flujo peatonal</string>
+    <string name="inmediato">Inmediato</string>
+    <string name="ocupado">Ocupado</string>
+    <string name="apartirde">A partir de</string>
+    <string name="amortizaciontotal">Monto de amortización</string>
+    <string name="periodotiempo">Periodo tiempo de amortización</string>
+    <string name="periodogracia">Periodo de gracia</string>
+    <!-- mapa -->
+    <string name="google_maps_key">AIzaSyAo-L-dbGjebd6KJd0-UeJprGk9o6YMVqY</string>
+    <!-- agenda -->
+    <string name="agenda">AGENDA\u0020</string>
+    <string name="tarea">TAREA\u0020</string>
+    <string name="evento">Evento</string>
+    <string name="tododia">Todo el dia</string>
+    <string name="accion_hoy">Hoy</string>
+    <string name="accion_ver">Ver 1.1.1</string>
+    <string name="accion_tres">Ver 3 días</string>
+    <string name="accion_semana">Ver la semana</string>
+    <string name="calendario">Calendario</string>
+    <string name="fin">Fin</string>
+    <string name="nuevoevento">Nuevo evento</string>
+    <string name="nombreTitulo">Título</string>
+    <string name="descricp">Descripcion</string>
+    <string name="nombreevento">Firma de contrato</string>
+    <string name="asignadopor">Firma de contrato</string>
+    <string name="participantes">Participantes:</string>
+    <string name="visible">visible</string>
+    <string name="pendientes">Pendientes</string>
+    <string name="notificaciones">Notificaciones</string>
+    <string name="porvencer">Por vencer</string>
+
+    <!-- menu izquierdo -->
+    <string name="crearMD">Crear MD</string>
+    <string name="inicio">Inicio</string>
+    <string name="crear">Por autorizar</string>
+    <string name="terminar">Por terminar</string>
+    <string name="proceso">En proceso</string>
+    <string name="rechazadas">Rechazadas</string>
+    <string name="agendas">Agenda</string>
+    <string name="colaboradores">Atrasadas</string>
+    <string name="contra">Cambiar contraseña</string>
+    <string name="sesion">Cerrar sesión</string>
+    <string name="navigation_drawer_open" translatable="false">Abrir left menu</string>
+    <string name="navigation_drawer_close" translatable="false">Cerrar left menu</string>
+    <string name="fontello_logo">&#xe8ad;</string>
+    <string name="fontello_search">&#xea01;</string>
+    <string name="fontello_x_mark">&#xe887;</string>
+    <string name="fontello_x_mark_masked">&#xe885;</string>
+    <string name="fontello_microfon">&#xea18;</string>
+    <string name="fontello_user">&#xe800;</string>
+    <string name="fontello_password">&#xe9df;</string>
+    <string name="fontello_upload">&#xeb30;</string>
+    <string name="fontello_play">&#xea7d;</string>
+    <string name="fontello_heart_empty">&#xe9b5;</string>
+    <string name="fontello_heart_full">&#xe9b6;</string>
+    <string name="fontello_drag_and_drop">&#xe988;</string>
+    <string name="material_icon_favorite">&#xe9b6;</string>
+    <string name="material_icon_share">&#xeac0;</string>
+    <string name="material_icon_like">&#xeb03;</string>
+    <string name="nombresitio">Nombre del Sitio</string>
+    <string name="tipoSitio">Ciudad</string>
+    <string name="ciudad">Ciudad</string>
+    <string name="rural">Rutal</string>
+    <string name="municipio">Municipio</string>
+    <string name="estado">Estado</string>
+    <string name="pais">País</string>
+    <string name="codigo">Código Postal</string>
+
+    <string name="buscar">Buscar</string>
+    <string name="file_provider_authority">expansion.neto.com.mx.jefeapp.fileprovider</string>
+
+     <string-array name="meses">
+         <item>1 mes</item>
+         <item>2 meses</item>
+         <item>3 meses</item>
+         <item>4 meses</item>
+         <item>5 meses</item>
+         <item>6 meses</item>
+         <item>7 meses</item>
+         <item>8 meses</item>
+         <item>9 meses</item>
+         <item>10 meses</item>
+         <item>11 meses</item>
+         <item>12 meses</item>
+     </string-array>
+
+    <!-- modulo por proceso -->
+    <string name="enProceso">En proceso</string>
+    <string name="enProcesoMenuTiempos">TIEMPOS</string>
+    <string name="enProcesoMenuChat">CHAT</string>
+    <string name="sinMDProceso">No existen MDs en proceso</string>
+    <string name="sinMDre">No existen MDs en rechazo</string>
+    <string name="categoria_a">A</string>
+    <string name="categoria_b">B</string>
+    <string name="categoria_c">C</string>
+    <string name="atrasadas">1</string>
+    <string name="verdetalle">Ver detalle</string>
+    <string name="modificar">Modificar</string>
+    <string name="valida">R</string>
+    <string name="aceptado">A</string>
+    <string name="entrar">ACEPTADO</string>
+    <string name="correciones">Esta MD llego a su máximo de correcciones</string>
+    <string name="creation">Creada el:</string>
+    <string name="g_expansi_n">G Expansión</string>
+    <string name="expansi_n">Expansión</string>
+    <string name="gestor_a">Gestoría</string>
+    <string name="construcci_n">Construcción</string>
+    <string name="operaciones">Operaciones</string>
+    <string name="auditor_a">Auditoría</string>
+    <string name="puntuaci_n">Puntuación</string>
+    <string name="guion">-</string>
+    <string name="categor_a">Categoría</string>
+    <string name="escribir">Escribir mensaje</string>
+    <string name="escribir_e">Escribir mensaje a expansión</string>
+    <string name="escribir_g">Escribir mensaje a gestoría</string>
+    <string name="escribir_c">Escribir mensaje a construcción</string>
+    <string name="escribir_o">Escribir mensaje a operaciones</string>
+    <string name="permisosnocompletados">Permisos no completados</string>
+    <string name="hoy_24_de_abril_2018">Hoy 24 de Abril 2018</string>
+    <string name="datos_faltantes">Datos faltantes</string>
+    <string name="cronometro">Cronómetro</string>
+    <string name="no_estas">No estas ubicado en la MD, no puedes volver a tomar las fotos</string>
+    <string name="chat">Chat</string>
+    <string name="comercios">Número de comercios con un radio de 400 mts</string>
+    <string name="alimentos">Número de comercios de alimentos con un radio de 2 km</string>
+    <string name="negocio">Número de negocios a 150 pasos de la MD a la redonda</string>
+    <string name="negociocomida">Número de negocios de comida a 150 pasos de la MD a la redonda</string>
+    <string name="personas_contadas">Personas contadas</string>
+    <string name="competencia">Competencia</string>
+    <string name="competencia_neto">Competencia Neto</string>
+    <string name="micro_ubicaci_n">MICRO UBICACIÓN</string>
+    <string name="macro_ubicaci_n">MACRO UBICACIÓN</string>
+    <string name="resumen_puntuaci_n">Resumen Puntuación</string>
+    <string name="superficie">3. Superficie</string>
+    <string name="mensaje_fotos">Para mandar la superficie es necesario las fotografías y el area del terreno</string>
+    <string name="horarios">Revisa el total de peatones u el horario</string>
+    <string name="micro_ub">MACRO UBICACION</string>
+</resources>
