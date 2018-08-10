@@ -528,18 +528,20 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                 datosSitio.getDatossitio().get(0).getNombreSitio()!=null){
 
                             binding.escogeSitio.setEnabled(false);
-
-                            if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")){
-                                binding.escogeSitio.setChecked(true);
-                                binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                                editorPre.putString("tipoSitio" ,"2");
-                                editorPre.apply();
-                            }else{
-                                binding.escogeSitio.setChecked(false);
-                                binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                                editorPre.putString("tipoSitio" ,"1");
-                                editorPre.apply();
+                            if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD()!=null){
+                                if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")){
+                                    binding.escogeSitio.setChecked(true);
+                                    binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
+                                    editorPre.putString("tipoSitio" ,"2");
+                                    editorPre.apply();
+                                }else{
+                                    binding.escogeSitio.setChecked(false);
+                                    binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
+                                    editorPre.putString("tipoSitio" ,"1");
+                                    editorPre.apply();
+                                }
                             }
+
 
                             binding.escogeSitio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1808,12 +1810,15 @@ public class FragmentDetalleRechazadas extends Fragment implements
                     }
 
                     for (int i = 0; i < datosPuntuacion.getFactores().size(); i++) {
-                        if (datosPuntuacion.getFactores().get(i).getRangoubica().equals("MACRO UBICACION")) {
-                            factoresMacro.add(datosPuntuacion.getFactores().get(i));
-                        } else{
+                        if(datosPuntuacion.getFactores().get(i).getRangoubica()!=null){
+                            if (datosPuntuacion.getFactores().get(i).getRangoubica().equals(getString(R.string.micro_ub))) {
+                                factoresMacro.add(datosPuntuacion.getFactores().get(i));
+                            } else{
+                                factoresMicro.add(datosPuntuacion.getFactores().get(i));
+                            }
+                        }else{
                             factoresMicro.add(datosPuntuacion.getFactores().get(i));
                         }
-
                     }
 
                     if (factoresMicro.size() <= 0) {
@@ -1882,7 +1887,12 @@ public class FragmentDetalleRechazadas extends Fragment implements
 
             TextView t3v2 = new TextView(getContext());
             t3v2.setTextSize(12);
-            t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            if(datosPuntuacion.get(i).getTotalxfactor()!=null){
+                t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            }else{
+                binding.tituloMacro.setVisibility(View.GONE);
+                binding.tituloMicro.setVisibility(View.GONE);
+            }
             t3v2.setTextColor(resource.getColor(R.color.azul));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
@@ -1931,7 +1941,12 @@ public class FragmentDetalleRechazadas extends Fragment implements
 
             TextView t3v2 = new TextView(getContext());
             t3v2.setTextSize(12);
-            t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            if(datosPuntuacion.get(i).getTotalxfactor()!=null){
+                t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            }else{
+                binding.tituloMacro.setVisibility(View.GONE);
+                binding.tituloMicro.setVisibility(View.GONE);
+            }
             t3v2.setTextColor(resource.getColor(R.color.azul));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,

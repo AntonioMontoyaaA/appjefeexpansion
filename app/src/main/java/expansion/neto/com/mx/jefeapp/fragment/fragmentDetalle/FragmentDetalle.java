@@ -886,8 +886,6 @@ public class FragmentDetalle extends Fragment implements
 
             String nombreMd = preferences[0].getString("nombreSitio", "");
             bindingZonificacion.robotoTextView2.setText(nombreMd);
-            //bindingZonificacion.toolbar.back.setVisibility(View.INVISIBLE);
-
             bindingZonificacion.toolbar.nombreTitulo.setText(getString(R.string.zonifica));
 
             if(true){
@@ -1121,6 +1119,7 @@ public class FragmentDetalle extends Fragment implements
                     @Override
                     public void onClick(View view) {
                         slideGenerador.show();
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.VISIBLE);
                         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putInt("zonificacion", 1);
@@ -1145,6 +1144,7 @@ public class FragmentDetalle extends Fragment implements
                     @Override
                     public void onClick(View view) {
                         slideCompetencia.hide();
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.GONE);
                     }
                 });
 
@@ -1152,6 +1152,7 @@ public class FragmentDetalle extends Fragment implements
                     @Override
                     public void onClick(View view) {
                         slideGenerador.hide();
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.GONE);
                     }
                 });
 
@@ -1159,6 +1160,7 @@ public class FragmentDetalle extends Fragment implements
                     @Override
                     public void onClick(View view) {
                         slideCompetencia.hide();
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.GONE);
                     }
                 });
 
@@ -1829,6 +1831,8 @@ public class FragmentDetalle extends Fragment implements
                             } else{
                                 factoresMicro.add(datosPuntuacion.getFactores().get(i));
                             }
+                        }else{
+                            factoresMicro.add(datosPuntuacion.getFactores().get(i));
                         }
                     }
 
@@ -1898,7 +1902,12 @@ public class FragmentDetalle extends Fragment implements
 
             TextView t3v2 = new TextView(getContext());
             t3v2.setTextSize(12);
-            t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            if(datosPuntuacion.get(i).getTotalxfactor()!=null){
+                t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            }else{
+                binding.tituloMacro.setVisibility(View.GONE);
+                binding.tituloMicro.setVisibility(View.GONE);
+            }
             t3v2.setTextColor(resource.getColor(R.color.azul));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
@@ -1947,7 +1956,12 @@ public class FragmentDetalle extends Fragment implements
 
             TextView t3v2 = new TextView(getContext());
             t3v2.setTextSize(12);
-            t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            if(datosPuntuacion.get(i).getTotalxfactor()!=null){
+                t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            }else{
+                binding.tituloMacro.setVisibility(View.GONE);
+                binding.tituloMicro.setVisibility(View.GONE);
+            }
             t3v2.setTextColor(resource.getColor(R.color.azul));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,

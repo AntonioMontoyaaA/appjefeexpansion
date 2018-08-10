@@ -203,9 +203,8 @@ public class Usuario {
     }
 
     public static UsuarioLogin.Perfil sharedGet(Context context){
-
-        UsuarioLogin.Perfil usuario = new UsuarioLogin.Perfil();
         SharedPreferences preferences = context.getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+        UsuarioLogin.Perfil usuario = new UsuarioLogin.Perfil();
         usuario.setNombre(preferences.getString("nombreCompleto", ""));
         usuario.setUsuario(preferences.getString("usuario", ""));
         usuario.setContra(preferences.getString("contra", ""));

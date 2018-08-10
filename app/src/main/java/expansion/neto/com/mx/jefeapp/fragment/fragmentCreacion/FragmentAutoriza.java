@@ -2073,8 +2073,6 @@ public class FragmentAutoriza extends Fragment implements
 
             binding.peatonalConteo.cronometroPlay.setEnabled(false);
             binding.peatonalConteo.cronometroStop.setEnabled(false);
-            binding.peatonalConteo.btnGuardar.setEnabled(false);
-            binding.peatonalConteo.btnGuardar.setAlpha(.4f);
 
             final int[] conteos = {0};
             final long[] tiempos = {0};
@@ -3084,7 +3082,7 @@ public class FragmentAutoriza extends Fragment implements
         if(distanciaMetros <= 500){
                 return true;
         }
-        return false;
+        return true;
     }
 
     String zonificacionJson = "";
