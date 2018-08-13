@@ -1,5 +1,6 @@
 package expansion.neto.com.mx.jefeapp.ui.crear;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -30,6 +31,8 @@ import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderConsultaFina
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderGuardaFinaliza;
 import expansion.neto.com.mx.jefeapp.ui.porterminar.ActivityFinalizaTerminar;
 
+import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
+
 /**
  * Created by marcosmarroquin on 23/03/18.
  */
@@ -49,16 +52,12 @@ public class ActivityFinaliza extends AppCompatActivity {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         binding.btnGuardar.setEnabled(false);
         binding.btnGuardar.setAlpha(.4f);
-
-        getDatos();
-
+        progressDialog = new ProgressDialog(ActivityFinaliza.this);
         SharedPreferences preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
         final long mdid = preferences.getLong("mdId", 0);
         final String usuario = preferences.getString("usuario", "");
-
-
-
+        getDatos();
 
         binding.btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,6 +68,7 @@ public class ActivityFinaliza extends AppCompatActivity {
                 GuardarFinalizar guardarFinalizar = new GuardarFinalizar(
                         String.valueOf(mdid),usuario,"1",puntuacion
                 );
+                loadingProgress(progressDialog, 0);
 
                 ProviderGuardaFinaliza.getInstance(getApplicationContext()).finalizaGuardaMd(guardarFinalizar,
                         new ProviderGuardaFinaliza.InterfaceGuardarFinalizar() {
@@ -89,6 +89,7 @@ public class ActivityFinaliza extends AppCompatActivity {
                                     binding.btnFinalizar.setAlpha(1.0f);
                                     binding.btnGuardar.setEnabled(true);
                                     binding.btnGuardar.setAlpha(1.0f);
+                                    loadingProgress(progressDialog, 1);
 
 
                                 }else{
@@ -100,6 +101,8 @@ public class ActivityFinaliza extends AppCompatActivity {
 
                                     binding.btnFinalizar.setEnabled(true);
                                     binding.btnFinalizar.setAlpha(1.0f);
+                                    loadingProgress(progressDialog, 1);
+
                                 }
                             }
                             @Override
@@ -120,6 +123,7 @@ public class ActivityFinaliza extends AppCompatActivity {
                 GuardarFinalizar guardarFinalizar = new GuardarFinalizar(
                         String.valueOf(mdid),usuario,"2",puntuacion
                 );
+                loadingProgress(progressDialog, 0);
 
                 ProviderGuardaFinaliza.getInstance(getApplicationContext()).finalizaGuardaMd(guardarFinalizar,
                         new ProviderGuardaFinaliza.InterfaceGuardarFinalizar() {
@@ -132,12 +136,16 @@ public class ActivityFinaliza extends AppCompatActivity {
                                     dFragment.show(fm, "Dialog Fragment Finaliza");
                                     binding.btnGuardar.setEnabled(true);
                                     binding.btnGuardar.setAlpha(1);
+                                    loadingProgress(progressDialog, 1);
+
                                 }else{
                                     Toast.makeText(ActivityFinaliza.this, codigo.getMensaje(),
                                             Toast.LENGTH_SHORT).show();
 
                                     binding.btnGuardar.setEnabled(true);
                                     binding.btnGuardar.setAlpha(1);
+                                    loadingProgress(progressDialog, 1);
+
                                 }
                             }
 
@@ -172,11 +180,13 @@ public class ActivityFinaliza extends AppCompatActivity {
      */
     private void initDataBinding() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_finaliza);
+
     }
 
 
     ArrayList<DatosPuntuacion.Factore> factoresMacro;
     ArrayList<DatosPuntuacion.Factore> factoresMicro;
+    ProgressDialog progressDialog;
 
     @Override
     public void onBackPressed() {
@@ -184,7 +194,7 @@ public class ActivityFinaliza extends AppCompatActivity {
     }
     String puntuacion, categoria;
     public void getDatos(){
-
+        loadingProgress(progressDialog, 0);
         SharedPreferences preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         long mdid = preferences.getLong("mdId", 0);
         String usuarioId = preferences.getString("usuario", "");
@@ -198,6 +208,7 @@ public class ActivityFinaliza extends AppCompatActivity {
                     binding.btnGuardar.setAlpha(1);
                     factoresMacro = new ArrayList<>();
                     factoresMicro = new ArrayList<>();
+                    loadingProgress(progressDialog, 1);
 
                     SharedPreferences preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     binding.textoTipo.setText(datosPuntuacion.getUbicacionMD()+"");
@@ -237,6 +248,8 @@ public class ActivityFinaliza extends AppCompatActivity {
                 }else{
                     Toast.makeText(ActivityFinaliza.this, "Error al guardar tu MD",
                             Toast.LENGTH_SHORT).show();
+                    loadingProgress(progressDialog, 1);
+
                 }
 
             }

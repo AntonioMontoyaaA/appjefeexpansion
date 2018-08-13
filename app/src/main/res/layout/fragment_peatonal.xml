@@ -378,6 +378,7 @@
                 android:textColor="@color/blanco" />
 
             <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                android:id="@+id/peatonal_n"
                 app:typeface="robotoRegular"
                 android:textSize="12sp"
                 android:layout_width="match_parent"

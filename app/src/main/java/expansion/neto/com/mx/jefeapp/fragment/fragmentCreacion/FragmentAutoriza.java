@@ -1,6 +1,7 @@
 package expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -210,6 +211,7 @@ public class FragmentAutoriza extends Fragment implements
     private int CAMERA_FRONTAL = 1;
     private int CAMERA_LATERAL_1 = 2;
     private int CAMERA_LATERAL_2 = 3;
+    ProgressDialog progressDialog;
 
     private AdapterListaPropietarios.OnItemClick clickPropietario = new AdapterListaPropietarios.OnItemClick() {
         @Override
@@ -550,7 +552,7 @@ public class FragmentAutoriza extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        progressDialog = new ProgressDialog(getContext());
         if (position == 0) {
             mensaje = "fragment 1";
             binding = DataBindingUtil.inflate(inflater,R.layout.fragment_autoriza,container,false);
@@ -631,14 +633,14 @@ public class FragmentAutoriza extends Fragment implements
                     }
                 }
             };
-
             timer.schedule (hourlyTask, 500, 1000);
-
             //TODO Hacer estos casos para las demás pantallas
             binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
+
                     binding.toolbar.guardar.setEnabled(false);
+                    loadingProgress(progressDialog, 0);
 
                     String[] latitud = {null};
                     String[] longitud = {null};
@@ -677,10 +679,12 @@ public class FragmentAutoriza extends Fragment implements
                                         editorExpansion.putString("nombreSitio", nombreSitio);
                                         editorExpansion.apply();
                                         binding.toolbar.guardar.setEnabled(true);
+                                        loadingProgress(progressDialog, 1);
 
                                         FragmentDialogGuardar a = new FragmentDialogGuardar();
                                         a.show(getChildFragmentManager(),"child");
                                     }else{
+                                        loadingProgress(progressDialog,  1);
                                         Toast.makeText(getContext(), codigo.getMensaje(),
                                                 Toast.LENGTH_SHORT).show();
                                         binding.toolbar.guardar.setEnabled(true);
@@ -791,6 +795,8 @@ public class FragmentAutoriza extends Fragment implements
                     String mdId = String.valueOf(md);
                     bindingPropietario.toolbar.guardar.setEnabled(false);
 
+                    loadingProgress(progressDialog, 0);
+
                     if(mdId.length()==1){
                         mdId = "";
                     }
@@ -834,8 +840,10 @@ public class FragmentAutoriza extends Fragment implements
                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
                                             a.show(getChildFragmentManager(),"child");
                                             bindingPropietario.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
                                         }else{
+                                            loadingProgress(progressDialog, 1);
                                             Toast.makeText(getContext(), codigo.getMensaje(),
                                                     Toast.LENGTH_SHORT).show();
                                             bindingPropietario.toolbar.guardar.setEnabled(true);
@@ -866,6 +874,9 @@ public class FragmentAutoriza extends Fragment implements
                                 getActivity().getCurrentFocus().getWindowToken(),
                                 InputMethodManager.HIDE_NOT_ALWAYS);
                         String nombre = bindingPropietario.nombreBuscadoredt.getText().toString();
+
+                        loadingProgress(progressDialog, 0);
+
                         ProviderBuscarPropietario.getInstance(getContext()).obtenerPropietario(usuarioId, nombre, new ProviderBuscarPropietario.ConsultaPropietario() {
                             @Override
                             public void resolve(PropietarioBusqueda propietario) {
@@ -874,9 +885,13 @@ public class FragmentAutoriza extends Fragment implements
                                     bindingPropietario.recyclerPropietarios.setLayoutManager(new LinearLayoutManager(getContext()));
                                     bindingPropietario.recyclerPropietarios.setAdapter(adapterListaPropietarios);
                                     bindingPropietario.coincide.setVisibility(View.VISIBLE);
+                                    loadingProgress(progressDialog, 1);
+
                                 }else{
                                     Toast.makeText(getContext(), "No se encontraron coincidencias",
                                             Toast.LENGTH_SHORT).show();
+                                    loadingProgress(progressDialog, 1);
+
                                 }
                             }
 
@@ -1139,6 +1154,8 @@ public class FragmentAutoriza extends Fragment implements
                     Long md = preferences.getLong("mdId", 0);
                     String mdId = String.valueOf(md);
 
+                    loadingProgress(progressDialog, 0);
+
                     if(mdId.length()==1){
                         mdId = "";
                     }
@@ -1151,9 +1168,11 @@ public class FragmentAutoriza extends Fragment implements
                         String convertido = String.valueOf(mdid);
 
                         if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
-                            Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
+                            Toast.makeText(getContext(), R.string.mandar,
                                     Toast.LENGTH_SHORT).show();
                             bindingSuperficie.toolbar.guardar.setEnabled(true);
+                            loadingProgress(progressDialog, 1);
+
                         }else{
                             String usuario = preferences.getString("usuario", "");
 
@@ -1171,7 +1190,9 @@ public class FragmentAutoriza extends Fragment implements
                                         bindingSuperficie.toolbar.guardar.setEnabled(true);
                                         FragmentDialogGuardar a = new FragmentDialogGuardar();
                                         a.show(getChildFragmentManager(),"child");
+                                        loadingProgress(progressDialog, 1);
                                     }else{
+                                        loadingProgress(progressDialog, 1);
                                         Toast.makeText(getContext(), codigo.getMensaje(),
                                                 Toast.LENGTH_SHORT).show();
                                         bindingSuperficie.toolbar.guardar.setEnabled(true);
@@ -1493,6 +1514,7 @@ public class FragmentAutoriza extends Fragment implements
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     Long md = preferences.getLong("mdId", 0);
                     String mdId = String.valueOf(md);
+                    loadingProgress(progressDialog, 0);
 
                     if(mdId.length()==1){ mdId = ""; }
 
@@ -1541,11 +1563,12 @@ public class FragmentAutoriza extends Fragment implements
                                         FragmentDialogGuardar a = new FragmentDialogGuardar();
                                         a.show(getChildFragmentManager(),"child");
                                         bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                        loadingProgress(progressDialog, 1);
 
                                     }else {
                                         Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                         bindingZonificacion.toolbar.guardar.setEnabled(true);
-
+                                        loadingProgress(progressDialog, 1);
                                     }
                                 }
 
@@ -1560,9 +1583,12 @@ public class FragmentAutoriza extends Fragment implements
                                         FragmentDialogGuardar a = new FragmentDialogGuardar();
                                         a.show(getChildFragmentManager(),"child");
                                         bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                        loadingProgress(progressDialog, 1);
                                     }else {
                                         Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                         bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                        loadingProgress(progressDialog, 1);
+
                                     }
                                 }
 
@@ -1705,13 +1731,17 @@ public class FragmentAutoriza extends Fragment implements
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     Long mdIdterminar = preferences.getLong("mdId", 0);
 
+                    loadingProgress(progressDialog, 0);
+
+
                     if(String.valueOf(mdIdterminar).length()==1){
                         mdIdterminar = Long.valueOf("");
                     }
 
                     if(!mdIdterminar.equals("")){
                         if(nivelId==0 || nivelIdCondicion==0){
-
+                            loadingProgress(progressDialog, 1);
+                            bindingConstruccion.toolbar.guardar.setEnabled(true);
                         }else{
 
                             niveles = new ArrayList<>();
@@ -1783,14 +1813,14 @@ public class FragmentAutoriza extends Fragment implements
                                         @Override
                                         public void resolve(Codigos codigo) {
                                             if(codigo.getCodigo()==200){
-
                                                 FragmentDialogGuardar a = new FragmentDialogGuardar();
                                                 a.show(getChildFragmentManager(),"child");
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
-
+                                                loadingProgress(progressDialog, 1);
                                             }else{
                                                 Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
                                             }
                                         }
 
@@ -1958,6 +1988,7 @@ public class FragmentAutoriza extends Fragment implements
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     Long md = preferences.getLong("mdId", 0);
                     String mdId = String.valueOf(md);
+                    loadingProgress(progressDialog, 0);
 
                     if(mdId.length()==1){
                         mdId = "";
@@ -2030,10 +2061,14 @@ public class FragmentAutoriza extends Fragment implements
                                     FragmentDialogGuardar a = new FragmentDialogGuardar();
                                     a.show(getChildFragmentManager(),"child");
                                     binding.toolbar.guardar.setEnabled(true);
+                                    loadingProgress(progressDialog, 1);
+
 
                                 }else{
                                     Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                     binding.toolbar.guardar.setEnabled(true);
+                                    loadingProgress(progressDialog, 1);
+
 
                                 }
                             }
@@ -2169,6 +2204,10 @@ public class FragmentAutoriza extends Fragment implements
                                 if(horasPeatonales.getCodigo()==200) {
 
                                     tiempo[0] = Integer.parseInt(horasPeatonales.getTiempoConteos());
+                                    binding.peatonalConteo.peatonalN.setText(
+                                            "Recuerda que el conteo peatonal debe ser de "+tiempo[0]+" min"
+
+                                    );
 
                                     binding.peatonalConteo.chronometer1.setBase(SystemClock.elapsedRealtime() - (tiempo[0] * 60000 + 0 * 1000));
                                     tiempos[0] = TimeUnit.MINUTES.toMillis(tiempo[0]);
@@ -2481,13 +2520,9 @@ public class FragmentAutoriza extends Fragment implements
 
                 }
             });
-
-
         }
         return view;
     }
-
-    long tiempo = 0;
 
     public static boolean isHourInInterval(String target, String start, String end) {
         return ((target.compareTo(start) >= 0)&& (target.compareTo(end) <= 0));
@@ -2606,6 +2641,7 @@ public class FragmentAutoriza extends Fragment implements
     String urlLateral2 = "";
 
     public void obtenerUrl(String foto, String b64, String mdId){
+        loadingProgress(progressDialog, 0);
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
@@ -2617,6 +2653,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.frontal.setEnabled(true);
                         hourlyTaskSuperficie.run();
                         hourlyTaskSuperficie.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
                     }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
                         bindingSuperficie.lateral1.setEnabled(false);
                         urlLateral1 = codigo.getResultado().getSecureUrl();
@@ -2624,6 +2662,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.lateral1.setEnabled(true);
                         hourlyTaskSuperficie.run();
                         hourlyTaskSuperficie.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
                     }else{
                         bindingSuperficie.lateral2.setEnabled(false);
                         urlLateral2 = codigo.getResultado().getSecureUrl();
@@ -2631,6 +2671,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.lateral2.setEnabled(true);
                         hourlyTaskSuperficie.run();
                         hourlyTaskSuperficie.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
                     }
                 }
             }
@@ -3477,4 +3519,16 @@ public class FragmentAutoriza extends Fragment implements
         }
 
     }
+
+    public static void loadingProgress(ProgressDialog progressDialog, int i){
+        if(i == 0){
+            progressDialog.setTitle("Enviando...");
+            progressDialog.setMessage("Espera mientras se carga tu informacion...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }else{
+            progressDialog.dismiss();
+        }
+    }
+
 }

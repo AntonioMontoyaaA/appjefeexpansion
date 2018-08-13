@@ -47,12 +47,13 @@ public class ProviderLogin {
             protected UsuarioLogin doInBackground(Void... voids) {
                 //TODO CONNECT AND GET DATA
                 try {
-                    //351881091739456
-                    //Log.e("imei", imei);
+                    //202020202020202 DES pruebas
+                    //351881091739233 QA pruebas
+                    //101010101010101 DES pruebas
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("usuarioId", usuario.getUsuario())
                             .add("contrasena", usuario.getContra())
-                            .add("numImei", imei/*"101010101010101"*/)
+                            .add("numImei", imei)
                             .add("versionapp", versionApp)
                             .add("tipoLog", TIPO_LOG);
 

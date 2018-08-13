@@ -101,7 +101,15 @@ public class Usuario {
                                     permisos.add(usuarioLogin.getPerfil().getPerfilesxusuario().get(0).getPermisos().get(i));
                                 }
 
-                                if(usuarioLogin.getPerfil().getPuestoId().equals("2")){
+                                //perfilId = 1 > para que pueda entrar el gerente en app jefe y puesto 3
+                                boolean permiso = false;
+                                for(int i=0;i<usuarioLogin.getPerfil().getPerfilesxusuario().size();i++){
+                                    if(usuarioLogin.getPerfil().getPerfilesxusuario().get(i).getPerfilid()==1){
+                                        permiso = true;
+                                    }
+                                }
+
+                                if(permiso){
                                     preferences = context.getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     Gson gson = new Gson();
