@@ -9,7 +9,7 @@ public class Superficie {
 
     @SerializedName("puntoFac")
     @Expose
-    private Integer puntoFac;
+    private Double puntoFac;
     @SerializedName("validado")
     @Expose
     private Integer validado;
@@ -32,11 +32,11 @@ public class Superficie {
     @Expose
     private List<Nivele> niveles = null;
 
-    public Integer getPuntoFac() {
+    public Double getPuntoFac() {
         return puntoFac;
     }
 
-    public void setPuntoFac(Integer puntoFac) {
+    public void setPuntoFac(Double puntoFac) {
         this.puntoFac = puntoFac;
     }
 
@@ -109,19 +109,75 @@ public class Superficie {
         private String imgFrenteId;
         @SerializedName("fondo")
         @Expose
-        private Integer fondo;
+        private Double fondo;
         @SerializedName("puntuacion")
         @Expose
         private Double puntuacion;
         @SerializedName("valorreal")
         @Expose
-        private Integer valorreal;
+        private Double valorreal;
         @SerializedName("imgLateral2Id")
         @Expose
         private String imgLateral2Id;
         @SerializedName("imgLateral1Id")
         @Expose
         private String imgLateral1Id;
+        @SerializedName("imgPredial")
+        @Expose
+        private String imgPredial;
+
+        @SerializedName("fecha_lat1")
+        @Expose
+        private String fecha_lat1;
+        @SerializedName("fecha_lat2")
+        @Expose
+        private String fecha_lat2;
+        @SerializedName("fecha_pred")
+        @Expose
+        private String fecha_pred;
+        @SerializedName("fecha_fente")
+        @Expose
+        private String fecha_fente;
+
+        public String getFecha_lat1() {
+            return fecha_lat1;
+        }
+
+        public void setFecha_lat1(String fecha_lat1) {
+            this.fecha_lat1 = fecha_lat1;
+        }
+
+        public String getFecha_lat2() {
+            return fecha_lat2;
+        }
+
+        public void setFecha_lat2(String fecha_lat2) {
+            this.fecha_lat2 = fecha_lat2;
+        }
+
+        public String getFecha_pred() {
+            return fecha_pred;
+        }
+
+        public void setFecha_pred(String fecha_pred) {
+            this.fecha_pred = fecha_pred;
+        }
+
+        public String getFecha_fente() {
+            return fecha_fente;
+        }
+
+        public void setFecha_fente(String fecha_fente) {
+            this.fecha_fente = fecha_fente;
+        }
+
+        public String getImgPredial() {
+            return imgPredial;
+        }
+
+        public void setImgPredial(String imgPredial) {
+            this.imgPredial = imgPredial;
+        }
 
         public Integer getNivel() {
             return nivel;
@@ -147,11 +203,11 @@ public class Superficie {
             this.imgFrenteId = imgFrenteId;
         }
 
-        public Integer getFondo() {
+        public Double getFondo() {
             return fondo;
         }
 
-        public void setFondo(Integer fondo) {
+        public void setFondo(Double fondo) {
             this.fondo = fondo;
         }
 
@@ -163,11 +219,11 @@ public class Superficie {
             this.puntuacion = puntuacion;
         }
 
-        public Integer getValorreal() {
+        public Double getValorreal() {
             return valorreal;
         }
 
-        public void setValorreal(Integer valorreal) {
+        public void setValorreal(Double valorreal) {
             this.valorreal = valorreal;
         }
 

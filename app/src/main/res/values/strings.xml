@@ -55,6 +55,7 @@
     <string name="profundidad">Profundidad</string>
     <string name="total">Total</string>
     <string name="frontal">Frontal</string>
+    <string name="prefial">Predial</string>
     <string name="lateral1">Lateral 1</string>
     <string name="lateral2">Lateral 2</string>
     <string name="soloterreno">Solo terreno</string>
@@ -71,7 +72,7 @@
     <string name="rentaneto">Renta a neto</string>
     <string name="renta">Renta</string>
     <string name="amortizacion">Amortización</string>
-    <string name="periodo">Período de gracia</string>
+    <string name="periodo">Periodo de gracia (meses)</string>
     <string name="tiempode">Tiempo de amortización</string>
     <string name="autorizado">Se a autorizado este punto</string>
     <string name="rechazado">Se a rechazado este punto</string>
@@ -103,8 +104,8 @@
     <string name="ocupado">Ocupado</string>
     <string name="apartirde">A partir de</string>
     <string name="amortizaciontotal">Monto de amortización</string>
-    <string name="periodotiempo">Periodo tiempo de amortización</string>
-    <string name="periodogracia">Periodo de gracia</string>
+    <string name="periodotiempo">Periodo tiempo de amortización (meses)</string>
+    <string name="periodogracia">Periodo de gracia (meses)</string>
     <!-- mapa -->
     <string name="google_maps_key">AIzaSyAo-L-dbGjebd6KJd0-UeJprGk9o6YMVqY</string>
     <!-- agenda -->
@@ -113,7 +114,7 @@
     <string name="evento">Evento</string>
     <string name="tododia">Todo el dia</string>
     <string name="accion_hoy">Hoy</string>
-    <string name="accion_ver">Ver 1.1.1</string>
+    <string name="accion_ver">Ver 1.1.3</string>
     <string name="accion_tres">Ver 3 días</string>
     <string name="accion_semana">Ver la semana</string>
     <string name="calendario">Calendario</string>

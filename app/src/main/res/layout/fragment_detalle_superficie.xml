@@ -92,7 +92,7 @@
 
                         <LinearLayout
                             android:id="@+id/linearLayout4"
-                            android:layout_width="match_parent"
+                            android:layout_width="95dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginEnd="10dp"
@@ -100,6 +100,7 @@
                             android:layout_marginTop="8dp"
                             android:orientation="vertical"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/robotoTextView2">
 
@@ -149,6 +150,40 @@
 
 
                             </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:visibility="gone"
+                            android:id="@+id/predial"
+                            android:layout_width="95dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="60dp"
+                            android:layout_marginTop="48dp"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toEndOf="@+id/linearLayout4"
+                            app:layout_constraintTop_toBottomOf="@+id/robotoTextView2">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:backgroundTint="@color/azultaco"
+                                android:src="@drawable/ic_camara" />
+
+                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="4dp"
+                                android:background="@android:color/transparent"
+                                android:text="@string/prefial"
+                                android:textColor="@color/azultaco"
+                                android:textSize="14sp"
+                                app:typeface="robotoRegular" />
 
 
                         </LinearLayout>
@@ -241,20 +276,36 @@
                                 android:textSize="12sp"
                                 app:typeface="robotoLight" />
 
-                            <EditText
-                                android:id="@+id/areaterreno"
-                                style="@style/edtText"
-                                android:layout_width="78dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="12dp"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginTop="-10dp"
-                                android:cursorVisible="true"
-                                android:enabled="false"
-                                android:inputType="text"
-                                android:maxLength="10"
-                                android:singleLine="true"
-                                android:textSize="14sp" />
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+                                <EditText
+                                    android:id="@+id/areaterreno"
+                                    style="@style/edtText"
+                                    android:layout_width="75dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:layout_marginStart="17dp"
+                                    android:layout_marginTop="-10dp"
+                                    android:cursorVisible="true"
+                                    android:enabled="false"
+                                    android:inputType="text"
+                                    android:maxLength="6"
+                                    android:singleLine="true"
+                                    android:textSize="14sp" />
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="-10dp"
+                                    android:layout_marginTop="-8dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:text="mts 2"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="12sp"
+                                    app:typeface="robotoLight" />
+                            </LinearLayout>
 
                         </LinearLayout>
 

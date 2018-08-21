@@ -16,6 +16,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_LOG;
 
 /**
@@ -52,7 +53,7 @@ public class ProviderPerfil {
                             .add("nombre", perfil.getNombre())
                             .add("apellidoPaterno", perfil.getApellidoPaterno())
                             .add("apellidoMaterno", perfil.getApellidoMaterno())
-                            .add("numTelefono", perfil.getNumTelefono())
+                            .add("numTelefono", NUM_TELEFONO)
                             .add("correo", perfil.getCorreo())
                             .add("contrasena", perfil.getContrasena())
                             .add("imagen", perfil.getImagen());

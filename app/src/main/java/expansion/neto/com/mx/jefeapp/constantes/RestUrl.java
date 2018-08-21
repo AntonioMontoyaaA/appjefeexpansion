@@ -16,7 +16,11 @@ public class RestUrl {
 
     //public static String dominio = "voksedesapi"; // desarrollo
     public static String dominio = "vokseqaapi"; // QA
-    ///public static String dominio = "vokseapi"; // produccion
+    //public static String dominio = "vokseapi"; // produccion
+
+    public static String NUM_TELEFONO = "0";
+
+    public static String VERSION_APP = "1.1.3";
 
     public static String REST_ACTION_CONSULTAR_LOGIN = "http://"+ ip +"/"+ dominio +"/login/";
 
@@ -70,8 +74,6 @@ public class RestUrl {
 
     public static String REST_ACTION_TIPS = "http://"+ ip +"/"+ dominio +"/consultaTips/";
 
-    public static String VERSION_APP = "1.0.1";
-
     public static String TIPO_APLICACION = "1";
 
     public static String FACTOR_ID = "5";
@@ -103,6 +105,13 @@ public class RestUrl {
     public static String REST_ACTION_CONSULTAR_NOTIFICACIONES = "http://"+ ip +"/"+ dominio +"/notificaciones/";
 
     public static String REST_ACTION_GUARDAR_NOTIFICACION = "http://"+ ip +"/"+ dominio +"/validaNotificacion/";
+
+    public static String REST_ACTION_GUARDAR_UBICACION = "http://"+ ip +"/"+ dominio +"/guardaubicacionact/";
+
+    public static String REST_ACTION_CONSULTAR_PREDIAL = "http://"+ ip +"/"+ dominio +"/superficiepreconsulta/";
+
+    public static String REST_ACTION_CONSULTAR_PERIODOS = "http://"+ ip +"/"+ dominio +"/genralidadespreconsulta/";
+
 
 }
 

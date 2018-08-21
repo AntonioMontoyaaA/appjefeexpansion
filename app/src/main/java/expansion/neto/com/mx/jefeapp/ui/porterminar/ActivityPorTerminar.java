@@ -165,14 +165,14 @@ public class ActivityPorTerminar extends AppCompatActivity{
                     });
                     if(!mdId.equals("") || mdId.equals("0")) {
 
-                        String json = obtenerZonificacion(ActivityPorTerminar.this);
-                        if (json.length() > 0 || !json.equals("")) {
-                            FragmentDatosZonificacion crear = new FragmentDatosZonificacion(ActivityPorTerminar.this);
-                            crear.mandarDatosZonificacion(json);
-                            getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
-
-
-                        }
+//                        String json = obtenerZonificacion(ActivityPorTerminar.this);
+//                        if (json.length() > 0 || !json.equals("")) {
+//                            FragmentDatosZonificacion crear = new FragmentDatosZonificacion(ActivityPorTerminar.this);
+//                            crear.mandarDatosZonificacion(json);
+//                            getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
+//
+//
+//                        }
                     }
                 }
 

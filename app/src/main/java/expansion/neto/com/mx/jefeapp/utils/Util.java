@@ -30,12 +30,14 @@ import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza;
 import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivityLogin;
 
 import static android.content.Context.TELEPHONY_SERVICE;
@@ -258,6 +260,19 @@ public class Util {
     }
 
     /**
+     * Metodo regresa fecha con horas
+     * @return
+     */
+    public static boolean getEntreFechas(){
+        Boolean hora = false;
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("kk:mm");
+        final String strDate = sdf.format(c.getTime());
+        hora =  FragmentAutoriza.isHourInInterval(strDate, "07:00", "19:00");
+        return hora;
+    }
+
+    /**
      *
      */
     public static class InputFilterMinMax implements InputFilter {
@@ -325,5 +340,5 @@ public class Util {
             }
         }
     }
-
 }
+

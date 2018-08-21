@@ -33,6 +33,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -88,6 +89,7 @@ import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogCan
 import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentDialogCancelarMdRechazadas;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
+import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosPredial;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosSitio;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.GeneralidadesSitio;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonal;
@@ -95,6 +97,7 @@ import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonales;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Propietario;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Superficie;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Zonificacion;
+import expansion.neto.com.mx.jefeapp.modelView.crearModel.Amortizacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradoresV2;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CrearZonificacion;
@@ -102,9 +105,11 @@ import expansion.neto.com.mx.jefeapp.modelView.crearModel.DatosConstruccion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.DatosPuntuacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.FactoresConstruccion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.HorasPeatonales;
+import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosAmortizacion;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosGeneralidadesSitio;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPeatonal;
+import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPredial;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPropietario;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosSitio;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosSuperficie;
@@ -694,6 +699,22 @@ public class FragmentDetalleRechazadas extends Fragment implements
             fechaEntorno2  = getFechaHora();
             bindingSuperficie.toolbar.guardar.setVisibility(View.INVISIBLE);
 
+            ProviderDatosPredial.getInstance(getContext()).obtenerDatosPredial(md, usuario[0], new ProviderDatosPredial.ConsultaDatosPredial() {
+                @Override
+                public void resolve(DatosPredial datosPredial) {
+                    if(datosPredial!=null){
+                        if(datosPredial.getAplicaPredial().equals("1")){
+                            bindingSuperficie.predial.setVisibility(View.VISIBLE);
+                        }else{
+                            urlPredial = " ";
+                            fechaPredial = " ";
+                        }
+                    }
+                }
+                @Override
+                public void reject(Exception e) { }
+            });
+
             bindingSuperficie.volver.setVisibility(View.INVISIBLE);
             final String[] tipoEsquina = {"0"};
 
@@ -726,7 +747,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                     }
                                 }
 
-                                int esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+                                Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
 
                                 if(esquina==1){
                                     bindingSuperficie.escogeEsquina.setChecked(true);
@@ -746,13 +767,15 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                 bindingSuperficie.frente.setText("  "+superficieS);
                                 bindingSuperficie.profundidad.setText("  "+fondoS);
 
-                                String total = String.valueOf((Integer.valueOf(superficieS)
-                                        *(Integer.valueOf(fondoS))));
+                                String total = String.valueOf((Double.valueOf(superficieS)
+                                        *(Double.valueOf(fondoS))));
                                 bindingSuperficie.areaterreno.setText("  "+total+"mts2");
 
                                 bindingSuperficie.frontal.setAlpha(1.0f);
                                 bindingSuperficie.lateral1.setAlpha(0.35f);
                                 bindingSuperficie.lateral2.setAlpha(0.35f);
+                                bindingSuperficie.predial.setAlpha(0.35f);
+
                                 bindingSuperficie.robotoTextView2.setText(nombreSitio);
 
                                 final int finalValorFoto = valorFoto;
@@ -766,6 +789,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                         bindingSuperficie.frontal.setAlpha(1.0f);
                                         bindingSuperficie.lateral1.setAlpha(0.35f);
                                         bindingSuperficie.lateral2.setAlpha(0.35f);
+                                        bindingSuperficie.predial.setAlpha(0.35f);
                                         if(superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length()>0){
                                             if(urlFrente.length()>0){
                                                 Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
@@ -788,6 +812,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                         bindingSuperficie.lateral1.setAlpha(1.0f);
                                         bindingSuperficie.frontal.setAlpha(0.35f);
                                         bindingSuperficie.lateral2.setAlpha(0.35f);
+                                        bindingSuperficie.predial.setAlpha(0.35f);
                                         if(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length()>0){
                                             if(urlLateral1.length()>0){
                                                 Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
@@ -802,10 +827,36 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                     }
                                 });
 
+                                bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if(!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("")){
+                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(1.0f);
+
+                                            if(superficie.getNiveles().get(finalValorFoto).getImgPredial().length()>0){
+                                                if(urlPredial.length()>0){
+                                                    Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                } else {
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                                }
+                                            }else{
+                                                bindingSuperficie.volver.setVisibility(View.GONE);
+                                                // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                // startActivityForResult(intent, CAMERA);
+                                            }
+                                        }
+                                    }
+                                });
+
 
                                 urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
                                 urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
                                 urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
+                                urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
 
                                 bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -813,6 +864,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                         bindingSuperficie.lateral2.setAlpha(1.0f);
                                         bindingSuperficie.frontal.setAlpha(0.35f);
                                         bindingSuperficie.lateral1.setAlpha(0.35f);
+                                        bindingSuperficie.predial.setAlpha(0.35f);
                                         if(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length()>0){
                                             if(urlLateral2.length()>0){
                                                 Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
@@ -1333,7 +1385,41 @@ public class FragmentDetalleRechazadas extends Fragment implements
             String usuarioId = preferences.getString("usuario", "");
             final String mdIdterminar = preferences.getString("mdIdterminar", "");
             final int textColor = Color.parseColor("#254581");
+            ProviderDatosAmortizacion.getInstance(getContext()).obtenerDatosAmortizacion(mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
+                @Override
+                public void resolve(Amortizacion datosPredial) {
+                    if(datosPredial!=null){
 
+                        ArrayList<String> amortizacion = new ArrayList<>();
+
+                        for(int i = 0;i<datosPredial.getAmortizacion().size();i++){
+                            amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                        }
+
+                        ArrayList<String> gracia = new ArrayList<>();
+
+                        for(int j = 0;j<datosPredial.getGracia().size();j++){
+                            gracia.add(datosPredial.getGracia().get(j).getOpcion());
+                        }
+
+                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                amortizacion);
+                        amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                        binding.periodoamotizacion.setAdapter(amortizacionSpinner);
+
+                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                gracia);
+                        graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                        binding.periodogracia.setAdapter(graciaSpinner);
+
+                    }
+                }
+
+                @Override
+                public void reject(Exception e) {
+
+                }
+            });
             ProviderDatosGeneralidadesSitio.getInstance(getContext())
                     .obtenerDatosGeneralidades(mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
                         @Override
@@ -1362,34 +1448,68 @@ public class FragmentDetalleRechazadas extends Fragment implements
 
                                     for(int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 || datosSitio.getGeneralidades().get(i).getNivelid() == 2 || datosSitio.getGeneralidades().get(i).getNivelid() == 3){
-                                            binding.renta.setText(datosSitio.getGeneralidades().get(i).getValor()+" MXN");
+                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9){
 
-                                            if(datosSitio.getGeneralidades().get(i).getDetalles() != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
+                                            binding.amortizaciontotal.setText(datosSitio.getGeneralidades().get(i).getValor()+" MXN");
 
-                                                switch (datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()){
-                                                    case 1:
+                                            if(datosSitio.getGeneralidades().get(i).getDetalles()
+                                                    != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
+                                                int valor = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
+                                                switch (valor){
+                                                    case 0:
                                                         binding.periodoamotizacion.setSelection(0);
                                                         break;
-                                                    case 2:
+                                                    case 1:
                                                         binding.periodoamotizacion.setSelection(1);
                                                         break;
-                                                    case 3:
+                                                    case 2:
                                                         binding.periodoamotizacion.setSelection(2);
                                                         break;
-                                                    case 4:
+                                                    case 3:
                                                         binding.periodoamotizacion.setSelection(3);
                                                         break;
-                                                    case 5:
+                                                    case 6:
                                                         binding.periodoamotizacion.setSelection(4);
                                                         break;
-                                                    case 6:
+                                                    case 9:
                                                         binding.periodoamotizacion.setSelection(5);
                                                         break;
+                                                    case 12:
+                                                        binding.periodoamotizacion.setSelection(6);
+                                                        break;
+                                                    case 18:
+                                                        binding.periodoamotizacion.setSelection(7);
+                                                        break;
+                                                    case 24:
+                                                        binding.periodoamotizacion.setSelection(8);
+                                                        break;
+                                                    case 30:
+                                                        binding.periodoamotizacion.setSelection(9);
+                                                        break;
+                                                    case 36:
+                                                        binding.periodoamotizacion.setSelection(10);
+                                                        break;
+                                                    case 42:
+                                                        binding.periodoamotizacion.setSelection(11);
+                                                        break;
+                                                    case 48:
+                                                        binding.periodoamotizacion.setSelection(12);
+                                                        break;
+                                                    case 54:
+                                                        binding.periodoamotizacion.setSelection(13);
+                                                        break;
+                                                    case 60:
+                                                        binding.periodoamotizacion.setSelection(14);
+                                                        break;
                                                 }
+
+
                                             }
 
                                         }
+
 
                                         if(datosSitio.getGeneralidades().get(i).getNivelid() == 4 || datosSitio.getGeneralidades().get(i).getNivelid() == 5 || datosSitio.getGeneralidades().get(i).getNivelid() == 6){
 
@@ -1420,33 +1540,56 @@ public class FragmentDetalleRechazadas extends Fragment implements
 
                                         }
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9){
+                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 2 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 3){
 
                                             String valor = datosSitio.getGeneralidades().get(i).getValor().toString();
-                                            binding.amortizaciontotal.setText("  "+valor+ " MXN");
+                                            binding.renta.setText(valor);
+                                            int valor2 = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
 
-                                            switch (datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()){
-                                                case 1:
+                                            switch (valor2){
+                                                case 0:
                                                     binding.periodogracia.setSelection(0);
                                                     break;
-                                                case 2:
+                                                case 1:
                                                     binding.periodogracia.setSelection(1);
                                                     break;
-                                                case 3:
+                                                case 2:
                                                     binding.periodogracia.setSelection(2);
                                                     break;
-                                                case 4:
+                                                case 3:
                                                     binding.periodogracia.setSelection(3);
                                                     break;
-                                                case 5:
+                                                case 4:
                                                     binding.periodogracia.setSelection(4);
                                                     break;
-                                                case 6:
+                                                case 5:
                                                     binding.periodogracia.setSelection(5);
                                                     break;
+                                                case 6:
+                                                    binding.periodogracia.setSelection(6);
+                                                    break;
+                                                case 7:
+                                                    binding.periodogracia.setSelection(7);
+                                                    break;
+                                                case 8:
+                                                    binding.periodogracia.setSelection(8);
+                                                    break;
+                                                case 9:
+                                                    binding.periodogracia.setSelection(9);
+                                                    break;
+                                                case 10:
+                                                    binding.periodogracia.setSelection(10);
+                                                    break;
+                                                case 11:
+                                                    binding.periodogracia.setSelection(11);
+                                                    break;
+                                                case 12:
+                                                    binding.periodogracia.setSelection(12);
+                                                    break;
                                             }
+
                                         }
                                     }
                                 }
@@ -2036,6 +2179,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
     String fechaFrente;
     String fechaEntorno1;
     String fechaEntorno2;
+    String fechaPredial;
 
     /**
      * método para realizar la respuesta de cada intent que se hace en la actividad (ver pdf, tomar foto)
@@ -2090,6 +2234,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
     String urlFrente = "";
     String urlLateral1 = "";
     String urlLateral2 = "";
+    String urlPredial = "";
 
     public void obtenerUrl(String foto, String b64, String mdId){
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {

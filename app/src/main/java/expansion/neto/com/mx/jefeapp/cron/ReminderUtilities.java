@@ -51,13 +51,15 @@ public class ReminderUtilities {
                 .setTrigger(Trigger.executionWindow(
                         testSecondsA,
                         testSecondsB))
+//                .setTrigger(Trigger.executionWindow(1*60,
+//                        2*60))
                 .setReplaceCurrent(true)
                 .build();
 
         int cancel = dispatcher.cancel(REMINDER_ID);
         if(cancel==0){
             dispatcher.schedule(constraintReminderJob);
-            //Log.w(ReminderUtilities.class.getName(), Cron.class.toString() + " iniciado");
+            Log.w(ReminderUtilities.class.getName(), Cron.class.toString() + "Cron Job iniciado");
         }
     }
 

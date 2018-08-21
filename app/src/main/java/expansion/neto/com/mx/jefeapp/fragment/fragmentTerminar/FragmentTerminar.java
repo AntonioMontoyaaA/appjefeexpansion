@@ -9,6 +9,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -24,13 +25,16 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,6 +48,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -74,6 +79,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -109,6 +116,7 @@ import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogTip
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosGeneralidades;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
+import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosPredial;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosSitio;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.GeneralidadesSitio;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonal;
@@ -116,6 +124,7 @@ import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonales;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Propietario;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Superficie;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Zonificacion;
+import expansion.neto.com.mx.jefeapp.modelView.crearModel.Amortizacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradoresV2;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CrearDatosPropietario;
@@ -128,9 +137,11 @@ import expansion.neto.com.mx.jefeapp.modelView.crearModel.DatosConstruccion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.FactoresConstruccion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.HorasPeatonales;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.PropietarioBusqueda;
+import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosAmortizacion;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosGeneralidadesSitio;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPeatonal;
+import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPredial;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPropietario;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosSitio;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosSuperficie;
@@ -147,6 +158,7 @@ import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderDatosCompete
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderDatosFactoresConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderHorasPeatonales;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderObtenerUrl;
+import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderObtenerUrlFile;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.AdapterAutorizaPeatonal;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.AutorizaHolderPeatonal;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaCompetencia;
@@ -160,6 +172,7 @@ import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaHoras;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaPropietarios;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaTiendaNeto;
 import expansion.neto.com.mx.jefeapp.ui.porterminar.ActivityFinalizaTerminar;
+import expansion.neto.com.mx.jefeapp.utils.CustomTextWatcher;
 import expansion.neto.com.mx.jefeapp.utils.PhoneNumberTextWatcher;
 import expansion.neto.com.mx.jefeapp.utils.ServicioGPS;
 import expansion.neto.com.mx.jefeapp.utils.Util;
@@ -216,7 +229,7 @@ public class FragmentTerminar extends Fragment implements
     CrearZonificacion zonificacion = null;
 
     int valor;
-    int valorNeto;
+    String municipio;
 
     String nombreGenerador;
     String nombreCompetencia;
@@ -232,6 +245,8 @@ public class FragmentTerminar extends Fragment implements
     private int CAMERA_FRONTAL = 1;
     private int CAMERA_LATERAL_1 = 2;
     private int CAMERA_LATERAL_2 = 3;
+    private int CAMERA_PREDIAL = 4;
+
 
     ProgressDialog progressDialog;
 
@@ -553,31 +568,8 @@ public class FragmentTerminar extends Fragment implements
                         zonificacionC = new CrearZonificacion.Zonificacion();
                         zonificacionG = new CrearZonificacion.Zonificacion();
 
-
-
-//                        detallesG = new ArrayList<>();;
-//
-//                        detalleG = new CrearZonificacion.Detalle(
-//                                    "6"
-//                            );
-//
-//                        detallesG.add(detalleG);
-//                        zonificacionG.setDetalles(detallesG);
-
                         generadores = new ArrayList<>();
-                        //generadores.add(zonificacionG);
-
-
-//                        detallesC = new ArrayList<>();
-//                        detalleC = new CrearZonificacion.Detalle(
-//                                    "1"
-//                        );
-//
-//                        detallesC.add(detalleC);
-//                        zonificacionC.setDetalles(detallesC);
-
                         competencia = new ArrayList<>();
-                        //competencia.add(zonificacionC);
 
                         zonificacion = new CrearZonificacion(
                                 usuario,
@@ -589,42 +581,43 @@ public class FragmentTerminar extends Fragment implements
                                 "5555555555",
                                 VERSION_APP
                         );
-
                         zonificacionJson = getJsonString(zonificacion);
-
-                    }
-                });
-
-                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-
-                    @Override
-                    public void onMapLongClick(LatLng arg0) {
-                        // TODO Auto-generated method stub
-                        // eliminar marcadores
-
                     }
                 });
 
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker m) {
-                        Log.e("*****", zonificacionJson+zonificacion);
-                        //m.remove();
+                        LatLng eliminar = m.getPosition();
+                        String latitudCompetencia;
+                        String latitudCompetenciaMarcador;
 
-//                        Marker marker = hashMarker.get(valor);
-//                        if(marker!=null){
-//                            marker.remove();
-//                            hashMarker.remove(valor);
-//                        }
+                        String latitudGenerador;
+                        String latitudGeneradorMarcador;
 
-//                        for(int i = 0;i<markers.size();i++){
-//                            if (m.equals(markers.get(i))) {
-//                                m.remove();
-//                            }
-//                        }
+                        if(zonificacion!=null && !zonificacion.getCompetencia().isEmpty()) {
+                            for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
+                                latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
+                                latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
+                                if (latitudCompetencia.equals(latitudCompetenciaMarcador)) {
+                                    zonificacion.getCompetencia().get(0).getDetalles().remove(i);
+                                    m.remove();
+                                }
+                            }
+                        }
 
+                        if(zonificacion!=null && !zonificacion.getGeneradores().isEmpty()){
+                            for(int i = 0;i<zonificacion.getGeneradores().get(0).getDetalles().size();i++){
+                                latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
+                                latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
+                                if(latitudGenerador.equals(latitudGeneradorMarcador)){
+                                    zonificacion.getGeneradores().get(0).getDetalles().remove(i);
+                                    m.remove();
+                                }
+                            }
+                        }
+                        zonificacionJson = getJsonString(zonificacion);
                         return false;
-
                     }
                 });
 
@@ -675,6 +668,7 @@ public class FragmentTerminar extends Fragment implements
             urlFrente = "";
             urlLateral2 = "";
             urlLateral1 = "";
+            urlPredial = "";
 
             binding.toolbar.nombreTitulo.setText(getString(R.string.datossitio));
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -781,7 +775,7 @@ public class FragmentTerminar extends Fragment implements
                     String codigoPostal = binding.codigopostalsitio.getText().toString();
                     String direccion = binding.direccionsitio.getText().toString();
                     String estado = binding.estadositio.getText().toString();
-                    String municipio = binding.municipiositio.getText().toString();
+                    municipio = binding.municipiositio.getText().toString();
                     String ciudad = binding.ciudadsitio.getText().toString();
                     String pais = binding.pais.getText().toString();
                     SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -823,7 +817,7 @@ public class FragmentTerminar extends Fragment implements
                     String codigoPostal = binding.codigopostalsitio.getText().toString();
                     String direccion = binding.direccionsitio.getText().toString();
                     String estado = binding.estadositio.getText().toString();
-                    String municipio = binding.municipiositio.getText().toString();
+                    municipio = binding.municipiositio.getText().toString();
                     String ciudad = binding.ciudadsitio.getText().toString();
                     String pais = binding.pais.getText().toString();
 
@@ -1109,7 +1103,7 @@ public class FragmentTerminar extends Fragment implements
 
         }else if (position == 2) {
 
-            final int[] area = {0};
+            final float[] area = {0};
 
             bindingSuperficie = DataBindingUtil.inflate(inflater,R.layout.fragment_autoriza_2,container,false);
             view = bindingSuperficie.getRoot();
@@ -1124,16 +1118,43 @@ public class FragmentTerminar extends Fragment implements
             bindingSuperficie.frente.setText("");
             bindingSuperficie.profundidad.setText("");
 
+            bindingSuperficie.frente.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
+            bindingSuperficie.profundidad.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
+            //bindingSuperficie.areaterreno.setFilters(new InputFilter[] {new CustomTextWatcher(5,1)});
+
+            ProviderDatosPredial.getInstance(getContext()).obtenerDatosPredial(md, usuario[0], new ProviderDatosPredial.ConsultaDatosPredial() {
+                @Override
+                public void resolve(DatosPredial datosPredial) {
+                    if(datosPredial!=null){
+                        if(datosPredial.getCodigo().equals("200")){
+                            if(datosPredial.getAplicaPredial().equals("1")){
+                                bindingSuperficie.predial.setVisibility(View.VISIBLE);
+                            }else{
+                                bindingSuperficie.predial.setVisibility(View.GONE);
+                                urlPredial = " ";
+                                fechaPredial = " ";
+                            }
+                        }
+                    }else{
+                        bindingSuperficie.predial.setVisibility(View.GONE);
+                        urlPredial = " ";
+                        fechaPredial = " ";
+                    }
+                }
+                @Override
+                public void reject(Exception e) {
+                    bindingSuperficie.predial.setVisibility(View.GONE);
+                    urlPredial = " ";
+                    fechaPredial = " ";
+                }
+            });
+
             mdLat = preferences.getFloat("latMd", 0);
             mdLot = preferences.getFloat("lotMd", 0);
 
-            fechaFrente = getFechaHora();
-            fechaEntorno1  = getFechaHora();
-            fechaEntorno2  = getFechaHora();
+
 
             final int[] banderaCamara = {0};
-
-
             final String[] tipoEsquina = {"0"};
 
             bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1146,632 +1167,784 @@ public class FragmentTerminar extends Fragment implements
                 }
             });
 
-
             ProviderDatosSuperficie.getInstance(getContext())
                     .obtenerDatosSuperficie(md, usuario[0], new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
                         @Override
                         public void resolve(final Superficie superficie) {
+                            if(superficie!=null){
+                                if(superficie.getCodigo()==200){
 
-                            if(superficie.getCodigo()==200){
 
-                                int valorFoto = 0;
-                                int valorFrente = 0;
-                                int valorFondo = 0;
-                                int valorEsquina = 0;
-                                for(int i = 0;i<superficie.getNiveles().size();i++){
-                                    if(superficie.getNiveles().get(i).getNivel()==4 ||
-                                    superficie.getNiveles().get(i).getNivel()==5){
-                                        Picasso.get().load(superficie.getNiveles().get(i).getImgFrenteId()).into(bindingSuperficie.imagen);
-                                        valorFoto = i;
-                                        valorFondo = i;
+
+
+                                    int valorFoto = 0;
+                                    int valorFrente = 0;
+                                    int valorFondo = 0;
+                                    int valorEsquina = 0;
+
+                                    for(int i = 0;i<superficie.getNiveles().size();i++){
+                                        if(superficie.getNiveles().get(i).getNivel()==4 ||
+                                                superficie.getNiveles().get(i).getNivel()==5){
+                                            Picasso.get().load(superficie.getNiveles().get(i)
+                                                    .getImgFrenteId()).into(bindingSuperficie.imagen);
+                                            valorFoto = i;
+                                            valorFondo = i;
+
+                                            fechaFrente = superficie.getNiveles().get(i).getFecha_fente();
+                                            fechaEntorno1  = superficie.getNiveles().get(i).getFecha_lat1();
+                                            fechaEntorno2  = superficie.getNiveles().get(i).getFecha_lat2();
+                                            fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
+                                        }
+                                        if(superficie.getNiveles().get(i).getNivel()==6 ||
+                                                superficie.getNiveles().get(i).getNivel()==7){
+                                            valorFrente = i;
+                                        }
+
+                                        if(superficie.getNiveles().get(i).getNivel()==8){
+                                            valorEsquina = i;
+                                        }
+
+
+
                                     }
-                                    if(superficie.getNiveles().get(i).getNivel()==6 ||
-                                            superficie.getNiveles().get(i).getNivel()==7){
-                                        valorFrente = i;
+
+                                    Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+
+                                    if(esquina==1){
+                                        bindingSuperficie.escogeEsquina.setChecked(true);
+                                        tipoEsquina[0] = "1";
+                                    }else{
+                                        bindingSuperficie.escogeEsquina.setChecked(false);
+                                        tipoEsquina[0] = "0";
                                     }
 
-                                    if(superficie.getNiveles().get(i).getNivel()==8){
-                                        valorEsquina = i;
-                                    }
-                                }
+                                    getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+                                    String superficieS = String.valueOf(superficie.getNiveles().get(valorFrente).getValorreal());
+                                    superficieS = superficieS.replace(" ", "");
 
-                                int esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+                                    String fondoS = String.valueOf(superficie.getNiveles().get(valorFondo).getFondo());
+                                    fondoS = fondoS.replace(" ", "");
 
-                                if(esquina==1){
-                                    bindingSuperficie.escogeEsquina.setChecked(true);
-                                    tipoEsquina[0] = "1";
-                                }else{
-                                    bindingSuperficie.escogeEsquina.setChecked(false);
-                                    tipoEsquina[0] = "0";
-                                }
+                                    bindingSuperficie.frente.setText(superficieS);
+                                    bindingSuperficie.profundidad.setText(fondoS);
 
-                                getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-                                String superficieS = String.valueOf(superficie.getNiveles().get(valorFrente).getValorreal());
-                                superficieS = superficieS.replace(" ", "");
+                                    String total = String.valueOf((Double.valueOf(superficieS)
+                                            *(Double.valueOf(fondoS))));
+                                    bindingSuperficie.areaterreno.setText(total+"");
 
-                                String fondoS = String.valueOf(superficie.getNiveles().get(valorFondo).getFondo());
-                                fondoS = fondoS.replace(" ", "");
+                                    bindingSuperficie.frontal.setAlpha(1.0f);
+                                    bindingSuperficie.lateral1.setAlpha(0.35f);
+                                    bindingSuperficie.lateral2.setAlpha(0.35f);
+                                    bindingSuperficie.predial.setAlpha(0.35f);
+                                    bindingSuperficie.robotoTextView2.setText(nombreSitio);
 
-                                bindingSuperficie.frente.setText(superficieS);
-                                bindingSuperficie.profundidad.setText(fondoS);
+                                    final int finalValorFoto = valorFoto;
 
-                                String total = String.valueOf((Integer.valueOf(superficieS)
-                                        *(Integer.valueOf(fondoS))));
-                                bindingSuperficie.areaterreno.setText(total+"mts2");
+                                    bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
 
-                                bindingSuperficie.frontal.setAlpha(1.0f);
-                                bindingSuperficie.lateral1.setAlpha(0.35f);
-                                bindingSuperficie.lateral2.setAlpha(0.35f);
-                                bindingSuperficie.robotoTextView2.setText(nombreSitio);
-
-                                final int finalValorFoto = valorFoto;
-                                bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
-                                        bindingSuperficie.frontal.setAlpha(1.0f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        banderaCamara[0] = 1;
-                                        if(superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length()>0){
-                                            if(urlFrente.length()>0){
-                                                Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            if(!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")){
+                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                            }else{
+                                                if(urlPredial.length()>3){
+                                                    Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                }
                                             }
 
-                                        }else{
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA);
-                                        }
-                                    }
-                                });
+                                            bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(1);
 
-                                bindingSuperficie.lateral1.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
-                                        bindingSuperficie.lateral1.setAlpha(1.0f);
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        banderaCamara[0] = 2;
+                                            banderaCamara[0] = 4;
 
-                                        if(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length()>0){
-                                            if(urlLateral1.length()>0){
-                                                Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            if(urlPredial.length()>3){
+                                                if(urlPredial.length()>0){
+                                                    Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }
+
+                                            }else{
+                                                bindingSuperficie.volver.setVisibility(View.GONE);
+                                                Intent pictureIntent = new Intent(
+                                                        MediaStore.ACTION_IMAGE_CAPTURE);
+                                                if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                    //Create a file to store the image
+                                                    File photoFile = null;
+                                                    try {
+                                                        photoFile = createImageFile(getContext());
+                                                    } catch (IOException ex) {
+                                                        // Error occurred while creating the File
+                                                    }
+                                                    if (photoFile != null) {
+                                                        Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                                getString(R.string.file_provider_authority), photoFile);
+                                                        pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                        startActivityForResult(pictureIntent,
+                                                                CAMERA_PREDIAL);
+                                                    }
+                                                }
                                             }
-                                        }else{
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA);
                                         }
-                                    }
-                                });
+                                    });
 
 
-                                urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
-                                urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
-                                urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
+                                    bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
 
-                                bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        bindingSuperficie.lateral2.setAlpha(1.0f);
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        banderaCamara[0] = 3;
-                                        if(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length()>0){
-                                            if(urlLateral2.length()>0){
-                                                Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
+                                            bindingSuperficie.frontal.setAlpha(1.0f);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(0.35f);
+                                            banderaCamara[0] = 1;
+                                            if(superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length()>0){
+                                                if(urlFrente.length()>0){
+                                                    Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }
+
+                                            }else{
+                                                bindingSuperficie.volver.setVisibility(View.GONE);
+                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                startActivityForResult(intent, CAMERA);
                                             }
-                                        }else{
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA);
                                         }
-                                    }
-                                });
+                                    });
+
+                                    bindingSuperficie.lateral1.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
+                                            bindingSuperficie.lateral1.setAlpha(1.0f);
+                                            bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(0.35f);
+                                            banderaCamara[0] = 2;
+
+                                            if(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length()>0){
+                                                if(urlLateral1.length()>0){
+                                                    Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }
+                                            }else{
+                                                bindingSuperficie.volver.setVisibility(View.GONE);
+                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                startActivityForResult(intent, CAMERA);
+                                            }
+                                        }
+                                    });
+
+
+                                    urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
+                                    urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
+                                    urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
+                                    urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
+
+
+                                    bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            bindingSuperficie.lateral2.setAlpha(1.0f);
+                                            bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(0.35f);
+                                            banderaCamara[0] = 3;
+                                            if(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length()>0){
+                                                if(urlLateral2.length()>0){
+                                                    Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id()).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }
+                                            }else{
+                                                bindingSuperficie.volver.setVisibility(View.GONE);
+                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                startActivityForResult(intent, CAMERA);
+                                            }
+                                        }
+                                    });
 //
-                                if(mdLat!=null || mdLot!=null) {
+                                    if(mdLat!=null || mdLot!=null) {
+                                        ServicioGPS n = new ServicioGPS(getContext());
+                                        final LatLng mds = new LatLng(mdLat, mdLot);
+                                        final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
+                                        final Boolean distancia = distanciaSuperficie(mds, gps);
+                                        Log.e("*****", distancia.toString());
+
+
+                                        bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                if(distancia){
+                                                    if(banderaCamara[0] ==1){
+                                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                        startActivityForResult(intent, CAMERA);
+                                                    } else if(banderaCamara[0] == 2){
+                                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                        startActivityForResult(intent, CAMERA_LATERAL_1);
+                                                    } else if(banderaCamara[0] == 3){
+                                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                        startActivityForResult(intent, CAMERA_LATERAL_2);
+                                                    } else if(banderaCamara[0] == 4){
+
+                                                        Intent pictureIntent = new Intent(
+                                                                MediaStore.ACTION_IMAGE_CAPTURE);
+                                                        if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                            File photoFile = null;
+                                                            try {
+                                                                photoFile = createImageFile(getContext());
+                                                            } catch (IOException ex) {
+
+                                                            }
+                                                            if (photoFile != null) {
+                                                                Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                                        getString(R.string.file_provider_authority), photoFile);
+                                                                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                                startActivityForResult(pictureIntent,
+                                                                        CAMERA_PREDIAL);
+                                                            }
+                                                        }
+                                                    }
+
+                                                }else {
+                                                    Toast.makeText(getContext(), R.string.no_estas,
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
+                                    final SharedPreferences preferencesExpansion = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+
+                                    final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences("datosSuperficie", Context.MODE_PRIVATE);
+                                    final SharedPreferences.Editor editor = preferencesSuperficie.edit();
+                                    mdLat = preferencesExpansion.getFloat("latMd", 0);
+                                    mdLot = preferencesExpansion.getFloat("lotMd", 0);
+                                    final String convertido = preferencesExpansion.getString("mdIdterminar", "");
+
+                                    final String finalUsuario = usuario[0];
+                                    Timer timer = new Timer ();
+                                    hourlyTask = new TimerTask () {
+                                        @Override
+                                        public void run () {
+                                            getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+
+                                            final String frentes = bindingSuperficie.frente.getText().toString();
+                                            final String profundidads = bindingSuperficie.profundidad.getText().toString();
+
+                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                                getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
+                                            }else{
+
+                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario, convertido,
+                                                        frentes, profundidads, urlLateral2, urlLateral1, urlFrente,
+                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
+                                                        urlPredial, fechaPredial);
+                                                salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
+                                            }
+                                        }
+                                    };
+
+                                    timer.schedule (hourlyTask, 100, 700);
+
+                                    bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
+                                        public void afterTextChanged(Editable s) { }
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                            String frente = bindingSuperficie.frente.getText().toString();
+                                            String profundidad = bindingSuperficie.profundidad.getText().toString();
+                                            if(frente.equals("") || profundidad.equals("")){
+                                                bindingSuperficie.areaterreno.setText("0mts");
+                                            }else{
+                                                if(!profundidad.equals(".") && !frente.equals(".")) {
+                                                    area[0] = Float.valueOf(frente) * Float.valueOf(profundidad);
+                                                    bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "");
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                    bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
+                                        public void afterTextChanged(Editable s) { }
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                            String frente = bindingSuperficie.frente.getText().toString();
+                                            String profundidad = bindingSuperficie.profundidad.getText().toString();
+                                            if(frente.equals("") || profundidad.equals("")){
+                                                bindingSuperficie.areaterreno.setText("0mts");
+                                            }else{
+                                                if(!profundidad.equals(".") && !frente.equals(".")) {
+                                                    area[0] = Float.valueOf(frente)*Float.valueOf(profundidad);
+                                                    bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"");
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                    bindingSuperficie.cancelar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            FragmentDialogCancelar a = new FragmentDialogCancelar();
+                                            a.show(getChildFragmentManager(),"child");
+                                        }
+                                    });
+
+                                    bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
+                                            a.show(getChildFragmentManager(),"child");
+                                        }
+                                    });
+
+                                    bindingSuperficie.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            bindingSuperficie.toolbar.guardar.setEnabled(false);
+
+                                            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                                            String mdId = preferences.getString("mdIdterminar", "");
+                                            loadingProgress(progressDialog, 0);
+
+                                            if(mdId.length()==1){
+                                                mdId = "";
+                                            }
+
+                                            if(!mdId.equals("") || mdId.equals("0")){
+                                                mdLat = preferences.getFloat("latMd", 0);
+                                                mdLot = preferences.getFloat("lotMd", 0);
+
+                                                if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+
+                                                    Toast.makeText(getContext(), R.string.mensaje_fotos,
+                                                            Toast.LENGTH_SHORT).show();
+                                                    bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                    loadingProgress(progressDialog, 1);
+
+                                                }else{
+                                                    String usuario = preferences.getString("usuario", "");
+
+                                                    String frenter = bindingSuperficie.frente.getText().toString();
+                                                    String profundidadr = bindingSuperficie.profundidad.getText().toString();
+
+                                                    CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
+                                                            frenter, profundidadr, urlLateral2, urlLateral1, urlFrente,
+                                                            String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2, urlPredial,
+                                                            fechaPredial);
+
+                                                    ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
+                                                        @Override
+                                                        public void resolve(Codigos codigo) {
+                                                            if(codigo.getCodigo()==200){
+                                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                                                a.show(getChildFragmentManager(),"child");
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                loadingProgress(progressDialog, 1);
+
+                                                            }else{
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                Toast.makeText(getContext(), codigo.getMensaje(),
+                                                                        Toast.LENGTH_SHORT).show();
+                                                                loadingProgress(progressDialog, 1);
+
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void reject(Exception e) {
+
+                                                        }
+                                                    });
+
+                                                }
+                                            }
+                                        }
+                                    });
+                                }else{
+                                    getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+                                    bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
+                                    final SharedPreferences preferencesExpansion = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+
+                                    final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences("datosSuperficie", Context.MODE_PRIVATE);
+                                    final SharedPreferences.Editor editor = preferencesSuperficie.edit();
+                                    mdLat = preferencesExpansion.getFloat("latMd", 0);
+                                    mdLot = preferencesExpansion.getFloat("lotMd", 0);
+                                    final String convertido = preferences.getString("mdIdterminar", "");
+                                    usuario[0] = preferencesExpansion.getString("usuario", "");
+
+                                    urlFrente = new String();
+                                    urlLateral1 = new String();
+                                    urlLateral2 = new String();
+
+                                    final String[] tipoEsquina = {"0"};
+
+                                    bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                            if(isChecked){
+                                                tipoEsquina[0] = "1";
+                                            }else{
+                                                tipoEsquina[0] = "0";
+                                            }
+                                        }
+                                    });
+
+
+
+                                    final String finalUsuario1 = usuario[0];
+                                    Timer timer = new Timer ();
+                                    hourlyTask = new TimerTask () {
+                                        @Override
+                                        public void run () {
+                                            getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+                                            String frente = bindingSuperficie.frente.getText().toString();
+                                            String profundidad = bindingSuperficie.profundidad.getText().toString();
+                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                                getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+                                            }else{
+                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario1, convertido,
+                                                        frente, profundidad, urlLateral2, urlLateral1, urlFrente,
+                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
+                                                        urlPredial, fechaPredial);
+                                                salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
+
+                                            }
+                                        }
+                                    };
+
+                                    timer.schedule (hourlyTask, 100, 700);
+
+
+
+                                    bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
+                                        public void afterTextChanged(Editable s) { }
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                            // Log.e("onTextChanged",s.toString());
+                                            String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
+                                            superficieS = superficieS.replace(" ", "");
+
+                                            String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString());
+                                            fondoS = fondoS.replace(" ", "");
+
+                                            if(superficieS.equals("") || fondoS.equals("")){
+
+                                            }else{
+                                                if(!fondoS.equals(".") && !superficieS.equals(".")) {
+                                                    area[0] = Float.valueOf(superficieS)*Float.valueOf(fondoS);
+                                                    bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
+                                                }
+
+                                            }
+                                        }
+                                    });
+
+                                    final int[] banderaCamaraTermina = {0};
+
+                                    bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
+
+                                        public void afterTextChanged(Editable s) { }
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                            String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
+                                            superficieS = superficieS.replace(" ", "");
+
+                                            String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString());
+                                            fondoS = fondoS.replace(" ", "");
+
+                                            if(superficieS.equals("") || fondoS.equals("")){
+
+                                            }else{
+                                                if(!fondoS.equals(".") && !superficieS.equals(".")) {
+                                                    area[0] = Float.valueOf(superficieS)*Float.valueOf(fondoS);
+                                                    bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
+                                                }
+                                            }
+                                        }
+                                    });
+
                                     ServicioGPS n = new ServicioGPS(getContext());
                                     final LatLng mds = new LatLng(mdLat, mdLot);
                                     final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
                                     final Boolean distancia = distanciaSuperficie(mds, gps);
-                                    Log.e("*****", distancia.toString());
+
+                                    bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            if(distancia){
+                                                bindingSuperficie.frontal.setAlpha(1.0f);
+                                                bindingSuperficie.lateral1.setAlpha(0.35f);
+                                                bindingSuperficie.lateral2.setAlpha(0.35f);
+                                                bindingSuperficie.predial.setAlpha(0.35f);
+                                                banderaCamaraTermina[0] = 1;
+                                                if(urlFrente.length()>0){
+                                                    Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }else{
+                                                    bindingSuperficie.volver.setVisibility(View.GONE);
+                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    startActivityForResult(intent, CAMERA);
+                                                }
+                                            }else{
+                                                Toast.makeText(getContext(), R.string.no_estas,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+                                    });
+
+
+                                    bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                            if(distancia){
+                                                bindingSuperficie.frontal.setAlpha(0.35f);
+                                                bindingSuperficie.lateral1.setAlpha(0.35f);
+                                                bindingSuperficie.lateral2.setAlpha(0.35f);
+                                                bindingSuperficie.predial.setAlpha(1.0f);
+                                                banderaCamaraTermina[0] = 4;
+                                                if(urlPredial.length()>0){
+                                                    Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }else{
+
+                                                    Intent pictureIntent = new Intent(
+                                                            MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                        //Create a file to store the image
+                                                        File photoFile = null;
+                                                        try {
+                                                            photoFile = createImageFile(getContext());
+                                                        } catch (IOException ex) {
+                                                            // Error occurred while creating the File
+                                                        }
+                                                        if (photoFile != null) {
+                                                            Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                                    getString(R.string.file_provider_authority), photoFile);
+                                                            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                            startActivityForResult(pictureIntent,
+                                                                    CAMERA_PREDIAL);
+                                                        }
+                                                    }
+                                                }
+                                            }else{
+                                                Toast.makeText(getContext(), R.string.no_estas,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+                                    });
+
+                                    bindingSuperficie.lateral1.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                            if(distancia){
+                                                bindingSuperficie.lateral1.setAlpha(1.0f);
+                                                bindingSuperficie.frontal.setAlpha(0.35f);
+                                                bindingSuperficie.lateral2.setAlpha(0.35f);
+                                                bindingSuperficie.predial.setAlpha(0.35f);
+                                                banderaCamaraTermina[0] = 2;
+
+                                                if(urlLateral1.length()>0){
+                                                    Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }else{
+                                                    bindingSuperficie.volver.setVisibility(View.GONE);
+                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    startActivityForResult(intent, CAMERA_LATERAL_1);
+                                                }
+                                            }else{
+                                                Toast.makeText(getContext(), R.string.no_estas,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+                                    });
+
+                                    bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            if(distancia){
+                                                bindingSuperficie.lateral2.setAlpha(1.0f);
+                                                bindingSuperficie.frontal.setAlpha(0.35f);
+                                                bindingSuperficie.lateral1.setAlpha(0.35f);
+                                                bindingSuperficie.predial.setAlpha(0.35f);
+                                                banderaCamaraTermina[0] = 3;
+
+                                                if(urlLateral2.length()>0){
+                                                    Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                }else{
+                                                    bindingSuperficie.volver.setVisibility(View.GONE);
+                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    startActivityForResult(intent, CAMERA_LATERAL_2);
+                                                }
+                                            }else{
+                                                Toast.makeText(getContext(), R.string.no_estas,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+
+
+
+
+                                        }
+                                    });
+
+
 
 
                                     bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
+
                                             if(distancia){
-                                                if(banderaCamara[0] ==1){
+                                                if(banderaCamaraTermina[0] ==1){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA);
-                                                } else if(banderaCamara[0] ==2){
+                                                } else if(banderaCamaraTermina[0] ==2){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA_LATERAL_1);
-                                                } else if(banderaCamara[0] ==3){
+                                                } else if(banderaCamaraTermina[0] ==3){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA_LATERAL_2);
+                                                }else if(banderaCamaraTermina[0] ==4){
+                                                    Intent pictureIntent = new Intent(
+                                                            MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                        //Create a file to store the image
+                                                        File photoFile = null;
+                                                        try {
+                                                            photoFile = createImageFile(getContext());
+                                                        } catch (IOException ex) {
+                                                            // Error occurred while creating the File
+                                                        }
+                                                        if (photoFile != null) {
+                                                            Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                                    getString(R.string.file_provider_authority), photoFile);
+                                                            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                            startActivityForResult(pictureIntent,
+                                                                    CAMERA_PREDIAL);
+                                                        }
+                                                    }
                                                 }
-                                            }else {
+                                            }else{
                                                 Toast.makeText(getContext(), R.string.no_estas,
                                                         Toast.LENGTH_SHORT).show();
                                             }
+
+
                                         }
                                     });
+
+                                    bindingSuperficie.cancelar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            FragmentDialogCancelar a = new FragmentDialogCancelar();
+                                            a.show(getChildFragmentManager(),"child");
+                                        }
+                                    });
+
+
+                                    bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
+                                            a.show(getChildFragmentManager(),"child");
+                                        }
+                                    });
+
+                                    bindingSuperficie.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            bindingSuperficie.toolbar.guardar.setEnabled(false);
+                                            loadingProgress(progressDialog, 0);
+
+                                            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+
+                                            String mdId =  preferences.getString("mdIdterminar", "");
+
+                                            if(mdId.length()==1){
+                                                mdId = "";
+                                            }
+
+
+                                            if(!mdId.equals("") || mdId.equals("0")){
+                                                mdLat = preferences.getFloat("latMd", 0);
+                                                mdLot = preferences.getFloat("lotMd", 0);
+
+                                                if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                                    Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
+                                                            Toast.LENGTH_SHORT).show();
+                                                    loadingProgress(progressDialog, 1);
+                                                    bindingSuperficie.toolbar.guardar.setEnabled(true);
+
+                                                }else{
+                                                    String usuario = preferences.getString("usuario", "");
+
+                                                    String frente = bindingSuperficie.frente.getText().toString();
+                                                    String profundidad = bindingSuperficie.profundidad.getText().toString();
+
+                                                    CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
+                                                            frente, profundidad, urlLateral2, urlLateral1, urlFrente,
+                                                            String.valueOf(mdLat), String.valueOf(mdLot), "",
+                                                            VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2, urlPredial, fechaPredial);
+
+                                                    ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
+                                                        @Override
+                                                        public void resolve(Codigos codigo) {
+                                                            if(codigo.getCodigo()==200){
+                                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                                                a.show(getChildFragmentManager(),"child");
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                loadingProgress(progressDialog, 1);
+
+
+                                                            }else{
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                Toast.makeText(getContext(), codigo.getMensaje(),
+                                                                        Toast.LENGTH_SHORT).show();
+                                                                loadingProgress(progressDialog, 1);
+
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void reject(Exception e) {
+
+                                                        }
+                                                    });
+
+                                                }
+                                            }
+                                        }
+                                    });
+                                    String nombreMd = preferencesExpansion.getString("nombreSitio", "");
+                                    bindingSuperficie.robotoTextView2.setText(nombreMd);
+
+
+
+                                    //===================================================================//
+                                    //=====================Por terminar END===========================//
+                                    //===================================================================//
                                 }
-
-
-
-                                bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
-                                final SharedPreferences preferencesExpansion = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-
-                                final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences("datosSuperficie", Context.MODE_PRIVATE);
-                                final SharedPreferences.Editor editor = preferencesSuperficie.edit();
-                                mdLat = preferencesExpansion.getFloat("latMd", 0);
-                                mdLot = preferencesExpansion.getFloat("lotMd", 0);
-                                final String convertido = preferencesExpansion.getString("mdIdterminar", "");
-
-                                final String finalUsuario = usuario[0];
-                                Timer timer = new Timer ();
-                                hourlyTask = new TimerTask () {
-                                    @Override
-                                    public void run () {
-                                        getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-
-                                        final String frentes = bindingSuperficie.frente.getText().toString();
-                                        final String profundidads = bindingSuperficie.profundidad.getText().toString();
-
-                                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
-                                            getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
-                                        }else{
-
-                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario, convertido,
-                                                    frentes, profundidads, urlLateral2, urlLateral1, urlFrente,
-                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
-                                            salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
-                                        }
-                                    }
-                                };
-
-                                timer.schedule (hourlyTask, 100, 700);
-
-                                bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                   //     Log.e("onTextChanged",s.toString());
-                                        String frente = bindingSuperficie.frente.getText().toString();
-                                        String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if(frente.equals("") || profundidad.equals("")){
-                                            bindingSuperficie.areaterreno.setText("0mts");
-                                        }else{
-                                            area[0] = Integer.valueOf(frente)*Integer.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"mts2");
-                                        }
-                                    }
-                                });
-                                bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
-
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                        String frente = bindingSuperficie.frente.getText().toString();
-                                        String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if(frente.equals("") || profundidad.equals("")){
-                                            bindingSuperficie.areaterreno.setText("0mts");
-                                        }else{
-                                            area[0] = Integer.valueOf(frente)*Integer.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"mts2");
-                                        }
-                                    }
-                                });
-
-                                bindingSuperficie.cancelar.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        FragmentDialogCancelar a = new FragmentDialogCancelar();
-                                        a.show(getChildFragmentManager(),"child");
-                                    }
-                                });
-
-                                bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(),"child");
-                                    }
-                                });
-
-                                bindingSuperficie.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        bindingSuperficie.toolbar.guardar.setEnabled(false);
-
-                                        final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                                        String mdId = preferences.getString("mdIdterminar", "");
-                                        loadingProgress(progressDialog, 0);
-
-                                        if(mdId.length()==1){
-                                            mdId = "";
-                                        }
-
-                                        if(!mdId.equals("") || mdId.equals("0")){
-                                            mdLat = preferences.getFloat("latMd", 0);
-                                            mdLot = preferences.getFloat("lotMd", 0);
-
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
-
-                                                Toast.makeText(getContext(), R.string.mensaje_fotos,
-                                                        Toast.LENGTH_SHORT).show();
-                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
-
-                                            }else{
-                                                String usuario = preferences.getString("usuario", "");
-
-                                                String frenter = bindingSuperficie.frente.getText().toString();
-                                                String profundidadr = bindingSuperficie.profundidad.getText().toString();
-
-                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
-                                                        frenter, profundidadr, urlLateral2, urlLateral1, urlFrente,
-                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
-
-                                                ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
-                                                    @Override
-                                                    public void resolve(Codigos codigo) {
-                                                        if(codigo.getCodigo()==200){
-                                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                            a.show(getChildFragmentManager(),"child");
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                            loadingProgress(progressDialog, 1);
-
-                                                        }else{
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                            Toast.makeText(getContext(), codigo.getMensaje(),
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            loadingProgress(progressDialog, 1);
-
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void reject(Exception e) {
-
-                                                    }
-                                                });
-
-                                            }
-                                        }
-                                    }
-                                });
-                            }else{
-                                getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-                                bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
-                                final SharedPreferences preferencesExpansion = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-
-                                final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences("datosSuperficie", Context.MODE_PRIVATE);
-                                final SharedPreferences.Editor editor = preferencesSuperficie.edit();
-                                mdLat = preferencesExpansion.getFloat("latMd", 0);
-                                mdLot = preferencesExpansion.getFloat("lotMd", 0);
-                                final String convertido = preferences.getString("mdIdterminar", "");
-                                usuario[0] = preferencesExpansion.getString("usuario", "");
-
-                                urlFrente = new String();
-                                urlLateral1 = new String();
-                                urlLateral2 = new String();
-
-                                final String[] tipoEsquina = {"0"};
-
-                                bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                        if(isChecked){
-                                            tipoEsquina[0] = "1";
-                                        }else{
-                                            tipoEsquina[0] = "0";
-                                        }
-                                    }
-                                });
-
-
-
-                                final String finalUsuario1 = usuario[0];
-                                Timer timer = new Timer ();
-                                hourlyTask = new TimerTask () {
-                                    @Override
-                                    public void run () {
-                                        getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-                                        String frente = bindingSuperficie.frente.getText().toString();
-                                        String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
-                                            getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-                                        }else{
-                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario1, convertido,
-                                                    frente, profundidad, urlLateral2, urlLateral1, urlFrente,
-                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
-                                            salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
-
-                                        }
-                                    }
-                                };
-
-                                timer.schedule (hourlyTask, 100, 700);
-
-                                bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                       // Log.e("onTextChanged",s.toString());
-                                        String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
-                                        superficieS = superficieS.replace(" ", "");
-
-                                        String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString());
-                                        fondoS = fondoS.replace(" ", "");
-
-                                        if(superficieS.equals("") || fondoS.equals("")){
-
-                                        }else{
-                                            area[0] = Integer.valueOf(superficieS)*Integer.valueOf(fondoS);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
-                                        }
-                                    }
-                                });
-
-                                final int[] banderaCamaraTermina = {0};
-
-                                bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
-
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                        //String frente = bindingSuperficie.frente.getText().toString();
-                                        // String profundidad = bindingSuperficie.profundidad.getText().toString();
-
-                                        String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
-                                        superficieS = superficieS.replace(" ", "");
-
-                                        String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString());
-                                        fondoS = fondoS.replace(" ", "");
-
-                                        if(superficieS.equals("") || fondoS.equals("")){
-
-                                        }else{
-                                            area[0] = Integer.valueOf(superficieS)*Integer.valueOf(fondoS);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
-                                        }
-                                    }
-                                });
-
-                                ServicioGPS n = new ServicioGPS(getContext());
-                                final LatLng mds = new LatLng(mdLat, mdLot);
-                                final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
-                                final Boolean distancia = distanciaSuperficie(mds, gps);
-
-                                bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(distancia){
-                                            bindingSuperficie.frontal.setAlpha(1.0f);
-                                            bindingSuperficie.lateral1.setAlpha(0.35f);
-                                            bindingSuperficie.lateral2.setAlpha(0.35f);
-                                            banderaCamaraTermina[0] = 1;
-                                            if(urlFrente.length()>0){
-                                                Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            }else{
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA);
-
-
-//                                                photoFile = null;
-//                                                try {
-//                                                    photoFile = createImageFile("frontal");
-//                                                } catch (IOException ex) {
-//                                                    // Error occurred while creating the File
-//                                                }
-//
-//                                                if (photoFile != null) {
-//                                                    photoURI = FileProvider.getUriForFile(getContext(),
-//                                                            getString(R.string.file_provider_authority),
-//                                                            photoFile);
-//                                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                                                    startActivityForResult(intent, CAMERA);
-//                                                }
-
-                                            }
-                                        }else{
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                });
-
-                                bindingSuperficie.lateral1.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        if(distancia){
-                                            bindingSuperficie.lateral1.setAlpha(1.0f);
-                                            bindingSuperficie.frontal.setAlpha(0.35f);
-                                            bindingSuperficie.lateral2.setAlpha(0.35f);
-                                            banderaCamaraTermina[0] = 2;
-
-                                            if(urlLateral1.length()>0){
-                                                Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            }else{
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_1);
-                                            }
-                                        }else{
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                });
-
-                                bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(distancia){
-                                            bindingSuperficie.lateral2.setAlpha(1.0f);
-                                            bindingSuperficie.frontal.setAlpha(0.35f);
-                                            bindingSuperficie.lateral1.setAlpha(0.35f);
-                                            banderaCamaraTermina[0] = 3;
-                                            if(urlLateral2.length()>0){
-                                                Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            }else{
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_2);
-                                            }
-                                        }else{
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-
-
-
-
-                                    }
-                                });
-
-
-
-
-                                bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        if(distancia){
-                                            if(banderaCamaraTermina[0] ==1){
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA);
-                                            } else if(banderaCamaraTermina[0] ==2){
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_1);
-                                            } else if(banderaCamaraTermina[0] ==3){
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_2);
-                                            }
-                                        }else{
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-
-
-                                    }
-                                });
-
-                                bindingSuperficie.cancelar.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        FragmentDialogCancelar a = new FragmentDialogCancelar();
-                                        a.show(getChildFragmentManager(),"child");
-                                    }
-                                });
-
-
-                                bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(),"child");
-                                    }
-                                });
-
-                                bindingSuperficie.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        bindingSuperficie.toolbar.guardar.setEnabled(false);
-                                        loadingProgress(progressDialog, 0);
-
-                                        final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-
-                                        String mdId =  preferences.getString("mdIdterminar", "");
-
-                                        if(mdId.length()==1){
-                                            mdId = "";
-                                        }
-
-
-                                        if(!mdId.equals("") || mdId.equals("0")){
-                                            mdLat = preferences.getFloat("latMd", 0);
-                                            mdLot = preferences.getFloat("lotMd", 0);
-
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
-                                                Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
-                                                        Toast.LENGTH_SHORT).show();
-                                                loadingProgress(progressDialog, 1);
-                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
-
-                                            }else{
-                                                String usuario = preferences.getString("usuario", "");
-
-                                                String frente = bindingSuperficie.frente.getText().toString();
-                                                String profundidad = bindingSuperficie.profundidad.getText().toString();
-
-                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
-                                                        frente, profundidad, urlLateral2, urlLateral1, urlFrente,
-                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
-
-                                                ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
-                                                    @Override
-                                                    public void resolve(Codigos codigo) {
-                                                        if(codigo.getCodigo()==200){
-                                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                            a.show(getChildFragmentManager(),"child");
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                            loadingProgress(progressDialog, 1);
-
-
-                                                        }else{
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                            Toast.makeText(getContext(), codigo.getMensaje(),
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            loadingProgress(progressDialog, 1);
-
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void reject(Exception e) {
-
-                                                    }
-                                                });
-
-                                            }
-                                        }
-                                    }
-                                });
-                                String nombreMd = preferencesExpansion.getString("nombreSitio", "");
-                                bindingSuperficie.robotoTextView2.setText(nombreMd);
-
-
-
-                                //===================================================================//
-                                //=====================Por terminar END===========================//
-                                //===================================================================//
                             }
+
                         }
                         @Override
                         public void reject(Exception e) { }
@@ -2165,30 +2338,6 @@ public class FragmentTerminar extends Fragment implements
 
                         if(!mdId.equals("")){
                             if(zonificacionJson.equals("")){
-
-//                                detallesG = new ArrayList<>();;
-//
-//                                detalleG = new CrearZonificacion.Detalle(
-//                                        "6"
-//                                );
-//
-//                                detallesG.add(detalleG);
-//                                zonificacionG.setDetalles(detallesG);
-//
-//                                generadores = new ArrayList<>();
-//                                generadores.add(zonificacionG);
-//
-//                                detallesC = new ArrayList<>();
-//                                detalleC = new CrearZonificacion.Detalle(
-//                                        "1"
-//                                );
-//
-//                                detallesC.add(detalleC);
-//                                zonificacionC.setDetalles(detallesC);
-
-                                //competencia = new ArrayList<>();
-                                //competencia.add(zonificacionC);
-
                                 zonificacion = new CrearZonificacion(
                                         usuario,
                                         mdIdterminar,
@@ -2224,6 +2373,7 @@ public class FragmentTerminar extends Fragment implements
                                 });
 
                             }else{
+                                zonificacionJson = getJsonString(zonificacion);
                                 ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
                                     @Override
                                     public void resolve(Codigos codigo) {
@@ -2550,6 +2700,47 @@ public class FragmentTerminar extends Fragment implements
 
             binding.amortizaciontotal.setFilters(new InputFilter[]{new Util.InputFilterMinMax("0", "9999999")});
             final int textColor = Color.parseColor("#254581");
+
+
+            ProviderDatosAmortizacion.getInstance(getContext()).obtenerDatosAmortizacion(mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
+                @Override
+                public void resolve(Amortizacion datosPredial) {
+                    if(datosPredial!=null){
+
+                        ArrayList<String> amortizacion = new ArrayList<>();
+
+                        for(int i = 0;i<datosPredial.getAmortizacion().size();i++){
+                            amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                        }
+
+                        ArrayList<String> gracia = new ArrayList<>();
+
+                        for(int j = 0;j<datosPredial.getGracia().size();j++){
+                            gracia.add(datosPredial.getGracia().get(j).getOpcion());
+                        }
+
+                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                amortizacion);
+                        amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                        binding.periodoamotizacion.setAdapter(amortizacionSpinner);
+
+                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                gracia);
+                        graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                        binding.periodogracia.setAdapter(graciaSpinner);
+
+                    }
+                }
+
+                @Override
+                public void reject(Exception e) {
+
+                }
+            });
+
+
+
+
             ProviderDatosGeneralidadesSitio.getInstance(getContext())
                     .obtenerDatosGeneralidades(mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
                         @Override
@@ -2582,31 +2773,64 @@ public class FragmentTerminar extends Fragment implements
 
                                     for(int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 || datosSitio.getGeneralidades().get(i).getNivelid() == 2 || datosSitio.getGeneralidades().get(i).getNivelid() == 3){
-                                            binding.renta.setText(datosSitio.getGeneralidades().get(i).getValor()+"");
+                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9){
 
-                                            if(datosSitio.getGeneralidades().get(i).getDetalles() != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
+                                            binding.amortizaciontotal.setText(datosSitio.getGeneralidades().get(i).getValor()+"");
 
-                                                switch (datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()){
-                                                    case 1:
+                                            if(datosSitio.getGeneralidades().get(i).getDetalles()
+                                                    != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
+                                                int valor = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
+                                                switch (valor){
+                                                    case 0:
                                                         binding.periodoamotizacion.setSelection(0);
                                                         break;
-                                                    case 2:
+                                                    case 1:
                                                         binding.periodoamotizacion.setSelection(1);
                                                         break;
-                                                    case 3:
+                                                    case 2:
                                                         binding.periodoamotizacion.setSelection(2);
                                                         break;
-                                                    case 4:
+                                                    case 3:
                                                         binding.periodoamotizacion.setSelection(3);
                                                         break;
-                                                    case 5:
+                                                    case 6:
                                                         binding.periodoamotizacion.setSelection(4);
                                                         break;
-                                                    case 6:
+                                                    case 9:
                                                         binding.periodoamotizacion.setSelection(5);
                                                         break;
+                                                    case 12:
+                                                        binding.periodoamotizacion.setSelection(6);
+                                                        break;
+                                                    case 18:
+                                                        binding.periodoamotizacion.setSelection(7);
+                                                        break;
+                                                    case 24:
+                                                        binding.periodoamotizacion.setSelection(8);
+                                                        break;
+                                                    case 30:
+                                                        binding.periodoamotizacion.setSelection(9);
+                                                        break;
+                                                    case 36:
+                                                        binding.periodoamotizacion.setSelection(10);
+                                                        break;
+                                                    case 42:
+                                                        binding.periodoamotizacion.setSelection(11);
+                                                        break;
+                                                    case 48:
+                                                        binding.periodoamotizacion.setSelection(12);
+                                                        break;
+                                                    case 54:
+                                                        binding.periodoamotizacion.setSelection(13);
+                                                        break;
+                                                    case 60:
+                                                        binding.periodoamotizacion.setSelection(14);
+                                                        break;
                                                 }
+
+
                                             }
 
                                         }
@@ -2643,30 +2867,56 @@ public class FragmentTerminar extends Fragment implements
 
                                         }
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 || datosSitio.getGeneralidades().get(i).getNivelid() == 8 || datosSitio.getGeneralidades().get(i).getNivelid() == 9){
-                                            String valor = datosSitio.getGeneralidades().get(i).getValor().toString();
-                                            binding.amortizaciontotal.setText(valor);
+                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 2 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 3){
 
-                                            switch (datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()){
-                                                case 1:
+                                            String valor = datosSitio.getGeneralidades().get(i).getValor().toString();
+                                            binding.renta.setText(valor);
+                                            int valor2 = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
+
+                                            switch (valor2){
+                                                case 0:
                                                     binding.periodogracia.setSelection(0);
                                                     break;
-                                                case 2:
+                                                case 1:
                                                     binding.periodogracia.setSelection(1);
                                                     break;
-                                                case 3:
+                                                case 2:
                                                     binding.periodogracia.setSelection(2);
                                                     break;
-                                                case 4:
+                                                case 3:
                                                     binding.periodogracia.setSelection(3);
                                                     break;
-                                                case 5:
+                                                case 4:
                                                     binding.periodogracia.setSelection(4);
                                                     break;
-                                                case 6:
+                                                case 5:
                                                     binding.periodogracia.setSelection(5);
                                                     break;
+                                                case 6:
+                                                    binding.periodogracia.setSelection(6);
+                                                    break;
+                                                case 7:
+                                                    binding.periodogracia.setSelection(7);
+                                                    break;
+                                                case 8:
+                                                    binding.periodogracia.setSelection(8);
+                                                    break;
+                                                case 9:
+                                                    binding.periodogracia.setSelection(9);
+                                                    break;
+                                                case 10:
+                                                    binding.periodogracia.setSelection(10);
+                                                    break;
+                                                case 11:
+                                                    binding.periodogracia.setSelection(11);
+                                                    break;
+                                                case 12:
+                                                    binding.periodogracia.setSelection(12);
+                                                    break;
                                             }
+
                                         }
                                     }
                                 }
@@ -2938,7 +3188,10 @@ public class FragmentTerminar extends Fragment implements
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             binding.peatonalConteo.chronometer1.setCountDown(true);
                         }
+
                         int sec = 60* tiempo[0];
+                        //int sec = 60* 1;
+
                         downTimer[0] = new CountDownTimer(1000 * sec, 1000) {
 
                                 public void onTick(long millisUntilFinished) {
@@ -2996,7 +3249,6 @@ public class FragmentTerminar extends Fragment implements
                         binding.peatonalConteo.real.setText(cuartoNumero+"");
 
                     }
-
 
                 }
             });
@@ -3313,7 +3565,6 @@ public class FragmentTerminar extends Fragment implements
         return ((target.compareTo(start) >= 0)&& (target.compareTo(end) <= 0));
     }
 
-
     public void generarDetalles(FragmentAutoriza4Binding binding,
                                 final FactoresConstruccion factoresConstruccion,
                                 DatosConstruccions datosConstruccion){
@@ -3325,7 +3576,6 @@ public class FragmentTerminar extends Fragment implements
         binding.factores.addView(rowPlomo);
 
         checks = new HashMap<Integer, String>();
-
 
         for(int i = 0;i<factoresConstruccion.getCatalogo().size(); i ++) {
             if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
@@ -3389,8 +3639,10 @@ public class FragmentTerminar extends Fragment implements
     String fechaFrente;
     String fechaEntorno1;
     String fechaEntorno2;
+    String fechaPredial;
+
     File photoFile;
-    Uri photoURI;
+    Uri imageUri;
     /**
      * método para realizar la respuesta de cada intent que se hace en la actividad (ver pdf, tomar foto)
      * @param requestCode
@@ -3404,16 +3656,6 @@ public class FragmentTerminar extends Fragment implements
         String mdIdterminar = preferences.getString("mdIdterminar", "");
         if (requestCode == CAMERA_FRONTAL && resultCode==-1) {
             if(resultCode==0){
-//                try {
-//                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoURI);
-//                     base64frente = encodeTobase64(bitmap);
-//                     base64frente = b64(bitmap);
-//                     fechaFrente = getFechaHora();
-//                     obtenerUrl(random()+"_frente", base64frente, mdIdterminar);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
 
             }else{
                 bit = (Bitmap) data.getExtras().get("data");
@@ -3432,6 +3674,20 @@ public class FragmentTerminar extends Fragment implements
                 obtenerUrl(random()+"_lateral1", base64Lateral1, mdIdterminar);
 
             }
+        }else if(requestCode == CAMERA_PREDIAL && resultCode==-1){
+            if(resultCode==0){
+
+            }else{
+
+                fechaPredial = getFechaHora();
+                //obtenerUrlFile(random()+"_predial", mdIdterminar, new File(imageFilePath));
+
+
+                Bitmap bitfromPath = getBitmap(imageFilePath);
+                base64Predial = getStringImage(compressImage(bitfromPath, 650));
+                obtenerUrl(random()+"_predial", base64Predial, mdIdterminar);
+
+            }
         }else if(requestCode == CAMERA_LATERAL_2 && resultCode==-1){
             if(resultCode==0){
 
@@ -3440,8 +3696,6 @@ public class FragmentTerminar extends Fragment implements
                 base64Lateral2 = b64(bit);
                 fechaEntorno2 = getFechaHora();
                 obtenerUrl(random()+"_lateral2", base64Lateral2, mdIdterminar);
-
-
             }
         }else if(resultCode == 0){
 
@@ -3453,6 +3707,101 @@ public class FragmentTerminar extends Fragment implements
     String urlFrente = "";
     String urlLateral1 = "";
     String urlLateral2 = "";
+    String urlPredial = "";
+
+    public static Bitmap compressImage(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    public static Bitmap getBitmap(String path) {
+        Bitmap bitmap = null;
+        try {
+            File f = new File(path);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return bitmap;
+    }
+
+    public static String getStringImage(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+    }
+
+
+    public void obtenerUrlFile(String foto, String mdId, File file){
+        loadingProgress(progressDialog, 0);
+        ProviderObtenerUrlFile.getInstance(getContext()).obtenerUrl(mdId, foto, file, new ProviderObtenerUrlFile.ConsultaUrl() {
+            @Override
+            public void resolve(Codigos codigo) {
+                loadingProgress(progressDialog, 1);
+
+//                if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
+//                    if(codigo.getResultado().getSecureUrl().contains("frente")){
+//                        bindingSuperficie.frontal.setEnabled(false);
+//                        urlFrente = codigo.getResultado().getSecureUrl();
+//                        Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+//                        bindingSuperficie.frontal.setEnabled(true);
+//                        hourlyTask.run();
+//                        hourlyTask.scheduledExecutionTime();
+//                        loadingProgress(progressDialog, 1);
+//
+//                    }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
+//                        bindingSuperficie.lateral1.setEnabled(false);
+//                        urlLateral1 = codigo.getResultado().getSecureUrl();
+//                        Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+//                        bindingSuperficie.lateral1.setEnabled(true);
+//                        hourlyTask.run();
+//                        hourlyTask.scheduledExecutionTime();
+//                        loadingProgress(progressDialog, 1);
+//
+//                    }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+//                        bindingSuperficie.predial.setEnabled(false);
+//                        urlPredial = codigo.getResultado().getSecureUrl();
+//                        Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+//                        bindingSuperficie.predial.setEnabled(true);
+//                        hourlyTask.run();
+//                        hourlyTask.scheduledExecutionTime();
+//                        loadingProgress(progressDialog, 1);
+//
+//                    } else{
+//                        bindingSuperficie.lateral2.setEnabled(false);
+//                        urlLateral2 = codigo.getResultado().getSecureUrl();
+//                        Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+//                        bindingSuperficie.lateral2.setEnabled(true);
+//                        hourlyTask.run();
+//                        hourlyTask.scheduledExecutionTime();
+//                        loadingProgress(progressDialog, 1);
+//
+//                    }
+//                }
+            }
+
+            @Override
+            public void reject(Exception e) {
+
+            }
+        });
+    }
+
 
     public void obtenerUrl(String foto, String b64, String mdId){
         loadingProgress(progressDialog, 0);
@@ -3478,7 +3827,16 @@ public class FragmentTerminar extends Fragment implements
                         hourlyTask.scheduledExecutionTime();
                         loadingProgress(progressDialog, 1);
 
-                    }else{
+                    }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+                        bindingSuperficie.predial.setEnabled(false);
+                        urlPredial = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                        bindingSuperficie.predial.setEnabled(true);
+                        hourlyTask.run();
+                        hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    } else{
                         bindingSuperficie.lateral2.setEnabled(false);
                         urlLateral2 = codigo.getResultado().getSecureUrl();
                         Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
@@ -3498,25 +3856,14 @@ public class FragmentTerminar extends Fragment implements
         });
     }
 
-    String mCurrentPhotoPath;
 
-    private File createImageFile(String foto) throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_"+foto+ "_";
-        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpeg",
-                storageDir
-        );
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
 
     HashMap<Integer, String> checks;
     String base64frente;
     String base64Lateral1;
     String base64Lateral2;
+    String base64Predial;
+
 
     private String b64(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -3767,13 +4114,22 @@ public class FragmentTerminar extends Fragment implements
         try {
             if(mCenterLatLong!=null){
                 addresses = geocoder.getFromLocation(lat, lng, 1);
-                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                String address = addresses.get(0).getAddressLine(0);
+                // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                 String city = addresses.get(0).getLocality();
                 String state = addresses.get(0).getAdminArea();
                 String country = addresses.get(0).getCountryName();
-                String municipio = addresses.get(0).getLocality();
-                String postalCode = addresses.get(0).getPostalCode();
+                municipio = addresses.get(0).getLocality();
 
+                String proof = addresses.get(0).getFeatureName();
+                String proof2 = addresses.get(0).getAdminArea();
+                String proof3 = addresses.get(0).getSubAdminArea();
+                String proof4 = addresses.get(0).getSubLocality();
+                String proof5 = addresses.get(0).getThoroughfare();
+
+
+
+                String postalCode = addresses.get(0).getPostalCode();
                 binding.direccionsitio.setText(address);
                 binding.ciudadsitio.setText(city);
                 binding.estadositio.setText(state);
@@ -4630,4 +4986,23 @@ public class FragmentTerminar extends Fragment implements
         zonificacionC = new CrearZonificacion.Zonificacion();
         zonificacionG = new CrearZonificacion.Zonificacion();
     }
+
+
+    String imageFilePath;
+    private File createImageFile(Context c) throws IOException {
+        String timeStamp =
+                new SimpleDateFormat("yyyyMMdd_HHmmss",
+                        Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir = c.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        imageFilePath = image.getAbsolutePath();
+        return image;
+    }
+
 }

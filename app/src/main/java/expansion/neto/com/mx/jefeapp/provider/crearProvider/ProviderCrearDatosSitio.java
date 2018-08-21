@@ -16,6 +16,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_APLICACION;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 
@@ -66,9 +67,10 @@ public class ProviderCrearDatosSitio {
                             .add("longitud", datosSitio.getLongitud())
                             .add("pais", datosSitio.getPais())
                             .add("tipoubicacion", datosSitio.getTipoubicacion())
-                            .add("numtelefono", "5540555599")
+                            .add("numtelefono", NUM_TELEFONO)
                             .add("versionapp", VERSION_APP)
                             .add("tipoAplicacion", TIPO_APLICACION)
+                            .add("municipio", datosSitio.getMunicipio())
                             .add("mdId", String.valueOf(mdIdZ));
 
                     RequestBody formBody = formBuilder.build();

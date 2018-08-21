@@ -1,6 +1,5 @@
 package expansion.neto.com.mx.jefeapp.cron;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,21 +7,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
+import com.google.gson.Gson;
 
 import expansion.neto.com.mx.jefeapp.R;
-import expansion.neto.com.mx.jefeapp.fragment.fragmentAgenda.FragmentInicioAgenda;
+import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Localizador;
 import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Notificaciones;
+import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
+import expansion.neto.com.mx.jefeapp.provider.agendaProvider.ProviderLocalizador;
 import expansion.neto.com.mx.jefeapp.provider.agendaProvider.ProviderObtieneNotificaciones;
 import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityNotificaciones;
+import expansion.neto.com.mx.jefeapp.utils.ServicioGPS;
+import expansion.neto.com.mx.jefeapp.utils.Util;
 
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_NOTIFICACION;
 
@@ -37,9 +38,13 @@ public class Cron extends JobService {
 
 
     public void call(Context context) {
-        //TODO MAKE NOTIFICATIONS UPDATE!
-         getNotificaciones();
+        getNotificaciones();
+        Log.e("cron ejecutado!","Cron ejecutado");
+
     }
+
+
+
 
     public void getNotificaciones(){
         final SharedPreferences preferences = this.getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -52,18 +57,12 @@ public class Cron extends JobService {
             public void resolve(Notificaciones eventos) {
                 if(eventos!=null ){
                         if (eventos.getCodigo()==200 && eventos.getTotalNotificaciones()>0){
-
                             int noti = preferences.getInt("notificaciones", 0);
-
-                        if(noti == eventos.getTotalNotificaciones()){
-
-                        }else{
-                            //sendNotification("Notificación", eventos.getNotificaciones().get(0).getMensaje());
+                        if(noti == eventos.getTotalNotificaciones()){ }else{
                             createNotification("Notificación", eventos.getNotificaciones().get(0).getMensaje());
                             editor.putInt("notificaciones", eventos.getTotalNotificaciones());
                             editor.apply();
                         }
-
                     }
                 }
             }
@@ -73,24 +72,8 @@ public class Cron extends JobService {
 
             }
         });
-    }
-
-    public void sendNotification(String titulo, String subtitulo) {
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this);
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        mBuilder.setSmallIcon(R.drawable.logo);
-        mBuilder.setContentTitle(titulo);
-        mBuilder.setContentText(subtitulo);
-        mBuilder.setPriority(Notification.PRIORITY_MAX);
-        mBuilder.setSound(alarmSound);
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(001, mBuilder.build());
 
     }
-
 
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilder;
@@ -131,9 +114,9 @@ public class Cron extends JobService {
         mNotificationManager.notify(0 /* Request Code */, mBuilder.build());
     }
 
-
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         return true;
     }
+
 }

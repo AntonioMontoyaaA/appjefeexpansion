@@ -17,6 +17,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_LOG;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 
 /**
  * Clase singleton que regresa la validación del usuario así como también regresa el modelo de la persona
@@ -28,7 +29,6 @@ public class ProviderLogin {
     Context context;
     String respuesta;
     UsuarioLogin usuarioCallback = null;
-    String versionApp = "1.0.1";
 
     public ProviderLogin() {}
 
@@ -54,7 +54,7 @@ public class ProviderLogin {
                             .add("usuarioId", usuario.getUsuario())
                             .add("contrasena", usuario.getContra())
                             .add("numImei", imei)
-                            .add("versionapp", versionApp)
+                            .add("versionapp", VERSION_APP)
                             .add("tipoLog", TIPO_LOG);
 
                     RequestBody formBody = formBuilder.build();

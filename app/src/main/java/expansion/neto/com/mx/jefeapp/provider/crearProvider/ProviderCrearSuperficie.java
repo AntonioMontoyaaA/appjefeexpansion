@@ -14,6 +14,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 
 /**
@@ -54,12 +55,14 @@ public class ProviderCrearSuperficie {
                             .add("imgFrenteId", datosSuperficie.getImgFrenteId())
                             .add("latitud", datosSuperficie.getLatitud())
                             .add("longitud", datosSuperficie.getLongitud())
-                            .add("numTelefono", "5540555599")
+                            .add("numTelefono", NUM_TELEFONO)
                             .add("versionApp", VERSION_APP)
                             .add("fechaFrente", datosSuperficie.getFechaFrente())
                             .add("fechaEntorno1", datosSuperficie.getFechaEntorno1())
                             .add("esquina", datosSuperficie.getEsquina())
-                            .add("fechaEntorno2", datosSuperficie.getFechaEntorno2());
+                            .add("fechaEntorno2", datosSuperficie.getFechaEntorno2())
+                            .add("imgPredial", datosSuperficie.getImgPredial())
+                            .add("fechaPredial", datosSuperficie.getFechaPredial());
 
                     RequestBody formBody = formBuilder.build();
                     Request request = new Request.Builder()

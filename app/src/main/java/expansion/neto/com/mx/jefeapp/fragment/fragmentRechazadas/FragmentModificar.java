@@ -23,13 +23,16 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
@@ -43,6 +46,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -109,6 +113,7 @@ import expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentDialogCan
 import expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
+import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosPredial;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosSitio;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.GeneralidadesSitio;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonal;
@@ -116,6 +121,7 @@ import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonales;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Propietario;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Superficie;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Zonificacion;
+import expansion.neto.com.mx.jefeapp.modelView.crearModel.Amortizacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradores;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradoresV2;
@@ -129,9 +135,11 @@ import expansion.neto.com.mx.jefeapp.modelView.crearModel.DatosConstruccion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.FactoresConstruccion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.HorasPeatonales;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.PropietarioBusqueda;
+import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosAmortizacion;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosGeneralidadesSitio;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPeatonal;
+import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPredial;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPropietario;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosSitio;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosSuperficie;
@@ -161,6 +169,7 @@ import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaHoras;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaPropietarios;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaTiendaNeto;
 import expansion.neto.com.mx.jefeapp.ui.porterminar.ActivityFinalizaTerminar;
+import expansion.neto.com.mx.jefeapp.utils.CustomTextWatcher;
 import expansion.neto.com.mx.jefeapp.utils.PhoneNumberTextWatcher;
 import expansion.neto.com.mx.jefeapp.utils.ServicioGPS;
 import expansion.neto.com.mx.jefeapp.utils.Util;
@@ -173,6 +182,9 @@ import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.gu
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSitio.salvarDatosSitio;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSuperficie.salvarDatosSuperficie;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosZonificacion.salvarDatosZonificacion;
+import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.compressImage;
+import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.getBitmap;
+import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.getStringImage;
 import static expansion.neto.com.mx.jefeapp.utils.Util.getFecha;
 import static expansion.neto.com.mx.jefeapp.utils.Util.isEmailValid;
 import static expansion.neto.com.mx.jefeapp.utils.Util.random;
@@ -182,6 +194,7 @@ public class FragmentModificar extends Fragment implements
          AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
     NumberFormat format = new DecimalFormat("0.#");
 
+    String municipio = "";
     private View view;
     private static final String ARG_POSITION = "position";
     private int position;
@@ -232,6 +245,8 @@ public class FragmentModificar extends Fragment implements
     private int CAMERA_FRONTAL = 1;
     private int CAMERA_LATERAL_1 = 2;
     private int CAMERA_LATERAL_2 = 3;
+    private int CAMERA_PREDIAL = 4;
+
 
     private AdapterListaPropietarios.OnItemClick clickPropietario = new AdapterListaPropietarios.OnItemClick() {
         @Override
@@ -551,34 +566,37 @@ public class FragmentModificar extends Fragment implements
                     }
                 });
 
-                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-
-                    @Override
-                    public void onMapLongClick(LatLng arg0) {
-                        // TODO Auto-generated method stub
-                        // eliminar marcadores
-
-                    }
-                });
-
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker m) {
-                        Log.e("*****", zonificacionJson+zonificacion);
-                        //m.remove();
+                        LatLng eliminar = m.getPosition();
+                        String latitudCompetencia;
+                        String latitudCompetenciaMarcador;
+                        String latitudGenerador;
+                        String latitudGeneradorMarcador;
 
-//                        Marker marker = hashMarker.get(valor);
-//                        if(marker!=null){
-//                            marker.remove();
-//                            hashMarker.remove(valor);
-//                        }
+                        if(zonificacion!=null && !zonificacion.getCompetencia().isEmpty()) {
+                            for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
+                                latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
+                                latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
+                                if (latitudCompetencia.equals(latitudCompetenciaMarcador)) {
+                                    zonificacion.getCompetencia().get(0).getDetalles().remove(i);
+                                    m.remove();
+                                }
+                            }
+                        }
 
-//                        for(int i = 0;i<markers.size();i++){
-//                            if (m.equals(markers.get(i))) {
-//                                m.remove();
-//                            }
-//                        }
-
+                        if(zonificacion!=null && !zonificacion.getGeneradores().isEmpty()){
+                            for(int i = 0;i<zonificacion.getGeneradores().get(0).getDetalles().size();i++){
+                                latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
+                                latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
+                                if(latitudGenerador.equals(latitudGeneradorMarcador)){
+                                    zonificacion.getGeneradores().get(0).getDetalles().remove(i);
+                                    m.remove();
+                                }
+                            }
+                        }
+                        zonificacionJson = getJsonString(zonificacion);
                         return false;
 
                     }
@@ -736,7 +754,7 @@ public class FragmentModificar extends Fragment implements
                     String codigoPostal = binding.codigopostalsitio.getText().toString();
                     String direccion = binding.direccionsitio.getText().toString();
                     String estado = binding.estadositio.getText().toString();
-                    String municipio = binding.municipiositio.getText().toString();
+                    municipio = binding.municipiositio.getText().toString();
                     String ciudad = binding.ciudadsitio.getText().toString();
                     String pais = binding.pais.getText().toString();
                     SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -778,7 +796,7 @@ public class FragmentModificar extends Fragment implements
                     String codigoPostal = binding.codigopostalsitio.getText().toString();
                     String direccion = binding.direccionsitio.getText().toString();
                     String estado = binding.estadositio.getText().toString();
-                    String municipio = binding.municipiositio.getText().toString();
+                    municipio = binding.municipiositio.getText().toString();
                     String ciudad = binding.ciudadsitio.getText().toString();
                     String pais = binding.pais.getText().toString();
 
@@ -1052,7 +1070,7 @@ public class FragmentModificar extends Fragment implements
 
         }else if (position == 2) {
 
-            final int[] area = {0};
+            final float[] area = {0};
 
             bindingSuperficie = DataBindingUtil.inflate(inflater,R.layout.fragment_autoriza_2,container,false);
             view = bindingSuperficie.getRoot();
@@ -1070,9 +1088,43 @@ public class FragmentModificar extends Fragment implements
             mdLat = preferences.getFloat("latMd", 0);
             mdLot = preferences.getFloat("lotMd", 0);
 
-            fechaFrente = getFechaHora();
-            fechaEntorno1  = getFechaHora();
-            fechaEntorno2  = getFechaHora();
+            bindingSuperficie.frente.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
+            bindingSuperficie.profundidad.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
+            //bindingSuperficie.areaterreno.setFilters(new InputFilter[] {new CustomTextWatcher(5,1)});
+
+            ProviderDatosPredial.getInstance(getContext()).obtenerDatosPredial(md, usuario[0], new ProviderDatosPredial.ConsultaDatosPredial() {
+                @Override
+                public void resolve(DatosPredial datosPredial) {
+                    if(datosPredial!=null){
+                        if(datosPredial.getCodigo().equals("200")){
+                            if(datosPredial.getAplicaPredial().equals("1")){
+                                bindingSuperficie.predial.setVisibility(View.VISIBLE);
+                            }else{
+                                bindingSuperficie.predial.setVisibility(View.GONE);
+                                urlPredial = " ";
+                                fechaPredial = " ";
+                            }
+                        }
+                    }else{
+                        bindingSuperficie.predial.setVisibility(View.GONE);
+                        urlPredial = " ";
+                        fechaPredial = " ";
+                    }
+                }
+                @Override
+                public void reject(Exception e) {
+                    bindingSuperficie.predial.setVisibility(View.GONE);
+                    urlPredial = " ";
+                    fechaPredial = " ";
+                }
+            });
+
+
+//            fechaFrente = getFechaHora();
+//            fechaEntorno1  = getFechaHora();
+//            fechaEntorno2  = getFechaHora();
+//            fechaPredial = getFechaHora();
+
 
             final int[] banderaCamara = {0};
 
@@ -1107,6 +1159,12 @@ public class FragmentModificar extends Fragment implements
                                         Picasso.get().load(superficie.getNiveles().get(i).getImgFrenteId()).into(bindingSuperficie.imagen);
                                         valorFoto = i;
                                         valorFondo = i;
+
+
+                                        fechaFrente = superficie.getNiveles().get(i).getFecha_fente();
+                                        fechaEntorno1  = superficie.getNiveles().get(i).getFecha_lat1();
+                                        fechaEntorno2  = superficie.getNiveles().get(i).getFecha_lat2();
+                                        fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
                                     }
 
                                     if(superficie.getNiveles().get(i).getNivel()==6 ||
@@ -1119,7 +1177,7 @@ public class FragmentModificar extends Fragment implements
                                     }
                                 }
 
-                                int esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+                                Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
 
                                 if(esquina==1){
                                     bindingSuperficie.escogeEsquina.setChecked(true);
@@ -1139,19 +1197,71 @@ public class FragmentModificar extends Fragment implements
                                 bindingSuperficie.frente.setText(superficieS);
                                 bindingSuperficie.profundidad.setText(fondoS);
 
-                                String total = String.valueOf((Integer.valueOf(superficieS)
-                                        *(Integer.valueOf(fondoS))));
-                                bindingSuperficie.areaterreno.setText(total+"mts2");
-
-
-
+                                String total = String.valueOf((Double.valueOf(superficieS)
+                                        *(Double.valueOf(fondoS))));
+                                bindingSuperficie.areaterreno.setText(total+"");
 
                                 bindingSuperficie.frontal.setAlpha(1.0f);
                                 bindingSuperficie.lateral1.setAlpha(0.35f);
                                 bindingSuperficie.lateral2.setAlpha(0.35f);
+                                bindingSuperficie.predial.setAlpha(0.35f);
+
                                 bindingSuperficie.robotoTextView2.setText(nombreSitio);
 
                                 final int finalValorFoto = valorFoto;
+
+                                bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        if(!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")){
+                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                        }else{
+                                            if(urlPredial.length()>3){
+                                                Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                            }
+                                        }
+
+                                        bindingSuperficie.frontal.setAlpha(0.35f);
+                                        bindingSuperficie.lateral1.setAlpha(0.35f);
+                                        bindingSuperficie.lateral2.setAlpha(0.35f);
+                                        bindingSuperficie.predial.setAlpha(1);
+
+                                        banderaCamara[0] = 4;
+
+                                        if(urlPredial.length()>3){
+                                            if(urlPredial.length()>0){
+                                                Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            } else {
+                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            }
+
+                                        }else{
+                                            bindingSuperficie.volver.setVisibility(View.GONE);
+                                            Intent pictureIntent = new Intent(
+                                                    MediaStore.ACTION_IMAGE_CAPTURE);
+                                            if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                //Create a file to store the image
+                                                File photoFile = null;
+                                                try {
+                                                    photoFile = createImageFile(getContext());
+                                                } catch (IOException ex) {
+                                                    // Error occurred while creating the File
+                                                }
+                                                if (photoFile != null) {
+                                                    Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                            getString(R.string.file_provider_authority), photoFile);
+                                                    pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                    startActivityForResult(pictureIntent,
+                                                            CAMERA_PREDIAL);
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+
                                 bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -1160,6 +1270,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.frontal.setAlpha(1.0f);
                                         bindingSuperficie.lateral1.setAlpha(0.35f);
                                         bindingSuperficie.lateral2.setAlpha(0.35f);
+                                        bindingSuperficie.predial.setAlpha(0.35f);
+
                                         banderaCamara[0] = 1;
                                         if(superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length()>0){
                                             if(urlFrente.length()>0){
@@ -1185,6 +1297,7 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.lateral1.setAlpha(1.0f);
                                         bindingSuperficie.frontal.setAlpha(0.35f);
                                         bindingSuperficie.lateral2.setAlpha(0.35f);
+                                        bindingSuperficie.predial.setAlpha(0.35f);
                                         banderaCamara[0] = 2;
 
                                         if(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length()>0){
@@ -1207,6 +1320,10 @@ public class FragmentModificar extends Fragment implements
                                 urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
                                 urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
                                 urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
+                                urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
+
+
+
 
                                 bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1214,6 +1331,7 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.lateral2.setAlpha(1.0f);
                                         bindingSuperficie.frontal.setAlpha(0.35f);
                                         bindingSuperficie.lateral1.setAlpha(0.35f);
+                                        bindingSuperficie.predial.setAlpha(0.35f);
                                         banderaCamara[0] = 3;
                                         if(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length()>0){
                                             if(urlLateral2.length()>0){
@@ -1246,12 +1364,32 @@ public class FragmentModificar extends Fragment implements
                                                 if(banderaCamara[0] ==1){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA);
-                                                } else if(banderaCamara[0] ==2){
+                                                } else if(banderaCamara[0] == 2){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA_LATERAL_1);
-                                                } else if(banderaCamara[0] ==3){
+                                                } else if(banderaCamara[0] == 3){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA_LATERAL_2);
+                                                } else if(banderaCamara[0] == 4){
+                                                    bindingSuperficie.volver.setVisibility(View.GONE);
+                                                    Intent pictureIntent = new Intent(
+                                                            MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                        //Create a file to store the image
+                                                        File photoFile = null;
+                                                        try {
+                                                            photoFile = createImageFile(getContext());
+                                                        } catch (IOException ex) {
+                                                            // Error occurred while creating the File
+                                                        }
+                                                        if (photoFile != null) {
+                                                            Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                                    getString(R.string.file_provider_authority), photoFile);
+                                                            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                            startActivityForResult(pictureIntent,
+                                                                    CAMERA_PREDIAL);
+                                                        }
+                                                    }
                                                 }
                                             }else {
                                                 Toast.makeText(getContext(), R.string.no_estas,
@@ -1288,7 +1426,8 @@ public class FragmentModificar extends Fragment implements
 
                                             CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario, convertido,
                                                     frentes, profundidads, urlLateral2, urlLateral1, urlFrente,
-                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
+                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
+                                            urlPredial,fechaPredial);
                                             salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
                                         }
                                     }
@@ -1306,8 +1445,8 @@ public class FragmentModificar extends Fragment implements
                                         if(frente.equals("") || profundidad.equals("")){
                                             bindingSuperficie.areaterreno.setText("0mts");
                                         }else{
-                                            area[0] = Integer.valueOf(frente)*Integer.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"mts2");
+                                            area[0] = Float.valueOf(frente)*Float.valueOf(profundidad);
+                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"");
                                         }
                                     }
                                 });
@@ -1321,8 +1460,8 @@ public class FragmentModificar extends Fragment implements
                                         if(frente.equals("") || profundidad.equals("")){
                                             bindingSuperficie.areaterreno.setText("0mts");
                                         }else{
-                                            area[0] = Integer.valueOf(frente)*Integer.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"mts2");
+                                            area[0] = Float.valueOf(frente)*Float.valueOf(profundidad);
+                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"");
                                         }
                                     }
                                 });
@@ -1372,7 +1511,8 @@ public class FragmentModificar extends Fragment implements
 
                                                 CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
                                                         frenter, profundidadr, urlLateral2, urlLateral1, urlFrente,
-                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
+                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2
+                                                ,urlPredial,fechaPredial);
 
                                                 ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                     @Override
@@ -1400,6 +1540,7 @@ public class FragmentModificar extends Fragment implements
                                     }
                                 });
                             }else{
+
                                 getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                 bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
                                 final SharedPreferences preferencesExpansion = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -1442,7 +1583,8 @@ public class FragmentModificar extends Fragment implements
                                         }else{
                                             CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario1, convertido,
                                                     frente, profundidad, urlLateral2, urlLateral1, urlFrente,
-                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
+                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
+                                                    urlPredial,fechaPredial);
                                             salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
 
                                         }
@@ -1465,13 +1607,16 @@ public class FragmentModificar extends Fragment implements
                                         if(superficieS.equals("") || fondoS.equals("")){
 
                                         }else{
-                                            area[0] = Integer.valueOf(superficieS)*Integer.valueOf(fondoS);
+                                            area[0] = Float.valueOf(superficieS)*Float.valueOf(fondoS);
                                             bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
                                         }
                                     }
                                 });
 
                                 final int[] banderaCamaraTermina = {0};
+
+
+
 
                                 bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
 
@@ -1491,7 +1636,7 @@ public class FragmentModificar extends Fragment implements
                                         if(superficieS.equals("") || fondoS.equals("")){
 
                                         }else{
-                                            area[0] = Integer.valueOf(superficieS)*Integer.valueOf(fondoS);
+                                            area[0] = Float.valueOf(superficieS)*Float.valueOf(fondoS);
                                             bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
                                         }
                                     }
@@ -1501,6 +1646,47 @@ public class FragmentModificar extends Fragment implements
                                 final LatLng mds = new LatLng(mdLat, mdLot);
                                 final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
                                 final Boolean distancia = distanciaSuperficie(mds, gps);
+
+                                bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if(distancia){
+                                            bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(1.0f);
+                                            banderaCamaraTermina[0] = 4;
+                                            if(urlPredial.length()>0){
+                                                Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            }else{
+
+                                                Intent pictureIntent = new Intent(
+                                                        MediaStore.ACTION_IMAGE_CAPTURE);
+                                                if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                    //Create a file to store the image
+                                                    File photoFile = null;
+                                                    try {
+                                                        photoFile = createImageFile(getContext());
+                                                    } catch (IOException ex) {
+                                                        // Error occurred while creating the File
+                                                    }
+                                                    if (photoFile != null) {
+                                                        Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                                getString(R.string.file_provider_authority), photoFile);
+                                                        pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                        startActivityForResult(pictureIntent,
+                                                                CAMERA_PREDIAL);
+                                                    }
+                                                }
+                                            }
+                                        }else{
+                                            Toast.makeText(getContext(), R.string.no_estas,
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
+                                });
 
                                 bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1517,23 +1703,6 @@ public class FragmentModificar extends Fragment implements
                                                 bindingSuperficie.volver.setVisibility(View.GONE);
                                                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                 startActivityForResult(intent, CAMERA);
-
-
-//                                                photoFile = null;
-//                                                try {
-//                                                    photoFile = createImageFile("frontal");
-//                                                } catch (IOException ex) {
-//                                                    // Error occurred while creating the File
-//                                                }
-//
-//                                                if (photoFile != null) {
-//                                                    photoURI = FileProvider.getUriForFile(getContext(),
-//                                                            getString(R.string.file_provider_authority),
-//                                                            photoFile);
-//                                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                                                    startActivityForResult(intent, CAMERA);
-//                                                }
-
                                             }
                                         }else{
                                             Toast.makeText(getContext(), R.string.no_estas,
@@ -1590,9 +1759,6 @@ public class FragmentModificar extends Fragment implements
                                                     Toast.LENGTH_SHORT).show();
                                         }
 
-
-
-
                                     }
                                 });
 
@@ -1613,7 +1779,26 @@ public class FragmentModificar extends Fragment implements
                                             } else if(banderaCamaraTermina[0] ==3){
                                                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                 startActivityForResult(intent, CAMERA_LATERAL_2);
-                                            }
+                                            } else if(banderaCamaraTermina[0] ==4){
+                                                Intent pictureIntent = new Intent(
+                                                        MediaStore.ACTION_IMAGE_CAPTURE);
+                                                if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                    //Create a file to store the image
+                                                    File photoFile = null;
+                                                    try {
+                                                        photoFile = createImageFile(getContext());
+                                                    } catch (IOException ex) {
+                                                        // Error occurred while creating the File
+                                                    }
+                                                    if (photoFile != null) {
+                                                        Uri photoURI = FileProvider.getUriForFile(getContext(),
+                                                                getString(R.string.file_provider_authority), photoFile);
+                                                        pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                        startActivityForResult(pictureIntent,
+                                                                CAMERA_PREDIAL);
+                                                    }
+                                                }
+                                        }
                                         }else{
                                             Toast.makeText(getContext(), R.string.no_estas,
                                                     Toast.LENGTH_SHORT).show();
@@ -1669,7 +1854,8 @@ public class FragmentModificar extends Fragment implements
 
                                                 CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
                                                         frente, profundidad, urlLateral2, urlLateral1, urlFrente,
-                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2);
+                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
+                                                urlPredial,fechaPredial);
 
                                                 ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                     @Override
@@ -2479,6 +2665,44 @@ public class FragmentModificar extends Fragment implements
 
             binding.amortizaciontotal.setFilters(new InputFilter[]{new Util.InputFilterMinMax("0", "9999999")});
             final int textColor = Color.parseColor("#254581");
+
+
+            ProviderDatosAmortizacion.getInstance(getContext()).obtenerDatosAmortizacion(mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
+                @Override
+                public void resolve(Amortizacion datosPredial) {
+                    if(datosPredial!=null){
+
+                        ArrayList<String> amortizacion = new ArrayList<>();
+
+                        for(int i = 0;i<datosPredial.getAmortizacion().size();i++){
+                            amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                        }
+
+                        ArrayList<String> gracia = new ArrayList<>();
+
+                        for(int j = 0;j<datosPredial.getGracia().size();j++){
+                            gracia.add(datosPredial.getGracia().get(j).getOpcion());
+                        }
+
+                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                amortizacion);
+                        amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                        binding.periodoamotizacion.setAdapter(amortizacionSpinner);
+
+                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                gracia);
+                        graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                        binding.periodogracia.setAdapter(graciaSpinner);
+
+                    }
+                }
+
+                @Override
+                public void reject(Exception e) {
+
+                }
+            });
+
             ProviderDatosGeneralidadesSitio.getInstance(getContext())
                     .obtenerDatosGeneralidades(mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
                         @Override
@@ -2511,31 +2735,64 @@ public class FragmentModificar extends Fragment implements
 
                                     for(int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 || datosSitio.getGeneralidades().get(i).getNivelid() == 2 || datosSitio.getGeneralidades().get(i).getNivelid() == 3){
+                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9){
+
                                             binding.renta.setText(datosSitio.getGeneralidades().get(i).getValor()+"");
 
-                                            if(datosSitio.getGeneralidades().get(i).getDetalles() != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
-
-                                                switch (datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()){
-                                                    case 1:
+                                            if(datosSitio.getGeneralidades().get(i).getDetalles()
+                                                    != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
+                                                int valor = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
+                                                switch (valor){
+                                                    case 0:
                                                         binding.periodoamotizacion.setSelection(0);
                                                         break;
-                                                    case 2:
+                                                    case 1:
                                                         binding.periodoamotizacion.setSelection(1);
                                                         break;
-                                                    case 3:
+                                                    case 2:
                                                         binding.periodoamotizacion.setSelection(2);
                                                         break;
-                                                    case 4:
+                                                    case 3:
                                                         binding.periodoamotizacion.setSelection(3);
                                                         break;
-                                                    case 5:
+                                                    case 6:
                                                         binding.periodoamotizacion.setSelection(4);
                                                         break;
-                                                    case 6:
+                                                    case 9:
                                                         binding.periodoamotizacion.setSelection(5);
                                                         break;
+                                                    case 12:
+                                                        binding.periodoamotizacion.setSelection(6);
+                                                        break;
+                                                    case 18:
+                                                        binding.periodoamotizacion.setSelection(7);
+                                                        break;
+                                                    case 24:
+                                                        binding.periodoamotizacion.setSelection(8);
+                                                        break;
+                                                    case 30:
+                                                        binding.periodoamotizacion.setSelection(9);
+                                                        break;
+                                                    case 36:
+                                                        binding.periodoamotizacion.setSelection(10);
+                                                        break;
+                                                    case 42:
+                                                        binding.periodoamotizacion.setSelection(11);
+                                                        break;
+                                                    case 48:
+                                                        binding.periodoamotizacion.setSelection(12);
+                                                        break;
+                                                    case 54:
+                                                        binding.periodoamotizacion.setSelection(13);
+                                                        break;
+                                                    case 60:
+                                                        binding.periodoamotizacion.setSelection(14);
+                                                        break;
                                                 }
+
+
                                             }
 
                                         }
@@ -2570,28 +2827,52 @@ public class FragmentModificar extends Fragment implements
 
                                         }
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 || datosSitio.getGeneralidades().get(i).getNivelid() == 8 || datosSitio.getGeneralidades().get(i).getNivelid() == 9){
+                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 2 ||
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 3){
+
                                             String valor = datosSitio.getGeneralidades().get(i).getValor().toString();
                                             binding.amortizaciontotal.setText(valor);
-
-                                            switch (datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()){
-                                                case 1:
+                                            int valor2 = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
+                                            switch (valor2){
+                                                case 0:
                                                     binding.periodogracia.setSelection(0);
                                                     break;
-                                                case 2:
+                                                case 1:
                                                     binding.periodogracia.setSelection(1);
                                                     break;
-                                                case 3:
+                                                case 2:
                                                     binding.periodogracia.setSelection(2);
                                                     break;
-                                                case 4:
+                                                case 3:
                                                     binding.periodogracia.setSelection(3);
                                                     break;
-                                                case 5:
+                                                case 4:
                                                     binding.periodogracia.setSelection(4);
                                                     break;
-                                                case 6:
+                                                case 5:
                                                     binding.periodogracia.setSelection(5);
+                                                    break;
+                                                case 6:
+                                                    binding.periodogracia.setSelection(6);
+                                                    break;
+                                                case 7:
+                                                    binding.periodogracia.setSelection(7);
+                                                    break;
+                                                case 8:
+                                                    binding.periodogracia.setSelection(8);
+                                                    break;
+                                                case 9:
+                                                    binding.periodogracia.setSelection(9);
+                                                    break;
+                                                case 10:
+                                                    binding.periodogracia.setSelection(10);
+                                                    break;
+                                                case 11:
+                                                    binding.periodogracia.setSelection(11);
+                                                    break;
+                                                case 12:
+                                                    binding.periodogracia.setSelection(12);
                                                     break;
                                             }
                                         }
@@ -3329,6 +3610,8 @@ public class FragmentModificar extends Fragment implements
     String fechaFrente;
     String fechaEntorno1;
     String fechaEntorno2;
+    String fechaPredial;
+
     File photoFile;
     Uri photoURI;
     /**
@@ -3372,6 +3655,17 @@ public class FragmentModificar extends Fragment implements
                 obtenerUrl(random()+"_lateral1", base64Lateral1, mdIdterminar);
 
             }
+        }else if(requestCode == CAMERA_PREDIAL && resultCode==-1){
+            if(resultCode==0){
+
+            }else{
+
+                fechaPredial = getFechaHora();
+                Bitmap bitfromPath = getBitmap(imageFilePath);
+                base64Predial = getStringImage(compressImage(bitfromPath, 650));
+                obtenerUrl(random()+"_predial", base64Predial, mdIdterminar);
+
+            }
         }else if(requestCode == CAMERA_LATERAL_2 && resultCode==-1){
             if(resultCode==0){
 
@@ -3380,8 +3674,6 @@ public class FragmentModificar extends Fragment implements
                 base64Lateral2 = b64(bit);
                 fechaEntorno2 = getFechaHora();
                 obtenerUrl(random()+"_lateral2", base64Lateral2, mdIdterminar);
-
-
             }
         }else if(resultCode == 0){
 
@@ -3393,6 +3685,7 @@ public class FragmentModificar extends Fragment implements
     String urlFrente = "";
     String urlLateral1 = "";
     String urlLateral2 = "";
+    String urlPredial = "";
 
     public void obtenerUrl(String foto, String b64, String mdId){
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
@@ -3431,18 +3724,20 @@ public class FragmentModificar extends Fragment implements
         });
     }
 
-    String mCurrentPhotoPath;
-
-    private File createImageFile(String foto) throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_"+foto+ "_";
-        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    String imageFilePath;
+    private File createImageFile(Context c) throws IOException {
+        String timeStamp =
+                new SimpleDateFormat("yyyyMMdd_HHmmss",
+                        Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir = c.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                imageFileName,
-                ".jpeg",
-                storageDir
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
         );
-        mCurrentPhotoPath = image.getAbsolutePath();
+
+        imageFilePath = image.getAbsolutePath();
         return image;
     }
 
@@ -3450,6 +3745,7 @@ public class FragmentModificar extends Fragment implements
     String base64frente;
     String base64Lateral1;
     String base64Lateral2;
+    String base64Predial;
 
     private String b64(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -3703,7 +3999,7 @@ public class FragmentModificar extends Fragment implements
                 String city = addresses.get(0).getLocality();
                 String state = addresses.get(0).getAdminArea();
                 String country = addresses.get(0).getCountryName();
-                String municipio = addresses.get(0).getLocality();
+                municipio = addresses.get(0).getLocality();
                 String postalCode = addresses.get(0).getPostalCode();
 
                 binding.direccionsitio.setText(address);

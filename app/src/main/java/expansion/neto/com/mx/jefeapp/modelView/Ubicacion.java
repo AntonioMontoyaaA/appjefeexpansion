@@ -37,4 +37,6 @@ public class Ubicacion {
     public void setGps(boolean gps) {
         this.gps = gps;
     }
+
+
 }

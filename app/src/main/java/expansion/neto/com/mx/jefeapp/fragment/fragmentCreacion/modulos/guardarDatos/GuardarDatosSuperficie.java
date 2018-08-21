@@ -26,6 +26,9 @@ public class GuardarDatosSuperficie {
             editor.putString("fechaEntorno1", superficie.getFechaEntorno1());
             editor.putString("fechaEntorno2", superficie.getFechaEntorno2());
             editor.putString("esquina", superficie.getEsquina());
+            editor.putString("imgPredial", superficie.getImgPredial());
+            editor.putString("fechaPredial", superficie.getFechaPredial());
+
 
             editor.apply();
         }
@@ -50,7 +53,8 @@ public class GuardarDatosSuperficie {
         crearDatosSuperficie.setFechaEntorno1(preferences.getString("fechaEntorno1", ""));
         crearDatosSuperficie.setFechaEntorno2(preferences.getString("fechaEntorno2", ""));
         crearDatosSuperficie.setEsquina(preferences.getString("esquina", ""));
-
+        crearDatosSuperficie.setImgPredial(preferences.getString("imgPredial", ""));
+        crearDatosSuperficie.setFechaPredial(preferences.getString("fechaPredial", ""));
         return crearDatosSuperficie;
 
     }

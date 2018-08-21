@@ -14,7 +14,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_APLICACION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 
 /**
  * Created by marcosmarroquin on 21/03/18.
@@ -53,9 +55,9 @@ public class ProviderCrearGeneralidades {
                             .add("montoamortiza", crearGeneralidades.getPorcentajeamortiza())
                             .add("periodoamortizacion", crearGeneralidades.getPeriodoamortizacion())
                             .add("periodogracia", crearGeneralidades.getPeriodogracia())
-                            .add("numtelefono", crearGeneralidades.getNumtelefono())
+                            .add("numtelefono", NUM_TELEFONO)
                             .add("tipoAplicacion", TIPO_APLICACION)
-                            .add("versionapp", crearGeneralidades.getVersionapp());
+                            .add("versionapp", VERSION_APP);
 
                     RequestBody formBody = formBuilder.build();
                     Request request = new Request.Builder()

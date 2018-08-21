@@ -13,14 +13,21 @@ public class CrearDatosSuperficie {
     private String longitud;
     private String numTelefono;
     private String versionApp;
-    String fechaFrente;
-    String fechaEntorno1;
-    String fechaEntorno2;
-    String esquina;
+    private String fechaFrente;
+    private String fechaEntorno1;
+    private String fechaEntorno2;
+    private String esquina;
+    private String imgPredial;
+    private String fechaPredial;
 
     public CrearDatosSuperficie (){}
 
-    public CrearDatosSuperficie(String esquina, String usuarioid, String mdId, String frente, String fondo, String imgEntorno2Id, String imgEntorno1Id, String imgFrenteId, String latitud, String longitud, String numTelefono, String versionApp, String fechaFrente, String fechaEntorno1, String fechaEntorno2) {
+    public CrearDatosSuperficie(String esquina, String usuarioid, String mdId,
+                                String frente, String fondo, String imgEntorno2Id,
+                                String imgEntorno1Id, String imgFrenteId, String latitud,
+                                String longitud, String numTelefono, String versionApp,
+                                String fechaFrente, String fechaEntorno1, String fechaEntorno2,
+                                String imgPredial, String fechaPredial) {
         this.esquina = esquina;
         this.usuarioid = usuarioid;
         this.mdId = mdId;
@@ -36,6 +43,25 @@ public class CrearDatosSuperficie {
         this.fechaFrente = fechaFrente;
         this.fechaEntorno1 = fechaEntorno1;
         this.fechaEntorno2 = fechaEntorno2;
+        this.imgPredial = imgPredial;
+        this.fechaPredial = fechaPredial;
+
+    }
+
+    public String getImgPredial() {
+        return imgPredial;
+    }
+
+    public void setImgPredial(String imgPredial) {
+        this.imgPredial = imgPredial;
+    }
+
+    public String getFechaPredial() {
+        return fechaPredial;
+    }
+
+    public void setFechaPredial(String fechaPredial) {
+        this.fechaPredial = fechaPredial;
     }
 
     public String getEsquina() {

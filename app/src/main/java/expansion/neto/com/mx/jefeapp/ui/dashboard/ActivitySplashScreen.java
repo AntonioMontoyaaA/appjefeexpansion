@@ -15,6 +15,8 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import com.crashlytics.android.Crashlytics;
+
+import expansion.neto.com.mx.jefeapp.utils.ServicioRutas;
 import io.fabric.sdk.android.Fabric;
 import com.google.gson.Gson;
 
@@ -63,6 +65,9 @@ public class ActivitySplashScreen extends AppCompatActivity {
 		decoracion.setSystemUiVisibility(uiOptions);
 
 		setAnimation();
+
+		Intent serviceIntent = new Intent(getApplicationContext(), ServicioRutas.class);
+		startService(serviceIntent);
 
 		preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
 		usuario = preferences.getString("usuario","");

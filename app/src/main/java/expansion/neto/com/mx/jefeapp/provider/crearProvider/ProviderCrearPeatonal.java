@@ -14,7 +14,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_SERVICIO;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 
 /**
  * Created by marcosmarroquin on 21/03/18.
@@ -54,8 +56,8 @@ public class ProviderCrearPeatonal {
                             .add("latitud", crearPeatonal.getLatitud())
                             .add("longitud", crearPeatonal.getLongitud())
                             .add("bajaConteos", crearPeatonal.getBajaConteos())
-                            .add("numTelefono", crearPeatonal.getNumTelefono())
-                            .add("versionApp", crearPeatonal.getVersionApp())
+                            .add("numTelefono", NUM_TELEFONO)
+                            .add("versionApp", VERSION_APP)
                             .add("tipoServicio", TIPO_SERVICIO);
 
                     RequestBody formBody = formBuilder.build();
