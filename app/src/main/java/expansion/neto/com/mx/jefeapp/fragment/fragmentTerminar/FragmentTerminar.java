@@ -1131,21 +1131,21 @@ public class FragmentTerminar extends Fragment implements
                                 bindingSuperficie.predial.setVisibility(View.VISIBLE);
                             }else{
                                 bindingSuperficie.predial.setVisibility(View.GONE);
-                                urlPredial = "";
-                                fechaPredial = "";
+                                urlPredial = " ";
+                                fechaPredial = " ";
                             }
                         }
                     }else{
                         bindingSuperficie.predial.setVisibility(View.GONE);
-                        urlPredial = "";
-                        fechaPredial = "";
+                        urlPredial = " ";
+                        fechaPredial = " ";
                     }
                 }
                 @Override
                 public void reject(Exception e) {
                     bindingSuperficie.predial.setVisibility(View.GONE);
-                    urlPredial = "";
-                    fechaPredial = "";
+                    urlPredial = " ";
+                    fechaPredial = " ";
                 }
             });
 
@@ -1402,7 +1402,7 @@ public class FragmentTerminar extends Fragment implements
 
                                     if(superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("") ||
                                     superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")){
-                                        urlPredial = "";
+                                        urlPredial = " ";
                                     }else{
                                         urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
                                     }

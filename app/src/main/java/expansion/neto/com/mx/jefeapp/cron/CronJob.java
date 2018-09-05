@@ -33,7 +33,6 @@ public class CronJob extends JobService {
 
             String json = getJsonString(gpsUbica);
             json = "["+json+"]";
-            
             ProviderLocalizador.getInstance(this).guardaLocalizacion(usuarioId, json, new ProviderLocalizador.InterfaceLocalizador() {
                 @Override
                 public void resolve(Codigos codigo) {

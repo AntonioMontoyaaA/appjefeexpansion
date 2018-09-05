@@ -36,7 +36,7 @@ public class ReminderUtilitiesJob {
     private static final int SYNC_FLEXTIME_SECONDS = REMINDER_INTERVAL_SECONDS;
 
     private static final int testSecondsA = 1700;
-    private static final int testSecondsB = 1800;
+    private static final int testSecondsB = 1900;
 
     private static final String REMINDER_ID_JOB = "REMINDER_ID_JOB";
 
@@ -48,7 +48,7 @@ public class ReminderUtilitiesJob {
                 .setService(CronJob.class)
                 .setTag(REMINDER_ID_JOB)
                 .setLifetime(Lifetime.FOREVER)
-                .setRecurring(false)
+                .setRecurring(true)
                 .setTrigger(Trigger.executionWindow(testSecondsA, testSecondsB))
                 .setReplaceCurrent(false)
                 .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
