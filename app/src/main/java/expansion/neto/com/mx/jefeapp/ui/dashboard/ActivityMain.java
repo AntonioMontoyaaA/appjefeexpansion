@@ -54,6 +54,7 @@ import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityCalendario;
 import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityNotificaciones;
 import expansion.neto.com.mx.jefeapp.ui.autoriza.ActivityAutorizar;
 import expansion.neto.com.mx.jefeapp.ui.autorizadas.ActivityAutorizadas;
+import expansion.neto.com.mx.jefeapp.utils.ServicioRutas;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 import expansion.neto.com.mx.jefeapp.utils.desing.CustomTypefaceSpan;
 
@@ -90,6 +91,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         numNotificaciones = (TextView) findViewById(R.id.numNotificacion);
 
         SharedPreferences preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+        //startService(new Intent(getApplicationContext(), ServicioRutas.class));
 
         notificacion.setVisibility(View.VISIBLE);
         getNotificaciones(numNotificaciones);

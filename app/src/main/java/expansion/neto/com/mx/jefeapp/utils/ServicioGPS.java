@@ -127,13 +127,6 @@ public class ServicioGPS extends Service {
     };
 
 
-
-     /**
-     * Function to show settings alert dialog.
-     * On pressing the Settings button it will launch Settings Options.
-     * */
-
-
     /**
      * Function obtiene latitud
      * */
@@ -155,10 +148,7 @@ public class ServicioGPS extends Service {
         return longitude;
     }
 
-    /**
-     * Funcion para detectar si esta encendido el gps/wifi
-     * @return boolean
-     * */
+
     public double getLastLatitude(){
         if(location != null){
             lastLatitude = location.getLatitude();

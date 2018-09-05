@@ -16,6 +16,13 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import com.eralp.circleprogressview.ProgressAnimationListener;
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,7 +32,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import expansion.neto.com.mx.jefeapp.R;
+import expansion.neto.com.mx.jefeapp.cron.Cron;
+import expansion.neto.com.mx.jefeapp.cron.CronJob;
 import expansion.neto.com.mx.jefeapp.cron.ReminderUtilities;
+import expansion.neto.com.mx.jefeapp.cron.ReminderUtilitiesJob;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDashboardBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentAgenda.FragmentInicioAgenda;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentInicioAutoriza;
@@ -38,6 +48,7 @@ import expansion.neto.com.mx.jefeapp.modelView.loginModel.UsuarioLogin;
 import expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard;
 import expansion.neto.com.mx.jefeapp.ui.autoriza.ActivityAutorizar;
 import expansion.neto.com.mx.jefeapp.ui.autorizadas.ActivityAutorizadas;
+import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivitySplashScreen;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 
 public class FragmentDashboard extends Fragment {
@@ -139,8 +150,11 @@ public class FragmentDashboard extends Fragment {
         binding.izqSemana.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 binding.derSemana.setEnabled(true);
+
                 binding.derSemana.setAlpha(1.0f);
+
                 if(semanaRestaInt!=0){
                     binding.izqSemana.setEnabled(true);
                     if(bandera==0){
@@ -168,6 +182,7 @@ public class FragmentDashboard extends Fragment {
             @Override
             public void onClick(View view) {
                 binding.izqSemana.setEnabled(true);
+
                 semanaRestaInt = (semanaRestaInt)+1;
                 int semanaActual = Integer.parseInt(getMesSemana());
                 if(semanaRestaInt==semanaActual){
@@ -230,6 +245,7 @@ public class FragmentDashboard extends Fragment {
             @Override
             public void onClick(View view) {
                 binding.izqMes.setEnabled(true);
+
                 mesRestaInt = (mesRestaInt)+1;
 
                 Calendar fecha = Calendar.getInstance();
@@ -261,9 +277,12 @@ public class FragmentDashboard extends Fragment {
         });
 
         ReminderUtilities.scheduleCronReminder(getContext());
+        ReminderUtilitiesJob.scheduleCronReminder(getContext());
 
         return v;
     }
+
+
 
     int bandera = 0;
     int semanaRestaInt = 1;
@@ -357,7 +376,7 @@ public class FragmentDashboard extends Fragment {
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         String usuarioId = preferences.getString("usuario","");
         String area = preferences.getString("areaxpuesto","");
-        blockUI();
+        //blockUI();
 
         Gson gson = new Gson();
         String json = preferences.getString("permisos", null);
@@ -373,6 +392,11 @@ public class FragmentDashboard extends Fragment {
                 if(dashboard!=null){
                     if(dashboard.getCodigo()==200 && dashboard!=null){
                         for(int i=0;i<dashboard.getTotales().size();i++){
+                            binding.izqSemana.setEnabled(true);
+                            binding.derMes.setEnabled(true);
+                            binding.derSemana.setEnabled(true);
+                            binding.izqMes.setEnabled(true);
+
 
                             if(dashboard.getTotales().get(i).getEstatusid()==2){
                                 binding.totalProceso.setText(dashboard.getTotales().get(i).getTotal()+"");
@@ -459,7 +483,7 @@ public class FragmentDashboard extends Fragment {
                         binding.setPerfil(perfil);
                         binding.nombreJefe.setVisibility(View.VISIBLE);
                     }
-                    unblockUI();
+                 //   unblockUI();
                 }else{
                     Toast.makeText(getContext(), "Error al cargar los datos", Toast.LENGTH_SHORT).show();
                 }

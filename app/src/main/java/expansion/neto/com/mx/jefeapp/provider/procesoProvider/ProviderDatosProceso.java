@@ -16,6 +16,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard.TIPO_APP;
+
 public class ProviderDatosProceso {
 
     private static ProviderDatosProceso instance;
@@ -54,6 +56,7 @@ public class ProviderDatosProceso {
                             .add("semana", SEMANA_0)
                             .add("anio", String.valueOf(anio))
                             .add("tipoconsulta", TIPO_CONSULTA_MD_POR_AUTORIZAR)
+                            .add("tipoapp", TIPO_APP)
                             .add("usuarioId", Usuario.sharedGet(context).getUsuario());
 
                     RequestBody formBody = formBuilder.build();

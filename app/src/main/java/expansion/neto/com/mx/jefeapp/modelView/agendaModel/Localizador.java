@@ -25,4 +25,5 @@ public class Localizador {
     public void setFcLongitud(double fcLongitud) {
         this.fcLongitud = fcLongitud;
     }
+
 }

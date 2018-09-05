@@ -16,8 +16,19 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import com.crashlytics.android.Crashlytics;
 
+import expansion.neto.com.mx.jefeapp.cron.Cron;
+import expansion.neto.com.mx.jefeapp.cron.CronJob;
+import expansion.neto.com.mx.jefeapp.cron.ReminderUtilitiesJob;
 import expansion.neto.com.mx.jefeapp.utils.ServicioRutas;
 import io.fabric.sdk.android.Fabric;
+
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -57,7 +68,6 @@ public class ActivitySplashScreen extends AppCompatActivity {
 		Fabric.with(this, new Crashlytics());
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		binding  = DataBindingUtil.setContentView(this, R.layout.activity_splash_screen);
-		ReminderUtilities.scheduleCronReminder(this);
 
 		View decoracion = getWindow().getDecorView();
 		int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -66,8 +76,10 @@ public class ActivitySplashScreen extends AppCompatActivity {
 
 		setAnimation();
 
-		Intent serviceIntent = new Intent(getApplicationContext(), ServicioRutas.class);
-		startService(serviceIntent);
+//        mDispatcherNoti = new FirebaseJobDispatcher(new GooglePlayDriver(ActivitySplashScreen.this));
+//        mDispatcherGps = new FirebaseJobDispatcher(new GooglePlayDriver(ActivitySplashScreen.this));
+//        scheduleJob();
+//        scheduleJob2();
 
 		preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
 		usuario = preferences.getString("usuario","");
@@ -192,6 +204,39 @@ public class ActivitySplashScreen extends AppCompatActivity {
 			}, TIME_TO_SHOW);
 		}
 	}
+
+//    private static final String JOB_NOTI = "Cron";
+//    private FirebaseJobDispatcher mDispatcherNoti;
+//
+//    private static final String JOB_GPS = "CronJob";
+//    private FirebaseJobDispatcher mDispatcherGps;
+
+//    private void scheduleJob() {
+//        Job myJob = mDispatcherNoti.newJobBuilder()
+//                .setService(Cron.class)
+//                .setTag(JOB_NOTI)
+//                .setRecurring(false)
+//                .setTrigger(Trigger.executionWindow(3, 6))
+//                .setLifetime(Lifetime.FOREVER)
+//                .setReplaceCurrent(false)
+//                .setConstraints(Constraint.ON_ANY_NETWORK)
+//                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+//                .build();
+//        mDispatcherNoti.mustSchedule(myJob);
+//    }
+//
+//    private void scheduleJob2() {
+//        Job myJobService = mDispatcherGps.newJobBuilder()
+//                .setService(CronJob.class)
+//                .setTag(JOB_GPS)
+//                .setTrigger(Trigger.executionWindow(1700, 1800))
+//                .setLifetime(Lifetime.FOREVER)
+//                .setReplaceCurrent(false)
+//                .setConstraints(Constraint.ON_ANY_NETWORK)
+//                .build();
+//        mDispatcherGps.mustSchedule(myJobService);
+//    }
+
 
 	/**
 	 * método que inicia los métodos para la animación del splash screen

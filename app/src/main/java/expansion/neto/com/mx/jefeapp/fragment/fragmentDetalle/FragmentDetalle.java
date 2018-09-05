@@ -1610,6 +1610,30 @@ public class FragmentDetalle extends Fragment implements
                                                 case 12:
                                                     binding.periodogracia.setSelection(12);
                                                     break;
+                                                case 18:
+                                                    binding.periodogracia.setSelection(13);
+                                                    break;
+                                                case 24:
+                                                    binding.periodogracia.setSelection(14);
+                                                    break;
+                                                case 30:
+                                                    binding.periodogracia.setSelection(15);
+                                                    break;
+                                                case 36:
+                                                    binding.periodogracia.setSelection(16);
+                                                    break;
+                                                case 42:
+                                                    binding.periodogracia.setSelection(17);
+                                                    break;
+                                                case 48:
+                                                    binding.periodogracia.setSelection(18);
+                                                    break;
+                                                case 54:
+                                                    binding.periodogracia.setSelection(19);
+                                                    break;
+                                                case 60:
+                                                    binding.periodogracia.setSelection(20);
+                                                    break;
                                             }
 
                                         }

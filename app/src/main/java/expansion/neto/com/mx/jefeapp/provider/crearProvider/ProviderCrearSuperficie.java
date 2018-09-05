@@ -45,6 +45,14 @@ public class ProviderCrearSuperficie {
                 //TODO CONNECT AND GET DATA
                 try {
 
+//                    if(datosSuperficie.getFechaPredial()==null){
+//                        datosSuperficie.setFechaPredial(" ");
+//                    }
+//
+//                    if(datosSuperficie.getImgPredial().equals("")){
+//                        datosSuperficie.setImgPredial(" ");
+//                    }
+
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("usuarioId", datosSuperficie.getUsuarioid())
                             .add("mdId", datosSuperficie.getMdId())

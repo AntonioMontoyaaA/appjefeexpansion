@@ -538,24 +538,29 @@ public class FragmentAutoriza extends Fragment implements
                         String latitudGenerador;
                         String latitudGeneradorMarcador;
 
-                        if(zonificacion!=null && !zonificacion.getCompetencia().isEmpty()) {
-                            for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
-                                latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
-                                latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
-                                if (latitudCompetencia.equals(latitudCompetenciaMarcador)) {
-                                    zonificacion.getCompetencia().get(0).getDetalles().remove(i);
-                                    m.remove();
+                        if(zonificacion!=null) {
+                            if(!zonificacion.getCompetencia().isEmpty()){
+                                for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
+                                    latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
+                                    latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
+                                    if (latitudCompetencia.equals(latitudCompetenciaMarcador)) {
+                                        zonificacion.getCompetencia().get(0).getDetalles().remove(i);
+                                        m.remove();
+                                    }
                                 }
                             }
+
                         }
 
-                        if(zonificacion!=null && !zonificacion.getGeneradores().isEmpty()){
-                            for(int i = 0;i<zonificacion.getGeneradores().get(0).getDetalles().size();i++){
-                                latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
-                                latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
-                                if(latitudGenerador.equals(latitudGeneradorMarcador)){
-                                    zonificacion.getGeneradores().get(0).getDetalles().remove(i);
-                                    m.remove();
+                        if(zonificacion!=null){
+                            if(!zonificacion.getGeneradores().isEmpty()){
+                                for(int i = 0;i<zonificacion.getGeneradores().get(0).getDetalles().size();i++){
+                                    latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
+                                    latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
+                                    if(latitudGenerador.equals(latitudGeneradorMarcador)){
+                                        zonificacion.getGeneradores().get(0).getDetalles().remove(i);
+                                        m.remove();
+                                    }
                                 }
                             }
                         }
@@ -995,7 +1000,7 @@ public class FragmentAutoriza extends Fragment implements
             final String usuario = preferencesExpansion.getString("usuario", "");
             bindingSuperficie.frente.setText("");
             bindingSuperficie.profundidad.setText("");
-
+            bindingSuperficie.toolbar.guardar.setEnabled(true);
             bindingSuperficie.frente.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
             bindingSuperficie.profundidad.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
            // bindingSuperficie.areaterreno.setFilters(new InputFilter[] {new CustomTextWatcher(5,1)});
@@ -1044,7 +1049,7 @@ public class FragmentAutoriza extends Fragment implements
                 @Override
                 public void run () {
 
-                    if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                    if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
                         getContext().getSharedPreferences("datosSuperficieCrear", 0).edit().clear().apply();
                     }else{
                         String frente = bindingSuperficie.frente.getText().toString();
@@ -1102,12 +1107,9 @@ public class FragmentAutoriza extends Fragment implements
             final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
             final Boolean distancia = distanciaSuperficie(mds, gps);
 
-
-
             bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     if(distancia){
                         bindingSuperficie.frontal.setAlpha(0.35f);
                         bindingSuperficie.lateral1.setAlpha(0.35f);
@@ -1138,8 +1140,6 @@ public class FragmentAutoriza extends Fragment implements
                                             CAMERA_PREDIAL);
                                 }
                             }
-
-
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1231,7 +1231,6 @@ public class FragmentAutoriza extends Fragment implements
                 }
             });
 
-
             bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1265,7 +1264,6 @@ public class FragmentAutoriza extends Fragment implements
                                             CAMERA_PREDIAL);
                                 }
                             }
-
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1297,7 +1295,6 @@ public class FragmentAutoriza extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     bindingSuperficie.toolbar.guardar.setEnabled(false);
-
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     Long md = preferences.getLong("mdId", 0);
                     String mdId = String.valueOf(md);
@@ -1314,7 +1311,7 @@ public class FragmentAutoriza extends Fragment implements
                         long mdid = preferences.getLong("mdId", 0);
                         String convertido = String.valueOf(mdid);
 
-                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
                             Toast.makeText(getContext(), R.string.mandar,
                                     Toast.LENGTH_SHORT).show();
                             bindingSuperficie.toolbar.guardar.setEnabled(true);
@@ -1330,7 +1327,7 @@ public class FragmentAutoriza extends Fragment implements
                                     frente, profundidad, urlLateral2, urlLateral1, urlFrente,
                                     String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
                                     urlPredial,fechaPredial);
-
+                            bindingSuperficie.toolbar.guardar.setEnabled(true);
                             ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                 @Override
                                 public void resolve(Codigos codigo) {
@@ -2821,7 +2818,8 @@ public class FragmentAutoriza extends Fragment implements
                 fechaPredial = getFechaHora();
                 Bitmap bitfromPath = getBitmap(imageFilePath);
                 base64Predial = getStringImage(compressImage(bitfromPath, 650));
-                obtenerUrl(random()+"_predial", base64Predial, String.valueOf(mdid));
+                obtenerUrl("6",random()+"_predial", base64Predial, String.valueOf(mdid));
+
 
             }
         }else if(requestCode == CAMERA_LATERAL_2 && resultCode==-1){
@@ -2847,6 +2845,60 @@ public class FragmentAutoriza extends Fragment implements
     public void obtenerUrl(String foto, String b64, String mdId){
         loadingProgress(progressDialog, 0);
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
+            @Override
+            public void resolve(Codigos codigo) {
+                if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
+                    if(codigo.getResultado().getSecureUrl().contains("frente")){
+                        bindingSuperficie.frontal.setEnabled(false);
+                        urlFrente = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                        bindingSuperficie.frontal.setEnabled(true);
+                        hourlyTaskSuperficie.run();
+                        hourlyTaskSuperficie.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
+                        bindingSuperficie.lateral1.setEnabled(false);
+                        urlLateral1 = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                        bindingSuperficie.lateral1.setEnabled(true);
+                        hourlyTaskSuperficie.run();
+                        hourlyTaskSuperficie.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+                        bindingSuperficie.predial.setEnabled(false);
+                        urlPredial = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                        bindingSuperficie.predial.setEnabled(true);
+                        hourlyTaskSuperficie.run();
+                        hourlyTaskSuperficie.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    } else{
+                        bindingSuperficie.lateral2.setEnabled(false);
+                        urlLateral2 = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                        bindingSuperficie.lateral2.setEnabled(true);
+                        hourlyTaskSuperficie.run();
+                        hourlyTaskSuperficie.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    }
+                }
+            }
+
+            @Override
+            public void reject(Exception e) {
+
+            }
+        });
+    }
+
+
+    public void obtenerUrl(String tipoPredial, String foto, String b64, String mdId){
+        loadingProgress(progressDialog, 0);
+        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(tipoPredial, mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
                 if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
@@ -3338,7 +3390,7 @@ public class FragmentAutoriza extends Fragment implements
         if(distanciaMetros <= 500){
                 return true;
         }
-        return true;
+        return false;
     }
 
     String zonificacionJson = "";
@@ -3449,7 +3501,7 @@ public class FragmentAutoriza extends Fragment implements
         Calendar cal1 = Calendar.getInstance();
         cal1.setTimeInMillis(timeInMillis);
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd hh:mm:ss");
+                "yyyy-MM-dd kk:mm:ss");
         String dateforrow = dateFormat.format(cal1.getTime());
         return dateforrow;
     }

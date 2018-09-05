@@ -18,6 +18,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard.ANIO_ACTUAL;
+import static expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard.TIPO_APP;
 
 /**
  * Created by marcosmarroquin on 21/03/18.
@@ -63,6 +64,7 @@ public class ProviderDatosPorTerminar {
                             .add("mes", mes)
                             .add("semana", TIPO_CONSULTA_SEMANA)
                             .add("anio", ANIO_ACTUAL)
+                            .add("tipoapp", TIPO_APP)
                             .add("tipoconsulta", TIPO_CONSULTA_TIPO)
                             .add("usuarioId", usuarioId);
 

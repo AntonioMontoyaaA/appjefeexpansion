@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -32,16 +33,16 @@ public class ServicioRutas extends Service implements LocationListener {
         try {
 
             LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1800000, 10000.0f, this);
-            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1800000,10000.0f, this);
-            //Log.e("Service ejecutado!","Service ejecutado");
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 10000.0f, this);
+            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1,10000.0f, this);
+            Log.e("Service ejecutado!","Service ejecutado");
 
         } catch(SecurityException e) {
             e.printStackTrace();
         } catch(Exception e) {
             e.printStackTrace();
         }
-        return START_STICKY;
+        return super.onStartCommand(intent, flags, idArranque);
     }
 
     Localizador gpsUbica;
@@ -53,13 +54,15 @@ public class ServicioRutas extends Service implements LocationListener {
         if(gpsUbica.fcLatitud!=0 && gpsUbica.fcLongitud!=0){
             String json = getJsonString(gpsUbica);
             json = "["+json+"]";
-            Log.e("localizador", "______"+json);
+           // Log.e("localizador", "______"+json);
             ProviderLocalizador.getInstance(this).guardaLocalizacion(usuarioId, json, new ProviderLocalizador.InterfaceLocalizador() {
                 @Override
                 public void resolve(Codigos codigo) {
                     if(codigo!=null){
                         if(codigo.getCodigo()==200){
                             Log.e("Service ejecutado!","Service enviado");
+                //            Toast.makeText(getApplicationContext(), "se ejecuto los datos"+" "+codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+
                         }
                     }
                 }
@@ -109,10 +112,10 @@ public class ServicioRutas extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        Boolean horario = Util.getEntreFechas();
-        if(horario){
+       // Boolean horario = Util.getEntreFechas();
+        //if(horario){
             sendLocalizador();
-        }
+       // }
     }
 
     @Override

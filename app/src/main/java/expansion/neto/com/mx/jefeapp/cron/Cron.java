@@ -11,40 +11,25 @@ import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
-import com.google.gson.Gson;
-
 import expansion.neto.com.mx.jefeapp.R;
-import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Localizador;
 import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Notificaciones;
-import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
-import expansion.neto.com.mx.jefeapp.provider.agendaProvider.ProviderLocalizador;
 import expansion.neto.com.mx.jefeapp.provider.agendaProvider.ProviderObtieneNotificaciones;
 import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityNotificaciones;
-import expansion.neto.com.mx.jefeapp.utils.ServicioGPS;
-import expansion.neto.com.mx.jefeapp.utils.Util;
+
 
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_NOTIFICACION;
 
 public class Cron extends JobService {
 
     @Override
-    public boolean onStartJob(final JobParameters jobParameters) {
-        call(this);
-        jobFinished(jobParameters, false);
-        return true;
-    }
-
-
-    public void call(Context context) {
+    public boolean onStartJob(JobParameters job) {
         getNotificaciones();
-        Log.e("cron ejecutado!","Cron ejecutado");
-
+        Log.e("Service ejecutado!","Cron NOTIFICACIONS");
+        return false;
     }
-
-
-
 
     public void getNotificaciones(){
         final SharedPreferences preferences = this.getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -55,14 +40,18 @@ public class Cron extends JobService {
                 ProviderObtieneNotificaciones.InterfaceObtieneNotificaciones() {
             @Override
             public void resolve(Notificaciones eventos) {
+
                 if(eventos!=null ){
-                        if (eventos.getCodigo()==200 && eventos.getTotalNotificaciones()>0){
+
+                    if (eventos.getCodigo()==200 && eventos.getTotalNotificaciones()>0){
                             int noti = preferences.getInt("notificaciones", 0);
-                        if(noti == eventos.getTotalNotificaciones()){ }else{
-                            createNotification("Notificación", eventos.getNotificaciones().get(0).getMensaje());
-                            editor.putInt("notificaciones", eventos.getTotalNotificaciones());
-                            editor.apply();
-                        }
+                            if(noti == eventos.getTotalNotificaciones()){
+
+                            }else{
+                                createNotification("Notificación", eventos.getNotificaciones().get(0).getMensaje());
+                                editor.putInt("notificaciones", eventos.getTotalNotificaciones());
+                                editor.apply();
+                            }
                     }
                 }
             }
@@ -115,8 +104,8 @@ public class Cron extends JobService {
     }
 
     @Override
-    public boolean onStopJob(JobParameters jobParameters) {
-        return true;
+    public boolean onStopJob(JobParameters job) {
+        return false;
     }
 
 }

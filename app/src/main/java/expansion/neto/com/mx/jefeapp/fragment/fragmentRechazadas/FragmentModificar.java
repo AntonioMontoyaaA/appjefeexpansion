@@ -1,6 +1,7 @@
 package expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -177,6 +178,7 @@ import expansion.neto.com.mx.jefeapp.utils.Util;
 import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.distanciaSuperficie;
+import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosConstruccion.salvarDatosConstruccion;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosPropietario.salvarDatosPropietario;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSitio.salvarDatosSitio;
@@ -575,27 +577,34 @@ public class FragmentModificar extends Fragment implements
                         String latitudGenerador;
                         String latitudGeneradorMarcador;
 
-                        if(zonificacion!=null && !zonificacion.getCompetencia().isEmpty()) {
-                            for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
-                                latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
-                                latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
-                                if (latitudCompetencia.equals(latitudCompetenciaMarcador)) {
-                                    zonificacion.getCompetencia().get(0).getDetalles().remove(i);
-                                    m.remove();
+                        if(zonificacion!=null && zonificacion.getCompetencia()!=null) {
+                            if(!zonificacion.getCompetencia().isEmpty()){
+                                for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
+                                    latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
+                                    latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
+                                    if (latitudCompetencia.equals(latitudCompetenciaMarcador)) {
+                                        zonificacion.getCompetencia().get(0).getDetalles().remove(i);
+                                        m.remove();
+                                    }
+                                }
+                            }
+
+                        }
+
+
+                        if(zonificacion!=null && zonificacion.getGeneradores()!=null){
+                            if(!zonificacion.getGeneradores().isEmpty()){
+                                for(int i = 0;i<zonificacion.getGeneradores().get(0).getDetalles().size();i++){
+                                    latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
+                                    latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
+                                    if(latitudGenerador.equals(latitudGeneradorMarcador)){
+                                        zonificacion.getGeneradores().get(0).getDetalles().remove(i);
+                                        m.remove();
+                                    }
                                 }
                             }
                         }
 
-                        if(zonificacion!=null && !zonificacion.getGeneradores().isEmpty()){
-                            for(int i = 0;i<zonificacion.getGeneradores().get(0).getDetalles().size();i++){
-                                latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
-                                latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
-                                if(latitudGenerador.equals(latitudGeneradorMarcador)){
-                                    zonificacion.getGeneradores().get(0).getDetalles().remove(i);
-                                    m.remove();
-                                }
-                            }
-                        }
                         zonificacionJson = getJsonString(zonificacion);
                         return false;
 
@@ -639,6 +648,7 @@ public class FragmentModificar extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        progressDialog = new ProgressDialog(getContext());
 
 
         if (position == 0) {
@@ -1119,16 +1129,7 @@ public class FragmentModificar extends Fragment implements
                 }
             });
 
-
-//            fechaFrente = getFechaHora();
-//            fechaEntorno1  = getFechaHora();
-//            fechaEntorno2  = getFechaHora();
-//            fechaPredial = getFechaHora();
-
-
             final int[] banderaCamara = {0};
-
-
             final String[] tipoEsquina = {"0"};
 
             bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1164,7 +1165,12 @@ public class FragmentModificar extends Fragment implements
                                         fechaFrente = superficie.getNiveles().get(i).getFecha_fente();
                                         fechaEntorno1  = superficie.getNiveles().get(i).getFecha_lat1();
                                         fechaEntorno2  = superficie.getNiveles().get(i).getFecha_lat2();
-                                        fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
+                                        if(!superficie.getNiveles().get(i).getFecha_pred().equals("")){
+                                            fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
+                                        }else{
+                                            fechaPredial = " ";
+                                            urlPredial = " ";
+                                        }
                                     }
 
                                     if(superficie.getNiveles().get(i).getNivel()==6 ||
@@ -1285,7 +1291,7 @@ public class FragmentModificar extends Fragment implements
                                         }else{
                                             bindingSuperficie.volver.setVisibility(View.GONE);
                                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA);
+                                            startActivityForResult(intent, CAMERA_FRONTAL);
                                         }
                                     }
                                 });
@@ -1311,7 +1317,7 @@ public class FragmentModificar extends Fragment implements
                                         }else{
                                             bindingSuperficie.volver.setVisibility(View.GONE);
                                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA);
+                                            startActivityForResult(intent, CAMERA_LATERAL_1);
                                         }
                                     }
                                 });
@@ -1320,7 +1326,12 @@ public class FragmentModificar extends Fragment implements
                                 urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
                                 urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
                                 urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
-                                urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
+                                if(!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("") ||
+                                        !superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ") ){
+                                    urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
+                                }else{
+                                    urlPredial = " ";
+                                }
 
 
 
@@ -1344,7 +1355,7 @@ public class FragmentModificar extends Fragment implements
                                         }else{
                                             bindingSuperficie.volver.setVisibility(View.GONE);
                                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA);
+                                            startActivityForResult(intent, CAMERA_LATERAL_2);
                                         }
                                     }
                                 });
@@ -1363,7 +1374,7 @@ public class FragmentModificar extends Fragment implements
                                             if(distancia){
                                                 if(banderaCamara[0] ==1){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    startActivityForResult(intent, CAMERA);
+                                                    startActivityForResult(intent, CAMERA_FRONTAL);
                                                 } else if(banderaCamara[0] == 2){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA_LATERAL_1);
@@ -1420,7 +1431,7 @@ public class FragmentModificar extends Fragment implements
                                         final String frentes = bindingSuperficie.frente.getText().toString();
                                         final String profundidads = bindingSuperficie.profundidad.getText().toString();
 
-                                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
                                             getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
                                         }else{
 
@@ -1498,7 +1509,7 @@ public class FragmentModificar extends Fragment implements
                                             mdLat = preferences.getFloat("latMd", 0);
                                             mdLot = preferences.getFloat("lotMd", 0);
 
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
 
                                                 Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
                                                         Toast.LENGTH_SHORT).show();
@@ -1702,7 +1713,7 @@ public class FragmentModificar extends Fragment implements
                                             }else{
                                                 bindingSuperficie.volver.setVisibility(View.GONE);
                                                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA);
+                                                startActivityForResult(intent, CAMERA_FRONTAL);
                                             }
                                         }else{
                                             Toast.makeText(getContext(), R.string.no_estas,
@@ -1843,7 +1854,7 @@ public class FragmentModificar extends Fragment implements
                                             mdLat = preferences.getFloat("latMd", 0);
                                             mdLot = preferences.getFloat("lotMd", 0);
 
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
                                                 Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
                                                         Toast.LENGTH_SHORT).show();
                                             }else{
@@ -2874,11 +2885,243 @@ public class FragmentModificar extends Fragment implements
                                                 case 12:
                                                     binding.periodogracia.setSelection(12);
                                                     break;
+                                                case 18:
+                                                    binding.periodogracia.setSelection(13);
+                                                    break;
+                                                case 24:
+                                                    binding.periodogracia.setSelection(14);
+                                                    break;
+                                                case 30:
+                                                    binding.periodogracia.setSelection(15);
+                                                    break;
+                                                case 36:
+                                                    binding.periodogracia.setSelection(16);
+                                                    break;
+                                                case 42:
+                                                    binding.periodogracia.setSelection(17);
+                                                    break;
+                                                case 48:
+                                                    binding.periodogracia.setSelection(18);
+                                                    break;
+                                                case 54:
+                                                    binding.periodogracia.setSelection(19);
+                                                    break;
+                                                case 60:
+                                                    binding.periodogracia.setSelection(20);
+                                                    break;
                                             }
                                         }
                                     }
                                 }
 
+
+                                final CrearGeneralidades[] crearGeneralidades = {null};
+
+                                Timer timer = new Timer ();
+                                hourlyTask = new TimerTask () {
+                                    @Override
+                                    public void run () {
+                                        getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
+                                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                        int day = binding.datepicker.getDayOfMonth();
+                                        int month = binding.datepicker.getMonth();
+                                        int year =  binding.datepicker.getYear();
+
+                                        Calendar calendar = Calendar.getInstance();
+                                        calendar.set(year, month, day);
+
+                                        String usuarioId = preferences.getString("usuario", "");
+                                        String renta = binding.renta.getText().toString()+"";
+                                        String fechadisponible = dateFormat.format(calendar.getTime());
+                                        String porcentajeamortiza = binding.amortizaciontotal.getText().toString()+"";
+
+                                        String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString()+"";
+                                        String periodogracia = binding.periodogracia.getSelectedItem().toString()+"";
+                                        String numtelefono = "5540555599";
+                                        String versionapp = VERSION_APP;
+
+                                        String arr[] = periodoamortizacion.split(" ", 2);
+                                        periodoamortizacion = arr[0];
+
+                                        String arra[] = periodogracia.split(" ", 2);
+                                        periodogracia = arra[0];
+
+                                        if(!renta.equals("") || !porcentajeamortiza.equals("")){
+                                            if(disponibilidad[0]!=null){
+
+                                                if(disponibilidad[0].equals("1")
+                                                        || disponibilidad[0].equals("2")){
+
+                                                    crearGeneralidades[0] = new CrearGeneralidades(
+                                                            mdIdterminar,
+                                                            usuarioId,
+                                                            renta,
+                                                            disponibilidad[0],
+                                                            getFecha(),
+                                                            porcentajeamortiza,
+                                                            periodoamortizacion,
+                                                            periodogracia,
+                                                            numtelefono,
+                                                            versionapp
+                                                    );
+                                                }else{
+                                                    crearGeneralidades[0] = new CrearGeneralidades(
+                                                            mdIdterminar,
+                                                            usuarioId,
+                                                            renta,
+                                                            disponibilidad[0],
+                                                            fechadisponible,
+                                                            porcentajeamortiza,
+                                                            periodoamortizacion,
+                                                            periodogracia,
+                                                            numtelefono,
+                                                            versionapp
+                                                    );
+                                                }
+
+                                                if(!crearGeneralidades[0].getRenta().equals("") &&
+                                                        !crearGeneralidades[0].getPorcentajeamortiza().equals("")){
+                                                    GuardarDatosGeneralidades.salvarDatosGeneralidades(getContext(),
+                                                            crearGeneralidades[0], editor, preferencesGeneralidades);
+                                                    crearGeneralidades[0] = null;
+                                                }
+                                            }
+                                        }
+
+
+                                    }
+                                };
+
+                                timer.schedule (hourlyTask, 100, 700);
+
+
+                                binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        binding.toolbar.guardar.setEnabled(false);
+
+                                        final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+
+                                        if(!mdIdterminar.equals("") || !mdIdterminar.equals("0")){
+                                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                            int day = binding.datepicker.getDayOfMonth();
+                                            int month = binding.datepicker.getMonth();
+                                            int year =  binding.datepicker.getYear();
+
+                                            Calendar calendar = Calendar.getInstance();
+                                            calendar.set(year, month, day);
+
+                                            String usuarioId = preferences.getString("usuario", "");
+                                            String renta = binding.renta.getText().toString();
+                                            String fechadisponible = dateFormat.format(calendar.getTime());;
+                                            String porcentajeamortiza = binding.amortizaciontotal.getText().toString();;
+
+                                            String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString();
+                                            String periodogracia = binding.periodogracia.getSelectedItem().toString();;
+                                            String numtelefono = "5540555599";
+                                            String versionapp = VERSION_APP;
+
+                                            String arr[] = periodoamortizacion.split(" ", 2);
+                                            periodoamortizacion = arr[0];
+
+                                            String arra[] = periodogracia.split(" ", 2);
+                                            periodogracia = arra[0];
+
+                                            if(disponibilidad[0]!=null && !porcentajeamortiza.equals("")){
+                                                if(disponibilidad[0].equals("1")
+                                                        || disponibilidad[0].equals("2")){
+
+                                                    crearGeneralidades[0] = new CrearGeneralidades(
+                                                            mdIdterminar,
+                                                            usuarioId,
+                                                            renta,
+                                                            disponibilidad[0],
+                                                            getFecha(),
+                                                            porcentajeamortiza,
+                                                            periodoamortizacion,
+                                                            periodogracia,
+                                                            numtelefono,
+                                                            versionapp
+                                                    );
+                                                }else{
+                                                    crearGeneralidades[0] = new CrearGeneralidades(
+                                                            mdIdterminar,
+                                                            usuarioId,
+                                                            renta,
+                                                            disponibilidad[0],
+                                                            fechadisponible,
+                                                            porcentajeamortiza,
+                                                            periodoamortizacion,
+                                                            periodogracia,
+                                                            numtelefono,
+                                                            versionapp
+                                                    );
+                                                }
+
+                                                ProviderCrearGeneralidades.getInstance(getContext()).guardarGeneralidades(
+                                                        crearGeneralidades[0], new ProviderCrearGeneralidades.InterfaceCrearDatosGeneralidades() {
+                                                            @Override
+                                                            public void resolve(Codigos codigo) {
+                                                                if(codigo.getCodigo()==200){
+
+                                                                    FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                                                    a.show(getChildFragmentManager(),"child");
+                                                                    binding.toolbar.guardar.setEnabled(true);
+
+                                                                }else{
+                                                                    Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                                                    binding.toolbar.guardar.setEnabled(true);
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void reject(Exception e) {
+
+                                                            }
+                                                        });
+
+
+                                            }else{
+                                                Toast.makeText(getContext(), R.string.datos_faltantes, Toast.LENGTH_SHORT).show();
+                                                binding.toolbar.guardar.setEnabled(true);
+                                            }
+                                        }
+                                    }
+                                });
+
+
+                                binding.rdgGrupo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                                    @Override
+                                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                                        switch (checkedId) {
+                                            case R.id.rinmediato:
+                                                disponibilidad[0] = "1";
+                                                //   Log.e("*****", "presione"+ disponibilidad[0]);
+                                                binding.datepicker.setVisibility(View.GONE);
+                                                break;
+                                            case R.id.rocupado:
+                                                disponibilidad[0] = "2";
+                                                binding.datepicker.setVisibility(View.GONE);
+                                                //    Log.e("*****", "presione"+ disponibilidad[0]);
+                                                break;
+                                            case R.id.rapartirde:
+                                                disponibilidad[0] = "3";
+                                                binding.datepicker.setVisibility(View.VISIBLE);
+                                                break;
+                                        }
+                                    }
+                                });
+
+
+                                binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
+                                        a.show(getChildFragmentManager(),"child");
+                                    }
+                                });
 
                             }
                         }
@@ -2888,214 +3131,6 @@ public class FragmentModificar extends Fragment implements
                         }
                     });
 
-
-            final CrearGeneralidades[] crearGeneralidades = {null};
-
-            Timer timer = new Timer ();
-            hourlyTask = new TimerTask () {
-                @Override
-                public void run () {
-                    getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-                    int day = binding.datepicker.getDayOfMonth();
-                    int month = binding.datepicker.getMonth();
-                    int year =  binding.datepicker.getYear();
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(year, month, day);
-
-                    String usuarioId = preferences.getString("usuario", "");
-                    String renta = binding.renta.getText().toString()+"";
-                    String fechadisponible = dateFormat.format(calendar.getTime());
-                    String porcentajeamortiza = binding.amortizaciontotal.getText().toString()+"";
-
-                    String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString()+"";
-                    String periodogracia = binding.periodogracia.getSelectedItem().toString()+"";
-                    String numtelefono = "5540555599";
-                    String versionapp = VERSION_APP;
-
-                    String arr[] = periodoamortizacion.split(" ", 2);
-                    periodoamortizacion = arr[0];
-
-                    String arra[] = periodogracia.split(" ", 2);
-                    periodogracia = arra[0];
-
-                    if(!renta.equals("") || !porcentajeamortiza.equals("")){
-                        if(disponibilidad[0]!=null){
-
-                            if(disponibilidad[0].equals("1")
-                                    || disponibilidad[0].equals("2")){
-
-                                crearGeneralidades[0] = new CrearGeneralidades(
-                                        mdIdterminar,
-                                        usuarioId,
-                                        renta,
-                                        disponibilidad[0],
-                                        getFecha(),
-                                        porcentajeamortiza,
-                                        periodoamortizacion,
-                                        periodogracia,
-                                        numtelefono,
-                                        versionapp
-                                );
-                            }else{
-                                crearGeneralidades[0] = new CrearGeneralidades(
-                                        mdIdterminar,
-                                        usuarioId,
-                                        renta,
-                                        disponibilidad[0],
-                                        fechadisponible,
-                                        porcentajeamortiza,
-                                        periodoamortizacion,
-                                        periodogracia,
-                                        numtelefono,
-                                        versionapp
-                                );
-                            }
-
-                            if(!crearGeneralidades[0].getRenta().equals("") &&
-                                    !crearGeneralidades[0].getPorcentajeamortiza().equals("")){
-                                GuardarDatosGeneralidades.salvarDatosGeneralidades(getContext(),
-                                        crearGeneralidades[0], editor, preferencesGeneralidades);
-                                crearGeneralidades[0] = null;
-                            }
-                        }
-                    }
-
-
-                }
-            };
-
-            timer.schedule (hourlyTask, 100, 700);
-
-
-            binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    binding.toolbar.guardar.setEnabled(false);
-
-                    final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-
-                    if(!mdIdterminar.equals("") || !mdIdterminar.equals("0")){
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-                        int day = binding.datepicker.getDayOfMonth();
-                        int month = binding.datepicker.getMonth();
-                        int year =  binding.datepicker.getYear();
-
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(year, month, day);
-
-                        String usuarioId = preferences.getString("usuario", "");
-                        String renta = binding.renta.getText().toString();
-                        String fechadisponible = dateFormat.format(calendar.getTime());;
-                        String porcentajeamortiza = binding.amortizaciontotal.getText().toString();;
-
-                        String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString();
-                        String periodogracia = binding.periodogracia.getSelectedItem().toString();;
-                        String numtelefono = "5540555599";
-                        String versionapp = VERSION_APP;
-
-                        String arr[] = periodoamortizacion.split(" ", 2);
-                        periodoamortizacion = arr[0];
-
-                        String arra[] = periodogracia.split(" ", 2);
-                        periodogracia = arra[0];
-
-                        if(disponibilidad[0]!=null && !porcentajeamortiza.equals("")){
-                            if(disponibilidad[0].equals("1")
-                                    || disponibilidad[0].equals("2")){
-
-                                crearGeneralidades[0] = new CrearGeneralidades(
-                                        mdIdterminar,
-                                        usuarioId,
-                                        renta,
-                                        disponibilidad[0],
-                                        getFecha(),
-                                        porcentajeamortiza,
-                                        periodoamortizacion,
-                                        periodogracia,
-                                        numtelefono,
-                                        versionapp
-                                );
-                            }else{
-                                crearGeneralidades[0] = new CrearGeneralidades(
-                                        mdIdterminar,
-                                        usuarioId,
-                                        renta,
-                                        disponibilidad[0],
-                                        fechadisponible,
-                                        porcentajeamortiza,
-                                        periodoamortizacion,
-                                        periodogracia,
-                                        numtelefono,
-                                        versionapp
-                                );
-                            }
-
-                            ProviderCrearGeneralidades.getInstance(getContext()).guardarGeneralidades(
-                                    crearGeneralidades[0], new ProviderCrearGeneralidades.InterfaceCrearDatosGeneralidades() {
-                                        @Override
-                                        public void resolve(Codigos codigo) {
-                                            if(codigo.getCodigo()==200){
-
-                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                a.show(getChildFragmentManager(),"child");
-                                                binding.toolbar.guardar.setEnabled(true);
-
-                                            }else{
-                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                                binding.toolbar.guardar.setEnabled(true);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void reject(Exception e) {
-
-                                        }
-                                    });
-
-
-                        }else{
-                            Toast.makeText(getContext(), R.string.datos_faltantes, Toast.LENGTH_SHORT).show();
-                            binding.toolbar.guardar.setEnabled(true);
-                        }
-                    }
-                }
-            });
-
-
-            binding.rdgGrupo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId) {
-                        case R.id.rinmediato:
-                            disponibilidad[0] = "1";
-                            //   Log.e("*****", "presione"+ disponibilidad[0]);
-                            binding.datepicker.setVisibility(View.GONE);
-                            break;
-                        case R.id.rocupado:
-                            disponibilidad[0] = "2";
-                            binding.datepicker.setVisibility(View.GONE);
-                            //    Log.e("*****", "presione"+ disponibilidad[0]);
-                            break;
-                        case R.id.rapartirde:
-                            disponibilidad[0] = "3";
-                            binding.datepicker.setVisibility(View.VISIBLE);
-                            break;
-                    }
-                }
-            });
-
-
-            binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(),"child");
-                }
-            });
 
 
         }else {
@@ -3663,7 +3698,7 @@ public class FragmentModificar extends Fragment implements
                 fechaPredial = getFechaHora();
                 Bitmap bitfromPath = getBitmap(imageFilePath);
                 base64Predial = getStringImage(compressImage(bitfromPath, 650));
-                obtenerUrl(random()+"_predial", base64Predial, mdIdterminar);
+                obtenerUrl("6"+random()+"_predial", base64Predial, mdIdterminar);
 
             }
         }else if(requestCode == CAMERA_LATERAL_2 && resultCode==-1){
@@ -3687,7 +3722,10 @@ public class FragmentModificar extends Fragment implements
     String urlLateral2 = "";
     String urlPredial = "";
 
+    ProgressDialog progressDialog;
+
     public void obtenerUrl(String foto, String b64, String mdId){
+        loadingProgress(progressDialog, 0);
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
@@ -3699,6 +3737,8 @@ public class FragmentModificar extends Fragment implements
                         bindingSuperficie.frontal.setEnabled(true);
                         hourlyTask.run();
                         hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
                     }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
                         bindingSuperficie.lateral1.setEnabled(false);
                         urlLateral1 = codigo.getResultado().getSecureUrl();
@@ -3706,13 +3746,79 @@ public class FragmentModificar extends Fragment implements
                         bindingSuperficie.lateral1.setEnabled(true);
                         hourlyTask.run();
                         hourlyTask.scheduledExecutionTime();
-                    }else{
+                        loadingProgress(progressDialog, 1);
+
+                    }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+                        bindingSuperficie.predial.setEnabled(false);
+                        urlPredial = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                        bindingSuperficie.predial.setEnabled(true);
+                        hourlyTask.run();
+                        hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    } else{
                         bindingSuperficie.lateral2.setEnabled(false);
                         urlLateral2 = codigo.getResultado().getSecureUrl();
                         Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
                         bindingSuperficie.lateral2.setEnabled(true);
                         hourlyTask.run();
                         hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    }
+                }
+            }
+
+            @Override
+            public void reject(Exception e) {
+
+            }
+        });
+    }
+
+    public void obtenerUrl(String tipoPredial, String foto, String b64, String mdId){
+        loadingProgress(progressDialog, 0);
+        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(tipoPredial, mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
+            @Override
+            public void resolve(Codigos codigo) {
+                if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
+                    if(codigo.getResultado().getSecureUrl().contains("frente")){
+                        bindingSuperficie.frontal.setEnabled(false);
+                        urlFrente = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                        bindingSuperficie.frontal.setEnabled(true);
+                        hourlyTask.run();
+                        hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
+                        bindingSuperficie.lateral1.setEnabled(false);
+                        urlLateral1 = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                        bindingSuperficie.lateral1.setEnabled(true);
+                        hourlyTask.run();
+                        hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+                        bindingSuperficie.predial.setEnabled(false);
+                        urlPredial = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                        bindingSuperficie.predial.setEnabled(true);
+                        hourlyTask.run();
+                        hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
+                    } else{
+                        bindingSuperficie.lateral2.setEnabled(false);
+                        urlLateral2 = codigo.getResultado().getSecureUrl();
+                        Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                        bindingSuperficie.lateral2.setEnabled(true);
+                        hourlyTask.run();
+                        hourlyTask.scheduledExecutionTime();
+                        loadingProgress(progressDialog, 1);
+
                     }
                 }
             }
@@ -4669,7 +4775,7 @@ public class FragmentModificar extends Fragment implements
         Calendar cal1 = Calendar.getInstance();
         cal1.setTimeInMillis(timeInMillis);
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd hh:mm:ss");
+                "yyyy-MM-dd kk:mm:ss");
         String dateforrow = dateFormat.format(cal1.getTime());
         return dateforrow;
     }

@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -74,8 +74,23 @@
             android:value="14ffbeefd4223817d96c8d7a06cb75e87b0075c1" />
 
         <service
+            android:name=".cron.CronJob"
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
+
+        <service
             android:name=".cron.Cron"
-            android:exported="false" />
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
+
+
+
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -87,6 +102,8 @@
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
 
+
+
         <service android:name=".utils.ServicioRutas" android:label="Localizador" />
         <receiver
             android:name=".utils.StartMyServiceAtBootReceiver"
@@ -95,6 +112,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+
 
     </application>
 

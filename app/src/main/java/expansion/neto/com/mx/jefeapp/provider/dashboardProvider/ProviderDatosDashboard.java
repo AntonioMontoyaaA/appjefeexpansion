@@ -26,6 +26,7 @@ public class ProviderDatosDashboard {
     public static String STATUS_AREA = "1";
     public static String TIPO_CONSULTA = "1";
     public static String ANIO_ACTUAL = "2018";
+    public static String TIPO_APP = "1";
 
 
     public ProviderDatosDashboard() {}
@@ -56,6 +57,7 @@ public class ProviderDatosDashboard {
                             .add("semana", semana)
                             .add("anio", ANIO_ACTUAL)
                             .add("tipoconsulta", TIPO_CONSULTA)
+                            .add("tipoapp", TIPO_APP)
                             .add("usuarioId", usuarioId);
 
                     RequestBody formBody = formBuilder.build();
