@@ -21,7 +21,7 @@ public class FragmentDatosSuperficie {
                         if(codigo.getCodigo()==200){
 
                         }else{
-                            Toast.makeText(context, codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                         }
                     }
 

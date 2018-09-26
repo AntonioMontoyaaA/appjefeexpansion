@@ -16,8 +16,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_APP;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_LOG;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
+import static expansion.neto.com.mx.jefeapp.utils.Util.md5;
 
 /**
  * Clase singleton que regresa la validación del usuario así como también regresa el modelo de la persona
@@ -51,11 +53,13 @@ public class ProviderLogin {
                     //351881091739233 QA pruebas
                     //351881091739183 PROD pruebas
                     //101010101010101 DES pruebas
+
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("usuarioId", usuario.getUsuario())
-                            .add("contrasena", usuario.getContra())
+                            .add("contrasena", md5(usuario.getContra()))
                             .add("numImei", imei)
                             .add("versionapp", VERSION_APP)
+                            .add("tipoapp", TIPO_APP)
                             .add("tipoLog", TIPO_LOG);
 
                     RequestBody formBody = formBuilder.build();

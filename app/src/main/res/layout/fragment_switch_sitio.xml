@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Elige el tipo de sitio"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="-10dp"
             android:textColor="@color/blanco"
             android:textSize="14sp"
             app:typeface="robotoRegular" />
@@ -28,54 +28,99 @@
             android:layout_marginTop="20dp"
             android:id="@+id/ciudad"
             android:layout_gravity="center"
-            android:background="@drawable/estilo_boton_blanco"
+            android:background="@drawable/estilo_boton_blanco_borde"
             android:layout_width="300dp"
             android:layout_height="210dp">
 
-
-            <ImageView
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                android:layout_width="280dp"
-                android:layout_height="180dp"
-                android:src="@drawable/city"/>
-
-            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+            <LinearLayout
+                android:background="@color/gris_borde"
+                android:layout_gravity="top"
                 android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="CIUDAD"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/azultaco"
-                android:textSize="14sp"
-                app:typeface="robotoRegular" />
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="230dp"
+                    android:layout_height="130dp"
+                    android:src="@drawable/city"/>
+
+                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="CIUDAD"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/azultaco"
+                    android:textSize="14sp"
+                    app:typeface="robotoBold"
+                    />
+
+            </LinearLayout>
+
+
+
 
 
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:layout_marginTop="20dp"
             android:id="@+id/rural"
-            android:layout_marginTop="60dp"
             android:layout_gravity="center"
-            android:background="@drawable/estilo_boton_blanco"
+            android:background="@drawable/estilo_boton_blanco_borde"
             android:layout_width="300dp"
             android:layout_height="210dp">
-            <ImageView
-                android:layout_gravity="center"
-                android:layout_width="280dp"
-                android:layout_height="180dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/rural"/>
-            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+
+            <LinearLayout
+                android:background="@color/gris_borde"
+                android:layout_gravity="top"
                 android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="RURAL"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/azultaco"
-                android:textSize="14sp"
-                app:typeface="robotoRegular" />
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="230dp"
+                    android:layout_height="130dp"
+                    android:src="@drawable/rural"/>
+
+                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="RURAL"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/azultaco"
+                    android:textSize="14sp"
+                    app:typeface="robotoBold"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
 
         </android.support.v7.widget.CardView>
 

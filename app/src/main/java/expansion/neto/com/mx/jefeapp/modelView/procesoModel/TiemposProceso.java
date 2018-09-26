@@ -38,6 +38,17 @@ public class TiemposProceso implements SortedListAdapter.ViewModel  {
     @SerializedName("recDefinitivo")
     @Expose
     private int recDefinitivo;
+    @SerializedName("puntajeTot")
+    @Expose
+    private int puntajeTot;
+
+    public int getPuntajeTot() {
+        return puntajeTot;
+    }
+
+    public void setPuntajeTot(int puntajeTot) {
+        this.puntajeTot = puntajeTot;
+    }
 
     public int getMtvRechazoid() {
         return mtvRechazoid;
@@ -119,7 +130,8 @@ public class TiemposProceso implements SortedListAdapter.ViewModel  {
         this.seguimiento = seguimiento;
     }
 
-    public class Seguimiento {
+    public class Seguimiento implements SortedListAdapter.ViewModel {
+
         @SerializedName("areaId")
         @Expose
         private int areaId;
@@ -141,6 +153,17 @@ public class TiemposProceso implements SortedListAdapter.ViewModel  {
         @SerializedName("tieneRechazo")
         @Expose
         private int tieneRechazo;
+        @SerializedName("nomArea")
+        @Expose
+        private String nomArea;
+
+        public String getNomArea() {
+            return nomArea;
+        }
+
+        public void setNomArea(String nomArea) {
+            this.nomArea = nomArea;
+        }
 
         public int getTieneRechazo() {
             return tieneRechazo;
@@ -167,6 +190,9 @@ public class TiemposProceso implements SortedListAdapter.ViewModel  {
         }
 
         public String getFechaLimite() {
+            if(fechaLimite==null){
+                fechaLimite = "-";
+            }
             return fechaLimite;
         }
 
@@ -183,6 +209,9 @@ public class TiemposProceso implements SortedListAdapter.ViewModel  {
         }
 
         public String getFechaAtencion() {
+            if(fechaAtencion==null){
+                fechaAtencion = "-";
+            }
             return fechaAtencion;
         }
 

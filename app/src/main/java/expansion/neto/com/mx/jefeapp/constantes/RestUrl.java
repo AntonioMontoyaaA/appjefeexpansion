@@ -8,22 +8,52 @@ import okhttp3.MediaType;
  */
 public class RestUrl {
 
-    //TODO Make validation null path image, checar parametros de validacion
-    //TODO de peatonal y de superficie en distancia
-
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public static String ip = "206.189.68.177"; // desarrollo
-    //public static String ip = "167.99.102.173"; // QA 36
-    //public static String ip = "206.189.223.154"; // produccion
+    //public static String ip = "206.189.68.177"; // desarrollo
+    public static String ip = "167.99.102.173"; // QA 36
+     //public static String ip = "206.189.223.154"; // produccion
 
-    public static String dominio = "voksedesapi"; // desarrollo
-    //public static String dominio = "vokseqaapi"; // QA
+    //public static String dominio = "voksedesapi"; // desarrollo
+    public static String dominio = "vokseqaapi"; // QA
     //public static String dominio = "vokseapi"; // produccion
 
     public static String NUM_TELEFONO = "0";
 
-    public static String VERSION_APP = "1.1.3";
+    public static String VERSION_APP = "1.2.1";
+
+    public static String TIPO_APP = "1";
+
+    public static String TIPO_APLICACION = "1";
+
+    public static String FACTOR_ID = "5";
+
+    public static String TIPO_SERVICIO = "1";
+
+    public static String FACTOR_ID_PEATONALES = "7";
+
+    public static String FORMATO_FOTO = "png";
+
+    public static String TIPO_LOG = "1";
+
+    public static String TIPO_NOTIFICACION = "3";
+
+    public static String ID_GEXPANSION = "4";
+
+    public static String ID_EXPANSION = "1";
+
+    public static String ID_GESTORIA = "2";
+
+    public static String ID_CONSTRUCCION = "3";
+
+    public static String ID_AUDITORIA = "4";
+
+    public static String ID_FINANZAS = "6";
+
+    public static String ID_OPERACIONES = "5";
+
+    public static String STATUS_TOTALES = "1";
+
 
     public static String REST_ACTION_CONSULTAR_LOGIN = "http://"+ ip +"/"+ dominio +"/login/";
 
@@ -77,20 +107,6 @@ public class RestUrl {
 
     public static String REST_ACTION_TIPS = "http://"+ ip +"/"+ dominio +"/consultaTips/";
 
-    public static String TIPO_APLICACION = "1";
-
-    public static String FACTOR_ID = "5";
-
-    public static String TIPO_SERVICIO = "1";
-
-    public static String FACTOR_ID_PEATONALES = "7";
-
-    public static String FORMATO_FOTO = "png";
-
-    public static String TIPO_LOG = "1";
-
-    public static String TIPO_NOTIFICACION = "3";
-
     public static String REST_ACTION_CONSULTAR_TIEMPOS_EN_PROCESO = "http://"+ ip +"/"+ dominio +"/consultatiemposxmd/";
 
     public static String REST_ACTION_CONSULTAR_CHAT_EN_PROCESO = "http://"+ ip +"/"+ dominio +"/consultachat/";
@@ -115,6 +131,11 @@ public class RestUrl {
 
     public static String REST_ACTION_CONSULTAR_PERIODOS = "http://"+ ip +"/"+ dominio +"/genralidadespreconsulta/";
 
+    public static String REST_CONSULTA_TOTALES = "http://"+ ip +"/"+ dominio +"/consultamdstotales/";
+
+    public static String REST_ACTION_CONSULTAR_RADIOS = "http://"+ ip +"/"+ dominio +"/consultaRadiosAsignados/";
+
+    public static String REST_ACTION_CAMBIA_ESTATUS_RADIOS = "http://"+ ip +"/"+ dominio +"/cambiaestatusradio/";
 
 }
 

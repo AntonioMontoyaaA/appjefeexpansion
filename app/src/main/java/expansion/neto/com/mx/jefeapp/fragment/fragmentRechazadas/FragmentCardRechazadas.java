@@ -29,6 +29,7 @@ import com.mancj.slideup.SlideUp;
 import com.mancj.slideup.SlideUpBuilder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
@@ -36,10 +37,21 @@ import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityProcesoListBinding;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityRechazadasListBinding;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Proceso;
+import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Totales;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderDatosProceso;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderTotales;
 import expansion.neto.com.mx.jefeapp.provider.rechazadasProvider.ProviderDatosRechazadas;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.ProcesoHolder;
 import expansion.neto.com.mx.jefeapp.sorted.rechazadas.AdapterRechazadas;
 import expansion.neto.com.mx.jefeapp.ui.rechazadas.ActivityRechazadas;
+
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_AUDITORIA;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_CONSTRUCCION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_EXPANSION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_GESTORIA;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_GEXPANSION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_OPERACIONES;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.STATUS_TOTALES;
 
 public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Listener  {
     private ActivityRechazadasListBinding binding;
@@ -47,11 +59,25 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
 
     List<Proceso.Memoria> listaMemorias = null;
 
+
+    String mes;
+    String area;
+    String usuarioId;
+    String anio;
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_rechazadas_list,container,false);
         View view = binding.getRoot();
+        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+        mes = preferences.getString("mesTaco","");
+        area = preferences.getString("areaxpuesto","");
+        usuarioId = preferences.getString("usuario","");
+
+        Calendar calendar = Calendar.getInstance();
+        anio = String.valueOf(calendar.get(Calendar.YEAR));
+
 
         getListaRechazadas();
 
@@ -59,9 +85,9 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
         binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerAutoriza.setAdapter(adapter);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         binding.recyclerAutoriza.setLayoutManager(mLayoutManager);
-        binding.recyclerAutoriza.addItemDecoration(new FragmentCardRechazadas.GridSpacingItemDecoration(3, dpToPx(4), true));
+        binding.recyclerAutoriza.addItemDecoration(new FragmentCardRechazadas.GridSpacingItemDecoration(1, dpToPx(1), true));
         binding.recyclerAutoriza.setItemAnimator(new DefaultItemAnimator());
 
         binding.buscar.addTextChangedListener(new TextWatcher() {
@@ -99,25 +125,316 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
             }
         });
 
-        slideUX(binding);
-
-        binding.leyenda.setOnClickListener(new View.OnClickListener() {
+        binding.content2.gexpansion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                slide.show();
+
+                getTotales(ID_GEXPANSION);
+
+                binding.content2.viewge.setAlpha(1);
+                binding.content2.imggerente.setAlpha(1.0f);
+                binding.content2.txtgexpansion.setAlpha(1.0f);
+
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+
+                binding.esta.setVisibility(View.VISIBLE);
+                resizeRecycler(binding, 418);
+
             }
         });
 
-        binding.content2.leyendacerrar.setOnClickListener(new View.OnClickListener() {
+        binding.content2.expansiones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                slide.hide();
+
+                getTotales(ID_EXPANSION);
+
+                binding.esta.setVisibility(View.VISIBLE);
+                binding.content2.viewe.setAlpha(1);
+                binding.content2.imgexpansion.setAlpha(1.0f);
+                binding.content2.txtexpansion.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+                resizeRecycler(binding, 418);
+
+            }
+        });
+
+        binding.content2.gestoria.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getTotales(ID_GESTORIA);
+
+                binding.esta.setVisibility(View.VISIBLE);
+
+                binding.content2.viewges.setAlpha(1);
+                binding.content2.imggestoria.setAlpha(1.0f);
+                binding.content2.txtgestoria.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+                resizeRecycler(binding, 418);
+
+            }
+        });
+
+        binding.content2.construccion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getTotales(ID_CONSTRUCCION);
+
+                binding.esta.setVisibility(View.VISIBLE);
+
+                binding.content2.viewcon.setAlpha(1);
+                binding.content2.imgconstruccion.setAlpha(1.0f);
+                binding.content2.txtconstruccion.setAlpha(1.0f);
+
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+                resizeRecycler(binding, 418);
+
+            }
+        });
+
+        binding.content2.operaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getTotales(ID_OPERACIONES);
+
+                binding.content2.viewope.setAlpha(1);
+                binding.content2.imgoperaciones.setAlpha(1.0f);
+                binding.content2.txtoperaciones.setAlpha(1.0f);
+                binding.esta.setVisibility(View.VISIBLE);
+
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+                resizeRecycler(binding, 418);
+
+            }
+        });
+
+        binding.content2.auditorias.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getTotales(ID_AUDITORIA);
+
+                binding.content2.viewaudi.setAlpha(1);
+                binding.content2.imgauditoria.setAlpha(1.0f);
+                binding.content2.txtauditoria.setAlpha(1.0f);
+
+                binding.esta.setVisibility(View.VISIBLE);
+
+                binding.content2.imggerente.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+                resizeRecycler(binding, 418);
+
+            }
+        });
+
+
+        binding.vermas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                binding.esta.setVisibility(View.GONE);
+
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+                resizeRecycler(binding, 470 );
+
+                binding.vermas.setEnabled(false);
+                binding.vermas.setAlpha(0.4f);
+                getListaProceso();
+
             }
         });
 
         return view;
     }
 
+    public void getListaProceso(){
+
+        binding.prog.setVisibility(View.VISIBLE);
+
+        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso(mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
+            @Override
+            public void resolve(Proceso memorias) {
+                if(memorias!=null){
+                    if(memorias.getCodigo()==200){
+                        if(memorias.getCodigo()!=404) {
+                            if(memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
+
+                                listaMemorias = memorias.getMemorias();
+                                adapter.edit().replaceAll(memorias.getMemorias()).commit();
+                                adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                                binding.prog.setVisibility(View.GONE);
+                                binding.rootView.setVisibility(View.VISIBLE);
+                                binding.vermas.setVisibility(View.VISIBLE);
+                                binding.layout.setVisibility(View.VISIBLE);
+                                binding.recyclerAutoriza.setVisibility(View.VISIBLE);
+
+                            } else {
+                                binding.prog.setVisibility(View.GONE);
+                                Snackbar snackbar = Snackbar.make(binding.layout,
+                                        Html.fromHtml("<b><font color=\"#254581\">" +
+                                                memorias.getMensaje() +
+                                                "</font></b>"), Snackbar.LENGTH_SHORT);
+                                View snackBarView = snackbar.getView();
+                                snackBarView.setBackgroundColor(getContext().getResources().getColor(R.color.snackBar));
+                                snackbar.show();
+                            }
+
+                        }else{
+                            binding.prog.setVisibility(View.GONE);
+                            Snackbar snackbar = Snackbar.make(binding.layout,
+                                    Html.fromHtml("<b><font color=\"#254581\">" +
+                                            getContext().getString(R.string.mdnull) +
+                                            "</font></b>"), Snackbar.LENGTH_SHORT);
+                            View snackBarView = snackbar.getView();
+                            snackBarView.setBackgroundColor(getContext().getResources().getColor(R.color.snackBar));
+                            snackbar.show();
+                        }
+                    }else{
+                        binding.prog.setVisibility(View.GONE);
+                        Snackbar snackbar = Snackbar.make(binding.layout,
+                                Html.fromHtml("<b><font color=\"#254581\">" +
+                                        getContext().getString(R.string.conexionInternet) +
+                                        "</font></b>"), Snackbar.LENGTH_SHORT);
+                        View snackBarView = snackbar.getView();
+                        snackBarView.setBackgroundColor(getContext().getResources().getColor(R.color.snackBar));
+                        snackbar.show();
+                    }
+                }
+            }
+
+            @Override
+            public void reject(Exception e) {
+
+            }
+        });
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -135,10 +452,6 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
 
         binding.prog.setVisibility(View.VISIBLE);
 
-        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        String mes = preferences.getString("mesTaco","");
-        String area = preferences.getString("areaxpuesto","");
-        String usuarioId = preferences.getString("usuario","");
 
         ProviderDatosRechazadas.getInstance(getContext()).obtenerDatosRechazadas(usuarioId, area, mes, new
                 ProviderDatosRechazadas.ConsultaDatosRechazadas() {
@@ -147,13 +460,21 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
                 if(memorias!=null){
                     if(memorias.getCodigo()==200){
                         if(memorias.getCodigo()!=404) {
-                            binding.leyendaLayout.setVisibility(View.VISIBLE);
-
                             if(memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
+
+
+                                binding.recyclerAutoriza.setAdapter(null);
+                                binding.recyclerAutoriza.removeAllViews();
+
                                 listaMemorias = memorias.getMemorias();
                                 adapter.edit().replaceAll(memorias.getMemorias()).commit();
                                 adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                                binding.recyclerAutoriza.setAdapter(adapter);
+
                                 binding.prog.setVisibility(View.GONE);
+                                binding.rootView.setVisibility(View.VISIBLE);
+                                binding.vermas.setVisibility(View.VISIBLE);
+
                             } else {
                                 binding.prog.setVisibility(View.GONE);
                                 Snackbar snackbar = Snackbar.make(binding.layout,
@@ -209,6 +530,9 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
         editor.apply();
         editor.putString("mdIdterminar", model.getMemoriaid());
         editor.putInt("estatusId", model.getEstatusid());
+        editor.putString("nombreSitio", model.getNombresitio());
+        editor.putInt("atrasa", model.getAtrasada());
+
         editor.apply();
 
         Intent main = new Intent(getContext(), ActivityRechazadas.class);
@@ -257,26 +581,31 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
-    private SlideUp slide;
+    public void resizeRecycler(ActivityRechazadasListBinding binding, int tam){
+        ViewGroup.LayoutParams params = binding.recyclerAutoriza.getLayoutParams();
+        final float scale = getContext().getResources().getDisplayMetrics().density;
+        int pixels = (int) (tam * scale + 0.5f);
+        params.height=pixels;
+        binding.recyclerAutoriza.setLayoutParams(params);
+    }
 
-    public void slideUX(final ActivityRechazadasListBinding binding){
-        slide = new SlideUpBuilder(binding.content2.slideView)
-                .withListeners(new SlideUp.Listener.Events() {
+    public void getTotales(String id){
+        ProviderTotales.getInstance(getContext()).obtenerTotales(usuarioId,
+                STATUS_TOTALES, id, mes, getString(R.string.zero), anio, new ProviderTotales.InterfaceObtieneTotales() {
                     @Override
-                    public void onSlide(float percent) {
-                        binding.dim.setAlpha(1 - (percent / 100));
-                    }
+                    public void resolve(Totales totales) {
+                        if(totales!=null){
+                            if(totales.getCodigo()==200){
+                                binding.totalMd.setText(totales.getTotal()+"");
+                                binding.totalAtrasadas.setText(totales.getAtrasada()+"");
 
-                    @Override
-                    public void onVisibilityChanged(int visibility) {
-                        if (visibility == 0){
-
+                            }
                         }
                     }
-                }).withStartGravity(Gravity.BOTTOM).withLoggingEnabled(true).withGesturesEnabled(true)
-                .withStartState(SlideUp.State.HIDDEN).withSlideFromOtherView(binding.rootView)
-                .withTouchableAreaPx(100)
-                .withTouchableAreaDp(100)
-                .build();
+                    @Override public void reject(Exception e) {
+
+                    }
+                });
     }
+
 }

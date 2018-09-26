@@ -84,7 +84,55 @@ public class DatosSitio {
         @SerializedName("detallesValidacion")
         @Expose
         private List<detallesValidacion> detallesValidacion = null;
+        @SerializedName("fechaCreacion")
+        @Expose
+        private String fechaCreacion;
+        @SerializedName("puntajeTotal")
+        @Expose
+        private String puntajeTotal;
+        @SerializedName("categoria")
+        @Expose
+        private String categoria;
+        @SerializedName("totalmd")
+        @Expose
+        private String totalmd;
 
+        public String getTotalmd() {
+            return totalmd;
+        }
+
+        public void setTotalmd(String totalmd) {
+            this.totalmd = totalmd;
+        }
+
+        public String getCategoria() {
+            return categoria;
+        }
+
+        public void setCategoria(String categoria) {
+            this.categoria = categoria;
+        }
+
+        public String getPuntajeTotal() {
+            return puntajeTotal;
+        }
+
+        public void setPuntajeTotal(String puntajeTotal) {
+            this.puntajeTotal = puntajeTotal;
+        }
+
+        public String getFechaCreacion() {
+
+            if(fechaCreacion!=null){
+                fechaCreacion = fechaCreacion.substring(0,10);
+            }
+
+            return fechaCreacion;
+        }
+
+        public void setFechaCreacion(String fechaCreacion) {
+            this.fechaCreacion = fechaCreacion;
+        }
 
         public List<detallesValidacion> getDetallesValidacion() {
             return detallesValidacion;

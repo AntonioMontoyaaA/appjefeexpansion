@@ -117,16 +117,17 @@
     </style>
 
     <style name="edtText" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorControlNormal">@color/azul</item>
-        <item name="colorControlActivated">@color/azul</item>
-        <item name="colorControlHighlight">@color/azul</item>
-        <item name="android:textColor">?attr/colorPrimary</item>
-        <item name="editTextColor">@color/azul</item>
-        <item name="textColor">@color/azul</item>
-        <item name="colorPrimary">@color/azul</item>
-        <item name="colorPrimaryDark">@color/azul</item>
-        <item name="colorAccent">@color/azul</item>
-        <item name="android:textColorHint">@color/azul</item>
+        <item name="colorControlNormal">@color/grisetxt</item>
+        <item name="colorControlActivated">@color/grisetxt</item>
+        <item name="colorControlHighlight">@color/grisetxt</item>
+        <item name="android:textColor">@color/grisetxt</item>
+        <item name="editTextColor">@color/grisetxt</item>
+        <item name="textColor">@color/grisetxt</item>
+        <item name="android:colorActivatedHighlight">@color/grisetxt</item>
+        <item name="colorPrimary">@color/grisetxt</item>
+        <item name="colorPrimaryDark">@color/grisetxt</item>
+        <item name="colorAccent">@color/grisetxt</item>
+        <item name="android:textColorHint">@color/grisetxt</item>
 
 
     </style>

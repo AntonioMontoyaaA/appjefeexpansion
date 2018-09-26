@@ -27,6 +27,7 @@ public class AdapterRechazadas extends SortedListAdapter<Proceso.Memoria> {
     protected ViewHolder<? extends Proceso.Memoria> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
         final ItemProcesoPickerBinding binding = ItemProcesoPickerBinding.inflate(inflater, parent, false);
         binding.setListener(listener);
+        binding.setTipoCard(1);
         return new ProcesoHolder(binding, listener);
     }
 

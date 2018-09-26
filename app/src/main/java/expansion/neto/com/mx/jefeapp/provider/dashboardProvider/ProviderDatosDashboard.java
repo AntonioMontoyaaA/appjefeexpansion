@@ -27,6 +27,7 @@ public class ProviderDatosDashboard {
     public static String TIPO_CONSULTA = "1";
     public static String ANIO_ACTUAL = "2018";
     public static String TIPO_APP = "1";
+    public static String VER_MAS = "1";
 
 
     public ProviderDatosDashboard() {}

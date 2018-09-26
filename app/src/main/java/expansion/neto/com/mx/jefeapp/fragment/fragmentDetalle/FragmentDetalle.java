@@ -1,6 +1,7 @@
 package expansion.neto.com.mx.jefeapp.fragment.fragmentDetalle;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -88,7 +89,9 @@ import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityFinalizaBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza3Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza4Binding;
+import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza4DetalleBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza6Binding;
+import expansion.neto.com.mx.jefeapp.databinding.FragmentDetalleGenBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDetalleGeneralidadesBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDetallePropietarioBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDetalleSitioBinding;
@@ -149,9 +152,13 @@ import expansion.neto.com.mx.jefeapp.utils.CustomTextWatcher;
 import expansion.neto.com.mx.jefeapp.utils.PhoneNumberTextWatcher;
 import expansion.neto.com.mx.jefeapp.utils.ServicioGPS;
 import expansion.neto.com.mx.jefeapp.utils.Util;
+import expansion.neto.com.mx.jefeapp.utils.desing.MainSliderAdapter;
+import expansion.neto.com.mx.jefeapp.utils.desing.PicassoImageLoadingService;
+import ss.com.bannerslider.Slider;
 
 import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
+import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
 import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 
@@ -173,16 +180,7 @@ public class FragmentDetalle extends Fragment implements
     String nombreGenerador;
     String nombreCompetencia;
 
-
-    String nombrePropietario;
-    String apellidoPropietario;
-    String apellidoMPropietario;
-    String telefonoPropietario;
-    String emailPropietario;
-
-    private int CAMERA_FRONTAL = 1;
-    private int CAMERA_LATERAL_1 = 2;
-    private int CAMERA_LATERAL_2 = 3;
+    String nombreSitio;
 
     AdapterListaGeneradoresNegocios adapterNegocios;
     AdapterListaGeneradoresTransporte adapterTransporte;
@@ -272,22 +270,6 @@ public class FragmentDetalle extends Fragment implements
             nivel = nivelId;
         }
     };
-    private AdapterListaPropietarios.OnItemClick clickPropietario = new AdapterListaPropietarios.OnItemClick() {
-        @Override
-        public void onClick(String nombre, String apellido, String apellidoM, String telefono, String email ) {
-            nombrePropietario = nombre;
-            apellidoPropietario = apellido;
-            apellidoMPropietario = apellidoM;
-            telefonoPropietario = telefono;
-            emailPropietario = email;
-            bindingPropietario.nombre.setText(nombrePropietario+"");
-            bindingPropietario.apellidoP.setText(apellidoPropietario+"");
-            bindingPropietario.apellidoM.setText(apellidoMPropietario+"");
-            bindingPropietario.telefono.setText(telefonoPropietario+"");
-            bindingPropietario.email.setText(emailPropietario+"");
-        }
-    };
-
 
     private LatLng mCenterLatLong;
 
@@ -299,11 +281,19 @@ public class FragmentDetalle extends Fragment implements
             mdLat = preferences.getFloat("latMd", 0);
             mdLot = preferences.getFloat("lotMd", 0);
 
+
+            LatLng mds = new LatLng(mdLat, mdLot);
+            icon = getBitmapDescriptor(R.drawable.home);
+            googleMap.addMarker(new MarkerOptions().position(mds)
+                    .title("")
+                    .icon(icon)
+            );
+
             mCenterLatLong = new LatLng(mdLat, mdLot);
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(mCenterLatLong));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCenterLatLong, 15));
             googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(8), 1000, null);
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(mCenterLatLong)
@@ -314,25 +304,8 @@ public class FragmentDetalle extends Fragment implements
 
             googleMap.getUiSettings().setScrollGesturesEnabled(false);
             googleMap.getUiSettings().setZoomGesturesEnabled(false);
-
-
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-                @Override
-                public void onCameraChange(CameraPosition cameraPosition) {
-                    mCenterLatLong = cameraPosition.target;
-                    googleMap.clear();
-                    try {
-                        Location mLocation = new Location("");
-                        mLocation.setLatitude(mCenterLatLong.latitude);
-                        mLocation.setLongitude(mCenterLatLong.longitude);
-                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
     };
 
@@ -377,7 +350,6 @@ public class FragmentDetalle extends Fragment implements
     BitmapDescriptor icon;
     Float mdLat;
     Float mdLot;
-
     ArrayList<Zonificacion.Detalle> detallesGen;
     ArrayList<Zonificacion.Detalle> detallesCom;
 
@@ -462,7 +434,6 @@ public class FragmentDetalle extends Fragment implements
         }
     };
 
-
     private static boolean noti = false;
     public static FragmentDetalle newInstance(int position, boolean notificacion) {
         FragmentDetalle f = new FragmentDetalle();
@@ -479,23 +450,25 @@ public class FragmentDetalle extends Fragment implements
         position = getArguments().getInt(ARG_POSITION);
     }
 
+    private Slider slider;
     private SlideUp slideCompetencia;
     private SlideUp slideGenerador;
     FragmentDetalleSitioBinding binding;
     FragmentAutoriza3Binding bindingZonificacion;
-    FragmentDetalleSuperficieBinding bindingSuperficie;
-    FragmentDetallePropietarioBinding bindingPropietario;
+
     Float lat, lot;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
         if (position == 0) {
+
             mensaje = "fragment 1";
             binding = DataBindingUtil.inflate(inflater,R.layout.fragment_detalle_sitio,container,false);
             view = binding.getRoot();
-            binding.toolbar.nombreTitulo.setText(getString(R.string.datossitio));
+
+            binding.toolbar.nombreTitulo.setText(getString(R.string.detalles));
+            binding.toolbar.guardar.setVisibility(View.INVISIBLE);
+
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(onMapReadyCallback);
@@ -503,6 +476,14 @@ public class FragmentDetalle extends Fragment implements
             final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
             final String usuario = preferences.getString("usuario", "");
             final String mdIdterminar = preferences.getString("mdIdterminar", "");
+
+            int atrasa = preferences.getInt("atrasa",0);
+
+            if(atrasa==1){
+                binding.view3.setBackgroundColor(Color.parseColor("#E4B163"));
+            }else{
+                binding.view3.setBackgroundColor(Color.parseColor("#D1D5DE"));
+            }
 
             binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -520,84 +501,95 @@ public class FragmentDetalle extends Fragment implements
 
             binding.nombresitio.setEnabled(false);
             binding.direccionsitio.setEnabled(false);
-            binding.ciudadsitio.setEnabled(false);
-            binding.municipiositio.setEnabled(false);
-            binding.estadositio.setEnabled(false);
-            binding.pais.setEnabled(false);
-
             binding.toolbar.guardar.setVisibility(View.INVISIBLE);
-
-            binding.nombresitio.setBackgroundResource(android.R.color.transparent);
-            binding.direccionsitio.setBackgroundResource(android.R.color.transparent);
-            binding.ciudadsitio.setBackgroundResource(android.R.color.transparent);
-            binding.municipiositio.setBackgroundResource(android.R.color.transparent);
-            binding.estadositio.setBackgroundResource(android.R.color.transparent);
-            binding.pais.setBackgroundResource(android.R.color.transparent);
             final SharedPreferences.Editor editorPre = preferences.edit();
 
             ProviderDatosSitio.getInstance(getContext()).obtenerDatosSitio(mdIdterminar, usuario, new ProviderDatosSitio.ConsultaDatosSitio() {
                 @Override
                 public void resolve(DatosSitio datosSitio) {
                     if(datosSitio.getDatossitio()!= null && datosSitio.getCodigo()==200){
-                        if(datosSitio.getDatossitio().get(0).getDireccion()!=null &&
-                                datosSitio.getDatossitio().get(0).getDetallesValidacion()!=null &&
-                                datosSitio.getDatossitio().get(0).getLatitud()!=null &&
-                                datosSitio.getDatossitio().get(0).getLongitud()!=null &&
-                                datosSitio.getDatossitio().get(0).getNombreSitio()!=null){
+                        if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD()!=null){
+                            if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")){
+                                binding.setRural("Rural");
+                                editorPre.putString("tipoSitio" ,"2");
+                                editorPre.apply();
+                            }else{
+                                binding.setRural("Ciudad");
+                                editorPre.putString("tipoSitio" ,"1");
+                                editorPre.apply();
+                            }
+                        }
 
-                            binding.escogeSitio.setEnabled(false);
-                            if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD()!=null){
-                                if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")){
-                                    binding.escogeSitio.setChecked(true);
-                                    binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                                    editorPre.putString("tipoSitio" ,"2");
-                                    editorPre.apply();
+                        nombreSitio = datosSitio.getDatossitio().get(0).getNombreSitio();
+
+                        binding.nombresitio.setEnabled(false);
+                        binding.nombresitio.setText(datosSitio.getDatossitio().get(0).getNombreSitio());
+                        binding.fechaCreacion.setText(datosSitio.getDatossitio().get(0).getFechaCreacion()+"");
+                        binding.direccionsitio.setText(datosSitio.getDatossitio().get(0).getDireccion()+"");
+                        binding.puntos.setText(datosSitio.getDatossitio().get(0).getTotalmd()+"");
+                        binding.setCategoria(datosSitio.getDatossitio().get(0).getCategoria()+"");
+                        binding.categoria.setText(datosSitio.getDatossitio().get(0).getCategoria()+"");
+
+
+
+                        lat = Float.valueOf(datosSitio.getDatossitio().get(0).getLatitud());
+                        lot = Float.valueOf(datosSitio.getDatossitio().get(0).getLongitud());
+
+                        SharedPreferences.Editor editorDatos = preferences.edit();
+
+                        editorDatos.putString("cate", datosSitio.getDatossitio().get(0).getCategoria()+"");
+                        editorDatos.putString("punto", datosSitio.getDatossitio().get(0).getTotalmd()+"");
+                        editorDatos.putString("fechaCreacion", datosSitio.getDatossitio().get(0).getFechaCreacion()+"");
+
+                        editorDatos.putFloat("latMd", lat);
+                        editorDatos.putFloat("lotMd", lot);
+                        editorDatos.apply();
+
+                        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                                .findFragmentById(R.id.map);
+                        mapFragment.getMapAsync(onMapReadyCallback);
+
+
+                        ProviderDatosPropietario.getInstance(getContext()).obtenerDatosPropietario(mdIdterminar, usuario, new ProviderDatosPropietario.ConsultaDatosPropietario() {
+                                    @Override
+                                    public void resolve(Propietario propietario) {
+                                        if(propietario.getCodigo()==200 && propietario.getAMaternoPropietario()!=null){
+
+                                            if(propietario.getRentaMasLocales() > 0) {
+                                               // binding.robotoTextView11.setText("YA RENTA A NETO");
+                                            } else {
+                                                //binding.robotoTextView11.setText("NO RENTA A NETO");
+                                            }
+
+                                            if(propietario.getMail().equals("null")){
+                                                propietario.setMail("");
+                                            }
+
+                                            binding.nombre.setText(propietario.getNombrePropietario()+ " " +
+                                            propietario.getAPaternoPropietario()+" "+propietario.getAMaternoPropietario());
+                                            binding.telefono.setText(propietario.getTelefono());
+                                            binding.email.setText(propietario.getMail());
+
+                                        }
+                                    }
+                                    @Override
+                                    public void reject(Exception e) {
+                                    }
+                                });
+
+                        binding.toolbar.nombreTitulo.setText(getString(R.string.detalles));
+                        binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(noti){
+                                    Intent main = new Intent(getContext(), ActivityNotificaciones.class);
+                                    startActivity(main);
                                 }else{
-                                    binding.escogeSitio.setChecked(false);
-                                    binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                                    editorPre.putString("tipoSitio" ,"1");
-                                    editorPre.apply();
+                                    FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                                    a.show(getChildFragmentManager(),"child");
                                 }
                             }
-
-
-                            binding.escogeSitio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                    if(isChecked){
-                                        editorPre.putString("tipoSitio" ,"2");
-                                        editorPre.apply();
-                                        binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
-                                        binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-
-                                    }else{
-                                        editorPre.putString("tipoSitio" ,"1");
-                                        editorPre.apply();
-                                        binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                                        binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
-
-
-                                    }
-                                }
-                            });
-
-                            binding.nombresitio.setEnabled(false);
-                            binding.nombresitio.setText(datosSitio.getDatossitio().get(0).getNombreSitio());
-
-                            binding.direccionsitio.setText(datosSitio.getDatossitio().get(0).getDireccion()+"");
-                            binding.estadositio.setText(datosSitio.getDatossitio().get(0).getEstado()+"");
-                            lat = Float.valueOf(datosSitio.getDatossitio().get(0).getLatitud());
-                            lot = Float.valueOf(datosSitio.getDatossitio().get(0).getLongitud());
-
-                            SharedPreferences.Editor editorDatos = preferences.edit();
-                            editorDatos.putFloat("latMd", lat);
-                            editorDatos.putFloat("lotMd", lot);
-                            editorDatos.putString("nombreSitio", datosSitio.getDatossitio().get(0).getNombreSitio().toString());
-                            editorDatos.apply();
-
-                            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                                    .findFragmentById(R.id.map);
-                            mapFragment.getMapAsync(onMapReadyCallback);
-                        }
+                        });
                     }
                 }
 
@@ -607,144 +599,45 @@ public class FragmentDetalle extends Fragment implements
 
         } else if (position == 1) {
 
-            bindingPropietario = DataBindingUtil.inflate(inflater, R.layout.fragment_detalle_propietario,container,false);
-            view = bindingPropietario.getRoot();
-
-           // bindingPropietario.toolbar.back.setVisibility(View.INVISIBLE);
+            final FragmentDetallePropietarioBinding bindingSuperficie = DataBindingUtil.inflate(inflater, R.layout.fragment_detalle_propietario,container,false);
+            view = bindingSuperficie.getRoot();
+            bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.detalles));
+            bindingSuperficie.toolbar.guardar.setVisibility(View.INVISIBLE);
 
             final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
             final String usuario = preferences.getString("usuario", "");
-            String md = preferences.getString("mdIdterminar", "");
-            bindingPropietario.telefono.addTextChangedListener(
-                    new PhoneNumberTextWatcher(bindingPropietario.telefono));
-            bindingPropietario.toolbar.guardar.setVisibility(View.INVISIBLE);
+            final String md = preferences.getString("mdIdterminar", "");
+            final String nombre = preferences.getString("nombreSitio", "");
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            loadingProgress(progressDialog, 0);
+            int atrasa = preferences.getInt("atrasa",0);
 
-            bindingPropietario.nombre.setEnabled(false);
-            bindingPropietario.apellidoP.setEnabled(false);
-            bindingPropietario.apellidoM.setEnabled(false);
-            bindingPropietario.telefono.setEnabled(false);
-            bindingPropietario.email.setEnabled(false);
-
-            bindingPropietario.nombre.setBackgroundResource(android.R.color.transparent);
-            bindingPropietario.apellidoP.setBackgroundResource(android.R.color.transparent);
-            bindingPropietario.apellidoM.setBackgroundResource(android.R.color.transparent);
-            bindingPropietario.telefono.setBackgroundResource(android.R.color.transparent);
-            bindingPropietario.email.setBackgroundResource(android.R.color.transparent);
-
-
-            bindingPropietario.renta.setVisibility(View.GONE);
-            bindingPropietario.md.setVisibility(View.VISIBLE);
-
-            ProviderDatosPropietario.getInstance(getContext())
-                    .obtenerDatosPropietario(md, usuario, new ProviderDatosPropietario.ConsultaDatosPropietario() {
-                        @Override
-                        public void resolve(Propietario propietario) {
-                            if(propietario.getCodigo()==200 && propietario.getAMaternoPropietario()!=null){
-
-                                if(propietario.getRentaMasLocales() > 0) {
-                                    bindingPropietario.robotoTextView11.setText("YA RENTA A NETO");
-                                } else {
-                                    bindingPropietario.robotoTextView11.setText("NO RENTA A NETO");
-                                }
-
-
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT);
-                                params.weight = 1.0f;
-                                params.gravity = Gravity.TOP;
-
-                                if(propietario.getMail().equals("null")){
-                                    propietario.setMail("");
-                                }
-
-                                bindingPropietario.nombre.setText(propietario.getNombrePropietario()+ " ");
-                                bindingPropietario.telefono.setText(propietario.getTelefono());
-                                bindingPropietario.email.setText(propietario.getMail());
-                                bindingPropietario.apellidoP.setText(propietario.getAPaternoPropietario());
-                                bindingPropietario.apellidoM.setText(propietario.getAMaternoPropietario());
-                            }
-                        }
-                        @Override
-                        public void reject(Exception e) {
-                        }
-                    });
-
-            bindingPropietario.toolbar.nombreTitulo.setText(getString(R.string.datospropietario));
-            bindingPropietario.toolbar.back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(noti){
-                        Intent main = new Intent(getContext(), ActivityNotificaciones.class);
-                        startActivity(main);
-                    }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
-                        a.show(getChildFragmentManager(),"child");
-                    }
-                }
-            });
-
-
-        }else if (position == 2) {
-
-            final int[] area = {0};
-
-            bindingSuperficie = DataBindingUtil.inflate(inflater,R.layout.fragment_detalle_superficie,container,false);
-            view = bindingSuperficie.getRoot();
-
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String[] usuario = {preferences.getString("usuario", "")};
-            String md = preferences.getString("mdIdterminar", "");
-            final String nombreSitio = preferences.getString("nombreSitio","");
-            bindingSuperficie.robotoTextView2.setText(nombreSitio);
-            bindingSuperficie.areaterreno.setEnabled(false);
-            bindingSuperficie.frente.setEnabled(false);
-            bindingSuperficie.profundidad.setEnabled(false);
-            bindingSuperficie.areaterreno.setBackgroundResource(android.R.color.transparent);
-            bindingSuperficie.frente.setBackgroundResource(android.R.color.transparent);
-            bindingSuperficie.profundidad.setBackgroundResource(android.R.color.transparent);
-            bindingSuperficie.toolbar.nombreTitulo.setText(R.string.superficie);
-            fechaFrente = getFechaHora();
-            fechaEntorno1  = getFechaHora();
-            fechaEntorno2  = getFechaHora();
-            bindingSuperficie.toolbar.guardar.setVisibility(View.INVISIBLE);
-            bindingSuperficie.volver.setVisibility(View.INVISIBLE);
-            final String[] tipoEsquina = {"0"};
-
-            bindingSuperficie.frente.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
-            bindingSuperficie.profundidad.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
-            //bindingSuperficie.areaterreno.setFilters(new InputFilter[] {new CustomTextWatcher(5,1)});
-
-            ProviderDatosPredial.getInstance(getContext()).obtenerDatosPredial(md, usuario[0], new ProviderDatosPredial.ConsultaDatosPredial() {
-                @Override
-                public void resolve(DatosPredial datosPredial) {
-                    if(datosPredial!=null){
-                        if(datosPredial.getAplicaPredial().equals("1")){
-                            bindingSuperficie.predial.setVisibility(View.VISIBLE);
-                        }else{
-                            urlPredial = " ";
-                        }
-                    }
-                }
-                @Override
-                public void reject(Exception e) { }
-            });
-
-
-            bindingSuperficie.escogeEsquina.setEnabled(false);
+            if(atrasa==1){
+                bindingSuperficie.view3.setBackgroundColor(Color.parseColor("#E4B163"));
+            }else{
+                bindingSuperficie.view3.setBackgroundColor(Color.parseColor("#D1D5DE"));
+            }
             ProviderDatosSuperficie.getInstance(getContext())
-                    .obtenerDatosSuperficie(md, usuario[0], new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
+                    .obtenerDatosSuperficie(md, usuario, new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
                         @Override
                         public void resolve(final Superficie superficie) {
                             if(superficie.getCodigo()==200){
+                                loadingProgress(progressDialog, 1);
+
+                                bindingSuperficie.nombresitio.setText(nombre+"");
+
                                 int valorFoto = 0;
                                 int valorFrente = 0;
                                 int valorFondo = 0;
                                 int valorEsquina = 0;
+
                                 for(int i = 0;i<superficie.getNiveles().size();i++){
                                     if(superficie.getNiveles().get(i).getNivel()==4 ||
                                             superficie.getNiveles().get(i).getNivel()==5){
-                                        Picasso.get().load(superficie.getNiveles().get(i).getImgFrenteId()).into(bindingSuperficie.imagen);
-                                        valorFoto = i;
-                                        valorFondo = i;
+                                        if(!superficie.getNiveles().get(i).getImgFrenteId().isEmpty()){
+                                            valorFoto = i;
+                                            valorFondo = i;
+                                        }
                                     }
 
                                     if(superficie.getNiveles().get(i).getNivel()==6 ||
@@ -760,150 +653,128 @@ public class FragmentDetalle extends Fragment implements
                                 Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
 
                                 if(esquina==1){
-                                    bindingSuperficie.escogeEsquina.setChecked(true);
-                                    tipoEsquina[0] = "1";
+
                                 }else{
-                                    bindingSuperficie.escogeEsquina.setChecked(false);
-                                    tipoEsquina[0] = "0";
+
                                 }
 
-                                getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                 String superficieS = String.valueOf(superficie.getNiveles().get(valorFrente).getValorreal());
                                 superficieS = superficieS.replace(" ", "");
-
                                 String fondoS = String.valueOf(superficie.getNiveles().get(valorFondo).getFondo());
                                 fondoS = fondoS.replace(" ", "");
 
-                                bindingSuperficie.frente.setText("  "+superficieS);
-                                bindingSuperficie.profundidad.setText("  "+fondoS);
-
                                 String total = String.valueOf((Double.valueOf(superficieS)
                                         *(Double.valueOf(fondoS))));
-                                bindingSuperficie.areaterreno.setText(""+total+"");
+                                bindingSuperficie.areaterreno.setText(total+" MTS2");
+                                bindingSuperficie.frente.setText(superficieS+" MTS");
+                                bindingSuperficie.profundidad.setText(fondoS+" MTS");
 
-                                bindingSuperficie.frontal.setAlpha(1.0f);
-                                bindingSuperficie.lateral1.setAlpha(0.35f);
-                                bindingSuperficie.lateral2.setAlpha(0.35f);
-                                bindingSuperficie.predial.setAlpha(0.35f);
+                                Slider.init(new PicassoImageLoadingService());
+                                slider = bindingSuperficie.map;
+                                final int finalValorFoto1 = valorFoto;
 
-                                bindingSuperficie.robotoTextView2.setText(nombreSitio);
-
-                                final int finalValorFoto = valorFoto;
-
-                                if(!superficie.getNiveles().get(finalValorFoto).getImgFrenteId().equals("")){
-                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
-                                }
-
-                                bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
+                                slider.postDelayed(new Runnable() {
                                     @Override
-                                    public void onClick(View view) {
-                                        if(!superficie.getNiveles().get(finalValorFoto).getImgFrenteId().equals("")){
-                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
-
-                                            bindingSuperficie.frontal.setAlpha(1.0f);
-                                            bindingSuperficie.lateral1.setAlpha(0.35f);
-                                            bindingSuperficie.lateral2.setAlpha(0.35f);
-                                            bindingSuperficie.predial.setAlpha(0.35f);
-
-                                            if(superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length()>0){
-                                                if(urlFrente.length()>0){
-                                                    Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                                                } else {
-                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
-                                                }
-                                            }else{
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                               //startActivityForResult(intent, CAMERA);
-                                            }
-                                        }
+                                    public void run() {
+                                        slider.setAdapter(new MainSliderAdapter(
+                                                superficie.getNiveles().get(finalValorFoto1).getImgFrenteId(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLateral1Id(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLateral2Id(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
+                                                ));
+                                        slider.setSelectedSlide(0);
                                     }
-                                });
+                                }, 1500);
 
-                                bindingSuperficie.lateral1.setOnClickListener(new View.OnClickListener() {
+                                final int[] local = {0};
+                                final int[] acceso = {0};
+                                final int[] grietas = {0};
+                                final int[] goteras = {0};
+
+                                ProviderDatosFactoresConstruccion.getInstance(getContext()).obtenerDatosContruccion(md, new ProviderDatosFactoresConstruccion.ConsultaFactoresConstruccion() {
                                     @Override
-                                    public void onClick(View view) {
-                                        if(!superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().equals("")){
-                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
-                                            bindingSuperficie.lateral1.setAlpha(1.0f);
-                                            bindingSuperficie.frontal.setAlpha(0.35f);
-                                            bindingSuperficie.lateral2.setAlpha(0.35f);
-                                            bindingSuperficie.predial.setAlpha(0.35f);
+                                    public void resolve(final FactoresConstruccion factoresConstruccion) {
+                                        if(factoresConstruccion.getCodigo()==200){
+                                            if(factoresConstruccion.getCatalogo()!=null) {
+                                                ProviderDatosConstruccion.getInstance(getContext()).obtenerDatosConstruccion(md, usuario, new ProviderDatosConstruccion.ConsultaDatosConstruccion() {
+                                                    @Override
+                                                    public void resolve(DatosConstruccions datosSitio) {
+                                                        datosSitios = datosSitio;
+                                                        if(datosSitio!=null){
+                                                            if(datosSitio.getCodigo()==200 && datosSitio.getConstruccion().size() > 0) {
+                                                                for(int i=0; i<datosSitio.getConstruccion().size(); i++){
+                                                                    if(datosSitio.getConstruccion().get(i).getNivelid()==1
+                                                                            || datosSitio.getConstruccion().get(i).getNivelid()==2){
+                                                                        String sitio = datosSitio.getConstruccion().get(i).getNombrenivel();
+                                                                        if(sitio.contains("LOCAL")){
 
+                                                                            bindingSuperficie.setTerreno(1);
+                                                                            for (int j = 0; j < datosSitio.getConstruccion().get(i).getDetalles().size(); j++) {
+                                                                                if(datosSitio.getConstruccion().get(i).getDetalles().get(j).getDetalleid()==1){
+                                                                                    local[0] = 1;
+                                                                                    bindingSuperficie.setLocal(local[0]);
+                                                                                }
 
-                                            if(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length()>0){
-                                                if(urlLateral1.length()>0){
-                                                    Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                                                } else {
-                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
-                                                }
-                                            }else{
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                               // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                               // startActivityForResult(intent, CAMERA);
-                                            }
-                                        }
-                                    }
-                                });
+                                                                                if(datosSitio.getConstruccion().get(i).getDetalles().get(j).getDetalleid()==2){
+                                                                                    acceso[0] = 1;
+                                                                                    bindingSuperficie.setAcceso(acceso[0]);
+                                                                                }
 
+                                                                                if(datosSitio.getConstruccion().get(i).getDetalles().get(j).getDetalleid()==3){
+                                                                                    grietas[0] = 1;
+                                                                                    bindingSuperficie.setTechos(grietas[0]);
+                                                                                }
 
-                                bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("")){
-                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
-                                            bindingSuperficie.lateral1.setAlpha(0.35f);
-                                            bindingSuperficie.frontal.setAlpha(0.35f);
-                                            bindingSuperficie.lateral2.setAlpha(0.35f);
-                                            bindingSuperficie.predial.setAlpha(1.0f);
+                                                                                if(datosSitio.getConstruccion().get(i).getDetalles().get(j).getDetalleid()==4){
+                                                                                    goteras[0] = 1;
+                                                                                    bindingSuperficie.setPisos(goteras[0]);
+                                                                                }
+                                                                            }
+                                                                        }else{
+                                                                            bindingSuperficie.setTerreno(0);
+                                                                        }
+                                                                        bindingSuperficie.construccion.setText(sitio+"");
+                                                                    }
 
-                                            if(superficie.getNiveles().get(finalValorFoto).getImgPredial().length()>0){
-                                                if(urlPredial.length()>0){
-                                                    Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
-                                                } else {
-                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
-                                                }
-                                            }else{
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                // startActivityForResult(intent, CAMERA);
-                                            }
-                                        }
-                                    }
-                                });
+                                                                    if(datosSitio.getConstruccion().get(i).getNivelid()==3
+                                                                            || datosSitio.getConstruccion().get(i).getNivelid()==4
+                                                                            || datosSitio.getConstruccion().get(i).getNivelid()==5){
 
-                                urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
-                                urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
-                                urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
-                                urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
+                                                                        String condicion = datosSitio.getConstruccion().get(i).getNombrenivel();
+                                                                        bindingSuperficie.setCondiciones(condicion+"");
 
-                                bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        bindingSuperficie.lateral2.setAlpha(1.0f);
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(0.35f);
+                                                                    }
 
-                                        if(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length()>0){
-                                            if(urlLateral2.length()>0){
-                                                Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                                            } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id()).into(bindingSuperficie.imagen);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void reject(Exception e) {
+
+                                                    }
+                                                });
                                             }
                                         }else{
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                           // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                           // startActivityForResult(intent, CAMERA);
+                                            Toast.makeText(getContext(), "Error al consultar factores de construcción", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    @Override
+                                    public void reject(Exception e) {
+
+                                    }
                                 });
+
+
+
+                            }else{
+                                loadingProgress(progressDialog, 1);
                             }
                         }
                         @Override
                         public void reject(Exception e) { }
                     });
-
 
             bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -920,13 +791,15 @@ public class FragmentDetalle extends Fragment implements
 
 
 
-        }else if (position == 3) {
+        }else if (position == 2) {
 
             mensaje = "fragment 2";
             bindingZonificacion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_3,container,false);
             view = bindingZonificacion.getRoot();
 
 
+            bindingZonificacion.ciudad.setVisibility(View.GONE);
+            bindingZonificacion.toolbar.guardar.setVisibility(View.INVISIBLE);
 
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                     .findFragmentById(R.id.map);
@@ -944,7 +817,7 @@ public class FragmentDetalle extends Fragment implements
 
             String nombreMd = preferences[0].getString("nombreSitio", "");
             bindingZonificacion.robotoTextView2.setText(nombreMd);
-            bindingZonificacion.toolbar.nombreTitulo.setText(getString(R.string.zonifica));
+            bindingZonificacion.toolbar.nombreTitulo.setText(getString(R.string.detalles));
 
             if(true){
                 preferences[0] = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -975,9 +848,9 @@ public class FragmentDetalle extends Fragment implements
 
 
                                     if(detallesGen.size()==0){
-                                       // mdsNuevos = new LatLng(0.0, 0.0);
-                                       // colocarMarcador(mdsNuevos, mMapZona, 1,
-                                              //  usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom);
+                                        // mdsNuevos = new LatLng(0.0, 0.0);
+                                        // colocarMarcador(mdsNuevos, mMapZona, 1,
+                                        //  usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom);
                                     }else{
                                         for(int j=0;j<detallesGen.size();j++){
                                             mdsNuevos = new LatLng(Double.valueOf(detallesGen.get(j).getLatitud()),
@@ -1258,91 +1131,264 @@ public class FragmentDetalle extends Fragment implements
             }
 
             /*************************************** terminar zonificacion **************************************************/
+        }else if (position == 3) {
 
-        }else if (position == 4) {
+            final FragmentDetalleGenBinding bindingSuperficie = DataBindingUtil.inflate(inflater,R.layout.fragment_detalle_gen,container,false);
+            view = bindingSuperficie.getRoot();
 
-            bindingConstruccion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_4,container,false);
-            view = bindingConstruccion.getRoot();
+            bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.detalles));
+            bindingSuperficie.toolbar.guardar.setVisibility(View.INVISIBLE);
 
-            bindingConstruccion.toolbar.guardar.setVisibility(View.INVISIBLE);
-
-            SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String mdIdterminar = preferences.getString("mdIdterminar", "");
-            final String usuarioId = preferences.getString("usuario", "");
-            final String nombreSitio = preferences.getString("nombreSitio","");
-            bindingConstruccion.titulo.setText(nombreSitio+"");
-
-            bindingConstruccion.toolbar.nombreTitulo.setText(getString(R.string.construccion));
-           // bindingConstruccion.toolbar.back.setVisibility(View.INVISIBLE);
-
-            ProviderDatosFactoresConstruccion.getInstance(getContext()).obtenerDatosContruccion(mdIdterminar,
-                    new ProviderDatosFactoresConstruccion.ConsultaFactoresConstruccion() {
-                @Override
-                public void resolve(final FactoresConstruccion factoresConstruccion) {
-
-                    if(factoresConstruccion.getCodigo()==200){
-                        if(factoresConstruccion.getCatalogo()!=null) {
-
-                            ProviderDatosConstruccion.getInstance(getContext())
-                                    .obtenerDatosConstruccion(mdIdterminar, usuarioId, new ProviderDatosConstruccion.ConsultaDatosConstruccion() {
-                                        @Override
-                                        public void resolve(DatosConstruccions datosSitio) {
-                                            datosSitios = datosSitio;
-                                            if(datosSitio!=null){
-                                                if(datosSitio.getCodigo()==200 &&  datosSitio.getConstruccion().size() > 0) {
-
-                                                    generarConstruccion(
-                                                            bindingConstruccion,
-                                                            factoresConstruccion,
-                                                            datosSitio);
-
-                                                    generarDetalles(bindingConstruccion,
-                                                            factoresConstruccion,
-                                                            datosSitio);
-
-                                                    generarCondiciones(bindingConstruccion,
-                                                            factoresConstruccion,
-                                                            datosSitio);
-
-                                                    datosConstruccion(mdIdterminar, usuarioId, datosSitios);
-
-                                                    bindingConstruccion.cargar.setVisibility(View.INVISIBLE);
+            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+            final String usuario = preferences.getString("usuario", "");
+            final String md = preferences.getString("mdIdterminar", "");
+            final String nombre = preferences.getString("nombreSitio", "");
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            loadingProgress(progressDialog, 0);
+            int atrasa = preferences.getInt("atrasa",0);
 
 
-                                                } else{
+            if(atrasa==1){
+                bindingSuperficie.view3.setBackgroundColor(Color.parseColor("#E4B163"));
+            }else{
+                bindingSuperficie.view3.setBackgroundColor(Color.parseColor("#D1D5DE"));
+            }
+            ProviderDatosSuperficie.getInstance(getContext())
+                    .obtenerDatosSuperficie(md, usuario, new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
+                        @Override
+                        public void resolve(final Superficie superficie) {
+                            if(superficie.getCodigo()==200){
+                                loadingProgress(progressDialog, 1);
+                                bindingSuperficie.nombresitio.setText(nombre+"");
+                                int valorFoto = 0;
+                                int valorFrente = 0;
+                                int valorFondo = 0;
+                                int valorEsquina = 0;
 
-                                                    generarConstruccion(
-                                                            bindingConstruccion,
-                                                            factoresConstruccion);
+                                for(int i = 0;i<superficie.getNiveles().size();i++){
+                                    if(superficie.getNiveles().get(i).getNivel()==4 ||
+                                            superficie.getNiveles().get(i).getNivel()==5){
+                                        if(!superficie.getNiveles().get(i).getImgFrenteId().isEmpty()){
+                                            valorFoto = i;
+                                            valorFondo = i;
+                                        }
+                                    }
 
-                                                    generarDetalles(bindingConstruccion,
-                                                            factoresConstruccion);
+                                    if(superficie.getNiveles().get(i).getNivel()==6 ||
+                                            superficie.getNiveles().get(i).getNivel()==7){
+                                        valorFrente = i;
+                                    }
 
-                                                    generarCondiciones(bindingConstruccion,
-                                                            factoresConstruccion);
-                                                    bindingConstruccion.cargar.setVisibility(View.INVISIBLE);
+                                    if(superficie.getNiveles().get(i).getNivel()==8){
+                                        valorEsquina = i;
+                                    }
+                                }
 
+                                Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+
+                                if(esquina==1){ }else{ }
+
+                                Slider.init(new PicassoImageLoadingService());
+                                slider = bindingSuperficie.map;
+                                final int finalValorFoto1 = valorFoto;
+
+                                slider.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        slider.setAdapter(new MainSliderAdapter(
+                                                superficie.getNiveles().get(finalValorFoto1).getImgFrenteId(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLateral1Id(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLateral2Id(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
+                                        ));
+                                        slider.setSelectedSlide(0);
+                                    }
+                                }, 1500);
+
+                                final DecimalFormat formatters = new DecimalFormat("#,###,###");
+
+                                ProviderDatosGeneralidadesSitio.getInstance(getContext())
+                                        .obtenerDatosGeneralidades(md, usuario, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
+                                            @Override
+                                            public void resolve(GeneralidadesSitio datosSitio) {
+                                                if(datosSitio!=null && datosSitio.getCodigo()==200) {
+                                                    if(datosSitio.getGeneralidades().size()>0){
+                                                        String fecha = datosSitio.getGeneralidades().get(0).getFechadisponible();
+
+                                                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                                        Date d = null;
+                                                        try {
+                                                            d = formatter.parse(fecha);
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                        Calendar thatDay = Calendar.getInstance();
+                                                        thatDay.setTime(d);
+
+                                                        int year = thatDay.get(Calendar.YEAR);
+                                                        int month = thatDay.get(Calendar.MONTH);
+                                                        int day = thatDay.get(Calendar.DAY_OF_MONTH);
+
+                                                        for(int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
+
+                                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
+                                                                    datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
+                                                                    datosSitio.getGeneralidades().get(i).getNivelid() == 9){
+
+                                                                bindingSuperficie.periodoamotizacion.setText(
+                                                                        datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()+""
+                                                                );
+
+                                                                bindingSuperficie.amortizaciontotal.setText(
+                                                                        "$"+formatters.format(datosSitio.getGeneralidades().get(i).getValor())+".00"
+                                                                );
+
+                                                            }
+
+                                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 4 || datosSitio.getGeneralidades().get(i).getNivelid() == 5 || datosSitio.getGeneralidades().get(i).getNivelid() == 6){
+
+                                                                if(datosSitio.getGeneralidades().get(i).getNivelid() == 4){
+                                                                    bindingSuperficie.apartirde.setText(getString(R.string.disponible)+"");
+                                                                }
+
+                                                                if(datosSitio.getGeneralidades().get(i).getNivelid() == 5){
+                                                                    bindingSuperficie.apartirde.setText(getString(R.string.apartir)+" "+datosSitio.getGeneralidades().get(i).getFechadisponible()+"");
+                                                                }
+
+                                                                if(datosSitio.getGeneralidades().get(i).getNivelid() == 6){
+                                                                    bindingSuperficie.apartirde.setText(R.string.ocupados);
+                                                                }
+
+                                                            }
+
+                                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
+                                                                    datosSitio.getGeneralidades().get(i).getNivelid() == 2 ||
+                                                                    datosSitio.getGeneralidades().get(i).getNivelid() == 3){
+
+                                                                bindingSuperficie.renta.setText("$"+formatters.format(datosSitio.getGeneralidades().get(i).getValor())+".00");
+                                                                bindingSuperficie.periodogracia.setText(
+                                                                        datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor()+ ""
+                                                                );
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
-                                        }
+                                            @Override
+                                            public void reject(Exception e) {
 
-                                        @Override
-                                        public void reject(Exception e) {
+                                            }
+                                        });
 
-                                        }
-                                    });
+
+
+                            }else{
+                                loadingProgress(progressDialog, 1);
+                            }
                         }
-                    }else{
-                        Toast.makeText(getContext(), "Error al consultar factores de construcción", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                @Override
-                public void reject(Exception e) {
+                        @Override
+                        public void reject(Exception e) { }
+                    });
 
+            bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(noti){
+                        Intent main = new Intent(getContext(), ActivityNotificaciones.class);
+                        startActivity(main);
+                    }else{
+                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                        a.show(getChildFragmentManager(),"child");
+                    }
                 }
             });
 
 
+        }else if (position == 4) {
+
+            bindingConstruccion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_4_detalle,container,false);
+            view = bindingConstruccion.getRoot();
+
+            bindingConstruccion.toolbar.nombreTitulo.setText(getString(R.string.detalles));
+            bindingConstruccion.toolbar.guardar.setVisibility(View.INVISIBLE);
+
+            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+            final String usuario = preferences.getString("usuario", "");
+            final String md = preferences.getString("mdIdterminar", "");
+            final String nombre = preferences.getString("nombreSitio", "");
+
+            final String punto = preferences.getString("punto", "");
+            final String cate = preferences.getString("cate", "");
+            final String fecha = preferences.getString("fechaCreacion", "");
+
+            bindingConstruccion.puntos.setText(punto+"");
+            bindingConstruccion.categoria.setText(cate+"");
+            bindingConstruccion.fechaCreacion.setText(fecha+"");
+
+            bindingConstruccion.setCategoria(cate);
+            bindingConstruccion.toolbar.nombreTitulo.setText(getString(R.string.detalles));
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+
+            loadingProgress(progressDialog, 0);
+
+            int atrasa = preferences.getInt("atrasa",0);
+            if(atrasa==1){
+                bindingConstruccion.view3.setBackgroundColor(Color.parseColor("#E4B163"));
+            }else{
+                bindingConstruccion.view3.setBackgroundColor(Color.parseColor("#D1D5DE"));
+            }
+
+            ProviderDatosSuperficie.getInstance(getContext())
+                    .obtenerDatosSuperficie(md, usuario, new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
+                        @Override
+                        public void resolve(final Superficie superficie) {
+                            if(superficie.getCodigo()==200){
+
+                                loadingProgress(progressDialog, 1);
+                                bindingConstruccion.nombresitio.setText(nombre+"");
+                                int valorFoto = 0;
+                                int valorEsquina = 0;
+
+                                for(int i = 0;i<superficie.getNiveles().size();i++){
+                                    if(superficie.getNiveles().get(i).getNivel()==4 ||
+                                            superficie.getNiveles().get(i).getNivel()==5){
+                                        if(!superficie.getNiveles().get(i).getImgFrenteId().isEmpty()){
+                                            valorFoto = i;
+                                        }
+                                    }
+                                }
+
+                                Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+
+                                if(esquina==1){ }else{ }
+
+                                Slider.init(new PicassoImageLoadingService());
+                                slider = bindingConstruccion.map;
+                                final int finalValorFoto1 = valorFoto;
+
+                                slider.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        slider.setAdapter(new MainSliderAdapter(
+                                                superficie.getNiveles().get(finalValorFoto1).getImgFrenteId(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLateral1Id(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLateral2Id(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
+                                        ));
+                                        slider.setSelectedSlide(0);
+                                    }
+                                }, 1500);
+
+                                listaPeatonal(bindingConstruccion);
+
+                            }else{
+                                loadingProgress(progressDialog, 1);
+                            }
+                        }
+                        @Override
+                        public void reject(Exception e) { }
+                    });
 
             bindingConstruccion.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1357,594 +1403,7 @@ public class FragmentDetalle extends Fragment implements
                 }
             });
 
-            bindingConstruccion.aceptar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FragmentDialogAceptar a = new FragmentDialogAceptar();
-                    a.show(getChildFragmentManager(),"child");
-                }
-            });
-
-            bindingConstruccion.cancelar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FragmentDialogCancelar a = new FragmentDialogCancelar();
-                    a.show(getChildFragmentManager(),"child");
-                }
-            });
-
-
-
-
-
-
-        }else if (position == 5) {
-
-            final FragmentDetalleGeneralidadesBinding binding;
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detalle_generalidades,container,false);
-            view = binding.getRoot();
-
-            //binding.toolbar.back.setVisibility(View.INVISIBLE);
-
-            binding.toolbar.nombreTitulo.setText(getString(R.string.generalidades));
-            binding.datepicker.setMinDate(System.currentTimeMillis() - 1000);
-
-
-
-
-            binding.renta.setEnabled(false);
-            binding.amortizaciontotal.setEnabled(false);
-
-            binding.toolbar.guardar.setVisibility(View.INVISIBLE);
-
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-
-            final String[] disponibilidad = new String[1];
-            String nombreMd = preferences.getString("nombreSitio", "");
-            binding.robotoTextView2.setText(nombreMd);
-
-            String usuarioId = preferences.getString("usuario", "");
-            final String mdIdterminar = preferences.getString("mdIdterminar", "");
-            final int textColor = Color.parseColor("#254581");
-
-            ProviderDatosAmortizacion.getInstance(getContext()).obtenerDatosAmortizacion(mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
-                @Override
-                public void resolve(Amortizacion datosPredial) {
-                    if(datosPredial!=null){
-
-                        ArrayList<String> amortizacion = new ArrayList<>();
-
-                        for(int i = 0;i<datosPredial.getAmortizacion().size();i++){
-                            amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
-                        }
-
-                        ArrayList<String> gracia = new ArrayList<>();
-
-                        for(int j = 0;j<datosPredial.getGracia().size();j++){
-                            gracia.add(datosPredial.getGracia().get(j).getOpcion());
-                        }
-
-                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
-                                amortizacion);
-                        amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodoamotizacion.setAdapter(amortizacionSpinner);
-
-                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
-                                gracia);
-                        graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodogracia.setAdapter(graciaSpinner);
-
-                    }
-                }
-
-                @Override
-                public void reject(Exception e) {
-
-                }
-            });
-
-            ProviderDatosGeneralidadesSitio.getInstance(getContext())
-                    .obtenerDatosGeneralidades(mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
-                        @Override
-                        public void resolve(GeneralidadesSitio datosSitio) {
-                            if(datosSitio!=null && datosSitio.getCodigo()==200) {
-                                if(datosSitio.getGeneralidades().size()>0){
-                                    String fecha = datosSitio.getGeneralidades().get(0).getFechadisponible();
-
-                                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                                    Date d = null;
-                                    try {
-                                        d = formatter.parse(fecha);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    Calendar thatDay = Calendar.getInstance();
-                                    thatDay.setTime(d);
-
-                                    int year = thatDay.get(Calendar.YEAR);
-                                    int month = thatDay.get(Calendar.MONTH);
-                                    int day = thatDay.get(Calendar.DAY_OF_MONTH);
-
-                                    binding.datepicker.updateDate(year, month, day);
-
-
-                                    for(int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
-
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9){
-
-                                            binding.amortizaciontotal.setText(datosSitio.getGeneralidades().get(i).getValor()+" MXN");
-
-                                            if(datosSitio.getGeneralidades().get(i).getDetalles()
-                                                    != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
-                                                int valor = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
-                                                switch (valor){
-                                                    case 0:
-                                                        binding.periodoamotizacion.setSelection(0);
-                                                        break;
-                                                    case 1:
-                                                        binding.periodoamotizacion.setSelection(1);
-                                                        break;
-                                                    case 2:
-                                                        binding.periodoamotizacion.setSelection(2);
-                                                        break;
-                                                    case 3:
-                                                        binding.periodoamotizacion.setSelection(3);
-                                                        break;
-                                                    case 6:
-                                                        binding.periodoamotizacion.setSelection(4);
-                                                        break;
-                                                    case 9:
-                                                        binding.periodoamotizacion.setSelection(5);
-                                                        break;
-                                                    case 12:
-                                                        binding.periodoamotizacion.setSelection(6);
-                                                        break;
-                                                    case 18:
-                                                        binding.periodoamotizacion.setSelection(7);
-                                                        break;
-                                                    case 24:
-                                                        binding.periodoamotizacion.setSelection(8);
-                                                        break;
-                                                    case 30:
-                                                        binding.periodoamotizacion.setSelection(9);
-                                                        break;
-                                                    case 36:
-                                                        binding.periodoamotizacion.setSelection(10);
-                                                        break;
-                                                    case 42:
-                                                        binding.periodoamotizacion.setSelection(11);
-                                                        break;
-                                                    case 48:
-                                                        binding.periodoamotizacion.setSelection(12);
-                                                        break;
-                                                    case 54:
-                                                        binding.periodoamotizacion.setSelection(13);
-                                                        break;
-                                                    case 60:
-                                                        binding.periodoamotizacion.setSelection(14);
-                                                        break;
-                                                }
-
-
-                                            }
-
-                                        }
-
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 4 || datosSitio.getGeneralidades().get(i).getNivelid() == 5 || datosSitio.getGeneralidades().get(i).getNivelid() == 6){
-
-                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 4){
-                                                binding.rinmediato.setChecked(true);
-                                                binding.rinmediato.setTextColor(Color.parseColor("#254581"));
-                                                binding.rinmediato.setButtonTintList(ColorStateList.valueOf(textColor));
-                                                disponibilidad[0] = "1";
-                                                binding.datepicker.setVisibility(View.GONE);
-                                            }
-
-                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 5){
-                                                binding.rapartirde.setChecked(true);
-                                                binding.rapartirde.setTextColor(Color.parseColor("#254581"));
-                                                binding.rapartirde.setButtonTintList(ColorStateList.valueOf(textColor));
-
-                                                disponibilidad[0] = "3";
-                                                binding.datepicker.setVisibility(View.VISIBLE);
-                                            }
-
-                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 6){
-                                                binding.rocupado.setChecked(true);
-                                                binding.rocupado.setTextColor(Color.parseColor("#254581"));
-                                                binding.rocupado.setButtonTintList(ColorStateList.valueOf(textColor));
-                                                disponibilidad[0] = "2";
-                                                binding.datepicker.setVisibility(View.GONE);
-                                            }
-
-                                        }
-
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 2 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 3){
-
-                                            String valor = datosSitio.getGeneralidades().get(i).getValor().toString();
-                                            binding.renta.setText(valor);
-                                            int valor2 = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
-
-                                            switch (valor2){
-                                                case 0:
-                                                    binding.periodogracia.setSelection(0);
-                                                    break;
-                                                case 1:
-                                                    binding.periodogracia.setSelection(1);
-                                                    break;
-                                                case 2:
-                                                    binding.periodogracia.setSelection(2);
-                                                    break;
-                                                case 3:
-                                                    binding.periodogracia.setSelection(3);
-                                                    break;
-                                                case 4:
-                                                    binding.periodogracia.setSelection(4);
-                                                    break;
-                                                case 5:
-                                                    binding.periodogracia.setSelection(5);
-                                                    break;
-                                                case 6:
-                                                    binding.periodogracia.setSelection(6);
-                                                    break;
-                                                case 7:
-                                                    binding.periodogracia.setSelection(7);
-                                                    break;
-                                                case 8:
-                                                    binding.periodogracia.setSelection(8);
-                                                    break;
-                                                case 9:
-                                                    binding.periodogracia.setSelection(9);
-                                                    break;
-                                                case 10:
-                                                    binding.periodogracia.setSelection(10);
-                                                    break;
-                                                case 11:
-                                                    binding.periodogracia.setSelection(11);
-                                                    break;
-                                                case 12:
-                                                    binding.periodogracia.setSelection(12);
-                                                    break;
-                                                case 18:
-                                                    binding.periodogracia.setSelection(13);
-                                                    break;
-                                                case 24:
-                                                    binding.periodogracia.setSelection(14);
-                                                    break;
-                                                case 30:
-                                                    binding.periodogracia.setSelection(15);
-                                                    break;
-                                                case 36:
-                                                    binding.periodogracia.setSelection(16);
-                                                    break;
-                                                case 42:
-                                                    binding.periodogracia.setSelection(17);
-                                                    break;
-                                                case 48:
-                                                    binding.periodogracia.setSelection(18);
-                                                    break;
-                                                case 54:
-                                                    binding.periodogracia.setSelection(19);
-                                                    break;
-                                                case 60:
-                                                    binding.periodogracia.setSelection(20);
-                                                    break;
-                                            }
-
-                                        }
-                                    }
-                                }
-
-
-                            }
-                        }
-                        @Override
-                        public void reject(Exception e) {
-
-                        }
-                    });
-
-
-
-            binding.datepicker.setEnabled(false);
-            binding.rinmediato.setEnabled(false);
-            binding.rocupado.setEnabled(false);
-            binding.rapartirde.setEnabled(false);
-
-            binding.periodoamotizacion.setEnabled(false);
-            binding.periodogracia.setEnabled(false);
-
-            binding.rdgGrupo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId) {
-                        case R.id.rinmediato:
-                            binding.datepicker.setVisibility(View.INVISIBLE);
-                            break;
-                        case R.id.rocupado:
-                            binding.datepicker.setVisibility(View.INVISIBLE);
-                            break;
-                        case R.id.rapartirde:
-                            binding.datepicker.setVisibility(View.VISIBLE);
-                            break;
-                    }
-                }
-            });
-
-
-            binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(noti){
-                        Intent main = new Intent(getContext(), ActivityNotificaciones.class);
-                        startActivity(main);
-                    }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
-                        a.show(getChildFragmentManager(),"child");
-                    }
-                }
-            });
-
-        } else if (position == 6) {
-            final FragmentAutoriza6Binding binding;
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_6,container,false);
-            view = binding.getRoot();
-            final ArrayList<String> horarios = new ArrayList<>();
-
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String usuarioId = preferences.getString("usuario", "");
-            final String mdIdterminar = preferences.getString("mdIdterminar", "");
-
-            binding.conteo.setVisibility(View.INVISIBLE);
-            binding.btnFinalizar.setVisibility(View.INVISIBLE);
-            binding.toolbar.guardar.setVisibility(View.INVISIBLE);
-
-            //binding.toolbar.back.setVisibility(View.INVISIBLE);
-
-            String nombreMd = preferences.getString("nombreSitio", "");
-            binding.robotoTextView2.setText(nombreMd);
-            listaPeatonal(binding);
-            binding.recyclerHoras.setVisibility(View.INVISIBLE);
-            ProviderHorasPeatonales.getInstance(getContext()).obtenerHoras(mdIdterminar, usuarioId,
-                    new ProviderHorasPeatonales.InterfaceObtieneHoras() {
-                        @Override
-                        public void resolve(final HorasPeatonales horasPeatonales) {
-                            if(horasPeatonales.getCodigo()==200){
-
-                                if(horasPeatonales.getDetalle().size()<0){
-                                    binding.btnFinalizar.setAlpha(0.35f);
-                                }else{
-                                    binding.botones.setVisibility(View.VISIBLE);
-                                    binding.btnFinalizar.setEnabled(true);
-                                }
-
-                                for(int i=0;i<horasPeatonales.getDetalle().size();i++){
-                                    horarios.add(horasPeatonales.getDetalle().get(i).getHoraMin()+" - "+
-                                            horasPeatonales.getDetalle().get(i).getHoraMax());
-                                }
-
-
-                                adapterHoras = new AdapterListaHoras(horasPeatonales.getDetalle(), getContext(), null, binding, "");
-                                binding.recyclerHoras.setLayoutManager(new LinearLayoutManager(getContext()));
-                                binding.recyclerHoras.setAdapter(adapterHoras);
-
-                                RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
-                                binding.recyclerHoras.setLayoutManager(mLayoutManager);
-                                binding.recyclerHoras.addItemDecoration(new FragmentDetalle.GridSpacingItemDecoration(3, dpToPx(4), true));
-                                binding.recyclerHoras.setItemAnimator(new DefaultItemAnimator());
-                                binding.peatonalConteo.spinnerHora.setItems(horarios);
-
-                                horaInicio = horasPeatonales.getDetalle().get(0).getHoraMin();
-                                horaFinal = horasPeatonales.getDetalle().get(0).getHoraMax();
-
-                                Calendar c = Calendar.getInstance();
-                                SimpleDateFormat sdf = new SimpleDateFormat("kk:mm");
-                                final String strDate = sdf.format(c.getTime());
-
-                                binding.toolbar.nombreTitulo.setText(getString(R.string.flujopeatonal));
-                                binding.conteo.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        binding.peaton.setVisibility(View.VISIBLE);
-                                        binding.recyclerPeatonal.setVisibility(View.INVISIBLE);
-                                        binding.btnFinalizar.setVisibility(View.INVISIBLE);
-                                        binding.promedio.setVisibility(View.INVISIBLE);
-
-                                        String hoI = horasPeatonales.getDetalle().get(0).getHoraMin();
-                                        String hoF = horasPeatonales.getDetalle().get(0).getHoraMax();
-
-                                        hoI = hoI.substring(0, 5);
-                                        hoF = hoF.substring(0, 5);
-
-                                        boolean hora =  isHourInInterval(strDate, hoI, hoF);
-                                        if(hora!=false){
-                                            binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                            binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                            horaInicio = hoI;
-                                            horaFinal = hoF;
-                                        }else{
-                                            binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                            Toast.makeText(getContext(), "La hora actual no se encuentra en esta seleccion",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-
-
-                                        listaPeatonal(binding);
-
-
-
-                                        binding.toolbar.guardar.setVisibility(View.INVISIBLE);
-                                        binding.peatonalConteo.fechaHoy.setText(Util.getFechita());
-
-
-                                        final String finalHoI = hoI;
-                                        final String finalHoF = hoF;
-                                        binding.peatonalConteo.spinnerHora.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-                                            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-
-                                                if(position==0){
-                                                    boolean hora = isHourInInterval(strDate, finalHoI, finalHoF);
-                                                    if(hora!=false){
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                                        horaInicio = finalHoI;
-                                                        horaFinal = finalHoF;
-                                                    }else{
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                                        Toast.makeText(getContext(), "La hora actual no se encuentra en esta seleccion", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-
-                                                if(position==1){
-
-                                                    String hoI = horasPeatonales.getDetalle().get(1).getHoraMin();
-                                                    String hoF = horasPeatonales.getDetalle().get(1).getHoraMax();
-
-                                                    boolean hora =  isHourInInterval(strDate, hoI, hoF);
-                                                    if(hora!=false){
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                                        horaInicio = hoI;
-                                                        horaFinal = hoF;
-                                                    }else{
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                                        Toast.makeText(getContext(), "La hora actual no se encuentra en esta seleccion",
-                                                                Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-
-                                                if(position==2){
-                                                    String hoI;
-                                                    String hoF;
-                                                    if(horarios.size()>1){
-                                                        hoI = horasPeatonales.getDetalle().get(2).getHoraMin();
-                                                        hoF = horasPeatonales.getDetalle().get(2).getHoraMax();
-                                                    }else{
-                                                        hoI = "";
-                                                        hoF = "";
-                                                    }
-
-                                                    boolean hora = isHourInInterval(strDate, hoI, hoF);
-                                                    if(hora!=false){
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                                        horaInicio = hoI;
-                                                        horaFinal = hoF;
-                                                    }else{
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(false);
-                                                        Toast.makeText(getContext(), "La hora actual no se encuentra en esta seleccion",
-                                                                Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            }
-                                        });
-
-                                        binding.peatonalConteo.cronometroPlay.setAlpha(0.35f);
-                                        binding.peatonalConteo.cronometroStop.setAlpha(0.35f);
-                                        binding.peatonalConteo.cronometroPlay.setEnabled(true);
-                                        binding.peatonalConteo.cronometroStop.setEnabled(true);
-
-                                        binding.peatonalConteo.cronometroPlay.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-
-                                                binding.peatonalConteo.cronometroPlay.setAlpha(1.0f);
-                                                binding.peatonalConteo.cronometroStop.setAlpha(0.35f);
-                                                binding.peatonalConteo.chronometer1.setBase(SystemClock.elapsedRealtime()- tiempo *1000);
-                                                binding.peatonalConteo.chronometer1.start();
-                                                showElapsedTime(binding);
-                                                binding.peatonalConteo.cronometroPlay.setEnabled(false);
-
-                                            }
-                                        });
-
-                                        binding.peatonalConteo.cronometroStop.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                binding.peatonalConteo.chronometer1.setBase(SystemClock.elapsedRealtime()- tiempo *1000);
-                                                binding.peatonalConteo.cronometroPlay.setEnabled(true);
-                                                binding.peatonalConteo.cronometroStop.setAlpha(1.0f);
-                                                binding.peatonalConteo.cronometroPlay.setAlpha(0.35f);
-                                                binding.peatonalConteo.chronometer1.stop();
-                                                showElapsedTime(binding);
-                                            }
-                                        });
-
-
-                                        binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                if(noti){
-                                                    Intent main = new Intent(getContext(), ActivityNotificaciones.class);
-                                                    startActivity(main);
-                                                }else{
-                                                    FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
-                                                    a.show(getChildFragmentManager(),"child");
-                                                }
-                                            }
-                                        });
-
-
-                                        binding.peatonalConteo.regresar.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                binding.peaton.setVisibility(View.INVISIBLE);
-                                                binding.conteo.setEnabled(true);
-                                                binding.btnFinalizar.setVisibility(View.VISIBLE);
-                                                binding.recyclerPeatonal.setVisibility(View.VISIBLE);
-                                                binding.btnFinalizar.setVisibility(View.VISIBLE);
-                                                binding.promedio.setVisibility(View.VISIBLE);
-
-                                            }
-                                        });
-                                    }
-                                });
-
-
-                            }
-                        }
-
-                        @Override
-                        public void reject(Exception e) {
-
-                        }
-                    });
-
-            binding.btnFinalizar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Intent intent = new Intent(getContext(), ActivityFinalizaTerminar.class);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-
-                }
-            });
-
-            binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(noti){
-                        Intent main = new Intent(getContext(), ActivityNotificaciones.class);
-                        startActivity(main);
-                    }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
-                        a.show(getChildFragmentManager(),"child");
-                    }
-                }
-            });
-
-
         }else {
-
             final ActivityFinalizaBinding binding;
             binding = DataBindingUtil.inflate(inflater, R.layout.activity_finaliza,container,false);
             view = binding.getRoot();
@@ -1952,7 +1411,6 @@ public class FragmentDetalle extends Fragment implements
             binding.btnFinalizar.setVisibility(View.INVISIBLE);
             binding.btnGuardar.setVisibility(View.INVISIBLE);
             binding.atras.setVisibility(View.INVISIBLE);
-
             binding.btnAtras.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1966,7 +1424,6 @@ public class FragmentDetalle extends Fragment implements
 
                 }
             });
-
         }
         return view;
     }
@@ -2018,6 +1475,10 @@ public class FragmentDetalle extends Fragment implements
                         binding.tituloMacro.setVisibility(View.GONE);
                     }
 
+                    binding.tituloFaltantesMicro.setVisibility(View.GONE);
+                    binding.tituloFaltantesMacro.setVisibility(View.GONE);
+                    binding.tituloFaltantes.setVisibility(View.GONE);
+
                     generarDetallesMicro(binding, factoresMicro);
                     generarDetallesMacro(binding, factoresMacro);
 
@@ -2056,8 +1517,8 @@ public class FragmentDetalle extends Fragment implements
             TextView t1v1 = new TextView(getContext());
             t1v1.setTextSize(12);
             t1v1.setText(datosPuntuacion.get(i).getNombrenivel()+"");
-            t1v1.setTextColor(resource.getColor(R.color.azul));
-            t1v1.setPadding(0, paddingPixel,0,0);
+            t1v1.setTextColor(resource.getColor(R.color.grisetxt));
+            t1v1.setPadding(0, paddingPixel,0,5);
             t1v1.setGravity(Gravity.START);
 
             t1v1.setLayoutParams( new TableRow.LayoutParams( 660,
@@ -2067,7 +1528,7 @@ public class FragmentDetalle extends Fragment implements
             TextView t3v1 = new TextView(getContext());
             t3v1.setTextSize(12);
             t3v1.setText(datosPuntuacion.get(i).getPuntuacion()+"");
-            t3v1.setTextColor(resource.getColor(R.color.azul));
+            t3v1.setTextColor(resource.getColor(R.color.grisetxt));
             t3v1.setGravity(Gravity.RIGHT);
             t3v1.setLayoutParams( new TableRow.LayoutParams( 50,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
@@ -2082,7 +1543,7 @@ public class FragmentDetalle extends Fragment implements
                 binding.tituloMacro.setVisibility(View.GONE);
                 binding.tituloMicro.setVisibility(View.GONE);
             }
-            t3v2.setTextColor(resource.getColor(R.color.azul));
+            t3v2.setTextColor(resource.getColor(R.color.grisetxt));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
@@ -2111,8 +1572,8 @@ public class FragmentDetalle extends Fragment implements
             TextView t1v1 = new TextView(getContext());
             t1v1.setTextSize(12);
             t1v1.setText(datosPuntuacion.get(i).getNombrenivel()+"");
-            t1v1.setTextColor(resource.getColor(R.color.azul));
-            t1v1.setPadding(0, paddingPixel,0,0);
+            t1v1.setTextColor(resource.getColor(R.color.grisetxt));
+            t1v1.setPadding(0, paddingPixel,0,5);
             t1v1.setGravity(Gravity.START);
 
             t1v1.setLayoutParams( new TableRow.LayoutParams( 660,
@@ -2122,7 +1583,7 @@ public class FragmentDetalle extends Fragment implements
             TextView t3v1 = new TextView(getContext());
             t3v1.setTextSize(12);
             t3v1.setText(datosPuntuacion.get(i).getPuntuacion()+"");
-            t3v1.setTextColor(resource.getColor(R.color.azul));
+            t3v1.setTextColor(resource.getColor(R.color.grisetxt));
             t3v1.setGravity(Gravity.RIGHT);
             t3v1.setLayoutParams( new TableRow.LayoutParams( 50,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
@@ -2136,7 +1597,7 @@ public class FragmentDetalle extends Fragment implements
                 binding.tituloMacro.setVisibility(View.GONE);
                 binding.tituloMicro.setVisibility(View.GONE);
             }
-            t3v2.setTextColor(resource.getColor(R.color.azul));
+            t3v2.setTextColor(resource.getColor(R.color.grisetxt));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
@@ -2146,182 +1607,11 @@ public class FragmentDetalle extends Fragment implements
         }
     }
 
-    long tiempo = 0;
-
-    public static boolean isHourInInterval(String target, String start, String end) {
-        return ((target.compareTo(start) >= 0)&& (target.compareTo(end) <= 0));
-    }
-
-    private void showElapsedTime(FragmentAutoriza6Binding binding) {
-        long elapsedMillis = SystemClock.elapsedRealtime() - binding.peatonalConteo.chronometer1.getBase();
-        tiempo = elapsedMillis/1000;
-    }
-
-    public void generarDetalles(FragmentAutoriza4Binding binding,
-                                final FactoresConstruccion factoresConstruccion,
-                                DatosConstruccions datosConstruccion){
-
-        Resources resource = getContext().getResources();
-        binding.factores.removeAllViews();
-        TableRow rowPlomo = new TableRow(getContext());
-        rowPlomo.setBackgroundColor(resource.getColor(R.color.blanco));
-        binding.factores.addView(rowPlomo);
-        checks = new HashMap<Integer, String>();
-
-        for(int i = 0;i<factoresConstruccion.getCatalogo().size(); i ++) {
-            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
-                for (int j = 0; j < factoresConstruccion.getCatalogo().get(i).getDetalles().size(); j++) {
-
-                    TableRow tbrow = new TableRow(getContext());
-                    tbrow.setBackgroundColor(resource.getColor(R.color.blanco));
-
-                    final CheckBox check = new CheckBox(getContext());
-                    check.setTextColor(resource.getColor(R.color.azul));
-                    int niv = factoresConstruccion.getCatalogo().get(1).getDetalles().get(j).getDetalleid();
-                    check.setId(niv);
-                    check.setGravity(Gravity.CENTER);
-
-                    for(int n = 0;n<datosConstruccion.getConstruccion().size(); n ++) {
-                        for (int m = 0; m < datosConstruccion.getConstruccion().get(n).getDetalles().size(); m++) {
-                            int nivelId = datosConstruccion.getConstruccion().get(0).getDetalles().get(m).getDetalleid();
-                            int factor = check.getId();
-                            if(factor==nivelId){
-                                check.setChecked(true);
-                            }
-
-                        }
-                    }
-                    tbrow.addView(check);
-                    final boolean checked = check.isChecked();
 
 
-                    check.setEnabled(false);
 
-                    if (checked) {
-                        checks.put(j, "1");
-                    } else {
-                        checks.put(j, "0");
-                    }
-
-                    final int finalI = j;
-                    int finalJ = j;
-
-
-                    TextView t1v1 = new TextView(getContext());
-                    t1v1.setText(factoresConstruccion.getCatalogo().get(i).getDetalles().get(finalJ).getDescripcion());
-                    t1v1.setTextColor(resource.getColor(R.color.azul));
-                    t1v1.setGravity(Gravity.CENTER_VERTICAL);
-                    tbrow.addView(t1v1);
-                    binding.factores.addView(tbrow);
-                }
-
-            }
-        }
-    }
-
-    String fechaFrente;
-    String fechaEntorno1;
-    String fechaEntorno2;
-    String fechaPredial;
-
-    /**
-     * método para realizar la respuesta de cada intent que se hace en la actividad (ver pdf, tomar foto)
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        String mdIdterminar = preferences.getString("mdIdterminar", "");
-        if (requestCode == CAMERA_FRONTAL && resultCode==-1) {
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64frente = b64(bit);
-                fechaFrente = getFechaHora();
-                obtenerUrl(random()+"_frente", base64frente, mdIdterminar);
-
-            }
-        }else if(requestCode == CAMERA_LATERAL_1 && resultCode==-1){
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64Lateral1 = b64(bit);
-                fechaEntorno1 = getFechaHora();
-                obtenerUrl(random()+"_lateral1", base64Lateral1, mdIdterminar);
-
-            }
-        }else if(requestCode == CAMERA_LATERAL_2 && resultCode==-1){
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64Lateral2 = b64(bit);
-                fechaEntorno2 = getFechaHora();
-                obtenerUrl(random()+"_lateral2", base64Lateral2, mdIdterminar);
-
-
-            }
-        }else if(resultCode == 0){
-
-
-        }
-
-    }
-
-    String urlFrente = "";
-    String urlLateral1 = "";
-    String urlLateral2 = "";
-    String urlPredial = "";
-
-    public void obtenerUrl(String foto, String b64, String mdId){
-        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
-            @Override
-            public void resolve(Codigos codigo) {
-                if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
-                    if(codigo.getResultado().getSecureUrl().contains("frente")){
-                        bindingSuperficie.frontal.setEnabled(false);
-                        urlFrente = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                        bindingSuperficie.frontal.setEnabled(true);
-                    }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
-                        bindingSuperficie.lateral1.setEnabled(false);
-                        urlLateral1 = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                        bindingSuperficie.lateral1.setEnabled(true);
-                    }else{
-                        bindingSuperficie.lateral2.setEnabled(false);
-                        urlLateral2 = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                        bindingSuperficie.lateral2.setEnabled(true);
-                    }
-                }
-            }
-
-            @Override
-            public void reject(Exception e) {
-
-            }
-        });
-    }
 
     HashMap<Integer, String> checks;
-    String base64frente;
-    String base64Lateral1;
-    String base64Lateral2;
-
-    private String b64(Bitmap bm) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte[] b = baos.toByteArray();
-        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-        return encImage;
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -2331,7 +1621,9 @@ public class FragmentDetalle extends Fragment implements
         menu.add(0, 2, 2, Util.menuIcon(getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),
                 getResources().getString(R.string.salir)));
     }
-
+    public static boolean isHourInInterval(String target, String start, String end) {
+        return ((target.compareTo(start) >= 0)&& (target.compareTo(end) <= 0));
+    }
     /**
      * Método que tiene la acción del menu posterior derecha
      * @param item
@@ -2399,7 +1691,7 @@ public class FragmentDetalle extends Fragment implements
     }
 
     ArrayList<Peatonal> peatonales;
-    public void listaPeatonal(final FragmentAutoriza6Binding binding){
+    public void listaPeatonal(final FragmentAutoriza4DetalleBinding binding){
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         String mdid = preferences.getString("mdIdterminar", "");
         String usuario = preferences.getString("usuario", "");
@@ -2411,14 +1703,6 @@ public class FragmentDetalle extends Fragment implements
 
                     if(peatonal.getConteos().size()>0){
                         for(int i=0;i<peatonal.getConteos().size();i++){
-                            if(peatonal.getConteos().get(i).getDetalle().size()>=3){
-                                binding.btnFinalizar.setAlpha(1.0f);
-                                binding.btnFinalizar.setEnabled(true);
-                            }else{
-                                binding.btnFinalizar.setAlpha(0.35f);
-                                binding.btnFinalizar.setEnabled(false);
-                            }
-
                             for(int j=0;j<peatonal.getConteos().get(i).getDetalle().size();j++){
                                 peatonales.add(new Peatonal(j,
                                         peatonal.getConteos().get(i).getDetalle().get(j).getFecha(),
@@ -2426,22 +1710,21 @@ public class FragmentDetalle extends Fragment implements
                                         0.0,0.0, peatonal.getConteos().get(i).getDetalle().get(j).getNombreGenerador()));
                             }
                         }
-                        binding.headersConteo.setVisibility(View.VISIBLE);
-                        binding.promedio.setText("Promedio peatonal "+ peatonal.getConteos().get(0).getPromedioPeatonal()+"");
+
+                        binding.promedio.setText(peatonal.getConteos().get(0).getPromedioPeatonal()+"");
                         binding.recyclerPeatonal.setHasFixedSize(true);
                         AdapterAutorizaPeatonal adapter = new AdapterAutorizaPeatonal(getContext(), ALPHABETICAL_COMPARATOR, n);
-                        binding.recyclerPeatonal.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
+                        binding.recyclerPeatonal.setLayoutManager(layoutManager);
                         binding.recyclerPeatonal.setAdapter(adapter);
                         adapter.edit().replaceAll(peatonales).commit();
                         adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                     }else{
-                        binding.btnFinalizar.setAlpha(0.35f);
-                        binding.btnFinalizar.setEnabled(false);
+
                     }
-                }else{
-                    binding.btnFinalizar.setAlpha(0.35f);
-                    binding.btnFinalizar.setEnabled(false);
-                }
+                }else{ }
             }
             @Override
             public void reject(Exception e) { }
@@ -2558,25 +1841,16 @@ public class FragmentDetalle extends Fragment implements
             if(mCenterLatLong!=null){
                 addresses = geocoder.getFromLocation(lat, lng, 1);
                 String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                String municipio = addresses.get(0).getLocality();
-                String postalCode = addresses.get(0).getPostalCode();
 
                 binding.direccionsitio.setText(address);
-                binding.ciudadsitio.setText(city);
-                binding.estadositio.setText(state);
-                binding.municipiositio.setText(municipio);
-                binding.pais.setText(country);
-                binding.codigopostalsitio.setText(postalCode);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    FragmentAutoriza4Binding bindingConstruccion;
+    FragmentAutoriza4DetalleBinding bindingConstruccion;
 
     Marker market;
 
@@ -2782,263 +2056,6 @@ public class FragmentDetalle extends Fragment implements
         return json;
     }
 
-    String datosConstruccionJson = "";
-
-    private String getJsonString(DatosConstruccion zonificacion) {
-        Gson gson = new Gson();
-        String json = gson.toJson(zonificacion);
-        return json;
-    }
-
-    String horaInicio, horaFinal;
-    int nivelId;
-
-    DatosConstruccion datosConstruccion;
-    Bitmap bit;
-    List<DatosConstruccion.Nivele> niveles;
-    List<DatosConstruccion.Detalle> detallesContruccion;
-    List<DatosConstruccion.Detalle> detallesCondicion;
-    DatosConstruccion.Detalle detalleConstruccion;
-
-    public void generarConstruccion(final FragmentAutoriza4Binding binding,
-                                    final FactoresConstruccion factoresConstruccion,
-                                    DatosConstruccions listaSubfactores) {
-        if(factoresConstruccion!=null){
-            final RadioButton[] rb = new RadioButton[2];
-            RadioGroup rg = new RadioGroup(getContext());
-            rg.setOrientation(RadioGroup.VERTICAL);
-            for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
-                if(factoresConstruccion.getCatalogo().get(i).getNivelid()==1
-                        || factoresConstruccion.getCatalogo().get(i).getNivelid()==2){
-
-                    rb[i]  = new RadioButton(getContext());
-                    rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                    rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
-                    rb[i].setEnabled(false);
-                    rg.addView(rb[i]);
-                }
-            }
-
-            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    int radioButtonID = group.getCheckedRadioButtonId();
-                    View radioButton = group.findViewById(radioButtonID);
-                    nivelId = group.indexOfChild(radioButton);
-                    if(checkedId==1){
-                        nivelId = 1;
-                        binding.linearLayout.setVisibility(View.GONE);
-                    }else if(checkedId==2){
-                        nivelId = 2;
-                        binding.linearLayout.setVisibility(View.VISIBLE);
-
-                    }
-                }
-            });
-
-            binding.local.addView(rg);
-
-
-            if(listaSubfactores.getConstruccion()!=null){
-                if(listaSubfactores.getConstruccion().get(0).getNivelid()==1){
-                    rb[0].setChecked(true);
-                }else if(listaSubfactores.getConstruccion().get(0).getNivelid()==2){
-                    rb[1].setChecked(true);
-                }else{
-                    binding.linearLayout.setVisibility(View.VISIBLE);
-                    rb[1].setChecked(true);
-                }
-            }
-        }
-
-    }
-
-    public void generarConstruccion(final FragmentAutoriza4Binding binding, final FactoresConstruccion factoresConstruccion) {
-        final RadioButton[] rb = new RadioButton[2];
-        RadioGroup rg = new RadioGroup(getContext());
-        rg.setOrientation(RadioGroup.VERTICAL);
-        for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
-            if(factoresConstruccion.getCatalogo().get(i).getNivelid()==1
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==2){
-                rb[i]  = new RadioButton(getContext());
-                rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
-                rg.addView(rb[i]);
-            }
-        }
-
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                int radioButtonID = group.getCheckedRadioButtonId();
-                View radioButton = group.findViewById(radioButtonID);
-                nivelId = group.indexOfChild(radioButton);
-                if(checkedId==1){
-                    nivelId = 1;
-                    binding.linearLayout.setVisibility(View.GONE);
-                }else if(checkedId==2){
-                    nivelId = 2;
-                    binding.linearLayout.setVisibility(View.VISIBLE);
-
-                }
-            }
-        });
-
-        binding.local.addView(rg);
-    }
-
-    int nivelIdCondicion;
-    public void generarCondiciones(final FragmentAutoriza4Binding binding,
-                                   final FactoresConstruccion factoresConstruccion,
-                                   DatosConstruccions datosConstruccion) {
-        final RadioButton[] rb = new RadioButton[factoresConstruccion.getCatalogo().size()];
-        RadioGroup rg = new RadioGroup(getContext());
-        rg.setOrientation(RadioGroup.VERTICAL);
-        for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
-            if(factoresConstruccion.getCatalogo().get(i).getNivelid()==3
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==4
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==5){
-
-                rb[i]  = new RadioButton(getContext());
-                rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                int niv = factoresConstruccion.getCatalogo().get(i).getNivelid();
-                rb[i].setId(niv);
-                rb[i].setEnabled(false);
-                rg.addView(rb[i]);
-
-                if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
-                    rb[i].setChecked(true);
-                }
-
-                if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
-                    rb[i].setChecked(true);
-                }
-
-                if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
-                    rb[i].setChecked(true);
-                }
-            }
-        }
-
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                int radioBttonID = group.getCheckedRadioButtonId();
-                View radioButton = group.findViewById(radioBttonID);
-                int nivelId = group.indexOfChild(radioButton);
-                if(checkedId==3){
-                    nivelIdCondicion = 3;
-                }else if(checkedId == 4){
-                    nivelIdCondicion = 4;
-                }else if(checkedId == 5){
-                    nivelIdCondicion = 5;
-                }
-            }
-        });
-
-        binding.condiciones.addView(rg);
-
-    }
-
-    public void generarCondiciones(final FragmentAutoriza4Binding binding, final FactoresConstruccion factoresConstruccion) {
-        final RadioButton[] rb = new RadioButton[factoresConstruccion.getCatalogo().size()];
-        RadioGroup rg = new RadioGroup(getContext());
-        rg.setOrientation(RadioGroup.VERTICAL);
-        for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
-
-            if(factoresConstruccion.getCatalogo().get(i).getNivelid()==3
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==4
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==5){
-
-                rb[i]  = new RadioButton(getContext());
-                rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
-                rg.addView(rb[i]);
-
-            }
-
-        }
-
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                int radioBttonID = group.getCheckedRadioButtonId();
-                View radioButton = group.findViewById(radioBttonID);
-                int nivelId = group.indexOfChild(radioButton);
-                if(checkedId==3){
-                    nivelIdCondicion = 3;
-                }else if(checkedId == 4){
-                    nivelIdCondicion = 4;
-                }else if(checkedId == 5){
-                    nivelIdCondicion = 5;
-                }
-            }
-        });
-
-        binding.condiciones.addView(rg);
-
-    }
-
-    public void generarDetalles(FragmentAutoriza4Binding binding, final FactoresConstruccion factoresConstruccion){
-
-        Resources resource = getContext().getResources();
-        binding.factores.removeAllViews();
-        TableRow rowPlomo = new TableRow(getContext());
-        rowPlomo.setBackgroundColor(resource.getColor(R.color.blanco));
-        binding.factores.addView(rowPlomo);
-
-        checks = new HashMap<Integer, String>();
-
-        for(int i = 0;i<factoresConstruccion.getCatalogo().size(); i ++) {
-            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
-                for (int j = 0; j < factoresConstruccion.getCatalogo().get(i).getDetalles().size(); j++) {
-
-                    TableRow tbrow = new TableRow(getContext());
-                    tbrow.setBackgroundColor(resource.getColor(R.color.blanco));
-
-                    final CheckBox check = new CheckBox(getContext());
-                    check.setTextColor(resource.getColor(R.color.azul));
-                    check.setGravity(Gravity.CENTER);
-                    tbrow.addView(check);
-
-                    final boolean checked = check.isChecked();
-
-                    if (checked) {
-                        checks.put(j, "1");
-                    } else {
-                        checks.put(j, "0");
-                    }
-
-                    final int finalI = j;
-                    int finalJ = j;
-
-                    check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                            if (isChecked) {
-                                checks.put(finalI, "1");
-                            } else {
-                                checks.put(finalI, "0");
-                            }
-
-                        }
-                    });
-
-                    TextView t1v1 = new TextView(getContext());
-                    t1v1.setText(factoresConstruccion.getCatalogo().get(i).getDetalles().get(finalJ).getDescripcion());
-                    t1v1.setTextColor(resource.getColor(R.color.azul));
-                    t1v1.setGravity(Gravity.CENTER_VERTICAL);
-                    tbrow.addView(t1v1);
-                    binding.factores.addView(tbrow);
-                }
-
-            }
-        }
-    }
-
     public String getFechaHora(){
         long timeInMillis = System.currentTimeMillis();
         Calendar cal1 = Calendar.getInstance();
@@ -3049,74 +2066,4 @@ public class FragmentDetalle extends Fragment implements
         return dateforrow;
     }
 
-    public void datosConstruccion(String md, String usuarioId, DatosConstruccions datosConstruccions){
-
-        if(datosConstruccions!=null){
-            if(datosConstruccions.getConstruccion().get(0).getDetalles().size()>0){
-                nivelId = 2;
-            }else{
-                nivelId = 1;
-            }
-
-            nivelIdCondicion = datosConstruccions.getConstruccion().get(1).getNivelid();
-
-            niveles = new ArrayList<>();
-
-            if(nivelIdCondicion==5 || nivelIdCondicion == 4 || nivelIdCondicion == 3){
-                detallesCondicion = new ArrayList<>();
-                DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
-                        nivelIdCondicion, detallesCondicion);
-                niveles.add(detalleCondicion);
-            }
-
-            if(nivelId==1 || nivelId==2){
-                detallesContruccion = new ArrayList<>();
-                if(nivelId==1){
-
-                }else if(nivelId==2){
-                    for ( Map.Entry<Integer, String> entry : checks.entrySet()) {
-                        Integer valor = entry.getKey();
-                        String check = entry.getValue();
-
-                        if(valor==0 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
-                            detallesContruccion.add(detalleConstruccion);
-                        }
-
-                        if(valor==1 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
-                            detallesContruccion.add(detalleConstruccion);
-                        }
-
-                        if(valor==2 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
-                            detallesContruccion.add(detalleConstruccion);
-                        }
-
-                        if(valor==3 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
-                            detallesContruccion.add(detalleConstruccion);
-                        }
-                    }
-                }
-
-                DatosConstruccion.Nivele detalleConstruccion = new DatosConstruccion.Nivele(
-                        nivelId, detallesContruccion);
-
-                niveles.add(detalleConstruccion);
-
-            }
-
-            datosConstruccion = new DatosConstruccion(
-                    md,
-                    usuarioId,
-                    "5",
-                    "5540555599",
-                    VERSION_APP,
-                    niveles
-            );
-
-            datosConstruccionJson = getJsonString(datosConstruccion);
-        }
-    }
 }

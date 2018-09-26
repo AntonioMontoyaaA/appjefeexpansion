@@ -17,6 +17,7 @@ public class CrearDatosSitio {
     private String versionapp;
     private String pais;
     private String mdId;
+    private String radio;
 
     public CrearDatosSitio(){}
 
@@ -24,7 +25,7 @@ public class CrearDatosSitio {
                            String direccion, String estado, String municipio,
                            String ciudad, String latitud, String longitud,
                            String tipoubicacion, String numtelefono, String versionapp,
-                           String pais, String mdId) {
+                           String pais, String mdId, String radio) {
         this.usuarioId = usuarioId;
         this.nombreSitio = nombreSitio;
         this.codigoPostal = codigoPostal;
@@ -38,7 +39,16 @@ public class CrearDatosSitio {
         this.numtelefono = numtelefono;
         this.versionapp = versionapp;
         this.pais = pais;
+        this.radio = radio;
         this.mdId = mdId;
+    }
+
+    public String getRadio() {
+        return radio;
+    }
+
+    public void setRadio(String radio) {
+        this.radio = radio;
     }
 
     public String getMdId() {

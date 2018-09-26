@@ -109,7 +109,7 @@ public class FragmentDialogCancelarMd extends DialogFragment {
         SharedPreferences preferences = context.getApplicationContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         SharedPreferences.Editor editorExpansion = preferences.edit();
         editorExpansion.putLong("mdId", 0);
-        editorExpansion.putString("nombreSitio", "");
+        //editorExpansion.putString("nombreSitio", "");
         editorExpansion.putFloat("latMd", 0);
         editorExpansion.putFloat("lotMd", 0);
         editor.putString("tipoSitio","");

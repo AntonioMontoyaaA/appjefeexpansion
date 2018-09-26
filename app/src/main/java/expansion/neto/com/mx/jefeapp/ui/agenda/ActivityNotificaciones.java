@@ -14,9 +14,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -24,7 +21,6 @@ import java.util.Date;
 
 import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAgendaNotificacionesBinding;
-import expansion.neto.com.mx.jefeapp.fragment.fragmentDetalle.FragmentDetalle;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentChatNotificaciones;
 import expansion.neto.com.mx.jefeapp.modelView.agendaModel.GuardarNotificacion;
 import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Notificaciones;
@@ -34,7 +30,6 @@ import expansion.neto.com.mx.jefeapp.provider.agendaProvider.ProviderObtieneNoti
 import expansion.neto.com.mx.jefeapp.sorted.agenda.AdapterAgendaNotificaciones;
 import expansion.neto.com.mx.jefeapp.sorted.agenda.AgendaEventosNotificacionesHolder;
 import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivityMain;
-import expansion.neto.com.mx.jefeapp.ui.rechazadas.ActivityDetalleRechazadas;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_NOTIFICACION;

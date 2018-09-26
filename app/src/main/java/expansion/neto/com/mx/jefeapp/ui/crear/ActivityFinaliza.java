@@ -186,6 +186,9 @@ public class ActivityFinaliza extends AppCompatActivity {
 
     ArrayList<DatosPuntuacion.Factore> factoresMacro;
     ArrayList<DatosPuntuacion.Factore> factoresMicro;
+    ArrayList<DatosPuntuacion.Factore> faltantes;
+    ArrayList<DatosPuntuacion.Factore> faltantesMicro;
+
     ProgressDialog progressDialog;
 
     @Override
@@ -208,6 +211,9 @@ public class ActivityFinaliza extends AppCompatActivity {
                     binding.btnGuardar.setAlpha(1);
                     factoresMacro = new ArrayList<>();
                     factoresMicro = new ArrayList<>();
+                    faltantes = new ArrayList<>();
+                    faltantesMicro = new ArrayList<>();
+
                     loadingProgress(progressDialog, 1);
 
                     SharedPreferences preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -229,6 +235,32 @@ public class ActivityFinaliza extends AppCompatActivity {
 
                     }
 
+                    for(int i = 0;i<datosPuntuacion.getFaltantes().size();i++){
+                        if(datosPuntuacion.getFaltantes().get(i).getRangoubica().equals("MACRO UBICACION")){
+                            faltantes.add(datosPuntuacion.getFaltantes().get(i));
+                        }else{
+                            faltantesMicro.add(datosPuntuacion.getFaltantes().get(i));
+                        }
+
+                    }
+
+                    if(faltantes.size()<=0){
+                        binding.tituloFaltantes.setVisibility(View.GONE);
+                        binding.tituloFaltantesMacro.setVisibility(View.GONE);
+                    }
+
+
+                    if(faltantesMicro.size()<=0){
+                        binding.tituloFaltantes.setVisibility(View.GONE);
+                        binding.tituloFaltantesMicro.setVisibility(View.GONE);
+                    }
+
+                    if(faltantesMicro.size()<=0 && faltantes.size()<=0){
+                        binding.tituloFaltantes.setVisibility(View.GONE);
+                        binding.tituloFaltantesMicro.setVisibility(View.GONE);
+                        binding.tituloFaltantesMacro.setVisibility(View.GONE);
+                    }
+
                     if(factoresMicro.size()<=0){
                         binding.tituloMicro.setVisibility(View.GONE);
                     }
@@ -239,6 +271,11 @@ public class ActivityFinaliza extends AppCompatActivity {
 
                     generarDetallesMicro(binding, factoresMicro);
                     generarDetallesMacro(binding, factoresMacro);
+
+                    generarDetallesMicroFaltantes(binding, faltantesMicro);
+                    generarDetallesMacroFaltantes(binding, faltantes);
+
+
 
                     final SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("categoria", categoria);
@@ -280,7 +317,7 @@ public class ActivityFinaliza extends AppCompatActivity {
             TextView t1v1 = new TextView(this);
             t1v1.setTextSize(12);
             t1v1.setText(datosPuntuacion.get(i).getNombrenivel()+"");
-            t1v1.setTextColor(resource.getColor(R.color.azul));
+            t1v1.setTextColor(resource.getColor(R.color.grisetxt));
             t1v1.setPadding(0, paddingPixel,0,0);
             t1v1.setGravity(Gravity.START);
 
@@ -291,7 +328,7 @@ public class ActivityFinaliza extends AppCompatActivity {
             TextView t3v1 = new TextView(this);
             t3v1.setTextSize(12);
             t3v1.setText(datosPuntuacion.get(i).getPuntuacion()+"");
-            t3v1.setTextColor(resource.getColor(R.color.azul));
+            t3v1.setTextColor(resource.getColor(R.color.grisetxt));
             t3v1.setGravity(Gravity.LEFT);
             t3v1.setLayoutParams( new TableRow.LayoutParams( 50,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
@@ -300,11 +337,12 @@ public class ActivityFinaliza extends AppCompatActivity {
             TextView t3v2 = new TextView(this);
             t3v2.setTextSize(12);
             t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
-            t3v2.setTextColor(resource.getColor(R.color.azul));
+            t3v2.setTextColor(resource.getColor(R.color.grisetxt));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
             tbrow.addView(t3v2);
+
 
             binding.factores.addView(tbrow);
         }
@@ -328,7 +366,7 @@ public class ActivityFinaliza extends AppCompatActivity {
             TextView t1v1 = new TextView(this);
             t1v1.setTextSize(12);
             t1v1.setText(datosPuntuacion.get(i).getNombrenivel()+"");
-            t1v1.setTextColor(resource.getColor(R.color.azul));
+            t1v1.setTextColor(resource.getColor(R.color.grisetxt));
             t1v1.setPadding(0, paddingPixel,0,0);
             t1v1.setGravity(Gravity.START);
 
@@ -339,8 +377,8 @@ public class ActivityFinaliza extends AppCompatActivity {
             TextView t3v1 = new TextView(this);
             t3v1.setTextSize(12);
             t3v1.setText(datosPuntuacion.get(i).getPuntuacion()+"");
-            t3v1.setTextColor(resource.getColor(R.color.azul));
-            t3v1.setGravity(Gravity.END);
+            t3v1.setTextColor(resource.getColor(R.color.grisetxt));
+            t3v1.setGravity(Gravity.LEFT);
             t3v1.setLayoutParams( new TableRow.LayoutParams( 50,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
             tbrow.addView(t3v1);
@@ -348,13 +386,110 @@ public class ActivityFinaliza extends AppCompatActivity {
             TextView t3v2 = new TextView(this);
             t3v2.setTextSize(12);
             t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
-            t3v2.setTextColor(resource.getColor(R.color.azul));
+            t3v2.setTextColor(resource.getColor(R.color.grisetxt));
             t3v2.setGravity(Gravity.LEFT);
             t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
             tbrow.addView(t3v2);
 
             binding.factoresMicro.addView(tbrow);
+        }
+    }
+
+    public void generarDetallesMacroFaltantes(ActivityFinalizaBinding binding,  ArrayList<DatosPuntuacion.Factore> datosPuntuacion){
+
+        Resources resource = this.getResources();
+        binding.faltantesMacro.removeAllViews();
+        TableRow rowPlomo = new TableRow(this);
+        rowPlomo.setBackgroundColor(resource.getColor(R.color.blanco));
+        int paddingDp = 2;
+
+        float density = getResources().getDisplayMetrics().density;
+        int paddingPixel = (int)(paddingDp * density);
+
+        for(int i = 0; i < datosPuntuacion.size(); i ++){
+
+            TableRow tbrow = new TableRow(this);
+            tbrow.setBackgroundColor(resource.getColor(R.color.blanco));
+            TextView t1v1 = new TextView(this);
+            t1v1.setTextSize(12);
+            t1v1.setText(datosPuntuacion.get(i).getNombrenivel()+"");
+            t1v1.setTextColor(resource.getColor(R.color.grisetxt));
+            t1v1.setPadding(0, paddingPixel,0,0);
+            t1v1.setGravity(Gravity.START);
+
+            t1v1.setLayoutParams( new TableRow.LayoutParams( 660,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
+            tbrow.addView(t1v1);
+
+            TextView t3v1 = new TextView(this);
+            t3v1.setTextSize(12);
+            t3v1.setText(datosPuntuacion.get(i).getPuntuacion()+"");
+            t3v1.setTextColor(resource.getColor(R.color.grisetxt));
+            t3v1.setGravity(Gravity.LEFT);
+            t3v1.setLayoutParams( new TableRow.LayoutParams( 50,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
+            tbrow.addView(t3v1);
+
+            TextView t3v2 = new TextView(this);
+            t3v2.setTextSize(12);
+            t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            t3v2.setTextColor(resource.getColor(R.color.grisetxt));
+            t3v2.setGravity(Gravity.LEFT);
+            t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
+            tbrow.addView(t3v2);
+
+
+            binding.faltantesMacro.addView(tbrow);
+        }
+    }
+
+    public void generarDetallesMicroFaltantes(ActivityFinalizaBinding binding,  ArrayList<DatosPuntuacion.Factore> datosPuntuacion){
+
+        Resources resource = this.getResources();
+        binding.tablaFaltantesMicro.removeAllViews();
+        TableRow rowPlomo = new TableRow(this);
+        rowPlomo.setBackgroundColor(resource.getColor(R.color.blanco));
+        int paddingDp = 2;
+
+        float density = getResources().getDisplayMetrics().density;
+        int paddingPixel = (int)(paddingDp * density);
+
+        for(int i = 0; i < datosPuntuacion.size(); i ++){
+
+            TableRow tbrow = new TableRow(this);
+            tbrow.setBackgroundColor(resource.getColor(R.color.blanco));
+            TextView t1v1 = new TextView(this);
+            t1v1.setTextSize(12);
+            t1v1.setText(datosPuntuacion.get(i).getNombrenivel()+"");
+            t1v1.setTextColor(resource.getColor(R.color.grisetxt));
+            t1v1.setPadding(0, paddingPixel,0,0);
+            t1v1.setGravity(Gravity.START);
+
+            t1v1.setLayoutParams( new TableRow.LayoutParams( 660,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
+            tbrow.addView(t1v1);
+
+            TextView t3v1 = new TextView(this);
+            t3v1.setTextSize(12);
+            t3v1.setText(datosPuntuacion.get(i).getPuntuacion()+"");
+            t3v1.setTextColor(resource.getColor(R.color.grisetxt));
+            t3v1.setGravity(Gravity.LEFT);
+            t3v1.setLayoutParams( new TableRow.LayoutParams( 50,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
+            tbrow.addView(t3v1);
+
+            TextView t3v2 = new TextView(this);
+            t3v2.setTextSize(12);
+            t3v2.setText("/"+datosPuntuacion.get(i).getTotalxfactor()+"");
+            t3v2.setTextColor(resource.getColor(R.color.grisetxt));
+            t3v2.setGravity(Gravity.LEFT);
+            t3v2.setLayoutParams( new TableRow.LayoutParams( 75,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 0 ) );
+            tbrow.addView(t3v2);
+
+            binding.tablaFaltantesMicro.addView(tbrow);
         }
     }
 

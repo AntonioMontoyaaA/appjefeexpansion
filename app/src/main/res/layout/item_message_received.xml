@@ -9,6 +9,7 @@
     android:paddingTop="8dp">
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/image_message_profile"
         android:layout_width="20dp"
         android:layout_height="20dp"
@@ -17,6 +18,7 @@
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+        android:visibility="gone"
         android:id="@+id/text_message_name"
         android:text="Expansion"
         android:layout_width="wrap_content"
@@ -38,7 +40,8 @@
         android:background="@drawable/rounded_rectangle_received"
         android:maxWidth="240dp"
         android:padding="8dp"
-        android:text="---"
+        android:text="-"
+        android:layout_marginBottom="12dp"
         android:textColor="@color/azultaco"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_message_profile"

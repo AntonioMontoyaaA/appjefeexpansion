@@ -77,7 +77,17 @@ public class Proceso implements SortedListAdapter.ViewModel {
         @SerializedName("estatusid")
         @Expose
         private int estatusid;
+        @SerializedName("fechaCreacion")
+        @Expose
+        private String fechaCreacion;
 
+        public String getFechaCreacion() {
+            return fechaCreacion;
+        }
+
+        public void setFechaCreacion(String fechaCreacion) {
+            this.fechaCreacion = fechaCreacion;
+        }
 
         public int getEstatusid() {
             return estatusid;

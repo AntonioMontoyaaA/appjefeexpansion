@@ -58,12 +58,11 @@
         <activity android:name=".fragment.fragmentCreacion.FragmentInicioAutoriza" android:screenOrientation="portrait"/>
         <activity android:name=".ui.crear.ActivityFinaliza" android:screenOrientation="portrait"/>
         <activity android:name=".ui.rechazadas.ActivityRechazadas" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.rechazadas.ActivityDetalleRechazadas" android:screenOrientation="portrait"/>
         <activity android:name=".ui.rechazadas.ActivityDetalleModifica" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.autorizadas.ActivityAutorizadas" android:screenOrientation="portrait"/>
         <activity android:name=".ui.agenda.ActivityAddEvento" android:screenOrientation="portrait"/>
         <activity android:name=".ui.agenda.ActivityNotificaciones" android:screenOrientation="portrait"/>
         <activity android:name=".ui.agenda.ActivityDetalleNotificaciones" android:screenOrientation="portrait"/>
+        <activity android:name=".fragment.fragmentAutorizadas.FragmentInicioAutorizadas" android:screenOrientation="portrait"/>
 
         <provider
             android:name=".sqlite.GerenteProvider"
@@ -113,7 +112,10 @@
             </intent-filter>
         </receiver>
 
-
+        <activity android:name=".radios.ui.radios.ActivityRadios"
+            android:screenOrientation="portrait" />
+        <activity android:name=".radios.ui.radios.ActivityDetalleRadios"
+            android:screenOrientation="portrait" />
 
     </application>
 

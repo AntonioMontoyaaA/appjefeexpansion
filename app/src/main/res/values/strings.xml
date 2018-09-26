@@ -114,7 +114,7 @@
     <string name="evento">Evento</string>
     <string name="tododia">Todo el dia</string>
     <string name="accion_hoy">Hoy</string>
-    <string name="accion_ver">Ver 1.1.4</string>
+    <string name="accion_ver">Ver 1.2.1</string>
     <string name="accion_tres">Ver 3 días</string>
     <string name="accion_semana">Ver la semana</string>
     <string name="calendario">Calendario</string>
@@ -161,7 +161,7 @@
     <string name="nombresitio">Nombre del Sitio</string>
     <string name="tipoSitio">Ciudad</string>
     <string name="ciudad">Ciudad</string>
-    <string name="rural">Rutal</string>
+    <string name="rural">Rural</string>
     <string name="municipio">Municipio</string>
     <string name="estado">Estado</string>
     <string name="pais">País</string>
@@ -219,6 +219,8 @@
     <string name="permisosnocompletados">Permisos no completados</string>
     <string name="hoy_24_de_abril_2018">Hoy 24 de Abril 2018</string>
     <string name="datos_faltantes">Datos faltantes</string>
+    <string name="faltantes">FALTANTES</string>
+
     <string name="cronometro">Cronómetro</string>
     <string name="no_estas">No estas ubicado en la MD, no puedes volver a tomar las fotos</string>
     <string name="chat">Chat</string>
@@ -237,4 +239,80 @@
     <string name="horarios">Revisa el total de peatones u el horario</string>
     <string name="micro_ub">MACRO UBICACION</string>
     <string name="mandar">Para mandar la superficie es necesario las fotografías y el area del terreno</string>
+    <string name="captura">Captura las siguientes imágenes</string>
+    <string name="autorizo">FECHA DE CREACIÓN</string>
+    <string name="rechazo">RECHAZÓ</string>
+
+    <string name="status">STATUS</string>
+
+    <string name="atras">Atrasada</string>
+    <string name="entiempo">En tiempo</string>
+    <string name="atrasmayus">ATRASADAS</string>
+    <string name="vermas">Ver más</string>
+    <string name="err_foto">Error al subir fotografia intenta nuevamente</string>
+    <string name="zero">0</string>
+    <string name="vencimiento">FECHA DE VENCIMIENTO</string>
+    <string name="creacion">FECHA DE CREACIÓN</string>
+    <string name="general">GENERAL</string>
+    <string name="colorazul">#162341</string>
+    <string name="creadael">Creada el </string>
+    <string name="seguimiento_de_autorizacion">Seguimiento de Autorización</string>
+    <string name="fecha_l_mite">FECHA LÍMITE</string>
+    <string name="atrasa">Atrasada</string>
+
+
+    <string name="expansion">EXPANSION</string>
+    <string name="operacione">OPERACIONES</string>
+    <string name="auditoria">AUDITORIA</string>
+    <string name="constru">CONSTRUCCION</string>
+    <string name="gestoria">GESTORIA</string>
+    <string name="finanza">FINANZAS</string>
+    <string name="propietario">PROPIETARIO</string>
+    <string name="detalles">Detalle</string>
+    <string name="condiciones_del_sitio">CONDICIONES DEL SITIO</string>
+    <string name="terreno">TERRENO</string>
+    <string name="frentemay">FRENTE</string>
+    <string name="profundidadm">PROFUNDIDAD</string>
+    <string name="asignado_el">ASIGNADO EL</string>
+    <string name="poblaci_n">Población</string>
+
+    <string name="bueno">BUENO</string>
+    <string name="regulars">REGULAR</string>
+    <string name="malos">MALO</string>
+    <string name="meses">MESES</string>
+    <string name="apartir">A partir de: </string>
+    <string name="ocupados">Ocupado</string>
+    <string name="disponible">Disponible de inmediato</string>
+    <string name="flujo">FLUJO PEATONAL</string>
+    <string name="personas">PERSONAS</string>
+    <string name="fecha_de_autorizacion">FECHA DE AUTORIZACIÓN:</string>
+    <string name="one">1</string>
+    <string name="mis_radios">Mis Radios</string>
+
+    <string name="tipo">TIPO</string>
+    <string name="estatus">ESTATUS</string>
+    <string name="detalle">Detalle</string>
+    <string name="mapa">Mapa</string>
+    <string name="informaci_n_socio_demogr_fica">Información Socio demográfica</string>
+    <string name="pea">PEA</string>
+    <string name="viviendas">Viviendas</string>
+    <string name="nse">NSE</string>
+    <string name="templos">Templos</string>
+    <string name="hospitales">Hospitales</string>
+    <string name="escuelas">Escuelas</string>
+    <string name="mercados">Mercados</string>
+    <string name="generadores">Generadores</string>
+    <string name="ubicaci_n">Ubicación</string>
+    <string name="calle">Calle</string>
+    <string name="entre_calle_1">Entre Calle 1</string>
+    <string name="entre_calle_2">Entre calle 2</string>
+    <string name="crear_md">Crear MD</string>
+    <string name="sin_sitios_disponibles">Sin sitios disponibles</string>
+    <string name="sin_radios">Se ha marcado este radio sin sitios disponibles</string>
+    <string name="sin_radios_asignados">No tienes radios asignados</string>
+    <string name="predial">Seleccionar archivo desde</string>
+    <string name="celular">El celular</string>
+    <string name="foto">Tomar foto</string>
+    <string name="comp">Debes seleccionar alguna compentencia y generador</string>
+
 </resources>

@@ -201,9 +201,7 @@ public class Usuario {
         editor.putString("contra", usuario.getContra());
         editor.putString("imei", usuarioLogin.getPerfil().getImei());
         editor.putString("numero", usuario.getContra());
-        editor.putString("nombreCompleto",
-                usuarioLogin.getPerfil().getNombre()+" "+
-                usuarioLogin.getPerfil().getApellidoP());
+        editor.putString("nombreCompleto", usuarioLogin.getPerfil().getNombre()+" "+ usuarioLogin.getPerfil().getApellidoP());
         editor.putString("telefono", usuarioLogin.getPerfil().getTelefono());
         editor.putString("correo", usuarioLogin.getPerfil().getCorreo());
         editor.apply();

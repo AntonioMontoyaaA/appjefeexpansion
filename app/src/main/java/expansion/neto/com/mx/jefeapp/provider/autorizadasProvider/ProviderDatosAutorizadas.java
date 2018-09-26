@@ -38,7 +38,7 @@ public class ProviderDatosAutorizadas {
 
     private final String SEMANA_0 = "0";
 
-    public void obtenerDatosAutorizadas(final String mes, final String usuarioId, final ConsultaDatosSitio promise){
+    public void obtenerDatosAutorizadas(final String vermas, final String mes, final String usuarioId, final ConsultaDatosSitio promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, Autorizadas>() {
             @Override
@@ -53,6 +53,7 @@ public class ProviderDatosAutorizadas {
                             .add("usuarioId", usuarioId)
                             .add("mes", mes)
                             .add("semana", SEMANA_0)
+                            .add("vermas", vermas)
                             .add("anio", String.valueOf(anio));
 
                     RequestBody formBody = formBuilder.build();

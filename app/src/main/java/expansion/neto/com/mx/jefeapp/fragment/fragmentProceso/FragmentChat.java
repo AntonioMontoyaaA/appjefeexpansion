@@ -30,6 +30,12 @@ import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderGuardaMens
 import expansion.neto.com.mx.jefeapp.sorted.proceso.adapter.MensajeChatAdapter;
 
 import static android.widget.LinearLayout.*;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_AUDITORIA;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_CONSTRUCCION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_EXPANSION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_GESTORIA;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_GEXPANSION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_OPERACIONES;
 
 public class FragmentChat extends Fragment {
 
@@ -69,8 +75,6 @@ public class FragmentChat extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -82,6 +86,216 @@ public class FragmentChat extends Fragment {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_chat,container,false);
         view = binding.getRoot();
         binding.buttonChat.setEnabled(false);
+
+        binding.content2.viewge.setAlpha(1);
+        binding.content2.imggerente.setAlpha(1.0f);
+        binding.content2.txtgexpansion.setAlpha(1.0f);
+
+        ViewGroup.LayoutParams params = binding.reyclerviewMessageList.getLayoutParams();
+        final float scale = getContext().getResources().getDisplayMetrics().density;
+        int pixels = (int) (452 * scale + 0.5f);
+        params.height=pixels;
+        binding.reyclerviewMessageList.setLayoutParams(params);
+
+        binding.content2.gexpansion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.content2.viewge.setAlpha(1);
+                binding.content2.imggerente.setAlpha(1.0f);
+                binding.content2.txtgexpansion.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+
+                consultaChatPorArea(AREA_CONSULTA_GENERAL);
+                areaSeleccionada = AREA_CONSULTA_GENERAL;
+                binding.edittextChatbox.setHint("Escribir mensaje");
+
+            }
+        });
+
+        binding.content2.expansiones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                consultaChatPorArea(AREA_CONSULTA_EXPANSION);
+                areaSeleccionada = AREA_CONSULTA_EXPANSION;
+                binding.edittextChatbox.setHint("Escribir mensaje a expansión");
+
+                binding.content2.viewe.setAlpha(1);
+                binding.content2.imgexpansion.setAlpha(1.0f);
+                binding.content2.txtexpansion.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+            }
+        });
+
+        binding.content2.gestoria.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.content2.viewges.setAlpha(1);
+                binding.content2.imggestoria.setAlpha(1.0f);
+                binding.content2.txtgestoria.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+                consultaChatPorArea(AREA_CONSULTA_GESTORIA);
+                areaSeleccionada = AREA_CONSULTA_GESTORIA;
+                binding.edittextChatbox.setHint("Escribir mensaje a gestoría");
+
+            }
+        });
+
+        binding.content2.construccion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                consultaChatPorArea(AREA_CONSULTA_CONSTRUCCION);
+                areaSeleccionada = AREA_CONSULTA_CONSTRUCCION;
+                binding.edittextChatbox.setHint("Escribir mensaje a construcción");
+
+                binding.content2.viewcon.setAlpha(1);
+                binding.content2.imgconstruccion.setAlpha(1.0f);
+                binding.content2.txtconstruccion.setAlpha(1.0f);
+
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+            }
+        });
+
+        binding.content2.operaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                consultaChatPorArea(AREA_CONSULTA_OPERACIONES);
+                areaSeleccionada = AREA_CONSULTA_OPERACIONES;
+                binding.edittextChatbox.setHint("Escribir mensaje a operaciones");
+
+                binding.content2.viewope.setAlpha(1);
+                binding.content2.imgoperaciones.setAlpha(1.0f);
+                binding.content2.txtoperaciones.setAlpha(1.0f);
+
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+            }
+        });
+
+        binding.content2.auditorias.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.content2.viewaudi.setAlpha(1);
+                binding.content2.imgauditoria.setAlpha(1.0f);
+                binding.content2.txtauditoria.setAlpha(1.0f);
+
+                binding.content2.imggerente.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+                consultaChatPorArea(AREA_CONSULTA_AUDITORIA);
+                areaSeleccionada = AREA_CONSULTA_AUDITORIA;
+                binding.edittextChatbox.setHint("Escribir mensaje");
+
+            }
+        });
+
+        /************************** nuevo version **************************/
 
         binding.chatGeneralBtn.setOnClickListener(new View.OnClickListener() {
             @Override

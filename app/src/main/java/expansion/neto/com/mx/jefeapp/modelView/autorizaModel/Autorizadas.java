@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import expansion.neto.com.mx.jefeapp.sorted.SortedListAdapter;
+
 public class Autorizadas {
 
     @SerializedName("mensaje")
@@ -42,7 +44,7 @@ public class Autorizadas {
     }
 
 
-    public class Autorizada {
+    public class Autorizada implements SortedListAdapter.ViewModel {
 
         @SerializedName("memoriaid")
         @Expose
@@ -59,6 +61,17 @@ public class Autorizadas {
         @SerializedName("nombresitio")
         @Expose
         private String nombresitio;
+        @SerializedName("estatus")
+        @Expose
+        private Integer atrasada;
+
+        public Integer getAtrasada() {
+            return atrasada;
+        }
+
+        public void setAtrasada(Integer atrasada) {
+            this.atrasada = atrasada;
+        }
 
         public String getMemoriaid() {
             return memoriaid;

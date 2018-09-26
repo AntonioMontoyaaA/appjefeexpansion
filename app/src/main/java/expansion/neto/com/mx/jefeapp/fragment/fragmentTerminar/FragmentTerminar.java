@@ -1,8 +1,10 @@
 package expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -177,6 +179,7 @@ import expansion.neto.com.mx.jefeapp.utils.PhoneNumberTextWatcher;
 import expansion.neto.com.mx.jefeapp.utils.ServicioGPS;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 
+import static android.app.Activity.RESULT_OK;
 import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.distanciaSuperficie;
@@ -246,6 +249,7 @@ public class FragmentTerminar extends Fragment implements
     private int CAMERA_LATERAL_1 = 2;
     private int CAMERA_LATERAL_2 = 3;
     private int CAMERA_PREDIAL = 4;
+    private int PICK_IMAGE_REQUEST = 5;
 
 
     ProgressDialog progressDialog;
@@ -365,7 +369,7 @@ public class FragmentTerminar extends Fragment implements
                     .build();
 
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            googleMap.setMyLocationEnabled(true);
+           // googleMap.setMyLocationEnabled(true);
             googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
@@ -423,6 +427,7 @@ public class FragmentTerminar extends Fragment implements
         }
     }
 
+    Ubicacion gpsUbica;
     BitmapDescriptor icon;
     Float mdLat;
     Float mdLot;
@@ -792,7 +797,7 @@ public class FragmentTerminar extends Fragment implements
                         if(nombreSitioGuardar.length()>0){
                             crearsitio = new CrearDatosSitio(usuario, nombreSitioGuardar, codigoPostal,
                                     direccion, estado, municipio, ciudad, latitud[0], longitud[0],
-                                    choices, "", VERSION_APP, pais, mdIdterminar);
+                                    choices, "", VERSION_APP, pais, mdIdterminar,"");
 
                             if(nombreSitioGuardar.equals("")){
 
@@ -830,7 +835,7 @@ public class FragmentTerminar extends Fragment implements
                     final String choices = preferences.getString("tipoSitio", "");
 
                     crearsitio = new CrearDatosSitio(usuario, nombreSitio, codigoPostal,
-                            direccion, estado, municipio, ciudad, latitud[0], longitud[0], choices, "", VERSION_APP, pais, "");
+                            direccion, estado, municipio, ciudad, latitud[0], longitud[0], choices, "", VERSION_APP, pais, "","");
 
                     ProviderCrearDatosSitio.getInstance(getContext()).guardarMd(crearsitio,
                             new ProviderCrearDatosSitio.InterfaceCrearDatosSitio() {
@@ -869,6 +874,33 @@ public class FragmentTerminar extends Fragment implements
                 }
             });
 
+            binding.gps.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    gpsUbica = gps();
+                    if(gpsUbica.lat!=0 && gpsUbica.lng!=0){
+                        mCenterLatLong = new LatLng(gpsUbica.lat, gpsUbica.lng);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mCenterLatLong));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCenterLatLong, 15));
+                        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(mCenterLatLong)
+                                .zoom(14)
+                                .bearing(0)
+                                .tilt(0)
+                                .build();
+
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        Location mLocation = new Location("");
+                        mLocation.setLatitude(mCenterLatLong.latitude);
+                        mLocation.setLongitude(mCenterLatLong.longitude);
+                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
+                    }
+
+                }
+            });
+
         } else if (position == 1) {
 
             bindingPropietario = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_1,container,false);
@@ -888,6 +920,10 @@ public class FragmentTerminar extends Fragment implements
             bindingPropietario.apellidoM.setText("");
             bindingPropietario.telefono.setText("");
             bindingPropietario.email.setText("");
+
+            bindingPropietario.nombre.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            bindingPropietario.apellidoP.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            bindingPropietario.apellidoM.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
             ProviderDatosPropietario.getInstance(getContext())
                     .obtenerDatosPropietario(md, usuario, new ProviderDatosPropietario.ConsultaDatosPropietario() {
@@ -1131,21 +1167,21 @@ public class FragmentTerminar extends Fragment implements
                                 bindingSuperficie.predial.setVisibility(View.VISIBLE);
                             }else{
                                 bindingSuperficie.predial.setVisibility(View.GONE);
-                                urlPredial = " ";
-                                fechaPredial = " ";
+                                urlPredial = "";
+                                fechaPredial = "";
                             }
                         }
                     }else{
                         bindingSuperficie.predial.setVisibility(View.GONE);
-                        urlPredial = " ";
-                        fechaPredial = " ";
+                        urlPredial = "";
+                        fechaPredial = "";
                     }
                 }
                 @Override
                 public void reject(Exception e) {
                     bindingSuperficie.predial.setVisibility(View.GONE);
-                    urlPredial = " ";
-                    fechaPredial = " ";
+                    urlPredial = "";
+                    fechaPredial = "";
                 }
             });
 
@@ -1181,39 +1217,39 @@ public class FragmentTerminar extends Fragment implements
 
                                     for(int i = 0;i<superficie.getNiveles().size();i++){
                                         //if(!superficie.getNiveles().get(i).getFecha_fente().equals("")){
-                                            if(superficie.getNiveles().get(i).getNivel()==4 ||
-                                                    superficie.getNiveles().get(i).getNivel()==5){
+                                        if(superficie.getNiveles().get(i).getNivel()==4 ||
+                                                superficie.getNiveles().get(i).getNivel()==5){
 
-                                                if(!superficie.getNiveles().get(i)
-                                                        .getImgFrenteId().isEmpty()){
-                                                    Picasso.get().load(superficie.getNiveles().get(i)
-                                                            .getImgFrenteId()).into(bindingSuperficie.imagen);
+                                            if(!superficie.getNiveles().get(i)
+                                                    .getImgFrenteId().isEmpty()){
+                                                Picasso.get().load(superficie.getNiveles().get(i)
+                                                        .getImgFrenteId()).into(bindingSuperficie.imagen);
 
-                                                    valorFoto = i;
-                                                    valorFondo = i;
+                                                valorFoto = i;
+                                                valorFondo = i;
 
-                                                    fechaFrente = superficie.getNiveles().get(i).getFecha_fente();
-                                                    fechaEntorno1  = superficie.getNiveles().get(i).getFecha_lat1();
-                                                    fechaEntorno2  = superficie.getNiveles().get(i).getFecha_lat2();
-                                                    if(!superficie.getNiveles().get(i).getFecha_pred().equals("")){
-                                                        fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
-                                                    }else{
-                                                        fechaPredial = "";
-                                                        urlPredial = "";
-                                                    }
+                                                fechaFrente = superficie.getNiveles().get(i).getFecha_fente();
+                                                fechaEntorno1  = superficie.getNiveles().get(i).getFecha_lat1();
+                                                fechaEntorno2  = superficie.getNiveles().get(i).getFecha_lat2();
+                                                if(!superficie.getNiveles().get(i).getFecha_pred().equals("")){
+                                                    fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
+                                                }else{
+                                                    fechaPredial = "";
+                                                    urlPredial = "";
                                                 }
-
                                             }
 
-                                            if(superficie.getNiveles().get(i).getNivel()==6 ||
-                                                    superficie.getNiveles().get(i).getNivel()==7){
-                                                valorFrente = i;
-                                            }
-
-                                            if(superficie.getNiveles().get(i).getNivel()==8){
-                                                valorEsquina = i;
-                                            }
                                         }
+
+                                        if(superficie.getNiveles().get(i).getNivel()==6 ||
+                                                superficie.getNiveles().get(i).getNivel()==7){
+                                            valorFrente = i;
+                                        }
+
+                                        if(superficie.getNiveles().get(i).getNivel()==8){
+                                            valorEsquina = i;
+                                        }
+                                    }
 
                                     //}
 
@@ -1289,6 +1325,10 @@ public class FragmentTerminar extends Fragment implements
                                                 bindingSuperficie.lateral2.setAlpha(0.35f);
                                                 bindingSuperficie.predial.setAlpha(1);
 
+                                                bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                                bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
                                                 banderaCamara[0] = 4;
 
                                                 if(urlPredial.length()>3){
@@ -1302,24 +1342,38 @@ public class FragmentTerminar extends Fragment implements
 
                                                 }else{
                                                     bindingSuperficie.volver.setVisibility(View.GONE);
-                                                    Intent pictureIntent = new Intent(
-                                                            MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
-                                                        //Create a file to store the image
-                                                        File photoFile = null;
-                                                        try {
-                                                            photoFile = createImageFile(getContext());
-                                                        } catch (IOException ex) {
-                                                            // Error occurred while creating the File
-                                                        }
-                                                        if (photoFile != null) {
-                                                            Uri photoURI = FileProvider.getUriForFile(getContext(),
-                                                                    getString(R.string.file_provider_authority), photoFile);
-                                                            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                            startActivityForResult(pictureIntent,
-                                                                    CAMERA_PREDIAL);
-                                                        }
-                                                    }
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                    builder.setMessage("¿De donde quieres tomar la foto?")
+                                                            .setCancelable(false)
+                                                            .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    Intent intent = new Intent();
+                                                                    intent.setType("image/*");
+                                                                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                                                                    startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                                }
+                                                            })
+                                                            .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                                                                    if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                                        File photoFile = null;
+                                                                        try {
+                                                                            photoFile = createImageFile(getContext());
+                                                                        } catch (IOException ex) {
+
+                                                                        }
+                                                                        if (photoFile != null) {
+                                                                            Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                                            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                                            startActivityForResult(pictureIntent, CAMERA_PREDIAL);
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+                                                    AlertDialog alert = builder.create();
+                                                    alert.setTitle("FOTO");
+                                                    alert.show();
                                                 }
                                             }
 
@@ -1338,6 +1392,12 @@ public class FragmentTerminar extends Fragment implements
                                                 bindingSuperficie.lateral1.setAlpha(0.35f);
                                                 bindingSuperficie.lateral2.setAlpha(0.35f);
                                                 bindingSuperficie.predial.setAlpha(0.35f);
+
+                                                bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
+                                                bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                                bindingSuperficie.viewpredial.setVisibility(View.GONE);
+
                                                 banderaCamara[0] = 1;
                                                 if(superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length()>0){
                                                     if(urlFrente.length()>0){
@@ -1371,6 +1431,10 @@ public class FragmentTerminar extends Fragment implements
                                                 bindingSuperficie.frontal.setAlpha(0.35f);
                                                 bindingSuperficie.lateral2.setAlpha(0.35f);
                                                 bindingSuperficie.predial.setAlpha(0.35f);
+                                                bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
+                                                bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                                bindingSuperficie.viewpredial.setVisibility(View.GONE);
                                                 banderaCamara[0] = 2;
 
                                                 if(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length()>0){
@@ -1401,8 +1465,8 @@ public class FragmentTerminar extends Fragment implements
 
 
                                     if(superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("") ||
-                                    superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")){
-                                        urlPredial = " ";
+                                            superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")){
+                                        urlPredial = "";
                                     }else{
                                         urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
                                     }
@@ -1416,6 +1480,12 @@ public class FragmentTerminar extends Fragment implements
                                             bindingSuperficie.frontal.setAlpha(0.35f);
                                             bindingSuperficie.lateral1.setAlpha(0.35f);
                                             bindingSuperficie.predial.setAlpha(0.35f);
+
+                                            bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
+                                            bindingSuperficie.viewpredial.setVisibility(View.GONE);
+
                                             banderaCamara[0] = 3;
                                             if(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length()>0){
                                                 if(urlLateral2.length()>0){
@@ -1444,7 +1514,43 @@ public class FragmentTerminar extends Fragment implements
                                         bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                if(distancia){
+
+                                                if(banderaCamara[0] == 4) {
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                    //Setting message manually and performing action on button click
+                                                    builder.setMessage("Seleccionar archivo desde")
+                                                            .setCancelable(false)
+                                                            .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    Intent intent = new Intent();
+                                                                    intent.setType("image/*");
+                                                                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                                                                    startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                                }
+                                                            })
+                                                            .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialog, int id) {
+                                                                    Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                                    if (pictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                                                                        File photoFile = null;
+                                                                        try {
+                                                                            photoFile = createImageFile(getContext());
+                                                                        } catch (IOException ex) {
+
+                                                                        }
+                                                                        if (photoFile != null) {
+                                                                            Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                                            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                                            startActivityForResult(pictureIntent,
+                                                                                    CAMERA_PREDIAL);
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+                                                    AlertDialog alert = builder.create();
+                                                    alert.setTitle("PREDIAL");
+                                                    alert.show();
+                                                } else if(distancia){
                                                     if(banderaCamara[0] ==1){
                                                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                         startActivityForResult(intent, CAMERA_FRONTAL);
@@ -1454,7 +1560,7 @@ public class FragmentTerminar extends Fragment implements
                                                     } else if(banderaCamara[0] == 3){
                                                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                         startActivityForResult(intent, CAMERA_LATERAL_2);
-                                                    } else if(banderaCamara[0] == 4){
+                                                    }/* else if(banderaCamara[0] == 4){
 
                                                         Intent pictureIntent = new Intent(
                                                                 MediaStore.ACTION_IMAGE_CAPTURE);
@@ -1473,7 +1579,7 @@ public class FragmentTerminar extends Fragment implements
                                                                         CAMERA_PREDIAL);
                                                             }
                                                         }
-                                                    }
+                                                    }*/
 
                                                 }else {
                                                     Toast.makeText(getContext(), R.string.no_estas,
@@ -1669,7 +1775,7 @@ public class FragmentTerminar extends Fragment implements
                                             getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                             String frente = bindingSuperficie.frente.getText().toString();
                                             String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
                                                 getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                             }else{
                                                 CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario1, convertido,
@@ -1747,6 +1853,13 @@ public class FragmentTerminar extends Fragment implements
                                                 bindingSuperficie.lateral1.setAlpha(0.35f);
                                                 bindingSuperficie.lateral2.setAlpha(0.35f);
                                                 bindingSuperficie.predial.setAlpha(0.35f);
+
+
+                                                bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
+                                                bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                                bindingSuperficie.viewpredial.setVisibility(View.GONE);
+
                                                 banderaCamaraTermina[0] = 1;
                                                 if(urlFrente.length()>0){
                                                     Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
@@ -1768,40 +1881,56 @@ public class FragmentTerminar extends Fragment implements
                                     bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-
-                                            if(distancia){
-                                                bindingSuperficie.frontal.setAlpha(0.35f);
-                                                bindingSuperficie.lateral1.setAlpha(0.35f);
-                                                bindingSuperficie.lateral2.setAlpha(0.35f);
-                                                bindingSuperficie.predial.setAlpha(1.0f);
-                                                banderaCamaraTermina[0] = 4;
-                                                if(urlPredial.length()>0){
-                                                    Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
-                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                                }else{
-
-                                                    Intent pictureIntent = new Intent(
-                                                            MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
-                                                        //Create a file to store the image
-                                                        File photoFile = null;
-                                                        try {
-                                                            photoFile = createImageFile(getContext());
-                                                        } catch (IOException ex) {
-                                                            // Error occurred while creating the File
-                                                        }
-                                                        if (photoFile != null) {
-                                                            Uri photoURI = FileProvider.getUriForFile(getContext(),
-                                                                    getString(R.string.file_provider_authority), photoFile);
-                                                            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                            startActivityForResult(pictureIntent,
-                                                                    CAMERA_PREDIAL);
-                                                        }
-                                                    }
-                                                }
+                                            bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(1.0f);
+                                            bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                            bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
+                                            banderaCamaraTermina[0] = 4;
+                                            if(urlPredial.length()>0){
+                                                banderaCamara[0] = 4;
+                                                Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }else{
-                                                Toast.makeText(getContext(), R.string.no_estas,
-                                                        Toast.LENGTH_SHORT).show();
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                builder.setMessage("¿De donde quieres tomar la foto?")
+                                                        .setCancelable(false)
+                                                        .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                Intent intent = new Intent();
+                                                                intent.setType("image/*");
+                                                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                                                startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                            }
+                                                        })
+                                                        .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                                                                if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                                    File photoFile = null;
+                                                                    try {
+                                                                        photoFile = createImageFile(getContext());
+                                                                    } catch (IOException ex) {
+
+                                                                    }
+                                                                    if (photoFile != null) {
+                                                                        Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                                        pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                                        startActivityForResult(pictureIntent,
+                                                                                CAMERA_PREDIAL);
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+
+                                                //Creating dialog box
+                                                AlertDialog alert = builder.create();
+                                                //Setting the title manually
+                                                alert.setTitle("FOTO");
+                                                alert.show();
                                             }
 
                                         }
@@ -1816,6 +1945,10 @@ public class FragmentTerminar extends Fragment implements
                                                 bindingSuperficie.frontal.setAlpha(0.35f);
                                                 bindingSuperficie.lateral2.setAlpha(0.35f);
                                                 bindingSuperficie.predial.setAlpha(0.35f);
+                                                bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
+                                                bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                                bindingSuperficie.viewpredial.setVisibility(View.GONE);
                                                 banderaCamaraTermina[0] = 2;
 
                                                 if(urlLateral1.length()>0){
@@ -1842,6 +1975,10 @@ public class FragmentTerminar extends Fragment implements
                                                 bindingSuperficie.frontal.setAlpha(0.35f);
                                                 bindingSuperficie.lateral1.setAlpha(0.35f);
                                                 bindingSuperficie.predial.setAlpha(0.35f);
+                                                bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                                bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
+                                                bindingSuperficie.viewpredial.setVisibility(View.GONE);
                                                 banderaCamaraTermina[0] = 3;
 
                                                 if(urlLateral2.length()>0){
@@ -1869,8 +2006,44 @@ public class FragmentTerminar extends Fragment implements
                                     bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
+                                            if(banderaCamara[0] == 4){
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                builder.setMessage("¿De donde quieres tomar la foto?")
+                                                        .setCancelable(false)
+                                                        .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                Intent intent = new Intent();
+                                                                intent.setType("image/*");
+                                                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                                                startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                            }
+                                                        })
+                                                        .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                                                                if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                                    File photoFile = null;
+                                                                    try {
+                                                                        photoFile = createImageFile(getContext());
+                                                                    } catch (IOException ex) {
 
-                                            if(distancia){
+                                                                    }
+                                                                    if (photoFile != null) {
+                                                                        Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                                        pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                                        startActivityForResult(pictureIntent,
+                                                                                CAMERA_PREDIAL);
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+
+                                                //Creating dialog box
+                                                AlertDialog alert = builder.create();
+                                                //Setting the title manually
+                                                alert.setTitle("FOTO");
+                                                alert.show();
+                                            }else if(distancia){
                                                 if(banderaCamaraTermina[0] ==1){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA_FRONTAL);
@@ -1880,7 +2053,7 @@ public class FragmentTerminar extends Fragment implements
                                                 } else if(banderaCamaraTermina[0] ==3){
                                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                                     startActivityForResult(intent, CAMERA_LATERAL_2);
-                                                }else if(banderaCamaraTermina[0] ==4){
+                                                }/*else if(banderaCamaraTermina[0] ==4){
                                                     Intent pictureIntent = new Intent(
                                                             MediaStore.ACTION_IMAGE_CAPTURE);
                                                     if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
@@ -1899,8 +2072,9 @@ public class FragmentTerminar extends Fragment implements
                                                                     CAMERA_PREDIAL);
                                                         }
                                                     }
-                                                }
-                                            }else{
+                                                }*/
+                                            }
+                                            else {
                                                 Toast.makeText(getContext(), R.string.no_estas,
                                                         Toast.LENGTH_SHORT).show();
                                             }
@@ -3276,20 +3450,20 @@ public class FragmentTerminar extends Fragment implements
 
                         downTimer[0] = new CountDownTimer(1000 * sec, 1000) {
 
-                                public void onTick(long millisUntilFinished) {
-                                    String v = String.format("%02d", millisUntilFinished / 60000);
-                                    int va = (int) ((millisUntilFinished % 60000) / 1000);
-                                    binding.peatonalConteo.contador.setText(v + ":" + String.format("%02d", va));
-                                }
+                            public void onTick(long millisUntilFinished) {
+                                String v = String.format("%02d", millisUntilFinished / 60000);
+                                int va = (int) ((millisUntilFinished % 60000) / 1000);
+                                binding.peatonalConteo.contador.setText(v + ":" + String.format("%02d", va));
+                            }
 
-                                public void onFinish() {
-                                    binding.peatonalConteo.contador.setText("00:00");
-                                    binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                    binding.peatonalConteo.btnGuardar.setAlpha(1.f);
-                                    binding.peatonalConteo.presion.setEnabled(false);
-                                }
-                            };
-                            downTimer[0].start();
+                            public void onFinish() {
+                                binding.peatonalConteo.contador.setText("00:00");
+                                binding.peatonalConteo.btnGuardar.setEnabled(true);
+                                binding.peatonalConteo.btnGuardar.setAlpha(1.f);
+                                binding.peatonalConteo.presion.setEnabled(false);
+                            }
+                        };
+                        downTimer[0].start();
 
                         binding.peatonalConteo.cronometroPlay.setEnabled(false);
                         binding.peatonalConteo.cronometroStop.setEnabled(true);
@@ -3377,7 +3551,7 @@ public class FragmentTerminar extends Fragment implements
                                     binding.btnFinalizar.setAlpha(0.35f);
                                     binding.btnFinalizar.setEnabled(false);
                                 }else{
-                                   // binding.botones.setVisibility(View.VISIBLE);
+                                    // binding.botones.setVisibility(View.VISIBLE);
                                     //binding.btnFinalizar.setEnabled(true);
                                 }
 
@@ -3410,8 +3584,15 @@ public class FragmentTerminar extends Fragment implements
                                 binding.conteo.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        binding.conteo.setAlpha(0.5f);
+
+                                        binding.conteo.setAlpha(0.0f);
                                         binding.conteo.setEnabled(false);
+
+                                        binding.recyclerHoras.setVisibility(View.GONE);
+                                        binding.recyclerPeatonal.setVisibility(View.GONE);
+                                        binding.ciudad.setVisibility(View.GONE);
+
+                                        binding.peatonalConteo.peatonales.setVisibility(View.VISIBLE);
 
                                         binding.peaton.setVisibility(View.VISIBLE);
                                         binding.recyclerPeatonal.setVisibility(View.GONE);
@@ -3551,7 +3732,7 @@ public class FragmentTerminar extends Fragment implements
                                                                 binding.peatonalConteo.cronometroStop.setAlpha(1.0f);
                                                                 binding.peatonalConteo.cronometroPlay.setAlpha(0.35f);
                                                                 binding.peatonalConteo.spinnerHora.setItems(horarios);
-                                                                binding.linearLayout.setVisibility(View.VISIBLE);
+                                                                //binding.linearLayout.setVisibility(View.VISIBLE);
                                                                 binding.conteo.setAlpha(1f);
                                                                 binding.conteo.setEnabled(true);
                                                                 binding.peatonalConteo.btnGuardar.setEnabled(false);
@@ -3562,6 +3743,7 @@ public class FragmentTerminar extends Fragment implements
                                                                 binding.peatonalConteo.mil.setText("0");
                                                                 binding.peatonalConteo.diez.setText("0");
                                                                 binding.peatonalConteo.presion.setEnabled(true);
+                                                                binding.ciudad.setVisibility(View.VISIBLE);
 
                                                                 if(downTimer[0]!=null){
                                                                     downTimer[0].cancel();
@@ -3593,7 +3775,7 @@ public class FragmentTerminar extends Fragment implements
                                                 binding.recyclerPeatonal.setVisibility(View.VISIBLE);
                                                 binding.btnFinalizar.setVisibility(View.VISIBLE);
                                                 binding.promedio.setVisibility(View.VISIBLE);
-                                                binding.linearLayout.setVisibility(View.VISIBLE);
+                                                // binding.linearLayout.setVisibility(View.VISIBLE);
                                                 binding.conteo.setAlpha(1f);
                                                 binding.conteo.setEnabled(true);
 
@@ -3618,12 +3800,50 @@ public class FragmentTerminar extends Fragment implements
 
 
                             }
+
+                            binding.peatonalConteo.btnCancelar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    binding.peatonalConteo.peatonales.setVisibility(View.GONE);
+                                    binding.ciudad.setVisibility(View.VISIBLE);
+                                    binding.btnFinalizar.setVisibility(View.VISIBLE);
+                                    binding.recyclerPeatonal.setVisibility(View.VISIBLE);
+                                    binding.btnFinalizar.setVisibility(View.VISIBLE);
+                                    binding.promedio.setVisibility(View.VISIBLE);
+                                    binding.peaton.setVisibility(View.GONE);
+                                    binding.conteo.setEnabled(true);
+                                    binding.btnFinalizar.setVisibility(View.VISIBLE);
+                                    binding.recyclerPeatonal.setVisibility(View.VISIBLE);
+                                    binding.btnFinalizar.setVisibility(View.VISIBLE);
+                                    binding.promedio.setVisibility(View.VISIBLE);
+                                    binding.conteo.setAlpha(1f);
+                                    binding.conteo.setEnabled(true);
+
+                                    binding.peatonalConteo.btnGuardar.setEnabled(false);
+                                    binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
+
+                                    conteos[0] = 0;
+
+                                    binding.peatonalConteo.cien.setText("0");
+                                    binding.peatonalConteo.real.setText("0");
+                                    binding.peatonalConteo.mil.setText("0");
+                                    binding.peatonalConteo.diez.setText("0");
+                                    binding.peatonalConteo.presion.setEnabled(true);
+                                    binding.peatonalConteo.contador.setText("00:00");
+                                    if(downTimer[0]!=null){
+                                        downTimer[0].cancel();
+                                    }
+
+                                    binding.conteo.setAlpha(1f);
+                                    binding.conteo.setEnabled(true);
+                                }
+                            });
+
                         }
 
                         @Override
-                        public void reject(Exception e) {
-
-                        }
+                        public void reject(Exception e) { }
                     });
 
             binding.btnFinalizar.setOnClickListener(new View.OnClickListener() {
@@ -3776,7 +3996,21 @@ public class FragmentTerminar extends Fragment implements
                 fechaEntorno2 = getFechaHora();
                 obtenerUrl(random()+"_lateral2", base64Lateral2, mdIdterminar);
             }
-        }else if(resultCode == 0){
+        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
+            Uri filePath = data.getData();
+            try {
+                fechaPredial = getFechaHora();
+                //Cómo obtener el mapa de bits de la Galería
+                Bitmap bitfromPath = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
+                base64Predial = getStringImage(compressImage(bitfromPath, 1200));
+                obtenerUrl("6",random()+"_predial", base64Predial, mdIdterminar);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        else if(resultCode == 0){
 
 
         }
@@ -3832,47 +4066,55 @@ public class FragmentTerminar extends Fragment implements
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(tipoPredial, mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
-                if(codigo!= null){
-                    if(codigo.getResultado().getSecureUrl()!=null){
-                        if(codigo.getResultado().getSecureUrl().contains("frente")){
-                            bindingSuperficie.frontal.setEnabled(false);
-                            urlFrente = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                            bindingSuperficie.frontal.setEnabled(true);
-                            hourlyTask.run();
-                            hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                if(codigo.getCodigo()==200){
+                    if(codigo!= null){
+                        if(codigo.getResultado().getSecureUrl()!=null){
+                            if(codigo.getResultado().getSecureUrl().contains("frente")){
+                                bindingSuperficie.frontal.setEnabled(false);
+                                urlFrente = codigo.getResultado().getSecureUrl();
+                                Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                                bindingSuperficie.frontal.setEnabled(true);
+                                hourlyTask.run();
+                                hourlyTask.scheduledExecutionTime();
+                                loadingProgress(progressDialog, 1);
 
-                        }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
-                            bindingSuperficie.lateral1.setEnabled(false);
-                            urlLateral1 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                            bindingSuperficie.lateral1.setEnabled(true);
-                            hourlyTask.run();
-                            hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
+                                bindingSuperficie.lateral1.setEnabled(false);
+                                urlLateral1 = codigo.getResultado().getSecureUrl();
+                                Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                                bindingSuperficie.lateral1.setEnabled(true);
+                                hourlyTask.run();
+                                hourlyTask.scheduledExecutionTime();
+                                loadingProgress(progressDialog, 1);
 
-                        }else if(codigo.getResultado().getSecureUrl().contains("predial")){
-                            bindingSuperficie.predial.setEnabled(false);
-                            urlPredial = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
-                            bindingSuperficie.predial.setEnabled(true);
-                            hourlyTask.run();
-                            hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+                                bindingSuperficie.predial.setEnabled(false);
+                                urlPredial = codigo.getResultado().getSecureUrl();
+                                Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                bindingSuperficie.predial.setEnabled(true);
+                                hourlyTask.run();
+                                hourlyTask.scheduledExecutionTime();
+                                loadingProgress(progressDialog, 1);
 
-                        } else{
-                            bindingSuperficie.lateral2.setEnabled(false);
-                            urlLateral2 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                            bindingSuperficie.lateral2.setEnabled(true);
-                            hourlyTask.run();
-                            hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            } else{
+                                bindingSuperficie.lateral2.setEnabled(false);
+                                urlLateral2 = codigo.getResultado().getSecureUrl();
+                                Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                                bindingSuperficie.lateral2.setEnabled(true);
+                                hourlyTask.run();
+                                hourlyTask.scheduledExecutionTime();
+                                loadingProgress(progressDialog, 1);
 
+                            }
                         }
+                    }else{
+                        loadingProgress(progressDialog, 1);
+                        Toast.makeText(getContext(), R.string.err_foto,
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
+
+
             }
 
             @Override
@@ -4071,9 +4313,22 @@ public class FragmentTerminar extends Fragment implements
                         binding.recyclerPeatonal.setAdapter(adapter);
                         adapter.edit().replaceAll(peatonales).commit();
                         adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+
+                        int i = binding.peaton.getVisibility();
+                        if(i==8){
+                            binding.ciudad.setVisibility(View.VISIBLE);
+                        }else{
+                            binding.ciudad.setVisibility(View.GONE);
+                        }
+
+
+
+
                     }else{
                         binding.btnFinalizar.setAlpha(0.35f);
                         binding.btnFinalizar.setEnabled(false);
+                        binding.ciudad.setVisibility(View.GONE);
+
                     }
                 }else{
                     binding.btnFinalizar.setAlpha(0.35f);

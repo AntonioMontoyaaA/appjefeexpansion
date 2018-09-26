@@ -39,14 +39,263 @@
                     android:padding="18dp"
                     android:layout_width="match_parent"
                     android:layout_height="610dp"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <android.support.constraint.ConstraintLayout
-                        android:id="@+id/mostrar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@{String.valueOf(validacion).equals(@string/valida) ? @drawable/estilo_boton_borde_rojo : @drawable/estilo_boton_blanco}"
+                        android:background="@drawable/background"
                         android:orientation="horizontal">
+
+
+
+                        <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                            android:visibility="gone"
+                            android:id="@+id/robotoTextView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:background="@android:color/transparent"
+                            android:text="MD Oaxaca"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/azultaco"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toStartOf="@+id/aceptar"
+                            app:layout_constraintStart_toEndOf="@+id/cancelar"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:typeface="robotoRegular" />
+
+                        <android.support.v7.widget.CardView
+                            android:visibility="gone"
+                            android:id="@+id/ciudad"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginTop="0dp"
+                            android:background="@drawable/estilo_boton_blanco_borde"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_gravity="top"
+                                android:background="@drawable/estilo_boton_blanco_up_celeste"
+                                android:orientation="vertical">
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/linearLayout8"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginBottom="8dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/recycler_peatonal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+
+                                </android.support.v7.widget.RecyclerView>
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/headers_conteo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/btn_agregar_conteo">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="2dp"
+                                        android:paddingStart="10dp"
+                                        android:text="Fecha"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/azultaco"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="2dp"
+                                        android:background="@android:color/transparent"
+                                        android:gravity="center_horizontal"
+                                        android:paddingStart="10dp"
+                                        android:text="Hora"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/azultaco"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="2dp"
+                                        android:background="@android:color/transparent"
+                                        android:gravity="center_horizontal"
+                                        android:text="Peatones"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/azultaco"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold" />
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:visibility="gone"
+                                android:id="@+id/linearLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="4dp"
+                                android:orientation="horizontal"
+                                app:layout_constraintTop_toBottomOf="@+id/headers_conteo">
+
+
+                                <android.support.v7.widget.RecyclerView
+
+                                    android:id="@+id/recycler_horas"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+
+                                </android.support.v7.widget.RecyclerView>
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:id="@+id/botones"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="420dp"
+
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:padding="10dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent">
+
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:id="@+id/promedio"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_marginTop="4dp"
+                                    android:background="@android:color/transparent"
+                                    android:textColor="@color/azultaco"
+                                    android:textSize="14sp"
+                                    app:layout_constraintHorizontal_bias="0.501"
+
+                                    app:typeface="robotoBold"
+                                    tools:text="010101" />
+
+                                <Button
+                                    android:id="@+id/btn_finalizar"
+                                    android:layout_width="200dp"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="10dp"
+                                    android:background="@drawable/estilo_boton_azul_claro"
+                                    android:gravity="center"
+                                    android:text="Finalizar"
+                                    android:textColor="@color/blanco" />
+                            </LinearLayout>
+
+
+                        </android.support.v7.widget.CardView>
+
+                        <LinearLayout
+                            android:visibility="gone"
+                            android:id="@+id/peaton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="0dp"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginTop="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <include
+                                android:id="@+id/peatonal_conteo"
+                                layout="@layout/fragment_peatonal"
+                                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/btn_agregar_conteo"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ciudad">
+
+                            <ImageView
+                                android:id="@+id/conteo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/agregar" />
+                        </RelativeLayout>
+
+
 
                         <ImageView
                             android:id="@+id/aceptar"
@@ -61,7 +310,7 @@
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:typeface="robotoRegular" />
+                            app:typeface="robotoBold" />
 
                         <ImageView
                             android:id="@+id/cancelar"
@@ -77,221 +326,28 @@
                             android:visibility="gone"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:typeface="robotoRegular" />
+                            app:typeface="robotoBold" />
 
                         <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                            android:id="@+id/robotoTextView2"
+                            android:id="@+id/titulo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="2dp"
                             android:background="@android:color/transparent"
+                            android:text="MD Oaxaca"
                             android:textColor="@color/azultaco"
                             android:textSize="14sp"
+                            android:visibility="gone"
                             app:layout_constraintEnd_toStartOf="@+id/aceptar"
-                            app:layout_constraintHorizontal_bias="0.501"
                             app:layout_constraintStart_toEndOf="@+id/cancelar"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:typeface="robotoRegular"
-                            tools:text="MD Oaxaca" />
+                            app:typeface="robotoRegular" />
 
-
-                        <LinearLayout
-                            android:id="@+id/headers_conteo"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="horizontal"
-                            android:visibility="gone"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/btn_agregar_conteo">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="2dp"
-                                    android:paddingStart="10dp"
-                                    android:text="Fecha"
-                                    android:textAlignment="center"
-                                    android:textColor="@color/azultaco"
-                                    android:textSize="14sp"
-                                    app:typeface="robotoBold" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
-                                    android:background="@android:color/transparent"
-                                    android:gravity="center_horizontal"
-                                    android:paddingStart="10dp"
-                                    android:text="Hora"
-                                    android:textAlignment="center"
-                                    android:textColor="@color/azultaco"
-                                    android:textSize="14sp"
-                                    app:typeface="robotoBold" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="2dp"
-                                    android:background="@android:color/transparent"
-                                    android:gravity="center_horizontal"
-                                    android:text="Peatones"
-                                    android:textAlignment="center"
-                                    android:textColor="@color/azultaco"
-                                    android:textSize="14sp"
-                                    app:typeface="robotoBold" />
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/linearLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
-                            android:layout_marginStart="2dp"
-                            android:layout_marginTop="4dp"
-                            android:orientation="horizontal"
-                            app:layout_constraintTop_toBottomOf="@+id/headers_conteo">
-
-
-                            <android.support.v7.widget.RecyclerView
-
-                                android:id="@+id/recycler_horas"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-
-                            </android.support.v7.widget.RecyclerView>
-                        </LinearLayout>
-
-
-                        <LinearLayout
-                            android:id="@+id/linearLayout8"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="-5dp"
-                            android:layout_weight="1"
-                            android:orientation="horizontal"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-
-                            <android.support.v7.widget.RecyclerView
-                                android:id="@+id/recycler_peatonal"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-
-                            </android.support.v7.widget.RecyclerView>
-
-
-                        </LinearLayout>
-
-
-                        <RelativeLayout
-                            android:id="@+id/btn_agregar_conteo"
-                            android:layout_width="match_parent"
-                            android:layout_height="42dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginTop="2dp"
-                            android:gravity="center"
-                            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/robotoTextView2"
-                            app:layout_constraintVertical_bias="0.0">
-
-                            <ImageView
-                                android:id="@+id/conteo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/agregar" />
-                        </RelativeLayout>
-
-
-                        <LinearLayout
-                            android:id="@+id/peaton"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility="gone">
-
-                            <include
-                                android:id="@+id/peatonal_conteo"
-                                layout="@layout/fragment_peatonal"
-                                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-                        </LinearLayout>
-
-
-                        <LinearLayout
-                            android:id="@+id/botones"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginStart="8dp"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:padding="10dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent">
-
-
-                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                android:id="@+id/promedio"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:layout_marginTop="4dp"
-                                android:background="@android:color/transparent"
-                                android:textColor="@color/azultaco"
-                                android:textSize="14sp"
-                                app:layout_constraintHorizontal_bias="0.501"
-
-                                app:typeface="robotoBold"
-                                tools:text="010101" />
-
-                            <Button
-                                android:id="@+id/btn_finalizar"
-                                android:layout_width="200dp"
-                                android:layout_height="30dp"
-                                android:layout_gravity="center"
-                                android:layout_margin="10dp"
-                                android:background="@drawable/estilo_boton_azul_claro"
-                                android:gravity="center"
-                                android:text="Finalizar"
-                                android:textColor="@color/blanco" />
-                        </LinearLayout>
 
                     </android.support.constraint.ConstraintLayout>
+
+
 
                 </LinearLayout>
 
@@ -300,5 +356,4 @@
         </ScrollView>
 
     </LinearLayout>
-
 </layout>

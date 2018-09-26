@@ -38,6 +38,7 @@ import expansion.neto.com.mx.jefeapp.cron.ReminderUtilities;
 import expansion.neto.com.mx.jefeapp.cron.ReminderUtilitiesJob;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDashboardBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentAgenda.FragmentInicioAgenda;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentAutorizadas.FragmentInicioAutorizadas;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentInicioAutoriza;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentInicioProceso;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentInicioRechazadas;
@@ -46,9 +47,8 @@ import expansion.neto.com.mx.jefeapp.modelView.loginModel.Permiso;
 import expansion.neto.com.mx.jefeapp.modelView.loginModel.Usuario;
 import expansion.neto.com.mx.jefeapp.modelView.loginModel.UsuarioLogin;
 import expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard;
+import expansion.neto.com.mx.jefeapp.radios.ui.radios.ActivityRadios;
 import expansion.neto.com.mx.jefeapp.ui.autoriza.ActivityAutorizar;
-import expansion.neto.com.mx.jefeapp.ui.autorizadas.ActivityAutorizadas;
-import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivitySplashScreen;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 
 public class FragmentDashboard extends Fragment {
@@ -141,7 +141,7 @@ public class FragmentDashboard extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent main = new Intent(getContext(), ActivityAutorizadas.class);
+                Intent main = new Intent(getContext(), FragmentInicioAutorizadas.class);
                 startActivity(main);
 
             }
@@ -175,6 +175,16 @@ public class FragmentDashboard extends Fragment {
                 }else{
                     binding.izqSemana.setEnabled(false);
                 }
+            }
+        });
+
+        binding.clradio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent main = new Intent(getContext(), ActivityRadios.class);
+                startActivity(main);
+
             }
         });
 
@@ -388,7 +398,6 @@ public class FragmentDashboard extends Fragment {
         ProviderDatosDashboard.getInstance(getContext()).obtenerDatosAutorizadas(semanas, buscaMes, usuarioId, area, new ProviderDatosDashboard.ConsultaDatosDashboard() {
             @Override
             public void resolve(Dashboard dashboard) {
-
                 if(dashboard!=null){
                     if(dashboard.getCodigo()==200 && dashboard!=null){
                         for(int i=0;i<dashboard.getTotales().size();i++){

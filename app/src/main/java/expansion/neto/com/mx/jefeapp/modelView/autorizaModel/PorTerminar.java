@@ -91,7 +91,7 @@ public class PorTerminar implements SortedListAdapter.ViewModel {
         private String fechaVencimiento;
         @SerializedName("atrasada")
         @Expose
-        private String atrasada;
+        private int atrasada;
 
         public String getFechaVencimiento(){
 
@@ -103,21 +103,21 @@ public class PorTerminar implements SortedListAdapter.ViewModel {
                     e.printStackTrace();
                 }
                 String formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(date);
-                return "Vence el "+formattedDate;
+                return ""+formattedDate;
             }
 
-            return "Vence el ";
+            return "";
         }
 
         public void setFechaVencimiento(String fechaVencimiento) {
             this.fechaVencimiento = fechaVencimiento;
         }
 
-        public String getAtrasada() {
+        public int getAtrasada() {
             return atrasada;
         }
 
-        public void setAtrasada(String atrasada) {
+        public void setAtrasada(int atrasada) {
             this.atrasada = atrasada;
         }
 
@@ -131,7 +131,7 @@ public class PorTerminar implements SortedListAdapter.ViewModel {
             }
             String formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(date);
 
-            return "Creado el "+formattedDate;
+            return ""+formattedDate;
 
         }
 
@@ -151,7 +151,7 @@ public class PorTerminar implements SortedListAdapter.ViewModel {
 
         public String getCategoria() {
             if(categoria==null){
-                categoria = "s/cat";
+                categoria = "-";
             }
             return categoria;
         }

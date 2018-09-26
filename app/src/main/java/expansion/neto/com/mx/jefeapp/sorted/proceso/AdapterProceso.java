@@ -26,6 +26,7 @@ public class AdapterProceso extends SortedListAdapter<Proceso.Memoria> {
     protected SortedListAdapter.ViewHolder<? extends Proceso.Memoria> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
         final ItemProcesoPickerBinding binding = ItemProcesoPickerBinding.inflate(inflater, parent, false);
         binding.setListener(listener);
+        binding.setTipoCard(0);
         return new ProcesoHolder(binding, listener);
     }
 

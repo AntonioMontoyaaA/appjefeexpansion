@@ -71,9 +71,9 @@ public class FragmentCardTerminar extends Fragment implements AutorizaHolder.Lis
 		binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
 		binding.recyclerAutoriza.setAdapter(adapter);
 
-		RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
+		RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
 		binding.recyclerAutoriza.setLayoutManager(mLayoutManager);
-		binding.recyclerAutoriza.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(4), true));
+		binding.recyclerAutoriza.addItemDecoration(new GridSpacingItemDecoration(1, dpToPx(1), true));
 		binding.recyclerAutoriza.setItemAnimator(new DefaultItemAnimator());
 
 		binding.buscar.addTextChangedListener(new TextWatcher() {

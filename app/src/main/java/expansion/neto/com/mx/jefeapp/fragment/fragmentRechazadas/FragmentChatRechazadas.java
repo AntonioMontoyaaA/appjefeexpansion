@@ -99,6 +99,210 @@ public class FragmentChatRechazadas extends Fragment {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_chat_rechazadas,container,false);
         view = binding.getRoot();
 
+        binding.content2.viewge.setAlpha(1);
+        binding.content2.imggerente.setAlpha(1.0f);
+        binding.content2.txtgexpansion.setAlpha(1.0f);
+
+        binding.content2.gexpansion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.content2.viewge.setAlpha(1);
+                binding.content2.imggerente.setAlpha(1.0f);
+                binding.content2.txtgexpansion.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+
+                consultaChatPorArea(AREA_CONSULTA_GENERAL);
+                areaSeleccionada = AREA_CONSULTA_GENERAL;
+                binding.edittextChatbox.setHint("Escribir mensaje");
+
+            }
+        });
+
+        binding.content2.expansiones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                consultaChatPorArea(AREA_CONSULTA_EXPANSION);
+                areaSeleccionada = AREA_CONSULTA_EXPANSION;
+                binding.edittextChatbox.setHint("Escribir mensaje a expansión");
+
+                binding.content2.viewe.setAlpha(1);
+                binding.content2.imgexpansion.setAlpha(1.0f);
+                binding.content2.txtexpansion.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+            }
+        });
+
+        binding.content2.gestoria.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.content2.viewges.setAlpha(1);
+                binding.content2.imggestoria.setAlpha(1.0f);
+                binding.content2.txtgestoria.setAlpha(1.0f);
+
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+                consultaChatPorArea(AREA_CONSULTA_GESTORIA);
+                areaSeleccionada = AREA_CONSULTA_GESTORIA;
+                binding.edittextChatbox.setHint("Escribir mensaje a gestoría");
+
+            }
+        });
+
+        binding.content2.construccion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                consultaChatPorArea(AREA_CONSULTA_CONSTRUCCION);
+                areaSeleccionada = AREA_CONSULTA_CONSTRUCCION;
+                binding.edittextChatbox.setHint("Escribir mensaje a construcción");
+
+                binding.content2.viewcon.setAlpha(1);
+                binding.content2.imgconstruccion.setAlpha(1.0f);
+                binding.content2.txtconstruccion.setAlpha(1.0f);
+
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+            }
+        });
+
+        binding.content2.operaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                consultaChatPorArea(AREA_CONSULTA_OPERACIONES);
+                areaSeleccionada = AREA_CONSULTA_OPERACIONES;
+                binding.edittextChatbox.setHint("Escribir mensaje a operaciones");
+
+                binding.content2.viewope.setAlpha(1);
+                binding.content2.imgoperaciones.setAlpha(1.0f);
+                binding.content2.txtoperaciones.setAlpha(1.0f);
+
+                binding.content2.imggestoria.setAlpha(0.2f);
+                binding.content2.imgauditoria.setAlpha(0.2f);
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggerente.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewaudi.setAlpha(0.2f);
+
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtauditoria.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+            }
+        });
+
+        binding.content2.auditorias.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.content2.viewaudi.setAlpha(1);
+                binding.content2.imgauditoria.setAlpha(1.0f);
+                binding.content2.txtauditoria.setAlpha(1.0f);
+
+                binding.content2.imggerente.setAlpha(0.2f);
+                binding.content2.imgoperaciones.setAlpha(0.2f);
+                binding.content2.imgconstruccion.setAlpha(0.2f);
+                binding.content2.imgexpansion.setAlpha(0.2f);
+                binding.content2.imggestoria.setAlpha(0.2f);
+
+                binding.content2.viewge.setAlpha(0.2f);
+                binding.content2.viewe.setAlpha(0.2f);
+                binding.content2.viewges.setAlpha(0.2f);
+                binding.content2.viewcon.setAlpha(0.2f);
+                binding.content2.viewope.setAlpha(0.2f);
+
+                binding.content2.txtconstruccion.setAlpha(0.2f);
+                binding.content2.txtexpansion.setAlpha(0.2f);
+                binding.content2.txtoperaciones.setAlpha(0.2f);
+                binding.content2.txtgestoria.setAlpha(0.2f);
+                binding.content2.txtgexpansion.setAlpha(0.2f);
+
+                consultaChatPorArea(AREA_CONSULTA_AUDITORIA);
+                areaSeleccionada = AREA_CONSULTA_AUDITORIA;
+                binding.edittextChatbox.setHint("Escribir mensaje");
+
+            }
+        });
+
+        /************************** nuevo version **************************/
+
         binding.chatGeneralBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -308,44 +512,41 @@ public class FragmentChatRechazadas extends Fragment {
     private final int PERFIL_GERENTE_EXPANSION = 3;
 
     public void rechazadas(ArrayList<TiemposProceso.Seguimiento> seguimientos){
-
-
         if(seguimientos!= null) {
             for (TiemposProceso.Seguimiento seguimiento : seguimientos) {
                 if (seguimiento.getAreaId() == AREA_EXPANSION && seguimiento.getPerfil() == PERFIL_GERENTE_EXPANSION) {
                     if(seguimiento.getTieneRechazo() == 1) {
-                        binding.equisGe.setVisibility(View.VISIBLE);
+                        //binding.equisGe.setVisibility(View.VISIBLE);
                     } else {
-                        binding.equisGe.setVisibility(View.GONE);
+                       // binding.equisGe.setVisibility(View.GONE);
                     }
                 } else if(seguimiento.getAreaId() == AREA_EXPANSION && seguimiento.getPerfil() != PERFIL_GERENTE_EXPANSION) {
                     if(seguimiento.getTieneRechazo() == 1) {
-                        binding.equisE.setVisibility(View.VISIBLE);
+                       // binding.equisE.setVisibility(View.VISIBLE);
                     } else {
-                        binding.equisE.setVisibility(View.GONE);
+                       // binding.equisE.setVisibility(View.GONE);
                     }
                 } else if(seguimiento.getAreaId() == AREA_GESTORIA) {
                     if(seguimiento.getTieneRechazo() == 1) {
-                        binding.equisG.setVisibility(View.VISIBLE);
+                       // binding.equisG.setVisibility(View.VISIBLE);
                     } else {
-                        binding.equisG.setVisibility(View.GONE);
+                       // binding.equisG.setVisibility(View.GONE);
                     }
                 } else if(seguimiento.getAreaId() == AREA_CONSTRUCCION) {
                     if(seguimiento.getTieneRechazo() == 1) {
-                        binding.equisC.setVisibility(View.VISIBLE);
+                       // binding.equisC.setVisibility(View.VISIBLE);
                     } else {
-                        binding.equisC.setVisibility(View.GONE);
+                       // binding.equisC.setVisibility(View.GONE);
                     }
                 } else if(seguimiento.getAreaId() == AREA_OPERACIONES) {
                     if(seguimiento.getTieneRechazo() == 1) {
-                        binding.equisO.setVisibility(View.VISIBLE);
+                       // binding.equisO.setVisibility(View.VISIBLE);
                     } else {
-                        binding.equisO.setVisibility(View.GONE);
+                       // binding.equisO.setVisibility(View.GONE);
                     }
                 }
             }
         }
-
     }
 
 
@@ -359,8 +560,6 @@ public class FragmentChatRechazadas extends Fragment {
             public void resolve(ChatProceso chat) {
 
                 if(chat.getCodigo() == 200) {
-
-
                     if(tipoPantallas == PANTALLA_EN_PROCESO) {
                         binding.linearMotivoRechazo.setVisibility(View.GONE);
                     } else if(tipoPantallas == PANTALLA_RECHAZADAS && modifica!=4) {
@@ -368,7 +567,7 @@ public class FragmentChatRechazadas extends Fragment {
                         binding.motivoRechazoGeneral.setText(chat.getMtvRechazo());
                         ViewGroup.LayoutParams params = binding.reyclerviewMessageList.getLayoutParams();
                         final float scale = getContext().getResources().getDisplayMetrics().density;
-                        int pixels = (int) (406 * scale + 0.5f);
+                        int pixels = (int) (402 * scale + 0.5f);
                         params.height=pixels;
                         binding.reyclerviewMessageList.setLayoutParams(params);
                     } else if(modifica==4){
@@ -376,16 +575,18 @@ public class FragmentChatRechazadas extends Fragment {
                         binding.motivoRechazoGeneral.setText(chat.getMtvRechazo());
                         ViewGroup.LayoutParams params = binding.reyclerviewMessageList.getLayoutParams();
                         final float scale = getContext().getResources().getDisplayMetrics().density;
-                        int pixels = (int) (391 * scale + 0.5f);
+                        int pixels = (int) (374 * scale + 0.5f);
                         params.height=pixels;
                         binding.reyclerviewMessageList.setLayoutParams(params);
                     }
+
                     binding.nombreMdText.setText(chat.getNombreSitio());
                     binding.creacionMdText.setText(getString(R.string.creation) + chat.getFechaCreacion());
                     binding.categoriaText.setText(chat.getCategoria());
+
                     if(chat.getCategoria().equals(CATEGORIA_B)) {
                         binding.estrella3.setVisibility(View.GONE);
-                    } else if(chat.getCategoria().equals(CATEGORIA_C)) {
+                    } else if(chat.getCategoria().equals(CATEGORIA_C)){
                         binding.estrella2.setVisibility(View.GONE);
                         binding.estrella3.setVisibility(View.GONE);
                     }

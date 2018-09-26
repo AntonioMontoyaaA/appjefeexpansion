@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentAgenda.FragmentAgendaNotificaciones;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentAgenda.FragmentInicioAgenda;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentAutorizadas.FragmentInicioAutorizadas;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogCancelarMd;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentInicioAutoriza;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentDashboard.FragmentDashboard;
@@ -50,11 +51,8 @@ import expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar;
 import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Notificaciones;
 import expansion.neto.com.mx.jefeapp.modelView.loginModel.Permiso;
 import expansion.neto.com.mx.jefeapp.provider.agendaProvider.ProviderObtieneNotificaciones;
-import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityCalendario;
 import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityNotificaciones;
 import expansion.neto.com.mx.jefeapp.ui.autoriza.ActivityAutorizar;
-import expansion.neto.com.mx.jefeapp.ui.autorizadas.ActivityAutorizadas;
-import expansion.neto.com.mx.jefeapp.utils.ServicioRutas;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 import expansion.neto.com.mx.jefeapp.utils.desing.CustomTypefaceSpan;
 
@@ -256,7 +254,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.txt_rechazadas:
                 if(permisoRechazadas){
-                    Intent main = new Intent(this, ActivityAutorizadas.class);
+                    Intent main = new Intent(this, FragmentInicioAutorizadas.class);
                     startActivity(main);
                 }
                 mPrevSelectedId = itemId;

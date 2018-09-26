@@ -21,12 +21,23 @@ public class DatosPuntuacion {
     @SerializedName("factores")
     @Expose
     private List<Factore> factores = null;
+    @SerializedName("faltantes")
+    @Expose
+    private List<Factore> faltantes = null;
     @SerializedName("codigo")
     @Expose
     private Integer codigo;
     @SerializedName("mensaje")
     @Expose
     private String mensaje;
+
+    public List<Factore> getFaltantes() {
+        return faltantes;
+    }
+
+    public void setFaltantes(List<Factore> faltantes) {
+        this.faltantes = faltantes;
+    }
 
     public String getNomcategoria() {
         return nomcategoria;
@@ -125,6 +136,9 @@ public class DatosPuntuacion {
         }
 
         public Double getPuntuacion() {
+            if(puntuacion==-1){
+                puntuacion = 0.0;
+            }
             return puntuacion;
         }
 

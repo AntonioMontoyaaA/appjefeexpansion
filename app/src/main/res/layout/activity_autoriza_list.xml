@@ -42,6 +42,8 @@
             android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="7dp"
                 android:id="@+id/recycler_autoriza"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

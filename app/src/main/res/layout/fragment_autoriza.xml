@@ -35,7 +35,7 @@
                 <LinearLayout
                     android:background="@drawable/background"
                     android:layout_marginTop="2dp"
-                    android:padding="18dp"
+                    android:padding="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="610dp"
                     android:orientation="horizontal">
@@ -43,9 +43,379 @@
 
                     <android.support.constraint.ConstraintLayout
                         android:orientation="horizontal"
+                        android:layout_gravity="bottom"
                         android:background="@{String.valueOf(validacion).equals(@string/valida) ? @drawable/estilo_boton_borde_rojo : @drawable/estilo_boton_blanco}"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="590dp">
+
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/ciudad"
+                            android:layout_width="330dp"
+                            android:layout_height="180dp"
+                            android:layout_gravity="center"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/estilo_boton_blanco_borde"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_gravity="top"
+                                android:background="@drawable/estilo_boton_blanco_up_celeste"
+                                android:orientation="vertical">
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_marginTop="2dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/cancelar"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:id="@+id/nombreSitioTitulo"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal" >
+
+                                    <LinearLayout
+                                        android:layout_width="310dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="8dp"
+                                        android:layout_marginStart="0dp"
+                                        android:gravity="center_vertical"
+                                        android:orientation="vertical"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toBottomOf="@+id/cancelar">
+
+                                        <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="16dp"
+                                            android:layout_marginRight="16dp"
+                                            android:backgroundTint="@color/azul"
+                                            android:text="@string/nombresitio"
+                                            android:textColor="@color/colorPrimary"
+                                            android:textSize="12sp"
+                                            android:textAllCaps="true"
+                                            app:typeface="robotoBold" />
+
+                                        <EditText
+                                            android:id="@+id/nombresitio"
+                                            style="@style/edtText"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginEnd="12dp"
+                                            android:layout_marginStart="12dp"
+                                            android:layout_marginTop="-10dp"
+                                            android:cursorVisible="true"
+                                            android:inputType="text"
+                                            android:singleLine="true"
+                                            android:textSize="14sp" />
+
+                                    </LinearLayout>
+                                    <LinearLayout
+                                        android:visibility="gone"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+                                        <Switch
+                                            android:id="@+id/escogeSitio"
+                                            android:layout_marginTop="-0dp"
+                                            android:layout_marginStart="20dp"
+                                            android:textColorHint="@color/colorPrimary"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content" />
+                                        <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                            android:id="@+id/tipoSitio"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="26dp"
+                                            tools:text="@string/tipoSitio"
+                                            android:textColor="@color/azul"
+                                            android:backgroundTint="@color/azul"
+                                            android:textSize="10sp"
+                                            app:typeface="robotoLight" />
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/robotoTextView3"
+                                    android:layout_width="310dp"
+                                    android:layout_height="47dp"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/nombreSitioTitulo">
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:backgroundTint="@color/azul"
+                                        android:text="@string/direccion"
+                                        android:textColor="@color/colorPrimary"
+                                        android:textSize="12sp"
+                                        android:textAllCaps="true"
+                                        app:typeface="robotoBold" />
+
+                                    <EditText
+                                        android:id="@+id/direccionsitio"
+                                        style="@style/edtText"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="12dp"
+                                        android:layout_marginStart="12dp"
+                                        android:layout_marginTop="-10dp"
+                                        android:cursorVisible="true"
+                                        android:inputType="text"
+                                        android:singleLine="true"
+                                        android:textSize="14sp" />
+
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:visibility="gone"
+                                    android:id="@+id/linearLayout4"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/robotoTextView3"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical" >
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:text="@string/ciudad"
+                                        android:textColor="@color/colorPrimary"
+                                        android:backgroundTint="@color/azul"
+                                        android:textSize="12sp"
+                                        app:typeface="robotoLight" />
+
+                                    <EditText
+                                        android:enabled="false"
+                                        android:id="@+id/ciudadsitio"
+                                        android:layout_marginTop="-10dp"
+                                        android:layout_marginStart="12dp"
+                                        android:layout_marginEnd="12dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:cursorVisible="true"
+                                        style="@style/edtText"
+                                        android:inputType="text"
+                                        android:singleLine="true"
+                                        android:textSize="14sp" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:visibility="gone"
+                                    android:id="@+id/robotoTextView5"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical" >
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:text="@string/municipio"
+                                        android:textColor="@color/colorPrimary"
+                                        android:backgroundTint="@color/azul"
+                                        android:textSize="10sp"
+                                        app:typeface="robotoLight" />
+
+                                    <EditText
+                                        android:enabled="false"
+                                        android:id="@+id/municipiositio"
+                                        android:textColorLink="@color/azul"
+                                        android:shadowColor="@color/azul"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:layout_weight="1"
+                                        android:backgroundTint="@color/azul"
+                                        android:background="@android:color/transparent"
+                                        android:backgroundTintMode="@color/azul"
+                                        android:cursorVisible="true"
+                                        android:textColorHighlight="@color/azul"
+                                        android:drawableBottom="@color/azul"
+                                        android:ems="10"
+                                        android:inputType="text"
+                                        android:singleLine="true"
+                                        android:textColor="@color/azul"
+                                        android:textColorHint="@color/azul"
+                                        android:textSize="12sp" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/direccion"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/robotoTextView5"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_width="310dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical" >
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:text="@string/estado"
+                                        android:textAllCaps="true"
+                                        android:textColor="@color/colorPrimary"
+                                        android:backgroundTint="@color/azul"
+                                        android:textSize="12sp"
+                                        app:typeface="robotoBold" />
+
+                                    <EditText
+                                        android:id="@+id/estadositio"
+                                        android:layout_marginTop="-10dp"
+                                        android:layout_marginStart="12dp"
+                                        android:layout_marginEnd="12dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:cursorVisible="true"
+                                        style="@style/edtText"
+                                        android:inputType="text"
+                                        android:singleLine="true"
+                                        android:textSize="14sp"/>
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:visibility="gone"
+                                    android:id="@+id/colonia"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/direccion"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical" >
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:text="@string/codigo"
+                                        android:textColor="@color/colorPrimary"
+                                        android:backgroundTint="@color/azul"
+                                        android:textSize="12sp"
+                                        app:typeface="robotoLight" />
+
+                                    <EditText
+                                        android:enabled="false"
+                                        android:id="@+id/codigopostalsitio"
+                                        android:textColorLink="@color/azul"
+                                        android:shadowColor="@color/azul"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:layout_weight="1"
+                                        android:backgroundTint="@color/azul"
+                                        android:background="@android:color/transparent"
+                                        android:backgroundTintMode="@color/azul"
+                                        android:cursorVisible="true"
+                                        android:textColorHighlight="@color/azul"
+                                        android:drawableBottom="@color/azul"
+                                        android:ems="10"
+                                        android:inputType="number"
+                                        android:singleLine="true"
+                                        android:textColor="@color/azul"
+                                        android:textColorHint="@color/azul"
+                                        android:textSize="14sp" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/colonia"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_width="310dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical" >
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="16dp"
+                                        android:layout_marginRight="16dp"
+                                        android:text="@string/pais"
+                                        android:textColor="@color/colorPrimary"
+                                        android:backgroundTint="@color/azul"
+                                        android:textSize="12sp"
+                                        app:typeface="robotoLight" />
+
+                                    <EditText
+                                        android:id="@+id/pais"
+                                        android:layout_marginTop="-10dp"
+                                        android:layout_marginStart="12dp"
+                                        android:layout_marginEnd="12dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:cursorVisible="true"
+                                        style="@style/edtText"
+                                        android:inputType="text"
+                                        android:singleLine="true"
+                                        android:textSize="14sp" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+
+                        </android.support.v7.widget.CardView>
+
 
                         <ImageView
                             android:visibility="gone"
@@ -73,348 +443,11 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:typeface="robotoBold" />
 
-
-                        <LinearLayout
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/cancelar"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:id="@+id/nombreSitioTitulo"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal" >
-
-                            <LinearLayout
-                                android:layout_width="310dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="8dp"
-                                android:layout_marginStart="0dp"
-                                android:gravity="center_vertical"
-                                android:orientation="vertical"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/cancelar">
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="16dp"
-                                    android:layout_marginRight="16dp"
-                                    android:backgroundTint="@color/azul"
-                                    android:text="@string/nombresitio"
-                                    android:textColor="@color/colorPrimary"
-                                    android:textSize="12sp"
-                                    app:typeface="robotoLight" />
-
-                                <EditText
-                                    android:id="@+id/nombresitio"
-                                    style="@style/edtText"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="12dp"
-                                    android:layout_marginStart="12dp"
-                                    android:layout_marginTop="-10dp"
-                                    android:cursorVisible="true"
-                                    android:inputType="text"
-                                    android:singleLine="true"
-                                    android:textSize="14sp" />
-                            </LinearLayout>
-                            <LinearLayout
-                                android:visibility="gone"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-                                <Switch
-                                    android:id="@+id/escogeSitio"
-                                    android:layout_marginTop="-0dp"
-                                    android:layout_marginStart="20dp"
-                                    android:textColorHint="@color/colorPrimary"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:id="@+id/tipoSitio"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="26dp"
-                                    tools:text="@string/tipoSitio"
-                                    android:textColor="@color/azul"
-                                    android:backgroundTint="@color/azul"
-                                    android:textSize="10sp"
-                                    app:typeface="robotoLight" />
-
-                            </LinearLayout>
-
-
-
-
-
-
-
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/robotoTextView3"
-                            android:layout_width="310dp"
-                            android:layout_height="47dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/nombreSitioTitulo">
-
-                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:backgroundTint="@color/azul"
-                                android:text="@string/direccion"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="12sp"
-                                app:typeface="robotoLight" />
-
-                            <EditText
-                                android:id="@+id/direccionsitio"
-                                style="@style/edtText"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="12dp"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginTop="-10dp"
-                                android:cursorVisible="true"
-                                android:inputType="text"
-                                android:singleLine="true"
-                                android:textSize="14sp" />
-
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/linearLayout4"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/robotoTextView3"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical" >
-
-                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:text="@string/ciudad"
-                                android:textColor="@color/colorPrimary"
-                                android:backgroundTint="@color/azul"
-                                android:textSize="12sp"
-                                app:typeface="robotoLight" />
-
-                            <EditText
-                                android:enabled="false"
-                                android:id="@+id/ciudadsitio"
-                                android:layout_marginTop="-10dp"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginEnd="12dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:cursorVisible="true"
-                                style="@style/edtText"
-                                android:inputType="text"
-                                android:singleLine="true"
-                                android:textSize="14sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/robotoTextView5"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical" >
-
-                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:text="@string/municipio"
-                                android:textColor="@color/colorPrimary"
-                                android:backgroundTint="@color/azul"
-                                android:textSize="10sp"
-                                app:typeface="robotoLight" />
-
-                            <EditText
-                                android:enabled="false"
-                                android:id="@+id/municipiositio"
-                                android:textColorLink="@color/azul"
-                                android:shadowColor="@color/azul"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:layout_weight="1"
-                                android:backgroundTint="@color/azul"
-                                android:background="@android:color/transparent"
-                                android:backgroundTintMode="@color/azul"
-                                android:cursorVisible="true"
-                                android:textColorHighlight="@color/azul"
-                                android:drawableBottom="@color/azul"
-                                android:ems="10"
-                                android:inputType="text"
-                                android:singleLine="true"
-                                android:textColor="@color/azul"
-                                android:textColorHint="@color/azul"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/direccion"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/robotoTextView5"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_width="310dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical" >
-
-                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:text="@string/estado"
-                                android:textColor="@color/colorPrimary"
-                                android:backgroundTint="@color/azul"
-                                android:textSize="12sp"
-                                app:typeface="robotoLight" />
-
-                            <EditText
-                                android:id="@+id/estadositio"
-                                android:layout_marginTop="-10dp"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginEnd="12dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:cursorVisible="true"
-                                style="@style/edtText"
-                                android:inputType="text"
-                                android:singleLine="true"
-                                android:textSize="14sp"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/colonia"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/direccion"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical" >
-
-                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:text="@string/codigo"
-                                android:textColor="@color/colorPrimary"
-                                android:backgroundTint="@color/azul"
-                                android:textSize="12sp"
-                                app:typeface="robotoLight" />
-
-                            <EditText
-                                android:enabled="false"
-                                android:id="@+id/codigopostalsitio"
-                                android:textColorLink="@color/azul"
-                                android:shadowColor="@color/azul"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:layout_weight="1"
-                                android:backgroundTint="@color/azul"
-                                android:background="@android:color/transparent"
-                                android:backgroundTintMode="@color/azul"
-                                android:cursorVisible="true"
-                                android:textColorHighlight="@color/azul"
-                                android:drawableBottom="@color/azul"
-                                android:ems="10"
-                                android:inputType="number"
-                                android:singleLine="true"
-                                android:textColor="@color/azul"
-                                android:textColorHint="@color/azul"
-                                android:textSize="14sp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/colonia"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_width="310dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical" >
-
-                            <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
-                                android:text="@string/pais"
-                                android:textColor="@color/colorPrimary"
-                                android:backgroundTint="@color/azul"
-                                android:textSize="12sp"
-                                app:typeface="robotoLight" />
-
-                            <EditText
-                                android:id="@+id/pais"
-                                android:layout_marginTop="-10dp"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginEnd="12dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:cursorVisible="true"
-                                style="@style/edtText"
-                                android:inputType="text"
-                                android:singleLine="true"
-                                android:textSize="14sp" />
-
-                        </LinearLayout>
-
                         <fragment
                             android:id="@+id/map"
                             android:name="com.google.android.gms.maps.SupportMapFragment"
                             android:layout_width="match_parent"
-                            android:layout_height="360dp"
+                            android:layout_height="match_parent"
                             android:layout_marginBottom="1dp"
                             android:layout_marginEnd="1dp"
                             android:layout_marginStart="1dp"
@@ -427,12 +460,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
                             android:gravity="center"
-                            android:orientation="vertical"
                             app:layout_constraintBottom_toBottomOf="@+id/map"
                             app:layout_constraintEnd_toEndOf="@+id/map"
                             app:layout_constraintStart_toStartOf="parent"
@@ -445,8 +473,8 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_pin" />
 
-                        </LinearLayout>
 
+                        </LinearLayout>
 
                         <LinearLayout
                             android:visibility="gone"
@@ -477,6 +505,25 @@
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/gps"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:gravity="center"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/map">
+
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/jef_locate" />
+
+
+                        </LinearLayout>
 
 
                     </android.support.constraint.ConstraintLayout>

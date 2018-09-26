@@ -41,6 +41,7 @@ public class ActivityDetalle extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -54,6 +55,8 @@ public class ActivityDetalle extends AppCompatActivity{
         binding.pager.setAdapter(adapter);
         binding.pager.setCurrentItem(currentItem);
         setNavigator();
+
+        binding.help.setVisibility(View.INVISIBLE);
 
         binding.help.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,10 +209,10 @@ public class ActivityDetalle extends AppCompatActivity{
         for (int i = 0; i < adapter.getCount(); i++) {
             if (i == binding.pager.getCurrentItem()) {
                 navigation += getString(R.string.material_icon_point_full)
-                        + "  ";
+                        + "      ";
             } else {
                 navigation += getString(R.string.material_icon_point_empty)
-                        + "  ";
+                        + "      ";
             }
         }
         binding.circuloPosicion.setText(navigation);
@@ -247,7 +250,7 @@ public class ActivityDetalle extends AppCompatActivity{
 
         @Override
         public int getCount() {
-            return 8;
+            return 6;
         }
 
         @Override

@@ -37,7 +37,7 @@ public class ProviderTiemposProceso {
             protected TiemposProceso doInBackground(Void... voids) {
                 //TODO CONNECT AND GET DATA
                 try {
-
+                    //180816085527
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("mdId", mdId)
                             .add("usuarioId", usuario);

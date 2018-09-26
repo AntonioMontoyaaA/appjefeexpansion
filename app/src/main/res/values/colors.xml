@@ -53,5 +53,12 @@
     <color name="event_color_04">#f8b552</color>
     <color name="back_atrasada">#B54A2D</color>
 
+    <!--  nuevos colores -->
+    <color name="gris_borde">#D1D5DE</color>
 
+    <color name="texto_gris">#ACACAC</color>
+    <color name="grisetxt">#a9a9a9</color>
+
+    <color name="atrasadas">#E4B163</color>
+    <color name="radios">#1D2B4A20</color>
 </resources>

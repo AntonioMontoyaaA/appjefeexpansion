@@ -71,7 +71,8 @@ public class ProviderCrearDatosSitio {
                             .add("versionapp", VERSION_APP)
                             .add("tipoAplicacion", TIPO_APLICACION)
                             .add("municipio", datosSitio.getMunicipio())
-                            .add("mdId", String.valueOf(mdIdZ));
+                            .add("mdId", String.valueOf(mdIdZ))
+                            .add("radioid", datosSitio.getRadio());
 
                     RequestBody formBody = formBuilder.build();
                     Request request = new Request.Builder()

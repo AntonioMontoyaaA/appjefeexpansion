@@ -27,11 +27,11 @@ public class Cron extends JobService {
     @Override
     public boolean onStartJob(JobParameters job) {
         getNotificaciones();
-        Log.e("Service ejecutado!","Cron NOTIFICACIONS");
         return false;
     }
 
     public void getNotificaciones(){
+
         final SharedPreferences preferences = this.getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         String usuarioId = preferences.getString("usuario", "");
         final SharedPreferences.Editor editor = preferences.edit();
@@ -42,7 +42,6 @@ public class Cron extends JobService {
             public void resolve(Notificaciones eventos) {
 
                 if(eventos!=null ){
-
                     if (eventos.getCodigo()==200 && eventos.getTotalNotificaciones()>0){
                             int noti = preferences.getInt("notificaciones", 0);
                             if(noti == eventos.getTotalNotificaciones()){

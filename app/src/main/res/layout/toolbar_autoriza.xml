@@ -57,7 +57,7 @@
                     tools:text="@string/terminar"
                     android:textColor="@color/blanco"
                     android:textColorHint="@color/blanco"
-                    android:textSize="18dp"
+                    android:textSize="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.387"
