@@ -11,12 +11,12 @@ public class RestUrl {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     //public static String ip = "206.189.68.177"; // desarrollo
-    public static String ip = "167.99.102.173"; // QA 36
-     //public static String ip = "206.189.223.154"; // produccion
+    //public static String ip = "167.99.102.173"; // QA 36
+     public static String ip = "206.189.223.154"; // produccion
 
     //public static String dominio = "voksedesapi"; // desarrollo
-    public static String dominio = "vokseqaapi"; // QA
-    //public static String dominio = "vokseapi"; // produccion
+    //public static String dominio = "vokseqaapi"; // QA
+    public static String dominio = "vokseapi"; // produccion
 
     public static String NUM_TELEFONO = "0";
 

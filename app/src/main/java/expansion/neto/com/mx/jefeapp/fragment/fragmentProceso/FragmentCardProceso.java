@@ -39,6 +39,7 @@ import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Proceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Totales;
 import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderDatosProceso;
 import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderTotales;
+import expansion.neto.com.mx.jefeapp.sorted.autorizadas.AdapterAutorizadas;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.AdapterProceso;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.ProcesoHolder;
 import expansion.neto.com.mx.jefeapp.ui.proceso.ActivityProceso;
@@ -79,7 +80,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         anio = String.valueOf(calendar.get(Calendar.YEAR));
 
 
-        getListaProceso(perfil);
+        getListaProceso("0");
 
         adapter = new AdapterProceso(getContext(),ALPHABETICAL_COMPARATOR, this);
         binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -366,7 +367,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                 binding.vermas.setEnabled(false);
                 binding.vermas.setAlpha(0.4f);
 
-                getListaProceso();
+                getListaProceso("1");
 
 
             }
@@ -399,16 +400,12 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                         if(memorias.getCodigo()!=404) {
                             if(memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
 
-
-
                                 listaMemorias = memorias.getMemorias();
                                 adapter.edit().replaceAll(memorias.getMemorias()).commit();
                                 adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                                 binding.prog.setVisibility(View.GONE);
                                 binding.rootView.setVisibility(View.VISIBLE);
                                 binding.vermas.setVisibility(View.VISIBLE);
-
-
 
                             } else {
                                 binding.prog.setVisibility(View.GONE);
@@ -451,18 +448,47 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         });
     }
 
+    private ProcesoHolder.Listener autorizaHolder = new ProcesoHolder.Listener() {
+        @Override
+        public void onProcesoSelect(Proceso.Memoria model) {
 
-    public void getListaProceso(){
+            SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("mdIdterminar", "");
+            editor.putString("nombreSitio", "");
+            editor.apply();
+            editor.putString("mdIdterminar", model.getMemoriaid());
+            editor.putString("nombreSitio", model.getNombresitio());
+            editor.putInt("atrasa", model.getAtrasada());
+
+            editor.apply();
+            Intent main = new Intent(getContext(), ActivityProceso.class);
+            getContext().startActivity(main);
+            getActivity().finish();
+        }
+    };
+
+    public void getListaProceso(String vermas){
 
         binding.prog.setVisibility(View.VISIBLE);
 
-        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso(mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
+        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso(vermas, mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
             @Override
             public void resolve(Proceso memorias) {
                 if(memorias!=null){
                     if(memorias.getCodigo()==200){
                         if(memorias.getCodigo()!=404) {
                             if(memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
+
+                                listaMemorias = new ArrayList<>();
+                                adapter = new AdapterProceso(getContext(),ALPHABETICAL_COMPARATOR, autorizaHolder);
+                                binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
+                                listaMemorias.clear();
+                                adapter.edit().replaceAll(listaMemorias).commit();
+                                adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                                binding.recyclerAutoriza.setAdapter(adapter);
+
+
 
                                 listaMemorias = memorias.getMemorias();
                                 adapter.edit().replaceAll(memorias.getMemorias()).commit();
@@ -472,9 +498,6 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                                 binding.prog.setVisibility(View.GONE);
                                 binding.rootView.setVisibility(View.VISIBLE);
                                 binding.vermas.setVisibility(View.VISIBLE);
-
-
-
 
                             } else {
                                 binding.prog.setVisibility(View.GONE);

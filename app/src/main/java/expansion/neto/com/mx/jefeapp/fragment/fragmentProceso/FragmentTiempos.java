@@ -159,9 +159,7 @@ public class FragmentTiempos extends Fragment implements TiemposHolder.Listener{
     }
 
     @Override
-    public void onAutorizaSelect(TiemposProceso.Seguimiento model) {
-        Log.e("me hiciste click", "jiji");
-    }
+    public void onAutorizaSelect(TiemposProceso.Seguimiento model) { }
 
     private static final Comparator<TiemposProceso.Seguimiento> ALPHABETICAL_COMPARATOR = new Comparator<TiemposProceso.Seguimiento>() {
         @Override

@@ -59,7 +59,6 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
 
     List<Proceso.Memoria> listaMemorias = null;
 
-
     String mes;
     String area;
     String usuarioId;
@@ -77,7 +76,6 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
 
         Calendar calendar = Calendar.getInstance();
         anio = String.valueOf(calendar.get(Calendar.YEAR));
-
 
         getListaRechazadas();
 
@@ -375,10 +373,8 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
     }
 
     public void getListaProceso(){
-
         binding.prog.setVisibility(View.VISIBLE);
-
-        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso(mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
+        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso("0", mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
             @Override
             public void resolve(Proceso memorias) {
                 if(memorias!=null){
@@ -391,7 +387,6 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
                                 adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                                 binding.prog.setVisibility(View.GONE);
                                 binding.rootView.setVisibility(View.VISIBLE);
-                                binding.vermas.setVisibility(View.VISIBLE);
                                 binding.layout.setVisibility(View.VISIBLE);
                                 binding.recyclerAutoriza.setVisibility(View.VISIBLE);
 
@@ -449,10 +444,7 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
     };
 
     public void getListaRechazadas(){
-
         binding.prog.setVisibility(View.VISIBLE);
-
-
         ProviderDatosRechazadas.getInstance(getContext()).obtenerDatosRechazadas(usuarioId, area, mes, new
                 ProviderDatosRechazadas.ConsultaDatosRechazadas() {
             @Override
@@ -473,7 +465,7 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
 
                                 binding.prog.setVisibility(View.GONE);
                                 binding.rootView.setVisibility(View.VISIBLE);
-                                binding.vermas.setVisibility(View.VISIBLE);
+                                //binding.vermas.setVisibility(View.VISIBLE);
 
                             } else {
                                 binding.prog.setVisibility(View.GONE);

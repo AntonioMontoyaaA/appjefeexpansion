@@ -63,7 +63,7 @@ public class ProviderDatosPorTerminar {
                             .add("area", area)
                             .add("mes", mes)
                             .add("semana", TIPO_CONSULTA_SEMANA)
-                            .add("anio", ANIO_ACTUAL)
+                            .add("anio", String.valueOf(ANIO_ACTUAL))
                             .add("tipoapp", TIPO_APP)
                             .add("tipoconsulta", TIPO_CONSULTA_TIPO)
                             .add("usuarioId", usuarioId);

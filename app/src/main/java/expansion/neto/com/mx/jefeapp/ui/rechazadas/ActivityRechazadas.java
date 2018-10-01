@@ -1,6 +1,5 @@
 package expansion.neto.com.mx.jefeapp.ui.rechazadas;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -14,11 +13,9 @@ import android.view.WindowManager;
 
 import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityRechazadasBinding;
-import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentTiempos;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentChatRechazadas;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentDialogCancelarMdRechazadas;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentTiemposRechazadas;
-import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivityMain;
 
 public class ActivityRechazadas extends AppCompatActivity {
 

@@ -3562,7 +3562,7 @@ public class FragmentAutoriza extends Fragment implements
                 generadores,
                 String.valueOf(mdLat),
                 String.valueOf(mdLot),
-                "5555555555",
+                NUM_TELEFONO,
                 VERSION_APP
         );
 

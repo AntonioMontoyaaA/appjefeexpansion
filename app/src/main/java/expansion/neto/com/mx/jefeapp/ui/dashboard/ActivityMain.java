@@ -51,6 +51,7 @@ import expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar;
 import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Notificaciones;
 import expansion.neto.com.mx.jefeapp.modelView.loginModel.Permiso;
 import expansion.neto.com.mx.jefeapp.provider.agendaProvider.ProviderObtieneNotificaciones;
+import expansion.neto.com.mx.jefeapp.radios.ui.radios.ActivityRadios;
 import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityNotificaciones;
 import expansion.neto.com.mx.jefeapp.ui.autoriza.ActivityAutorizar;
 import expansion.neto.com.mx.jefeapp.utils.Util;
@@ -267,9 +268,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 }
                 mPrevSelectedId = itemId;
                 break;
-//            case R.id.txt_cambiar:
-//                mPrevSelectedId = itemId;
-//                break;
+            case R.id.txt_misradios:
+                main = new Intent(this, ActivityRadios.class);
+                startActivity(main);
+                mPrevSelectedId = itemId;
+                break;
             case R.id.txt_sesion:
                 mPrevSelectedId = itemId;
                 Util.cerrarSesion(this);
@@ -349,7 +352,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
         }
     }
 

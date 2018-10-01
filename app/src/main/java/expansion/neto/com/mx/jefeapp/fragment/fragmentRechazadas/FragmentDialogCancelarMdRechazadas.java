@@ -46,9 +46,6 @@ public class FragmentDialogCancelarMdRechazadas extends DialogFragment {
 
                 Intent main = new Intent(getContext(), FragmentInicioRechazadas.class);
                 getContext().startActivity(main);
-
-
-
                 cleanShared(getContext());
 
             }

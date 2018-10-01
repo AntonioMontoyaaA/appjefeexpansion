@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
+import java.util.Calendar;
+
 import expansion.neto.com.mx.jefeapp.constantes.RestUrl;
 import expansion.neto.com.mx.jefeapp.modelView.dashboardModel.Dashboard;
 import okhttp3.FormBody;
@@ -25,9 +27,10 @@ public class ProviderDatosDashboard {
     Dashboard callback = null;
     public static String STATUS_AREA = "1";
     public static String TIPO_CONSULTA = "1";
-    public static String ANIO_ACTUAL = "2018";
+    public static int ANIO_ACTUAL = Calendar.getInstance().get(Calendar.YEAR);
     public static String TIPO_APP = "1";
     public static String VER_MAS = "1";
+
 
 
     public ProviderDatosDashboard() {}
@@ -56,7 +59,7 @@ public class ProviderDatosDashboard {
                             .add("area", area)
                             .add("mes", mes)
                             .add("semana", semana)
-                            .add("anio", ANIO_ACTUAL)
+                            .add("anio", String.valueOf(ANIO_ACTUAL))
                             .add("tipoconsulta", TIPO_CONSULTA)
                             .add("tipoapp", TIPO_APP)
                             .add("usuarioId", usuarioId);

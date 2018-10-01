@@ -35,9 +35,9 @@
             android:id="@+id/txt_agenda"
             android:title="@string/agendas" />
 
-        <!--<item-->
-            <!--android:id="@+id/txt_cambiar"-->
-            <!--android:title="@string/contra" />-->
+        <item
+            android:id="@+id/txt_misradios"
+            android:title="@string/mis_radios" />
 
         <item
             android:id="@+id/txt_sesion"

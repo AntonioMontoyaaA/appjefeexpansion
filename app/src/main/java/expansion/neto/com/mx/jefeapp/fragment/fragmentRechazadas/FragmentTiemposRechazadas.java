@@ -27,6 +27,7 @@ import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderTiemposPro
 import expansion.neto.com.mx.jefeapp.sorted.proceso.AdapterTiempos;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.TiemposHolder;
 import expansion.neto.com.mx.jefeapp.ui.detalle.ActivityDetalle;
+import expansion.neto.com.mx.jefeapp.ui.detalle.ActivityDetalleRechazadas;
 
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
 
@@ -53,8 +54,8 @@ public class FragmentTiemposRechazadas extends Fragment implements TiemposHolder
     private static final int PANTALLA_RECHAZADAS = 2;
 
 
-    public static FragmentTiempos newInstance(int tipoPantalla) {
-        FragmentTiempos fragmentTiempos = new FragmentTiempos();
+    public static FragmentTiemposRechazadas newInstance(int tipoPantalla) {
+        FragmentTiemposRechazadas fragmentTiempos = new FragmentTiemposRechazadas();
         Bundle args = new Bundle();
         fragmentTiempos.setArguments(args);
         tipoPantallas = tipoPantalla;
@@ -146,7 +147,7 @@ public class FragmentTiemposRechazadas extends Fragment implements TiemposHolder
             @Override
             public void onClick(View view) {
 
-                Intent main = new Intent(getContext(), ActivityDetalle.class);
+                Intent main = new Intent(getContext(), ActivityDetalleRechazadas.class);
                 getContext().startActivity(main);
                 getActivity().finish();
 

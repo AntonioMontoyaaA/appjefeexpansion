@@ -375,6 +375,12 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
         return view;
     }
 
+    private AutorizadasHolder.Listener autorizaHolder = new AutorizadasHolder.Listener() {
+        @Override
+        public void onProcesoSelect(Autorizadas.Autorizada model) {
+        }
+    };
+
     public void getListaProceso(){
 
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -388,11 +394,15 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
                     public void resolve(Autorizadas datosSitio) {
 
                         if(datosSitio!=null && datosSitio.getAutorizadas()!=null){
+                            adapter = new AdapterAutorizadas(getContext(),ALPHABETICAL_COMPARATOR, autorizaHolder);
+                            listaMemorias.clear();
+                            adapter.edit().replaceAll(listaMemorias).commit();
+                            adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                            binding.recyclerAutoriza.setAdapter(adapter);
 
                             loadingProgress(progressDialog, 1);
 
                             listaMemorias = datosSitio.getAutorizadas();
-
                             adapter.edit().replaceAll(datosSitio.getAutorizadas()).commit();
                             adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
 
@@ -404,6 +414,7 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
                             binding.vermas.setVisibility(View.VISIBLE);
                             loadingProgress(progressDialog, 1);
                         }
+
                     }
 
                     @Override
@@ -443,10 +454,6 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
                 if(datosSitio!=null && datosSitio.getAutorizadas()!=null){
 
                     loadingProgress(progressDialog, 1);
-
-                    binding.recyclerAutoriza.setAdapter(null);
-                    binding.recyclerAutoriza.removeAllViews();
-
 
                     listaMemorias = datosSitio.getAutorizadas();
                     adapter.edit().replaceAll(datosSitio.getAutorizadas()).commit();

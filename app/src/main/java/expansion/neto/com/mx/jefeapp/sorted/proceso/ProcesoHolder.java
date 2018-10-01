@@ -21,4 +21,5 @@ public class ProcesoHolder extends SortedListAdapter.ViewHolder<Proceso.Memoria>
     public interface Listener {
         void onProcesoSelect(Proceso.Memoria model);
     }
+
 }

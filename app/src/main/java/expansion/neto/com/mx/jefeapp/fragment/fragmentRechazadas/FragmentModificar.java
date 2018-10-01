@@ -179,6 +179,8 @@ import expansion.neto.com.mx.jefeapp.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
 import static android.media.MediaRecorder.VideoSource.CAMERA;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.FACTOR_ID;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.distanciaSuperficie;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
@@ -2470,7 +2472,7 @@ public class FragmentModificar extends Fragment implements
                                         generadores,
                                         String.valueOf(mdLat),
                                         String.valueOf(mdLot),
-                                        "5555555555",
+                                        NUM_TELEFONO,
                                         VERSION_APP
                                 );
 
@@ -2723,8 +2725,8 @@ public class FragmentModificar extends Fragment implements
                             datosConstruccion = new DatosConstruccion(
                                     mdIdterminar,
                                     usuarioId,
-                                    "5",
-                                    "5540555599",
+                                    FACTOR_ID,
+                                    NUM_TELEFONO,
                                     VERSION_APP,
                                     niveles
                             );

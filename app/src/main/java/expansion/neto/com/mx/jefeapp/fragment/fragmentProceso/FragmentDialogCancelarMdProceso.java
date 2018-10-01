@@ -16,16 +16,23 @@ import android.view.Window;
 
 import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentCancelarMdProcesoBinding;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentInicioRechazadas;
 
 /**
  * Created by Kevin on 26/6/2017.
  */
 
+@SuppressLint("ValidFragment")
 public class FragmentDialogCancelarMdProceso extends DialogFragment {
 
-
     FragmentCancelarMdProcesoBinding binding;
+    int tipo = 0;
 
+    public FragmentDialogCancelarMdProceso(int tipo){
+        this.tipo = tipo;
+    }
+
+    public FragmentDialogCancelarMdProceso(){ }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -45,9 +52,11 @@ public class FragmentDialogCancelarMdProceso extends DialogFragment {
             public void onClick(View view) {
 
 
-                Intent main = new Intent(getContext(), FragmentInicioProceso.class);
-                getContext().startActivity(main);
-                cleanShared(getContext());
+                    Intent main = new Intent(getContext(), FragmentInicioProceso.class);
+                    getContext().startActivity(main);
+                    cleanShared(getContext());
+
+
 
             }
         });

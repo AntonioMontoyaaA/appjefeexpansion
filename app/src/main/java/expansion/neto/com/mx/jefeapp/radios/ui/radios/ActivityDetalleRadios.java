@@ -104,6 +104,8 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
             @Override
             public void onClick(View view) {
                 finish();
+                Intent i = new Intent(ActivityDetalleRadios.this, ActivityRadios.class);
+                startActivity(i);
             }
         });
 

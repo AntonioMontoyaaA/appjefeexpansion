@@ -71,7 +71,6 @@ public class FragmentInicioRechazadas extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new FragmentCardRechazadas(), getString(R.string.md));
-        //adapter.addFragment(new FragmentCardTerminar(), getString(R.string.area));
         viewPager.setAdapter(adapter);
     }
 

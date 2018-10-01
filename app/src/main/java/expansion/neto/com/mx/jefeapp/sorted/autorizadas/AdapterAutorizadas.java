@@ -39,4 +39,5 @@ public class AdapterAutorizadas extends SortedListAdapter<Autorizadas.Autorizada
     protected boolean areItemContentsTheSame(Autorizadas.Autorizada oldItem, Autorizadas.Autorizada newItem) {
         return false;
     }
+
 }

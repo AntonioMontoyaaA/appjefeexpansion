@@ -181,6 +181,8 @@ import expansion.neto.com.mx.jefeapp.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
 import static android.media.MediaRecorder.VideoSource.CAMERA;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.FACTOR_ID;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.distanciaSuperficie;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
@@ -2840,8 +2842,8 @@ public class FragmentTerminar extends Fragment implements
                             datosConstruccion = new DatosConstruccion(
                                     mdIdterminar,
                                     usuarioId,
-                                    "5",
-                                    "5540555599",
+                                    FACTOR_ID,
+                                    NUM_TELEFONO,
                                     VERSION_APP,
                                     niveles
                             );
@@ -3284,7 +3286,7 @@ public class FragmentTerminar extends Fragment implements
 
                                         String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString();
                                         String periodogracia = binding.periodogracia.getSelectedItem().toString();;
-                                        String numtelefono = "5540555599";
+                                        String numtelefono = NUM_TELEFONO;
                                         String versionapp = VERSION_APP;
 
                                         String arr[] = periodoamortizacion.split(" ", 2);
@@ -4846,7 +4848,7 @@ public class FragmentTerminar extends Fragment implements
                     generadores,
                     String.valueOf(mdLat),
                     String.valueOf(mdLot),
-                    "5555555555",
+                    NUM_TELEFONO,
                     VERSION_APP
             );
 

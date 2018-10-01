@@ -63,6 +63,7 @@
         <activity android:name=".ui.agenda.ActivityNotificaciones" android:screenOrientation="portrait"/>
         <activity android:name=".ui.agenda.ActivityDetalleNotificaciones" android:screenOrientation="portrait"/>
         <activity android:name=".fragment.fragmentAutorizadas.FragmentInicioAutorizadas" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.detalle.ActivityDetalleRechazadas" android:screenOrientation="portrait"/>
 
         <provider
             android:name=".sqlite.GerenteProvider"

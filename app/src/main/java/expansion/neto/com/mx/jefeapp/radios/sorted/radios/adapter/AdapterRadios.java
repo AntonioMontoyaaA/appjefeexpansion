@@ -1,5 +1,6 @@
 package expansion.neto.com.mx.jefeapp.radios.sorted.radios.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +42,8 @@ public class AdapterRadios extends RecyclerView.Adapter<AdapterRadios.ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //adapter radios
+                ((Activity)context).finish();
                 Intent intent = new Intent(context, ActivityDetalleRadios.class);
                 intent.putExtra(NOMBRERADIO, detalleRadio.getNombreRadio());
                 intent.putExtra(ActivityDetalleRadios.FECHAASIGANDO, detalleRadio.getFechaAsignado());

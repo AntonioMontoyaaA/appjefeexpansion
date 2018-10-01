@@ -39,7 +39,62 @@ public class ProviderDatosProceso {
         return instance;
     }
 
-    public void obtenerDatosProceso(final String semana, final String mes, final String areaId, final ProviderDatosProceso.ConsultaDatosProceso promise){
+//    public void obtenerDatosProceso(final String semana, final String mes, final String areaId, final ProviderDatosProceso.ConsultaDatosProceso promise){
+//        final OkHttpClient client = new OkHttpClient();
+//        (new AsyncTask<Void, Void, Proceso>() {
+//            @Override
+//            protected Proceso doInBackground(Void... voids) {
+//                //TODO CONNECT AND GET DATA
+//                try {
+//
+//                    Calendar fecha = Calendar.getInstance();
+//                    int anio = fecha.get(Calendar.YEAR);
+//
+//                    FormBody.Builder formBuilder = new FormBody.Builder()
+//                            .add("estatus", ESTATUS_EN_PROCESO_APP_GERENTE)
+//                            .add("area", areaId)
+//                            .add("mes", mes)
+//                            .add("semana", SEMANA_0)
+//                            .add("anio", String.valueOf(anio))
+//                            .add("tipoconsulta", TIPO_CONSULTA_MD_POR_AUTORIZAR)
+//                            .add("tipoapp", TIPO_APP)
+//                            .add("usuarioId", Usuario.sharedGet(context).getUsuario());
+//
+//                    RequestBody formBody = formBuilder.build();
+//
+//                    Request request = new Request.Builder()
+//                            .url(RestUrl.REST_ACTION_CONSULTAR_AUTORIZADAS_LISTA)
+//                            .post(formBody)
+//                            .build();
+//
+//                    Response response = client.newCall(request).execute();
+//                    respuesta = response.body().string();
+//                    Gson gson = new Gson();
+//                    String jsonInString = respuesta;
+//
+//                    return callback = gson.fromJson(jsonInString, Proceso.class);
+//
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                    if(e.getMessage().contains("Failed to connect to")){
+//                        callback = new Proceso();
+//                        callback.setCodigo(1);
+//                        return callback;
+//                    }else{
+//                        callback = new Proceso();
+//                        callback.setCodigo(404);
+//                        return callback;
+//                    }
+//                }
+//            }
+//            @Override
+//            protected void onPostExecute(Proceso datosSitio){
+//                promise.resolve(datosSitio);
+//            }
+//        }).execute();
+//    }
+    
+    public void obtenerDatosProceso(final String vermas, final String mes, final String areaId, final ProviderDatosProceso.ConsultaDatosProceso promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, Proceso>() {
             @Override
@@ -58,62 +113,7 @@ public class ProviderDatosProceso {
                             .add("anio", String.valueOf(anio))
                             .add("tipoconsulta", TIPO_CONSULTA_MD_POR_AUTORIZAR)
                             .add("tipoapp", TIPO_APP)
-                            .add("usuarioId", Usuario.sharedGet(context).getUsuario());
-
-                    RequestBody formBody = formBuilder.build();
-
-                    Request request = new Request.Builder()
-                            .url(RestUrl.REST_ACTION_CONSULTAR_AUTORIZADAS_LISTA)
-                            .post(formBody)
-                            .build();
-
-                    Response response = client.newCall(request).execute();
-                    respuesta = response.body().string();
-                    Gson gson = new Gson();
-                    String jsonInString = respuesta;
-
-                    return callback = gson.fromJson(jsonInString, Proceso.class);
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                    if(e.getMessage().contains("Failed to connect to")){
-                        callback = new Proceso();
-                        callback.setCodigo(1);
-                        return callback;
-                    }else{
-                        callback = new Proceso();
-                        callback.setCodigo(404);
-                        return callback;
-                    }
-                }
-            }
-            @Override
-            protected void onPostExecute(Proceso datosSitio){
-                promise.resolve(datosSitio);
-            }
-        }).execute();
-    }
-
-    public void obtenerDatosProceso(final String mes, final String areaId, final ProviderDatosProceso.ConsultaDatosProceso promise){
-        final OkHttpClient client = new OkHttpClient();
-        (new AsyncTask<Void, Void, Proceso>() {
-            @Override
-            protected Proceso doInBackground(Void... voids) {
-                //TODO CONNECT AND GET DATA
-                try {
-
-                    Calendar fecha = Calendar.getInstance();
-                    int anio = fecha.get(Calendar.YEAR);
-
-                    FormBody.Builder formBuilder = new FormBody.Builder()
-                            .add("estatus", ESTATUS_EN_PROCESO_APP_GERENTE)
-                            .add("area", areaId)
-                            .add("mes", mes)
-                            .add("semana", SEMANA_0)
-                            .add("anio", String.valueOf(anio))
-                            .add("tipoconsulta", TIPO_CONSULTA_MD_POR_AUTORIZAR)
-                            .add("tipoapp", TIPO_APP)
-                            .add("vermas", VER_MAS)
+                            .add("vermas", vermas)
                             .add("usuarioId", Usuario.sharedGet(context).getUsuario());
 
                     RequestBody formBody = formBuilder.build();
