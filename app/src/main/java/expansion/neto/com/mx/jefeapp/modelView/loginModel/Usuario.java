@@ -3,9 +3,11 @@ package expansion.neto.com.mx.jefeapp.modelView.loginModel;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.text.Html;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -16,6 +18,8 @@ import expansion.neto.com.mx.jefeapp.provider.loginProvider.ProviderLogin;
 import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivityMain;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityLoginBinding;
+
+import static expansion.neto.com.mx.jefeapp.ui.dashboard.ActivityLogin.canGetLocation;
 
 
 /**
@@ -63,25 +67,33 @@ public class Usuario {
      */
     public void onClickEntrar(String usuario, String contra) {
         blockUI();
-        if(usuario.length() > 0 && contra.length() > 0){
-            binding.entrar.setAlpha(0.45f);
-            binding.entrar.setEnabled(false);
-            Usuario user = new Usuario(usuario, contra, context, binding);
-            String imei = Util.getImei(context);
-            compruebaUsuario(user, imei);
+        boolean act = canGetLocation(context);
+        if(act){
+            if(usuario.length() > 0 && contra.length() > 0){
+                binding.entrar.setAlpha(0.45f);
+                binding.entrar.setEnabled(false);
+                Usuario user = new Usuario(usuario, contra, context, binding);
+                String imei = Util.getImei(context);
+                compruebaUsuario(user, imei);
+            }else{
+                binding.entrar.setEnabled(true);
+                binding.entrar.setAlpha(1f);
+                Snackbar snackbar = Snackbar.make(binding.container,
+                        Html.fromHtml("<b><font color=\"#254581\">" +
+                                context.getString(R.string.sizeContra) +
+                                "</font></b>"), Snackbar.LENGTH_SHORT);
+                View snackBarView = snackbar.getView();
+                snackBarView.setBackgroundColor(context.getResources().getColor(R.color.snackBar)); // snackbar background color
+                snackbar.show();
+                unblockUI();
+            }
         }else{
-            binding.entrar.setEnabled(true);
-            binding.entrar.setAlpha(1f);
-            Snackbar snackbar = Snackbar.make(binding.container,
-                    Html.fromHtml("<b><font color=\"#254581\">" +
-                            context.getString(R.string.sizeContra) +
-                            "</font></b>"), Snackbar.LENGTH_SHORT);
-            View snackBarView = snackbar.getView();
-            snackBarView.setBackgroundColor(context.getResources().getColor(R.color.snackBar)); // snackbar background color
-            snackbar.show();
             unblockUI();
+            Toast.makeText(context, "Por favor activa tu gps para poder accesar", Toast.LENGTH_SHORT).show();
+            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
         }
     }
+
     ArrayList<Permiso> permisos;
 
     /**

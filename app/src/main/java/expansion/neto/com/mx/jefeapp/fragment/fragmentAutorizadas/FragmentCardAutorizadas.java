@@ -105,22 +105,24 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
             @SuppressLint("DefaultLocale")
             @Override
             public void afterTextChanged(Editable editable) {
-                String texto = binding.buscar.getText().toString();
-                List<Autorizadas.Autorizada> listaTemporal = new ArrayList<Autorizadas.Autorizada>();
+                if(listaMemorias!=null){
+                    String texto = binding.buscar.getText().toString();
+                    List<Autorizadas.Autorizada> listaTemporal = new ArrayList<Autorizadas.Autorizada>();
 
-                binding.recyclerAutoriza.removeAllViews();
-                adapter.edit().removeAll().commit();
-                if (texto.equals("")) {
-                    adapter.edit().replaceAll(listaMemorias).commit();
-                    adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
-                } else {
-                    for(Autorizadas.Autorizada memoria : listaMemorias) {
-                        if(memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase()) || memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
-                            listaTemporal.add(memoria);
+                    binding.recyclerAutoriza.removeAllViews();
+                    adapter.edit().removeAll().commit();
+                    if (texto.equals("")) {
+                        adapter.edit().replaceAll(listaMemorias).commit();
+                        adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                    } else {
+                        for(Autorizadas.Autorizada memoria : listaMemorias) {
+                            if(memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase()) || memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
+                                listaTemporal.add(memoria);
+                            }
                         }
+                        adapter.edit().replaceAll(listaTemporal).commit();
+                        adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                     }
-                    adapter.edit().replaceAll(listaTemporal).commit();
-                    adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                 }
             }
         });
@@ -395,12 +397,13 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
 
                         if(datosSitio!=null && datosSitio.getAutorizadas()!=null){
                             adapter = new AdapterAutorizadas(getContext(),ALPHABETICAL_COMPARATOR, autorizaHolder);
-                            listaMemorias.clear();
-                            adapter.edit().replaceAll(listaMemorias).commit();
-                            adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
-                            binding.recyclerAutoriza.setAdapter(adapter);
 
-                            loadingProgress(progressDialog, 1);
+                            if(listaMemorias!=null){
+                                listaMemorias.clear();
+                                adapter.edit().replaceAll(listaMemorias).commit();
+                                adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                                binding.recyclerAutoriza.setAdapter(adapter);
+                            }
 
                             listaMemorias = datosSitio.getAutorizadas();
                             adapter.edit().replaceAll(datosSitio.getAutorizadas()).commit();
@@ -409,7 +412,7 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
                             binding.recyclerAutoriza.setAdapter(adapter);
                             binding.prog.setVisibility(View.GONE);
                             binding.vermas.setVisibility(View.VISIBLE);
-
+                            loadingProgress(progressDialog, 1);
                         }else{
                             binding.vermas.setVisibility(View.VISIBLE);
                             loadingProgress(progressDialog, 1);

@@ -106,22 +106,24 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
             @SuppressLint("DefaultLocale")
             @Override
             public void afterTextChanged(Editable editable) {
-                String texto = binding.buscar.getText().toString();
-                List<Proceso.Memoria> listaTemporal = new ArrayList<Proceso.Memoria>();
+                if(listaMemorias!=null){
+                    String texto = binding.buscar.getText().toString();
+                    List<Proceso.Memoria> listaTemporal = new ArrayList<Proceso.Memoria>();
 
-                binding.recyclerAutoriza.removeAllViews();
-                adapter.edit().removeAll().commit();
-                if (texto.equals("")) {
-                    adapter.edit().replaceAll(listaMemorias).commit();
-                    adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
-                } else {
-                    for(Proceso.Memoria memoria : listaMemorias) {
-                        if(memoria.getCreador().toLowerCase().contains(texto.toLowerCase()) || memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
-                            listaTemporal.add(memoria);
+                    binding.recyclerAutoriza.removeAllViews();
+                    adapter.edit().removeAll().commit();
+                    if (texto.equals("")) {
+                        adapter.edit().replaceAll(listaMemorias).commit();
+                        adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                    } else {
+                        for(Proceso.Memoria memoria : listaMemorias) {
+                            if(memoria.getCreador().toLowerCase().contains(texto.toLowerCase()) || memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
+                                listaTemporal.add(memoria);
+                            }
                         }
+                        adapter.edit().replaceAll(listaTemporal).commit();
+                        adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                     }
-                    adapter.edit().replaceAll(listaTemporal).commit();
-                    adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                 }
             }
         });
@@ -480,15 +482,15 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                         if(memorias.getCodigo()!=404) {
                             if(memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
 
-                                listaMemorias = new ArrayList<>();
+                                //listaMemorias = new ArrayList<>();
                                 adapter = new AdapterProceso(getContext(),ALPHABETICAL_COMPARATOR, autorizaHolder);
-                                binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
-                                listaMemorias.clear();
-                                adapter.edit().replaceAll(listaMemorias).commit();
-                                adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
-                                binding.recyclerAutoriza.setAdapter(adapter);
-
-
+                                if(listaMemorias!=null){
+                                    binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
+                                    listaMemorias.clear();
+                                    adapter.edit().replaceAll(listaMemorias).commit();
+                                    adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                                    binding.recyclerAutoriza.setAdapter(adapter);
+                                }
 
                                 listaMemorias = memorias.getMemorias();
                                 adapter.edit().replaceAll(memorias.getMemorias()).commit();
@@ -500,6 +502,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                                 binding.vermas.setVisibility(View.VISIBLE);
 
                             } else {
+                                binding.vermas.setVisibility(View.VISIBLE);
                                 binding.prog.setVisibility(View.GONE);
                                 Snackbar snackbar = Snackbar.make(binding.layout,
                                         Html.fromHtml("<b><font color=\"#254581\">" +

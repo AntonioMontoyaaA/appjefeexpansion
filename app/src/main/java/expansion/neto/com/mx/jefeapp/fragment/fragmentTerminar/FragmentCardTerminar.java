@@ -91,28 +91,29 @@ public class FragmentCardTerminar extends Fragment implements AutorizaHolder.Lis
 			@SuppressLint("DefaultLocale")
 			@Override
 			public void afterTextChanged(Editable editable) {
-				String texto = binding.buscar.getText().toString();
-				List<PorTerminar.Memoria> listaTemporal = new ArrayList<PorTerminar.Memoria>();
-
-				binding.recyclerAutoriza.removeAllViews();
-				adapter.edit().removeAll().commit();
-
 				if(listaMemorias!=null){
-					if (texto.equals("")) {
-						adapter.edit().replaceAll(listaMemorias).commit();
-						adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
-					} else {
-						for(PorTerminar.Memoria memoria : listaMemorias) {
-							if(memoria.getCreador().toLowerCase().contains(texto.toLowerCase())
-									|| memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
-								listaTemporal.add(memoria);
+					String texto = binding.buscar.getText().toString();
+					List<PorTerminar.Memoria> listaTemporal = new ArrayList<PorTerminar.Memoria>();
+
+					binding.recyclerAutoriza.removeAllViews();
+					adapter.edit().removeAll().commit();
+
+					if(listaMemorias!=null){
+						if (texto.equals("")) {
+							adapter.edit().replaceAll(listaMemorias).commit();
+							adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+						} else {
+							for(PorTerminar.Memoria memoria : listaMemorias) {
+								if(memoria.getCreador().toLowerCase().contains(texto.toLowerCase())
+										|| memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
+									listaTemporal.add(memoria);
+								}
 							}
+							adapter.edit().replaceAll(listaTemporal).commit();
+							adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
 						}
-						adapter.edit().replaceAll(listaTemporal).commit();
-						adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
 					}
 				}
-
 			}
 		});
 		return view;

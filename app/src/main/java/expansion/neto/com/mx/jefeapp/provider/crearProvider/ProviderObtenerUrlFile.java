@@ -42,7 +42,6 @@ public class ProviderObtenerUrlFile {
 
     public static String TIPO_ARCHIVO = "1";
 
-
     public void obtenerUrl(final String mdId, final String nombreImg, final File file, final ConsultaUrl promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, Codigos>() {

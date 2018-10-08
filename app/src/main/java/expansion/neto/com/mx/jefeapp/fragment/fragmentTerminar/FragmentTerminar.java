@@ -160,7 +160,6 @@ import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderDatosCompete
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderDatosFactoresConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderHorasPeatonales;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderObtenerUrl;
-import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderObtenerUrlFile;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.AdapterAutorizaPeatonal;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.AutorizaHolderPeatonal;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaCompetencia;
@@ -700,71 +699,76 @@ public class FragmentTerminar extends Fragment implements
 
             final String mdIdterminar = preferences.getString("mdIdterminar", "");
 
-
+            loadingProgress(progressDialog, 0);
             ProviderDatosSitio.getInstance(getContext()).obtenerDatosSitio(mdIdterminar, usuario, new ProviderDatosSitio.ConsultaDatosSitio() {
                 @Override
                 public void resolve(DatosSitio datosSitio) {
 
-                    if(datosSitio.getDatossitio()!= null && datosSitio.getCodigo()==200){
-                        if(datosSitio.getDatossitio().get(0).getLongitud()==null){
-                            ServicioGPS n = new ServicioGPS(getContext());
-                            datosSitio.getDatossitio().get(0).setLatitud(String.valueOf(n.getLatitude()));
-                            datosSitio.getDatossitio().get(0).setLongitud(String.valueOf(n.getLongitude()));
-                        }
+                    if(datosSitio!=null){
+                        loadingProgress(progressDialog, 1);
 
-
-                        if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")){
-                            binding.escogeSitio.setChecked(true);
-                            binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                            editorPre.putString("tipoSitio" ,"2");
-                            editorPre.apply();
-                        }else{
-                            binding.escogeSitio.setChecked(false);
-                            binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                            editorPre.putString("tipoSitio" ,"1");
-                            editorPre.apply();
-                        }
-
-                        binding.escogeSitio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                if(isChecked){
-                                    editorPre.putString("tipoSitio" ,"2");
-                                    editorPre.apply();
-                                    binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
-                                    binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-
-                                }else{
-                                    editorPre.putString("tipoSitio" ,"1");
-                                    editorPre.apply();
-                                    binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                                    binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
-
-
-                                }
+                        if(datosSitio.getDatossitio()!= null && datosSitio.getCodigo()==200) {
+                            if (datosSitio.getDatossitio().get(0).getLongitud() == null) {
+                                ServicioGPS n = new ServicioGPS(getContext());
+                                datosSitio.getDatossitio().get(0).setLatitud(String.valueOf(n.getLatitude()));
+                                datosSitio.getDatossitio().get(0).setLongitud(String.valueOf(n.getLongitude()));
                             }
-                        });
-
-                        binding.nombresitio.setEnabled(false);
-
-                        binding.nombresitio.setText(datosSitio.getDatossitio().get(0).getNombreSitio());
 
 
-                        binding.direccionsitio.setText(datosSitio.getDatossitio().get(0).getDireccion()+"");
-                        binding.estadositio.setText(datosSitio.getDatossitio().get(0).getEstado()+"");
-                        lat = Float.valueOf(datosSitio.getDatossitio().get(0).getLatitud());
-                        lot = Float.valueOf(datosSitio.getDatossitio().get(0).getLongitud());
+                            if (datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")) {
+                                binding.escogeSitio.setChecked(true);
+                                binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
+                                editorPre.putString("tipoSitio", "2");
+                                editorPre.apply();
+                            } else {
+                                binding.escogeSitio.setChecked(false);
+                                binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
+                                editorPre.putString("tipoSitio", "1");
+                                editorPre.apply();
+                            }
 
-                        SharedPreferences.Editor editorDatos = preferences.edit();
-                        editorDatos.putFloat("latMd", lat);
-                        editorDatos.putFloat("lotMd", lot);
-                        editorDatos.putString("nombreSitio", datosSitio.getDatossitio().get(0).getNombreSitio().toString());
-                        editorDatos.apply();
+                            binding.escogeSitio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                    if (isChecked) {
+                                        editorPre.putString("tipoSitio", "2");
+                                        editorPre.apply();
+                                        binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
+                                        binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
 
-                        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                                .findFragmentById(R.id.map);
-                        mapFragment.getMapAsync(onMapReadyCallback);
+                                    } else {
+                                        editorPre.putString("tipoSitio", "1");
+                                        editorPre.apply();
+                                        binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
+                                        binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
+
+
+                                    }
+                                }
+                            });
+
+                            binding.nombresitio.setEnabled(false);
+
+                            binding.nombresitio.setText(datosSitio.getDatossitio().get(0).getNombreSitio());
+
+
+                            binding.direccionsitio.setText(datosSitio.getDatossitio().get(0).getDireccion() + "");
+                            binding.estadositio.setText(datosSitio.getDatossitio().get(0).getEstado() + "");
+                            lat = Float.valueOf(datosSitio.getDatossitio().get(0).getLatitud());
+                            lot = Float.valueOf(datosSitio.getDatossitio().get(0).getLongitud());
+
+                            SharedPreferences.Editor editorDatos = preferences.edit();
+                            editorDatos.putFloat("latMd", lat);
+                            editorDatos.putFloat("lotMd", lot);
+                            editorDatos.putString("nombreSitio", datosSitio.getDatossitio().get(0).getNombreSitio().toString());
+                            editorDatos.apply();
+
+                            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                                    .findFragmentById(R.id.map);
+                            mapFragment.getMapAsync(onMapReadyCallback);
+                        }
+                    }else{
+                        loadingProgress(progressDialog, 1);
                     }
-
                 }
 
                 @Override
@@ -926,12 +930,14 @@ public class FragmentTerminar extends Fragment implements
             bindingPropietario.nombre.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
             bindingPropietario.apellidoP.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
             bindingPropietario.apellidoM.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            loadingProgress(progressDialog, 0);
 
             ProviderDatosPropietario.getInstance(getContext())
                     .obtenerDatosPropietario(md, usuario, new ProviderDatosPropietario.ConsultaDatosPropietario() {
                         @Override
                         public void resolve(Propietario propietario) {
                             if(propietario.getCodigo()==200){
+                                loadingProgress(progressDialog, 1);
 
                                 if(propietario.getMail().equals("null")){
                                     propietario.setMail("");
@@ -941,6 +947,8 @@ public class FragmentTerminar extends Fragment implements
                                 bindingPropietario.email.setText(propietario.getMail());
                                 bindingPropietario.apellidoP.setText(propietario.getAPaternoPropietario());
                                 bindingPropietario.apellidoM.setText(propietario.getAMaternoPropietario());
+                            }else{
+                                loadingProgress(progressDialog, 1);
                             }
                         }
                         @Override
@@ -1204,6 +1212,7 @@ public class FragmentTerminar extends Fragment implements
                     }
                 }
             });
+            loadingProgress(progressDialog, 0);
 
             ProviderDatosSuperficie.getInstance(getContext())
                     .obtenerDatosSuperficie(md, usuario[0], new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
@@ -1211,6 +1220,7 @@ public class FragmentTerminar extends Fragment implements
                         public void resolve(final Superficie superficie) {
                             if(superficie!=null){
                                 if(superficie.getCodigo()==200){
+                                    loadingProgress(progressDialog, 1);
 
                                     int valorFoto = 0;
                                     int valorFrente = 0;
@@ -1610,7 +1620,7 @@ public class FragmentTerminar extends Fragment implements
                                             final String frentes = bindingSuperficie.frente.getText().toString();
                                             final String profundidads = bindingSuperficie.profundidad.getText().toString();
 
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
+                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
                                                 getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
                                             }else{
 
@@ -1692,7 +1702,7 @@ public class FragmentTerminar extends Fragment implements
                                                 mdLat = preferences.getFloat("latMd", 0);
                                                 mdLot = preferences.getFloat("lotMd", 0);
 
-                                                if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
+                                                if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
 
                                                     Toast.makeText(getContext(), R.string.mensaje_fotos,
                                                             Toast.LENGTH_SHORT).show();
@@ -1739,6 +1749,7 @@ public class FragmentTerminar extends Fragment implements
                                         }
                                     });
                                 }else{
+                                    loadingProgress(progressDialog, 1);
 
                                     getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                     bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
@@ -1777,7 +1788,7 @@ public class FragmentTerminar extends Fragment implements
                                             getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                             String frente = bindingSuperficie.frente.getText().toString();
                                             String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
+                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
                                                 getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                             }else{
                                                 CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario1, convertido,
@@ -2121,7 +2132,7 @@ public class FragmentTerminar extends Fragment implements
                                                 mdLat = preferences.getFloat("latMd", 0);
                                                 mdLot = preferences.getFloat("lotMd", 0);
 
-                                                if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
+                                                if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
                                                     Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
                                                             Toast.LENGTH_SHORT).show();
                                                     loadingProgress(progressDialog, 1);
@@ -2133,7 +2144,7 @@ public class FragmentTerminar extends Fragment implements
                                                     String frente = bindingSuperficie.frente.getText().toString();
                                                     String profundidad = bindingSuperficie.profundidad.getText().toString();
 
-                                                    CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
+                                                    final CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
                                                             frente, profundidad, urlLateral2, urlLateral1, urlFrente,
                                                             String.valueOf(mdLat), String.valueOf(mdLot), "",
                                                             VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2, urlPredial, fechaPredial);
@@ -2149,11 +2160,17 @@ public class FragmentTerminar extends Fragment implements
 
 
                                                             }else{
-                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                                Toast.makeText(getContext(), codigo.getMensaje(),
-                                                                        Toast.LENGTH_SHORT).show();
-                                                                loadingProgress(progressDialog, 1);
 
+                                                                if(datos.getFechaPredial()==null){
+                                                                    Toast.makeText(getContext(), "Se necesita la foto del predial",
+                                                                            Toast.LENGTH_SHORT).show();
+                                                                    loadingProgress(progressDialog, 1);
+                                                                }else{
+                                                                    bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                    Toast.makeText(getContext(), codigo.getMensaje(),
+                                                                            Toast.LENGTH_SHORT).show();
+                                                                    loadingProgress(progressDialog, 1);
+                                                                }
                                                             }
                                                         }
 
@@ -2176,6 +2193,8 @@ public class FragmentTerminar extends Fragment implements
                                     //=====================Por terminar END===========================//
                                     //===================================================================//
                                 }
+                            }else{
+                                loadingProgress(progressDialog, 1);
                             }
 
                         }
@@ -2240,6 +2259,7 @@ public class FragmentTerminar extends Fragment implements
                 }
             });
 
+            loadingProgress(progressDialog, 0);
 
             if(true){
                 preferences[0] = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -2298,8 +2318,10 @@ public class FragmentTerminar extends Fragment implements
                                     }
 
                                     listGeneradores = new ArrayList<>();
+                                    loadingProgress(progressDialog, 1);
 
                                 }else{
+                                    loadingProgress(progressDialog, 1);
                                     Toast.makeText(getContext(), "Error al obtener los datos",
                                             Toast.LENGTH_LONG).show();
                                 }
@@ -2311,11 +2333,14 @@ public class FragmentTerminar extends Fragment implements
 
 
                 slideUX(bindingZonificacion);
+                loadingProgress(progressDialog, 0);
 
                 ProviderDatosCompetencias.getInstance(getContext()).obtenerDatosCompetencias(usuario, mdIdterminar, new ProviderDatosCompetencias.ConsultaDatosCompetencia() {
                     @Override
                     public void resolve(CompetenciasGeneradoresV2 competenciasGeneradores) {
                         if(competenciasGeneradores!=null && competenciasGeneradores.getCodigo()==200){
+                            loadingProgress(progressDialog, 1);
+
                             listCompetencia = new ArrayList<>();
                             listGeneradores = new ArrayList<>();
                             listCompetenciaTiendaNeto = new ArrayList<>();
@@ -2444,6 +2469,8 @@ public class FragmentTerminar extends Fragment implements
                             bindingZonificacion.contenido.contentListaTienda.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(4), true));
                             bindingZonificacion.contenido.contentListaTienda.setItemAnimator(new DefaultItemAnimator());
 
+                        }else{
+                            loadingProgress(progressDialog, 1);
                         }
 
                         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -2671,6 +2698,7 @@ public class FragmentTerminar extends Fragment implements
             bindingConstruccion.titulo.setText(nombreSitio+"");
 
             bindingConstruccion.toolbar.nombreTitulo.setText(getString(R.string.construccion));
+            loadingProgress(progressDialog, 0);
 
             ProviderDatosFactoresConstruccion.getInstance(getContext()).obtenerDatosContruccion(mdIdterminar,
                     new ProviderDatosFactoresConstruccion.ConsultaFactoresConstruccion() {
@@ -2679,6 +2707,7 @@ public class FragmentTerminar extends Fragment implements
 
                     if(factoresConstruccion.getCodigo()==200){
                         if(factoresConstruccion.getCatalogo()!=null) {
+                            loadingProgress(progressDialog, 1);
 
                             ProviderDatosConstruccion.getInstance(getContext())
                                     .obtenerDatosConstruccion(mdIdterminar, usuarioId, new ProviderDatosConstruccion.ConsultaDatosConstruccion() {
@@ -2686,8 +2715,8 @@ public class FragmentTerminar extends Fragment implements
                                         public void resolve(DatosConstruccions datosSitio) {
                                             datosSitios = datosSitio;
                                             getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
-
                                             if(datosSitio!=null){
+                                                loadingProgress(progressDialog, 1);
                                                 if(datosSitio.getCodigo()==200 &&  datosSitio.getConstruccion().size() > 0) {
 
                                                     generarConstruccion(
@@ -2707,6 +2736,7 @@ public class FragmentTerminar extends Fragment implements
 
                                                     bindingConstruccion.cargar.setVisibility(View.GONE);
 
+                                                    loadingProgress(progressDialog, 1);
 
                                                 } else{
 
@@ -2722,6 +2752,8 @@ public class FragmentTerminar extends Fragment implements
                                                     bindingConstruccion.cargar.setVisibility(View.GONE);
 
                                                 }
+                                            }else{
+                                                loadingProgress(progressDialog, 1);
                                             }
                                         }
 
@@ -2830,6 +2862,21 @@ public class FragmentTerminar extends Fragment implements
                                             detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
                                             detallesContruccion.add(detalleConstruccion);
                                         }
+
+//                                        if(valor==4 && check =="1"){
+//                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+//                                            detallesContruccion.add(detalleConstruccion);
+//                                        }
+//
+//                                        if(valor==5 && check =="1"){
+//                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+//                                            detallesContruccion.add(detalleConstruccion);
+//                                        }
+//
+//                                        if(valor==6 && check =="1"){
+//                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+//                                            detallesContruccion.add(detalleConstruccion);
+//                                        }
                                     }
                                 }
 
@@ -2934,11 +2981,13 @@ public class FragmentTerminar extends Fragment implements
             binding.amortizaciontotal.setFilters(new InputFilter[]{new Util.InputFilterMinMax("0", "9999999")});
             final int textColor = Color.parseColor("#254581");
 
+            loadingProgress(progressDialog, 0);
 
             ProviderDatosAmortizacion.getInstance(getContext()).obtenerDatosAmortizacion(mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
                 @Override
                 public void resolve(Amortizacion datosPredial) {
                     if(datosPredial!=null){
+                        loadingProgress(progressDialog, 1);
 
                         ArrayList<String> amortizacion = new ArrayList<>();
 
@@ -2962,6 +3011,9 @@ public class FragmentTerminar extends Fragment implements
                         graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
                         binding.periodogracia.setAdapter(graciaSpinner);
 
+                    }else{
+                        loadingProgress(progressDialog, 1);
+
                     }
                 }
 
@@ -2973,12 +3025,14 @@ public class FragmentTerminar extends Fragment implements
 
 
 
+            loadingProgress(progressDialog, 0);
 
             ProviderDatosGeneralidadesSitio.getInstance(getContext())
                     .obtenerDatosGeneralidades(mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
                         @Override
                         public void resolve(GeneralidadesSitio datosSitio) {
                             if(datosSitio!=null && datosSitio.getCodigo()==200) {
+                                loadingProgress(progressDialog, 1);
 
                                 getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
 
@@ -3178,6 +3232,9 @@ public class FragmentTerminar extends Fragment implements
                                     }
                                 }
 
+
+                            }else{
+                                loadingProgress(progressDialog, 1);
 
                             }
 
@@ -3437,6 +3494,7 @@ public class FragmentTerminar extends Fragment implements
 
             final int[] conteos = {0};
             final int[] tiempo = new int[1];
+            loadingProgress(progressDialog, 0);
 
             final CountDownTimer[] downTimer = new CountDownTimer[1];
             binding.peatonalConteo.presion.setOnClickListener(new View.OnClickListener() {
@@ -3542,6 +3600,7 @@ public class FragmentTerminar extends Fragment implements
                         @Override
                         public void resolve(final HorasPeatonales horasPeatonales) {
                             if(horasPeatonales.getCodigo()==200){
+                                loadingProgress(progressDialog, 1);
                                 tiempo[0] = Integer.parseInt(horasPeatonales.getTiempoConteos());
                                 binding.peatonalConteo.peatonalN.setText(
                                         "Recuerda que el conteo peatonal debe ser de "+tiempo[0]+" min"
@@ -3801,6 +3860,8 @@ public class FragmentTerminar extends Fragment implements
                                 });
 
 
+                            }else{
+                                loadingProgress(progressDialog, 1);
                             }
 
                             binding.peatonalConteo.btnCancelar.setOnClickListener(new View.OnClickListener() {
@@ -3893,7 +3954,6 @@ public class FragmentTerminar extends Fragment implements
                     int niv = factoresConstruccion.getCatalogo().get(1).getDetalles().get(j).getDetalleid();
                     check.setId(niv);
                     check.setGravity(Gravity.CENTER);
-                    final int textColor = Color.parseColor("#254581");
                     for(int n = 0;n<datosConstruccion.getConstruccion().size(); n ++) {
                         for (int m = 0; m < datosConstruccion.getConstruccion().get(n).getDetalles().size(); m++) {
                             int nivelId = datosConstruccion.getConstruccion().get(0).getDetalles().get(m).getDetalleid();
@@ -4108,12 +4168,20 @@ public class FragmentTerminar extends Fragment implements
                                 loadingProgress(progressDialog, 1);
 
                             }
+                        }else{
+                            loadingProgress(progressDialog, 1);
+                            Toast.makeText(getContext(), R.string.err_foto,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }else{
                         loadingProgress(progressDialog, 1);
                         Toast.makeText(getContext(), R.string.err_foto,
                                 Toast.LENGTH_SHORT).show();
                     }
+                }else{
+                    loadingProgress(progressDialog, 1);
+                    Toast.makeText(getContext(), R.string.err_foto,
+                            Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -4132,44 +4200,54 @@ public class FragmentTerminar extends Fragment implements
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
-                if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
-                    if(codigo.getResultado().getSecureUrl().contains("frente")){
-                        bindingSuperficie.frontal.setEnabled(false);
-                        urlFrente = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                        bindingSuperficie.frontal.setEnabled(true);
-                        hourlyTask.run();
-                        hourlyTask.scheduledExecutionTime();
-                        loadingProgress(progressDialog, 1);
+                if(codigo.getCodigo()==200){
+                    if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
+                        if(codigo.getResultado().getSecureUrl().contains("frente")){
+                            bindingSuperficie.frontal.setEnabled(false);
+                            urlFrente = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                            bindingSuperficie.frontal.setEnabled(true);
+                            hourlyTask.run();
+                            hourlyTask.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
 
-                    }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
-                        bindingSuperficie.lateral1.setEnabled(false);
-                        urlLateral1 = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                        bindingSuperficie.lateral1.setEnabled(true);
-                        hourlyTask.run();
-                        hourlyTask.scheduledExecutionTime();
-                        loadingProgress(progressDialog, 1);
+                        }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
+                            bindingSuperficie.lateral1.setEnabled(false);
+                            urlLateral1 = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                            bindingSuperficie.lateral1.setEnabled(true);
+                            hourlyTask.run();
+                            hourlyTask.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
 
-                    }else if(codigo.getResultado().getSecureUrl().contains("predial")){
-                        bindingSuperficie.predial.setEnabled(false);
-                        urlPredial = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
-                        bindingSuperficie.predial.setEnabled(true);
-                        hourlyTask.run();
-                        hourlyTask.scheduledExecutionTime();
-                        loadingProgress(progressDialog, 1);
+                        }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+                            bindingSuperficie.predial.setEnabled(false);
+                            urlPredial = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                            bindingSuperficie.predial.setEnabled(true);
+                            hourlyTask.run();
+                            hourlyTask.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
 
-                    } else{
-                        bindingSuperficie.lateral2.setEnabled(false);
-                        urlLateral2 = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                        bindingSuperficie.lateral2.setEnabled(true);
-                        hourlyTask.run();
-                        hourlyTask.scheduledExecutionTime();
-                        loadingProgress(progressDialog, 1);
+                        } else{
+                            bindingSuperficie.lateral2.setEnabled(false);
+                            urlLateral2 = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                            bindingSuperficie.lateral2.setEnabled(true);
+                            hourlyTask.run();
+                            hourlyTask.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
 
+                        }
+                    }else{
+                        loadingProgress(progressDialog, 1);
+                        Toast.makeText(getContext(), R.string.err_foto,
+                                Toast.LENGTH_SHORT).show();
                     }
+                } else{
+                    loadingProgress(progressDialog, 1);
+                    Toast.makeText(getContext(), R.string.err_foto,
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -4772,7 +4850,8 @@ public class FragmentTerminar extends Fragment implements
 
             }else if(valor == 5 || valor == 6 || valor == 7 ||
                     valor == 8 || valor == 9 ||
-                    valor == 11 || valor == 12 || valor == 13 || valor == 14){
+                    valor == 11 || valor == 12 || valor == 13 || valor == 14
+                    || valor == 15 || valor == 16 || valor == 17){
 
                 detalleG = new CrearZonificacion.Detalle(
                         String.valueOf(valor),
@@ -4922,10 +5001,8 @@ public class FragmentTerminar extends Fragment implements
                 }else if(listaSubfactores.getConstruccion().get(0).getNivelid()==2){
                     rb[1].setChecked(false);
                     rb[1].setChecked(true);
-                    //nivelId = 1;
                 }else{
                     binding.linearLayout.setVisibility(View.VISIBLE);
-                    //nivelId = 2;
                     rb[1].setChecked(false);
                     rb[1].setChecked(true);
                 }
@@ -4973,7 +5050,6 @@ public class FragmentTerminar extends Fragment implements
     public void generarCondiciones(final FragmentAutoriza4Binding binding,
                                    final FactoresConstruccion factoresConstruccion,
                                    DatosConstruccions datosConstruccion) {
-        final int textColor = Color.parseColor("#254581");
         final RadioButton[] rb = new RadioButton[factoresConstruccion.getCatalogo().size()];
         RadioGroup rg = new RadioGroup(getContext());
         rg.setOrientation(RadioGroup.VERTICAL);
@@ -4990,20 +5066,14 @@ public class FragmentTerminar extends Fragment implements
 
                 if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
                     rb[i].setChecked(true);
-//                    rb[i].setTextColor(Color.parseColor("#254581"));
-//                    rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
                 }
 
                 if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
                     rb[i].setChecked(true);
-//                    rb[i].setTextColor(Color.parseColor("#254581"));
-//                    rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
                 }
 
                 if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
                     rb[i].setChecked(true);
-//                    rb[i].setTextColor(Color.parseColor("#254581"));
-//                    rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
                 }
             }
         }
@@ -5185,6 +5255,21 @@ public class FragmentTerminar extends Fragment implements
                             detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
                             detallesContruccion.add(detalleConstruccion);
                         }
+
+//                        if(valor==4 && check =="1"){
+//                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+//                            detallesContruccion.add(detalleConstruccion);
+//                        }
+//
+//                        if(valor==5 && check =="1"){
+//                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+//                            detallesContruccion.add(detalleConstruccion);
+//                        }
+//
+//                        if(valor==6 && check =="1"){
+//                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+//                            detallesContruccion.add(detalleConstruccion);
+//                        }
                     }
                 }
 

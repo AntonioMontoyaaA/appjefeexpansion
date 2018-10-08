@@ -3075,7 +3075,7 @@ public class FragmentModificar extends Fragment implements
 
                                         String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString()+"";
                                         String periodogracia = binding.periodogracia.getSelectedItem().toString()+"";
-                                        String numtelefono = "5540555599";
+                                        String numtelefono = NUM_TELEFONO;
                                         String versionapp = VERSION_APP;
 
                                         String arr[] = periodoamortizacion.split(" ", 2);
@@ -3157,7 +3157,7 @@ public class FragmentModificar extends Fragment implements
 
                                             String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString();
                                             String periodogracia = binding.periodogracia.getSelectedItem().toString();;
-                                            String numtelefono = "5540555599";
+                                            String numtelefono = NUM_TELEFONO;
                                             String versionapp = VERSION_APP;
 
                                             String arr[] = periodoamortizacion.split(" ", 2);
@@ -3919,6 +3919,10 @@ public class FragmentModificar extends Fragment implements
                             loadingProgress(progressDialog, 1);
 
                         }
+                    }else{
+                        loadingProgress(progressDialog, 1);
+                        Toast.makeText(getContext(), R.string.err_foto,
+                                Toast.LENGTH_SHORT).show();
                     }
                 }else{
                     loadingProgress(progressDialog, 1);
@@ -4446,7 +4450,7 @@ public class FragmentModificar extends Fragment implements
                     generadores,
                     String.valueOf(mdLat),
                     String.valueOf(mdLot),
-                    "5555555555",
+                    NUM_TELEFONO,
                     VERSION_APP
             );
 
