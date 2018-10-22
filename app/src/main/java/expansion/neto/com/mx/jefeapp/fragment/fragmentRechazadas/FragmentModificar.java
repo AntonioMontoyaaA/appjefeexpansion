@@ -81,7 +81,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -198,7 +201,7 @@ import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 
 public class FragmentModificar extends Fragment implements
-         AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
+        AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
     NumberFormat format = new DecimalFormat("0.#");
 
     String municipio = "";
@@ -257,17 +260,17 @@ public class FragmentModificar extends Fragment implements
 
     private AdapterListaPropietarios.OnItemClick clickPropietario = new AdapterListaPropietarios.OnItemClick() {
         @Override
-        public void onClick(String nombre, String apellido, String apellidoM, String telefono, String email ) {
+        public void onClick(String nombre, String apellido, String apellidoM, String telefono, String email) {
             nombrePropietario = nombre;
             apellidoPropietario = apellido;
             apellidoMPropietario = apellidoM;
             telefonoPropietario = telefono;
             emailPropietario = email;
-            bindingPropietario.nombre.setText(nombrePropietario+"");
-            bindingPropietario.apellidoP.setText(apellidoPropietario+"");
-            bindingPropietario.apellidoM.setText(apellidoMPropietario+"");
-            bindingPropietario.telefono.setText(telefonoPropietario+"");
-            bindingPropietario.email.setText(emailPropietario+"");
+            bindingPropietario.nombre.setText(nombrePropietario + "");
+            bindingPropietario.apellidoP.setText(apellidoPropietario + "");
+            bindingPropietario.apellidoM.setText(apellidoMPropietario + "");
+            bindingPropietario.telefono.setText(telefonoPropietario + "");
+            bindingPropietario.email.setText(emailPropietario + "");
         }
     };
 
@@ -370,7 +373,7 @@ public class FragmentModificar extends Fragment implements
                     .build();
 
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-          //  googleMap.setMyLocationEnabled(true);
+            //  googleMap.setMyLocationEnabled(true);
             googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
@@ -405,6 +408,7 @@ public class FragmentModificar extends Fragment implements
             e.printStackTrace();
         }
     }
+
     private GoogleMap mMap;
     private GoogleMap mMapZona;
 
@@ -434,7 +438,6 @@ public class FragmentModificar extends Fragment implements
 
     ArrayList<Zonificacion.Detalle> detallesGen;
     ArrayList<Zonificacion.Detalle> detallesCom;
-
 
 
     private OnMapReadyCallback onMapReadyCallbackZonificacion = new OnMapReadyCallback() {
@@ -473,7 +476,7 @@ public class FragmentModificar extends Fragment implements
                     .build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-            if(mdLat!=null || mdLot!=null){
+            if (mdLat != null || mdLot != null) {
                 mds = new LatLng(mdLat, mdLot);
                 icon = getBitmapDescriptor(R.drawable.home);
                 googleMap.addMarker(new MarkerOptions().position(mds)
@@ -505,19 +508,19 @@ public class FragmentModificar extends Fragment implements
                         int zonificacion = preferences.getInt("zonificacion", 0);
                         String usuario = preferences.getString("usuario", "");
 
-                        if(zonificacion==0){
-                            if(valor==0){
+                        if (zonificacion == 0) {
+                            if (valor == 0) {
                                 Toast.makeText(getContext(), "Debes seleccionar alguna compentencia y generador",
                                         Toast.LENGTH_SHORT).show();
-                            }else{
+                            } else {
                                 colocarMarcador(latLng, googleMap, valor, usuario, finalMds, String.valueOf(mdIdZ), null, null);
                             }
-                        }else if(zonificacion==1){
-                            if(valor==0){
+                        } else if (zonificacion == 1) {
+                            if (valor == 0) {
 
                                 Toast.makeText(getContext(), "Debes seleccionar alguna compentencia y generador",
                                         Toast.LENGTH_SHORT).show();
-                            }else{
+                            } else {
                                 colocarMarcador(latLng, googleMap, valor, usuario, finalMds, String.valueOf(mdIdZ), null, null);
                             }
                         }
@@ -528,9 +531,9 @@ public class FragmentModificar extends Fragment implements
                     @Override
                     public void onClick(View view) {
 
-                        CameraUpdate center=
+                        CameraUpdate center =
                                 CameraUpdateFactory.newLatLng(new LatLng(mdLat, mdLot));
-                        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
+                        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
                         googleMap.moveCamera(center);
                         googleMap.animateCamera(zoom);
 
@@ -542,7 +545,7 @@ public class FragmentModificar extends Fragment implements
                     public void onClick(View view) {
                         getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
 
-                        for (Marker marker: markers) {
+                        for (Marker marker : markers) {
                             marker.remove();
                         }
 
@@ -582,8 +585,8 @@ public class FragmentModificar extends Fragment implements
                         String latitudGenerador;
                         String latitudGeneradorMarcador;
 
-                        if(zonificacion!=null && zonificacion.getCompetencia()!=null) {
-                            if(!zonificacion.getCompetencia().isEmpty()){
+                        if (zonificacion != null && zonificacion.getCompetencia() != null) {
+                            if (!zonificacion.getCompetencia().isEmpty()) {
                                 for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
                                     latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
                                     latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
@@ -597,12 +600,12 @@ public class FragmentModificar extends Fragment implements
                         }
 
 
-                        if(zonificacion!=null && zonificacion.getGeneradores()!=null){
-                            if(!zonificacion.getGeneradores().isEmpty()){
-                                for(int i = 0;i<zonificacion.getGeneradores().get(0).getDetalles().size();i++){
+                        if (zonificacion != null && zonificacion.getGeneradores() != null) {
+                            if (!zonificacion.getGeneradores().isEmpty()) {
+                                for (int i = 0; i < zonificacion.getGeneradores().get(0).getDetalles().size(); i++) {
                                     latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
                                     latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
-                                    if(latitudGenerador.equals(latitudGeneradorMarcador)){
+                                    if (latitudGenerador.equals(latitudGeneradorMarcador)) {
                                         zonificacion.getGeneradores().get(0).getDetalles().remove(i);
                                         m.remove();
                                     }
@@ -621,7 +624,6 @@ public class FragmentModificar extends Fragment implements
 
         }
     };
-
 
 
     public static FragmentTerminar newInstance(int position) {
@@ -659,7 +661,7 @@ public class FragmentModificar extends Fragment implements
 
         if (position == 0) {
             mensaje = "fragment 1";
-            binding = DataBindingUtil.inflate(inflater,R.layout.fragment_autoriza_porterminar,container,false);
+            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_porterminar, container, false);
             view = binding.getRoot();
             urlFrente = "";
             urlLateral2 = "";
@@ -674,7 +676,7 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(),"child");
+                    a.show(getChildFragmentManager(), "child");
                 }
             });
 
@@ -693,36 +695,36 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void resolve(DatosSitio datosSitio) {
 
-                    if(datosSitio.getDatossitio()!= null && datosSitio.getCodigo()==200){
-                        if(datosSitio.getDatossitio().get(0).getLongitud()==null){
+                    if (datosSitio.getDatossitio() != null && datosSitio.getCodigo() == 200) {
+                        if (datosSitio.getDatossitio().get(0).getLongitud() == null) {
                             ServicioGPS n = new ServicioGPS(getContext());
                             datosSitio.getDatossitio().get(0).setLatitud(String.valueOf(n.getLatitude()));
                             datosSitio.getDatossitio().get(0).setLongitud(String.valueOf(n.getLongitude()));
                         }
 
 
-                        if(datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")){
+                        if (datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")) {
                             binding.escogeSitio.setChecked(true);
                             binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                            editorPre.putString("tipoSitio" ,"2");
+                            editorPre.putString("tipoSitio", "2");
                             editorPre.apply();
-                        }else{
+                        } else {
                             binding.escogeSitio.setChecked(false);
                             binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                            editorPre.putString("tipoSitio" ,"1");
+                            editorPre.putString("tipoSitio", "1");
                             editorPre.apply();
                         }
 
                         binding.escogeSitio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                if(isChecked){
-                                    editorPre.putString("tipoSitio" ,"2");
+                                if (isChecked) {
+                                    editorPre.putString("tipoSitio", "2");
                                     editorPre.apply();
                                     binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
                                     binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
 
-                                }else{
-                                    editorPre.putString("tipoSitio" ,"1");
+                                } else {
+                                    editorPre.putString("tipoSitio", "1");
                                     editorPre.apply();
                                     binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
                                     binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
@@ -737,8 +739,8 @@ public class FragmentModificar extends Fragment implements
                         binding.nombresitio.setText(datosSitio.getDatossitio().get(0).getNombreSitio());
 
 
-                        binding.direccionsitio.setText(datosSitio.getDatossitio().get(0).getDireccion()+"");
-                        binding.estadositio.setText(datosSitio.getDatossitio().get(0).getEstado()+"");
+                        binding.direccionsitio.setText(datosSitio.getDatossitio().get(0).getDireccion() + "");
+                        binding.estadositio.setText(datosSitio.getDatossitio().get(0).getEstado() + "");
                         lat = Float.valueOf(datosSitio.getDatossitio().get(0).getLatitud());
                         lot = Float.valueOf(datosSitio.getDatossitio().get(0).getLongitud());
 
@@ -756,13 +758,14 @@ public class FragmentModificar extends Fragment implements
                 }
 
                 @Override
-                public void reject(Exception e) { }
+                public void reject(Exception e) {
+                }
             });
 
-            Timer timer = new Timer ();
-            hourlyTask = new TimerTask () {
+            Timer timer = new Timer();
+            hourlyTask = new TimerTask() {
                 @Override
-                public void run () {
+                public void run() {
 
                     final String[] latitud = {null};
                     final String[] longitud = {null};
@@ -776,29 +779,29 @@ public class FragmentModificar extends Fragment implements
                     SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     String choices = preferences.getString("tipoSitio", "");
 
-                    if(mCenterLatLong!=null){
-                        if(mCenterLatLong.latitude!=0){
+                    if (mCenterLatLong != null) {
+                        if (mCenterLatLong.latitude != 0) {
                             latitud[0] = String.valueOf(mCenterLatLong.latitude);
                             longitud[0] = String.valueOf(mCenterLatLong.longitude);
                         }
                     }
 
-                    if(nombreSitioGuardar!=null){
-                        if(nombreSitioGuardar.length()>0){
+                    if (nombreSitioGuardar != null) {
+                        if (nombreSitioGuardar.length() > 0) {
                             crearsitio = new CrearDatosSitio(usuario, nombreSitioGuardar, codigoPostal,
                                     direccion, estado, municipio, ciudad, latitud[0], longitud[0],
-                                    choices, "", VERSION_APP, pais, mdIdterminar,"");
+                                    choices, "", VERSION_APP, pais, mdIdterminar, "");
 
-                            if(nombreSitioGuardar.equals("")){
+                            if (nombreSitioGuardar.equals("")) {
 
-                            }else{
+                            } else {
                                 salvarDatosSitio(crearsitio, editor);
                             }
                         }
                     }
                 }
             };
-            timer.schedule (hourlyTask, 100, 700);
+            timer.schedule(hourlyTask, 100, 700);
 
             //TODO Hacer estos casos para las demás pantallas
             binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
@@ -816,7 +819,7 @@ public class FragmentModificar extends Fragment implements
                     String ciudad = binding.ciudadsitio.getText().toString();
                     String pais = binding.pais.getText().toString();
 
-                    if(mCenterLatLong.latitude!=0){
+                    if (mCenterLatLong.latitude != 0) {
                         latitud[0] = String.valueOf(mCenterLatLong.latitude);
                         longitud[0] = String.valueOf(mCenterLatLong.longitude);
                     }
@@ -825,14 +828,14 @@ public class FragmentModificar extends Fragment implements
                     final String choices = preferences.getString("tipoSitio", "");
 
                     crearsitio = new CrearDatosSitio(usuario, nombreSitio, codigoPostal,
-                            direccion, estado, municipio, ciudad, latitud[0], longitud[0], choices, "", VERSION_APP, pais, "","");
+                            direccion, estado, municipio, ciudad, latitud[0], longitud[0], choices, "", VERSION_APP, pais, "", "");
 
                     ProviderCrearDatosSitio.getInstance(getContext()).guardarMd(crearsitio,
                             new ProviderCrearDatosSitio.InterfaceCrearDatosSitio() {
                                 @Override
                                 public void resolve(Codigos codigo) {
 
-                                    if(codigo.getCodigo()==200){
+                                    if (codigo.getCodigo() == 200) {
 
                                         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor editorExpansion = preferences.edit();
@@ -843,10 +846,10 @@ public class FragmentModificar extends Fragment implements
                                         editorExpansion.apply();
 
                                         FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                        a.show(getChildFragmentManager(),"child");
+                                        a.show(getChildFragmentManager(), "child");
                                         binding.toolbar.guardar.setEnabled(true);
 
-                                    }else{
+                                    } else {
                                         binding.toolbar.guardar.setEnabled(true);
                                         Toast.makeText(getContext(), codigo.getMensaje(),
                                                 Toast.LENGTH_SHORT).show();
@@ -866,7 +869,7 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     gpsUbica = gps();
-                    if(gpsUbica.lat!=0 && gpsUbica.lng!=0){
+                    if (gpsUbica.lat != 0 && gpsUbica.lng != 0) {
                         mCenterLatLong = new LatLng(gpsUbica.lat, gpsUbica.lng);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(mCenterLatLong));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCenterLatLong, 15));
@@ -891,7 +894,7 @@ public class FragmentModificar extends Fragment implements
 
         } else if (position == 1) {
 
-            bindingPropietario = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_1,container,false);
+            bindingPropietario = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_1, container, false);
             view = bindingPropietario.getRoot();
 
             getContext().getSharedPreferences("datosPropietario", 0).edit().clear().apply();
@@ -913,18 +916,19 @@ public class FragmentModificar extends Fragment implements
                     .obtenerDatosPropietario(md, usuario, new ProviderDatosPropietario.ConsultaDatosPropietario() {
                         @Override
                         public void resolve(Propietario propietario) {
-                            if(propietario.getCodigo()==200){
+                            if (propietario.getCodigo() == 200) {
 
-                                if(propietario.getMail().equals("null")){
+                                if (propietario.getMail().equals("null")) {
                                     propietario.setMail("");
                                 }
-                                bindingPropietario.nombre.setText(propietario.getNombrePropietario()+ " ");
+                                bindingPropietario.nombre.setText(propietario.getNombrePropietario() + " ");
                                 bindingPropietario.telefono.setText(propietario.getTelefono());
                                 bindingPropietario.email.setText(propietario.getMail());
                                 bindingPropietario.apellidoP.setText(propietario.getAPaternoPropietario());
                                 bindingPropietario.apellidoM.setText(propietario.getAMaternoPropietario());
                             }
                         }
+
                         @Override
                         public void reject(Exception e) {
                         }
@@ -935,7 +939,7 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(),"child");
+                    a.show(getChildFragmentManager(), "child");
                 }
             });
 
@@ -949,10 +953,10 @@ public class FragmentModificar extends Fragment implements
             final SharedPreferences preferencesPropietario = getContext().getSharedPreferences("datosPropietario", Context.MODE_PRIVATE);
             final SharedPreferences.Editor editor = preferencesPropietario.edit();
 
-            Timer timer = new Timer ();
-            hourlyTask = new TimerTask () {
+            Timer timer = new Timer();
+            hourlyTask = new TimerTask() {
                 @Override
-                public void run () {
+                public void run() {
 
                     String usuarioId = preferences.getString("usuario", "");
                     String mdIdterminar = preferences.getString("mdIdterminar", "");
@@ -963,14 +967,14 @@ public class FragmentModificar extends Fragment implements
 
                     String telefono = bindingPropietario.telefono.getText().toString();
 
-                    if(bindingPropietario.email.getText().toString().equals("")){
+                    if (bindingPropietario.email.getText().toString().equals("")) {
                         email = "-";
                     }
 
-                    if(ubicacion!=null){
+                    if (ubicacion != null) {
                         latitudDatos[0] = String.valueOf(ubicacion.getLat());
                         longitudDatos[0] = String.valueOf(ubicacion.getLng());
-                    }else{
+                    } else {
                         latitudDatos[0] = String.valueOf(mdLat);
                         longitudDatos[0] = String.valueOf(mdLot);
                     }
@@ -983,7 +987,7 @@ public class FragmentModificar extends Fragment implements
                 }
             };
 
-            timer.schedule (hourlyTask, 100, 700);
+            timer.schedule(hourlyTask, 100, 700);
 
             bindingPropietario.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -992,11 +996,11 @@ public class FragmentModificar extends Fragment implements
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     String mdIdterminar = preferences.getString("mdIdterminar", "");
 
-                    if(mdIdterminar.length()==1){
+                    if (mdIdterminar.length() == 1) {
                         mdIdterminar = "";
                     }
 
-                    if(!mdIdterminar.equals("") || mdIdterminar.equals("0")){
+                    if (!mdIdterminar.equals("") || mdIdterminar.equals("0")) {
                         String usuarioId = preferences.getString("usuario", "");
                         String apaternoPropietario = bindingPropietario.apellidoP.getText().toString();
                         String nombrePropietario = bindingPropietario.nombre.getText().toString();
@@ -1005,14 +1009,14 @@ public class FragmentModificar extends Fragment implements
                         String telefono = bindingPropietario.telefono.getText().toString();
                         String email = bindingPropietario.email.getText().toString();
 
-                        if(bindingPropietario.email.getText().toString().equals("")){
+                        if (bindingPropietario.email.getText().toString().equals("")) {
                             email = "''";
                         }
 
-                        if(ubicacion!=null){
+                        if (ubicacion != null) {
                             latitudDatos[0] = String.valueOf(ubicacion.getLat());
                             longitudDatos[0] = String.valueOf(ubicacion.getLng());
-                        }else{
+                        } else {
                             latitudDatos[0] = String.valueOf(mdLat);
                             longitudDatos[0] = String.valueOf(mdLot);
                         }
@@ -1026,13 +1030,13 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void resolve(Codigos codigo) {
 
-                                        if(codigo.getCodigo()==200){
+                                        if (codigo.getCodigo() == 200) {
 
                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(),"child");
+                                            a.show(getChildFragmentManager(), "child");
                                             bindingPropietario.toolbar.guardar.setEnabled(true);
 
-                                        }else{
+                                        } else {
                                             bindingPropietario.toolbar.guardar.setEnabled(true);
                                             Toast.makeText(getContext(), codigo.getMensaje(),
                                                     Toast.LENGTH_SHORT).show();
@@ -1066,12 +1070,12 @@ public class FragmentModificar extends Fragment implements
                         ProviderBuscarPropietario.getInstance(getContext()).obtenerPropietario(usuarioId, nombre, new ProviderBuscarPropietario.ConsultaPropietario() {
                             @Override
                             public void resolve(PropietarioBusqueda propietario) {
-                                if(propietario.getCodigo()==200){
+                                if (propietario.getCodigo() == 200) {
                                     adapterListaPropietarios = new AdapterListaPropietarios(propietario.getListaPropietarios(), getContext(), clickPropietario);
                                     bindingPropietario.recyclerPropietarios.setLayoutManager(new LinearLayoutManager(getContext()));
                                     bindingPropietario.recyclerPropietarios.setAdapter(adapterListaPropietarios);
                                     bindingPropietario.coincide.setVisibility(View.VISIBLE);
-                                }else{
+                                } else {
                                     Toast.makeText(getContext(), "No se encontraron coincidencias",
                                             Toast.LENGTH_SHORT).show();
                                 }
@@ -1090,7 +1094,7 @@ public class FragmentModificar extends Fragment implements
 
             bindingPropietario.buscarNombre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         bindingPropietario.co.setVisibility(View.VISIBLE);
                         bindingPropietario.nombreBuscador.setVisibility(View.VISIBLE);
                         bindingPropietario.nombre.setEnabled(false);
@@ -1098,7 +1102,7 @@ public class FragmentModificar extends Fragment implements
                         bindingPropietario.apellidoM.setEnabled(false);
                         bindingPropietario.telefono.setEnabled(false);
                         bindingPropietario.email.setEnabled(false);
-                    }else{
+                    } else {
                         bindingPropietario.nombreBuscador.setVisibility(View.GONE);
                         bindingPropietario.co.setVisibility(View.GONE);
                         bindingPropietario.nombre.setEnabled(true);
@@ -1111,11 +1115,11 @@ public class FragmentModificar extends Fragment implements
             });
 
 
-        }else if (position == 2) {
+        } else if (position == 2) {
 
             final float[] area = {0};
 
-            bindingSuperficie = DataBindingUtil.inflate(inflater,R.layout.fragment_autoriza_2,container,false);
+            bindingSuperficie = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_2, container, false);
             view = bindingSuperficie.getRoot();
 
             getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
@@ -1123,7 +1127,7 @@ public class FragmentModificar extends Fragment implements
             final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
             final String[] usuario = {preferences.getString("usuario", "")};
             String md = preferences.getString("mdIdterminar", "");
-            final String nombreSitio = preferences.getString("nombreSitio","");
+            final String nombreSitio = preferences.getString("nombreSitio", "");
             bindingSuperficie.robotoTextView2.setText(nombreSitio);
             bindingSuperficie.frente.setText("");
             bindingSuperficie.profundidad.setText("");
@@ -1131,34 +1135,35 @@ public class FragmentModificar extends Fragment implements
             mdLat = preferences.getFloat("latMd", 0);
             mdLot = preferences.getFloat("lotMd", 0);
 
-            bindingSuperficie.frente.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
-            bindingSuperficie.profundidad.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
+            bindingSuperficie.frente.setFilters(new InputFilter[]{new CustomTextWatcher(4, 1)});
+            bindingSuperficie.profundidad.setFilters(new InputFilter[]{new CustomTextWatcher(4, 1)});
             //bindingSuperficie.areaterreno.setFilters(new InputFilter[] {new CustomTextWatcher(5,1)});
 
             ProviderDatosPredial.getInstance(getContext()).obtenerDatosPredial(md, usuario[0], new ProviderDatosPredial.ConsultaDatosPredial() {
                 @Override
                 public void resolve(DatosPredial datosPredial) {
-                    if(datosPredial!=null){
-                        if(datosPredial.getCodigo().equals("200")){
-                            if(datosPredial.getAplicaPredial().equals("1")){
+                    if (datosPredial != null) {
+                        if (datosPredial.getCodigo().equals("200")) {
+                            if (datosPredial.getAplicaPredial().equals("1")) {
                                 bindingSuperficie.predial.setVisibility(View.VISIBLE);
-                            }else{
+                            } else {
                                 bindingSuperficie.predial.setVisibility(View.GONE);
-                                urlPredial = " ";
-                                fechaPredial = " ";
+                                urlPredial = "";
+                                fechaPredial = "";
                             }
                         }
-                    }else{
+                    } else {
                         bindingSuperficie.predial.setVisibility(View.GONE);
-                        urlPredial = " ";
-                        fechaPredial = " ";
+                        urlPredial = "";
+                        fechaPredial = "";
                     }
                 }
+
                 @Override
                 public void reject(Exception e) {
                     bindingSuperficie.predial.setVisibility(View.GONE);
-                    urlPredial = " ";
-                    fechaPredial = " ";
+                    urlPredial = "";
+                    fechaPredial = "";
                 }
             });
 
@@ -1167,9 +1172,9 @@ public class FragmentModificar extends Fragment implements
 
             bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         tipoEsquina[0] = "1";
-                    }else{
+                    } else {
                         tipoEsquina[0] = "0";
                     }
                 }
@@ -1181,47 +1186,47 @@ public class FragmentModificar extends Fragment implements
                         @Override
                         public void resolve(final Superficie superficie) {
 
-                            if(superficie.getCodigo()==200){
+                            if (superficie.getCodigo() == 200) {
 
                                 int valorFoto = 0;
                                 int valorFrente = 0;
                                 int valorFondo = 0;
                                 int valorEsquina = 0;
-                                for(int i = 0;i<superficie.getNiveles().size();i++){
-                                    if(superficie.getNiveles().get(i).getNivel()==4 ||
-                                            superficie.getNiveles().get(i).getNivel()==5){
+                                for (int i = 0; i < superficie.getNiveles().size(); i++) {
+                                    if (superficie.getNiveles().get(i).getNivel() == 4 ||
+                                            superficie.getNiveles().get(i).getNivel() == 5) {
                                         Picasso.get().load(superficie.getNiveles().get(i).getImgFrenteId()).into(bindingSuperficie.imagen);
                                         valorFoto = i;
                                         valorFondo = i;
 
 
                                         fechaFrente = superficie.getNiveles().get(i).getFecha_fente();
-                                        fechaEntorno1  = superficie.getNiveles().get(i).getFecha_lat1();
-                                        fechaEntorno2  = superficie.getNiveles().get(i).getFecha_lat2();
-                                        if(!superficie.getNiveles().get(i).getFecha_pred().equals("")){
+                                        fechaEntorno1 = superficie.getNiveles().get(i).getFecha_lat1();
+                                        fechaEntorno2 = superficie.getNiveles().get(i).getFecha_lat2();
+                                        if (!superficie.getNiveles().get(i).getFecha_pred().equals("")) {
                                             fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
-                                        }else{
+                                        } else {
                                             fechaPredial = " ";
                                             urlPredial = " ";
                                         }
                                     }
 
-                                    if(superficie.getNiveles().get(i).getNivel()==6 ||
-                                            superficie.getNiveles().get(i).getNivel()==7){
+                                    if (superficie.getNiveles().get(i).getNivel() == 6 ||
+                                            superficie.getNiveles().get(i).getNivel() == 7) {
                                         valorFrente = i;
                                     }
 
-                                    if(superficie.getNiveles().get(i).getNivel()==8){
+                                    if (superficie.getNiveles().get(i).getNivel() == 8) {
                                         valorEsquina = i;
                                     }
                                 }
 
                                 Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
 
-                                if(esquina==1){
+                                if (esquina == 1) {
                                     bindingSuperficie.escogeEsquina.setChecked(true);
                                     tipoEsquina[0] = "1";
-                                }else{
+                                } else {
                                     bindingSuperficie.escogeEsquina.setChecked(false);
                                     tipoEsquina[0] = "0";
                                 }
@@ -1237,8 +1242,8 @@ public class FragmentModificar extends Fragment implements
                                 bindingSuperficie.profundidad.setText(fondoS);
 
                                 String total = String.valueOf((Double.valueOf(superficieS)
-                                        *(Double.valueOf(fondoS))));
-                                bindingSuperficie.areaterreno.setText(total+"");
+                                        * (Double.valueOf(fondoS))));
+                                bindingSuperficie.areaterreno.setText(total + "");
 
                                 bindingSuperficie.frontal.setAlpha(1.0f);
                                 bindingSuperficie.lateral1.setAlpha(0.35f);
@@ -1253,10 +1258,10 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void onClick(View view) {
 
-                                        if(!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")){
+                                        if (!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")) {
                                             Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
-                                        }else{
-                                            if(urlPredial.length()>3){
+                                        } else {
+                                            if (urlPredial.length() > 3) {
                                                 Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
                                             }
                                         }
@@ -1273,8 +1278,8 @@ public class FragmentModificar extends Fragment implements
 
                                         banderaCamara[0] = 4;
 
-                                        if(urlPredial.length()>3){
-                                            if(urlPredial.length()>0){
+                                        if (urlPredial.length() > 3) {
+                                            if (urlPredial.length() > 0) {
                                                 Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             } else {
@@ -1282,35 +1287,19 @@ public class FragmentModificar extends Fragment implements
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }
 
-                                        }else{
+                                        } else {
                                             bindingSuperficie.volver.setVisibility(View.GONE);
                                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                             builder.setMessage("¿De donde quieres tomar la foto?")
                                                     .setCancelable(false)
                                                     .setPositiveButton("Desde galería", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            Intent intent = new Intent();
-                                                            intent.setType("image/*");
-                                                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                                                            startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                            intentGaleria(PICK_IMAGE_REQUEST);
                                                         }
                                                     })
                                                     .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
-                                                            if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
-                                                                File photoFile = null;
-                                                                try {
-                                                                    photoFile = createImageFile(getContext());
-                                                                } catch (IOException ex) {
-
-                                                                }
-                                                                if (photoFile != null) {
-                                                                    Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
-                                                                    pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                                    startActivityForResult(pictureIntent, CAMERA_PREDIAL);
-                                                                }
-                                                            }
+                                                            intentFoto(CAMERA_PREDIAL);
                                                         }
                                                     });
                                             AlertDialog alert = builder.create();
@@ -1336,8 +1325,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 1;
-                                        if(superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length()>0){
-                                            if(urlFrente.length()>0){
+                                        if (superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length() > 0) {
+                                            if (urlFrente.length() > 0) {
                                                 Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             } else {
@@ -1345,10 +1334,9 @@ public class FragmentModificar extends Fragment implements
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }
 
-                                        }else{
+                                        } else {
                                             bindingSuperficie.volver.setVisibility(View.GONE);
-                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA_FRONTAL);
+                                            intentFoto(CAMERA_FRONTAL);
                                         }
                                     }
                                 });
@@ -1368,18 +1356,17 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
                                         banderaCamara[0] = 2;
 
-                                        if(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length()>0){
-                                            if(urlLateral1.length()>0){
+                                        if (superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length() > 0) {
+                                            if (urlLateral1.length() > 0) {
                                                 Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             } else {
                                                 Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }
-                                        }else{
+                                        } else {
                                             bindingSuperficie.volver.setVisibility(View.GONE);
-                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA_LATERAL_1);
+                                            intentFoto(CAMERA_LATERAL_1);
                                         }
                                     }
                                 });
@@ -1388,14 +1375,12 @@ public class FragmentModificar extends Fragment implements
                                 urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
                                 urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
                                 urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
-                                if(!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("") ||
-                                        !superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ") ){
+                                if (!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("") ||
+                                        !superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")) {
                                     urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
-                                }else{
+                                } else {
                                     urlPredial = " ";
                                 }
-
-
 
 
                                 bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
@@ -1412,23 +1397,22 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 3;
-                                        if(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length()>0){
-                                            if(urlLateral2.length()>0){
+                                        if (superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length() > 0) {
+                                            if (urlLateral2.length() > 0) {
                                                 Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             } else {
                                                 Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id()).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }
-                                        }else{
+                                        } else {
                                             bindingSuperficie.volver.setVisibility(View.GONE);
-                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            startActivityForResult(intent, CAMERA_LATERAL_2);
+                                            intentFoto(CAMERA_LATERAL_2);
                                         }
                                     }
                                 });
 //
-                                if(mdLat!=null || mdLot!=null) {
+                                if (mdLat != null || mdLot != null) {
                                     ServicioGPS n = new ServicioGPS(getContext());
                                     final LatLng mds = new LatLng(mdLat, mdLot);
                                     final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
@@ -1439,36 +1423,19 @@ public class FragmentModificar extends Fragment implements
                                     bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            if(banderaCamara[0] == 4) {
+                                            if (banderaCamara[0] == 4) {
                                                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                                 //Setting message manually and performing action on button click
                                                 builder.setMessage("Seleccionar archivo desde")
                                                         .setCancelable(false)
                                                         .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                Intent intent = new Intent();
-                                                                intent.setType("image/*");
-                                                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                                                startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                                intentGaleria(PICK_IMAGE_REQUEST);
                                                             }
                                                         })
                                                         .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                                if (pictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
-                                                                    File photoFile = null;
-                                                                    try {
-                                                                        photoFile = createImageFile(getContext());
-                                                                    } catch (IOException ex) {
-
-                                                                    }
-                                                                    if (photoFile != null) {
-                                                                        Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
-                                                                        pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                                        startActivityForResult(pictureIntent,
-                                                                                CAMERA_PREDIAL);
-                                                                    }
-                                                                }
+                                                                intentFoto(CAMERA_PREDIAL);
                                                             }
                                                         });
 
@@ -1477,18 +1444,15 @@ public class FragmentModificar extends Fragment implements
                                                 //Setting the title manually
                                                 alert.setTitle("PREDIAL");
                                                 alert.show();
-                                            }else if(distancia){
-                                                if(banderaCamara[0] ==1){
-                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    startActivityForResult(intent, CAMERA_FRONTAL);
-                                                } else if(banderaCamara[0] == 2){
-                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    startActivityForResult(intent, CAMERA_LATERAL_1);
-                                                } else if(banderaCamara[0] == 3){
-                                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    startActivityForResult(intent, CAMERA_LATERAL_2);
+                                            } else if (distancia) {
+                                                if (banderaCamara[0] == 1) {
+                                                    intentFoto(CAMERA_FRONTAL);
+                                                } else if (banderaCamara[0] == 2) {
+                                                    intentFoto(CAMERA_LATERAL_1);
+                                                } else if (banderaCamara[0] == 3) {
+                                                    intentFoto(CAMERA_LATERAL_2);
                                                 }
-                                            }else {
+                                            } else {
                                                 Toast.makeText(getContext(), R.string.no_estas,
                                                         Toast.LENGTH_SHORT).show();
                                             }
@@ -1506,57 +1470,65 @@ public class FragmentModificar extends Fragment implements
                                 final String convertido = preferencesExpansion.getString("mdIdterminar", "");
 
                                 final String finalUsuario = usuario[0];
-                                Timer timer = new Timer ();
-                                hourlyTask = new TimerTask () {
+                                Timer timer = new Timer();
+                                hourlyTask = new TimerTask() {
                                     @Override
-                                    public void run () {
+                                    public void run() {
                                         getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
 
                                         final String frentes = bindingSuperficie.frente.getText().toString();
                                         final String profundidads = bindingSuperficie.profundidad.getText().toString();
 
-                                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
+                                        if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")) {
                                             getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
-                                        }else{
+                                        } else {
 
-                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario, convertido,
+                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], finalUsuario, convertido,
                                                     frentes, profundidads, urlLateral2, urlLateral1, urlFrente,
                                                     String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
-                                                    urlPredial,fechaPredial);
+                                                    urlPredial, fechaPredial);
                                             salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
                                         }
                                     }
                                 };
 
-                                timer.schedule (hourlyTask, 100, 700);
+                                timer.schedule(hourlyTask, 100, 700);
 
                                 bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                    public void afterTextChanged(Editable s) {
+                                    }
+
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                    }
+
                                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                                         //     Log.e("onTextChanged",s.toString());
                                         String frente = bindingSuperficie.frente.getText().toString();
                                         String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if(frente.equals("") || profundidad.equals("")){
+                                        if (frente.equals("") || profundidad.equals("")) {
                                             bindingSuperficie.areaterreno.setText("0mts");
-                                        }else{
-                                            area[0] = Float.valueOf(frente)*Float.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"");
+                                        } else {
+                                            area[0] = Float.valueOf(frente) * Float.valueOf(profundidad);
+                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "");
                                         }
                                     }
                                 });
                                 bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
 
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                    public void afterTextChanged(Editable s) {
+                                    }
+
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                    }
+
                                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                                         String frente = bindingSuperficie.frente.getText().toString();
                                         String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if(frente.equals("") || profundidad.equals("")){
+                                        if (frente.equals("") || profundidad.equals("")) {
                                             bindingSuperficie.areaterreno.setText("0mts");
-                                        }else{
-                                            area[0] = Float.valueOf(frente)*Float.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"");
+                                        } else {
+                                            area[0] = Float.valueOf(frente) * Float.valueOf(profundidad);
+                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "");
                                         }
                                     }
                                 });
@@ -1565,7 +1537,7 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelar a = new FragmentDialogCancelar();
-                                        a.show(getChildFragmentManager(),"child");
+                                        a.show(getChildFragmentManager(), "child");
                                     }
                                 });
 
@@ -1573,7 +1545,7 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(),"child");
+                                        a.show(getChildFragmentManager(), "child");
                                     }
                                 });
 
@@ -1585,39 +1557,39 @@ public class FragmentModificar extends Fragment implements
                                         final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                                         String mdId = preferences.getString("mdIdterminar", "");
 
-                                        if(mdId.length()==1){
+                                        if (mdId.length() == 1) {
                                             mdId = "";
                                         }
 
-                                        if(!mdId.equals("") || mdId.equals("0")){
+                                        if (!mdId.equals("") || mdId.equals("0")) {
                                             mdLat = preferences.getFloat("latMd", 0);
                                             mdLot = preferences.getFloat("lotMd", 0);
 
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
+                                            if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")) {
 
                                                 Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
                                                         Toast.LENGTH_SHORT).show();
 
-                                            }else{
+                                            } else {
                                                 String usuario = preferences.getString("usuario", "");
 
                                                 String frenter = bindingSuperficie.frente.getText().toString();
                                                 String profundidadr = bindingSuperficie.profundidad.getText().toString();
 
-                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
+                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, mdId,
                                                         frenter, profundidadr, urlLateral2, urlLateral1, urlFrente,
                                                         String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2
-                                                        ,urlPredial,fechaPredial);
+                                                        , urlPredial, fechaPredial);
 
                                                 ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                     @Override
                                                     public void resolve(Codigos codigo) {
-                                                        if(codigo.getCodigo()==200){
+                                                        if (codigo.getCodigo() == 200) {
                                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                            a.show(getChildFragmentManager(),"child");
+                                                            a.show(getChildFragmentManager(), "child");
                                                             bindingSuperficie.toolbar.guardar.setEnabled(true);
 
-                                                        }else{
+                                                        } else {
                                                             bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                             Toast.makeText(getContext(), codigo.getMensaje(),
                                                                     Toast.LENGTH_SHORT).show();
@@ -1634,7 +1606,7 @@ public class FragmentModificar extends Fragment implements
                                         }
                                     }
                                 });
-                            }else{
+                            } else {
 
                                 getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                 bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
@@ -1655,55 +1627,58 @@ public class FragmentModificar extends Fragment implements
 
                                 bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                        if(isChecked){
+                                        if (isChecked) {
                                             tipoEsquina[0] = "1";
-                                        }else{
+                                        } else {
                                             tipoEsquina[0] = "0";
                                         }
                                     }
                                 });
 
 
-
                                 final String finalUsuario1 = usuario[0];
-                                Timer timer = new Timer ();
-                                hourlyTask = new TimerTask () {
+                                Timer timer = new Timer();
+                                hourlyTask = new TimerTask() {
                                     @Override
-                                    public void run () {
+                                    public void run() {
                                         getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                         String frente = bindingSuperficie.frente.getText().toString();
                                         String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                                        if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")) {
                                             getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-                                        }else{
-                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],finalUsuario1, convertido,
+                                        } else {
+                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], finalUsuario1, convertido,
                                                     frente, profundidad, urlLateral2, urlLateral1, urlFrente,
                                                     String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
-                                                    urlPredial,fechaPredial);
+                                                    urlPredial, fechaPredial);
                                             salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
 
                                         }
                                     }
                                 };
 
-                                timer.schedule (hourlyTask, 100, 700);
+                                timer.schedule(hourlyTask, 100, 700);
 
                                 bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                    public void afterTextChanged(Editable s) {
+                                    }
+
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                    }
+
                                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                                         // Log.e("onTextChanged",s.toString());
                                         String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
                                         superficieS = superficieS.replace(" ", "");
 
-                                        String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString());
+                                        String fondoS = String.valueOf(bindingSuperficie.profundidad.getText().toString());
                                         fondoS = fondoS.replace(" ", "");
 
-                                        if(superficieS.equals("") || fondoS.equals("")){
+                                        if (superficieS.equals("") || fondoS.equals("")) {
 
-                                        }else{
-                                            area[0] = Float.valueOf(superficieS)*Float.valueOf(fondoS);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
+                                        } else {
+                                            area[0] = Float.valueOf(superficieS) * Float.valueOf(fondoS);
+                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "m2");
                                         }
                                     }
                                 });
@@ -1711,12 +1686,14 @@ public class FragmentModificar extends Fragment implements
                                 final int[] banderaCamaraTermina = {0};
 
 
-
-
                                 bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
 
-                                    public void afterTextChanged(Editable s) { }
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                    public void afterTextChanged(Editable s) {
+                                    }
+
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                    }
+
                                     public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                                         //String frente = bindingSuperficie.frente.getText().toString();
@@ -1725,14 +1702,14 @@ public class FragmentModificar extends Fragment implements
                                         String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
                                         superficieS = superficieS.replace(" ", "");
 
-                                        String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString());
+                                        String fondoS = String.valueOf(bindingSuperficie.profundidad.getText().toString());
                                         fondoS = fondoS.replace(" ", "");
 
-                                        if(superficieS.equals("") || fondoS.equals("")){
+                                        if (superficieS.equals("") || fondoS.equals("")) {
 
-                                        }else{
-                                            area[0] = Float.valueOf(superficieS)*Float.valueOf(fondoS);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0])+"m2");
+                                        } else {
+                                            area[0] = Float.valueOf(superficieS) * Float.valueOf(fondoS);
+                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "m2");
                                         }
                                     }
                                 });
@@ -1757,37 +1734,21 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
 
                                         banderaCamaraTermina[0] = 4;
-                                        if(urlPredial.length()>0){
+                                        if (urlPredial.length() > 0) {
                                             Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
                                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                        }else{
+                                        } else {
                                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                             builder.setMessage("¿De donde quieres tomar la foto?")
                                                     .setCancelable(false)
                                                     .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            Intent intent = new Intent();
-                                                            intent.setType("image/*");
-                                                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                                                            startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                            intentGaleria(PICK_IMAGE_REQUEST);
                                                         }
                                                     })
                                                     .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
-                                                            if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
-                                                                File photoFile = null;
-                                                                try {
-                                                                    photoFile = createImageFile(getContext());
-                                                                } catch (IOException ex) {
-
-                                                                }
-                                                                if (photoFile != null) {
-                                                                    Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
-                                                                    pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                                    startActivityForResult(pictureIntent, CAMERA_PREDIAL);
-                                                                }
-                                                            }
+                                                            intentFoto(CAMERA_PREDIAL);
                                                         }
                                                     });
                                             AlertDialog alert = builder.create();
@@ -1802,7 +1763,7 @@ public class FragmentModificar extends Fragment implements
                                 bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        if(distancia){
+                                        if (distancia) {
                                             bindingSuperficie.frontal.setAlpha(1.0f);
                                             bindingSuperficie.lateral1.setAlpha(0.35f);
                                             bindingSuperficie.lateral2.setAlpha(0.35f);
@@ -1813,15 +1774,14 @@ public class FragmentModificar extends Fragment implements
                                             bindingSuperficie.viewpredial.setVisibility(View.GONE);
 
                                             banderaCamaraTermina[0] = 1;
-                                            if(urlFrente.length()>0){
+                                            if (urlFrente.length() > 0) {
                                                 Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            }else{
+                                            } else {
                                                 bindingSuperficie.volver.setVisibility(View.GONE);
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_FRONTAL);
+                                                intentFoto(CAMERA_FRONTAL);
                                             }
-                                        }else{
+                                        } else {
                                             Toast.makeText(getContext(), R.string.no_estas,
                                                     Toast.LENGTH_SHORT).show();
                                         }
@@ -1833,7 +1793,7 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void onClick(View view) {
 
-                                        if(distancia){
+                                        if (distancia) {
                                             bindingSuperficie.lateral1.setAlpha(1.0f);
                                             bindingSuperficie.frontal.setAlpha(0.35f);
                                             bindingSuperficie.lateral2.setAlpha(0.35f);
@@ -1845,15 +1805,14 @@ public class FragmentModificar extends Fragment implements
 
                                             banderaCamaraTermina[0] = 2;
 
-                                            if(urlLateral1.length()>0){
+                                            if (urlLateral1.length() > 0) {
                                                 Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            }else{
+                                            } else {
                                                 bindingSuperficie.volver.setVisibility(View.GONE);
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_1);
+                                                intentFoto(CAMERA_LATERAL_1);
                                             }
-                                        }else{
+                                        } else {
                                             Toast.makeText(getContext(), R.string.no_estas,
                                                     Toast.LENGTH_SHORT).show();
                                         }
@@ -1864,7 +1823,7 @@ public class FragmentModificar extends Fragment implements
                                 bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        if(distancia){
+                                        if (distancia) {
                                             bindingSuperficie.lateral2.setAlpha(1.0f);
                                             bindingSuperficie.frontal.setAlpha(0.35f);
                                             bindingSuperficie.lateral1.setAlpha(0.35f);
@@ -1875,15 +1834,14 @@ public class FragmentModificar extends Fragment implements
                                             bindingSuperficie.viewpredial.setVisibility(View.GONE);
 
                                             banderaCamaraTermina[0] = 3;
-                                            if(urlLateral2.length()>0){
+                                            if (urlLateral2.length() > 0) {
                                                 Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                            }else{
+                                            } else {
                                                 bindingSuperficie.volver.setVisibility(View.GONE);
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_2);
+                                                intentFoto(CAMERA_LATERAL_2);
                                             }
-                                        }else{
+                                        } else {
                                             Toast.makeText(getContext(), R.string.no_estas,
                                                     Toast.LENGTH_SHORT).show();
                                         }
@@ -1892,12 +1850,10 @@ public class FragmentModificar extends Fragment implements
                                 });
 
 
-
-
                                 bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        if(banderaCamara[0] == 4) {
+                                        if (banderaCamaraTermina[0] == 4) {
 
                                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                             //Setting message manually and performing action on button click
@@ -1905,29 +1861,12 @@ public class FragmentModificar extends Fragment implements
                                                     .setCancelable(false)
                                                     .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            Intent intent = new Intent();
-                                                            intent.setType("image/*");
-                                                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                                                            startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                                            intentGaleria(PICK_IMAGE_REQUEST);
                                                         }
                                                     })
                                                     .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                            if (pictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
-                                                                File photoFile = null;
-                                                                try {
-                                                                    photoFile = createImageFile(getContext());
-                                                                } catch (IOException ex) {
-
-                                                                }
-                                                                if (photoFile != null) {
-                                                                    Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
-                                                                    pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                                    startActivityForResult(pictureIntent,
-                                                                            CAMERA_PREDIAL);
-                                                                }
-                                                            }
+                                                            intentFoto(CAMERA_PREDIAL);
                                                         }
                                                     });
 
@@ -1936,18 +1875,15 @@ public class FragmentModificar extends Fragment implements
                                             //Setting the title manually
                                             alert.setTitle("PREDIAL");
                                             alert.show();
-                                        }else if(distancia){
-                                            if(banderaCamaraTermina[0] ==1){
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA);
-                                            } else if(banderaCamaraTermina[0] ==2){
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_1);
-                                            } else if(banderaCamaraTermina[0] ==3){
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                startActivityForResult(intent, CAMERA_LATERAL_2);
+                                        } else if (distancia) {
+                                            if (banderaCamaraTermina[0] == 1) {
+                                                intentFoto(CAMERA);
+                                            } else if (banderaCamaraTermina[0] == 2) {
+                                                intentFoto(CAMERA_LATERAL_1);
+                                            } else if (banderaCamaraTermina[0] == 3) {
+                                                intentFoto(CAMERA_LATERAL_2);
                                             }
-                                        }else{
+                                        } else {
                                             Toast.makeText(getContext(), R.string.no_estas,
                                                     Toast.LENGTH_SHORT).show();
                                         }
@@ -1960,7 +1896,7 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelar a = new FragmentDialogCancelar();
-                                        a.show(getChildFragmentManager(),"child");
+                                        a.show(getChildFragmentManager(), "child");
                                     }
                                 });
 
@@ -1969,7 +1905,7 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(),"child");
+                                        a.show(getChildFragmentManager(), "child");
                                     }
                                 });
 
@@ -1980,40 +1916,40 @@ public class FragmentModificar extends Fragment implements
 
                                         final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
 
-                                        String mdId =  preferences.getString("mdIdterminar", "");
+                                        String mdId = preferences.getString("mdIdterminar", "");
 
-                                        if(mdId.length()==1){
+                                        if (mdId.length() == 1) {
                                             mdId = "";
                                         }
 
 
-                                        if(!mdId.equals("") || mdId.equals("0")){
+                                        if (!mdId.equals("") || mdId.equals("0")) {
                                             mdLat = preferences.getFloat("latMd", 0);
                                             mdLot = preferences.getFloat("lotMd", 0);
 
-                                            if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")){
+                                            if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")) {
                                                 Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
                                                         Toast.LENGTH_SHORT).show();
-                                            }else{
+                                            } else {
                                                 String usuario = preferences.getString("usuario", "");
 
                                                 String frente = bindingSuperficie.frente.getText().toString();
                                                 String profundidad = bindingSuperficie.profundidad.getText().toString();
 
-                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0],usuario, mdId,
+                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, mdId,
                                                         frente, profundidad, urlLateral2, urlLateral1, urlFrente,
                                                         String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
-                                                        urlPredial,fechaPredial);
+                                                        urlPredial, fechaPredial);
 
                                                 ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                     @Override
                                                     public void resolve(Codigos codigo) {
-                                                        if(codigo.getCodigo()==200){
+                                                        if (codigo.getCodigo() == 200) {
                                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                            a.show(getChildFragmentManager(),"child");
+                                                            a.show(getChildFragmentManager(), "child");
                                                             bindingSuperficie.toolbar.guardar.setEnabled(true);
 
-                                                        }else{
+                                                        } else {
                                                             bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                             Toast.makeText(getContext(), codigo.getMensaje(),
                                                                     Toast.LENGTH_SHORT).show();
@@ -2034,22 +1970,22 @@ public class FragmentModificar extends Fragment implements
                                 bindingSuperficie.robotoTextView2.setText(nombreMd);
 
 
-
                                 //===================================================================//
                                 //=====================Por terminar END===========================//
                                 //===================================================================//
                             }
                         }
+
                         @Override
-                        public void reject(Exception e) { }
+                        public void reject(Exception e) {
+                        }
                     });
 
 
-
-        }else if (position == 3) {
+        } else if (position == 3) {
 
             mensaje = "fragment 2";
-            bindingZonificacion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_3,container,false);
+            bindingZonificacion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_3, container, false);
             view = bindingZonificacion.getRoot();
 
             getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
@@ -2077,13 +2013,14 @@ public class FragmentModificar extends Fragment implements
             slideUp = new SlideUpBuilder(bindingZonificacion.slideRuralStart.slideViewRural)
                     .withListeners(new SlideUp.Listener.Events() {
                         @Override
-                        public void onSlide(float percent) { }
+                        public void onSlide(float percent) {
+                        }
 
                         @Override
                         public void onVisibilityChanged(int visibility) {
-                            if (visibility == 0){
+                            if (visibility == 0) {
                                 bindingZonificacion.fab.hide();
-                            } else if(visibility == 8){
+                            } else if (visibility == 8) {
                                 bindingZonificacion.fab.show();
                             }
                         }
@@ -2102,13 +2039,13 @@ public class FragmentModificar extends Fragment implements
             });
 
 
-            if(true){
+            if (true) {
                 preferences[0] = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                 ProviderDatosZonificacion.getInstance(getContext())
                         .obtenerDatosZonificacion(mdIdterminar, usuario, new ProviderDatosZonificacion.ConsultaDatosZonificacion() {
                             @Override
                             public void resolve(Zonificacion creaZonificacion) {
-                                if(creaZonificacion.getCodigo()==200){
+                                if (creaZonificacion.getCodigo() == 200) {
 
                                     getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
                                     clearZoni();
@@ -2118,25 +2055,25 @@ public class FragmentModificar extends Fragment implements
                                     detallesCom = new ArrayList<>();
                                     detallesGen = new ArrayList<>();
 
-                                    for(int i=0;i<creaZonificacion.getCompetencia().size();i++){
-                                        for(int j=0;j<creaZonificacion.getCompetencia().get(i).getDetalle().size();j++){
+                                    for (int i = 0; i < creaZonificacion.getCompetencia().size(); i++) {
+                                        for (int j = 0; j < creaZonificacion.getCompetencia().get(i).getDetalle().size(); j++) {
                                             detallesCom.add(creaZonificacion.getCompetencia().get(i).getDetalle().get(j));
                                         }
                                     }
 
-                                    for(int i=0;i<creaZonificacion.getGeneradores().size();i++){
-                                        for(int j=0;j<creaZonificacion.getGeneradores().get(i).getDetalle().size();j++){
+                                    for (int i = 0; i < creaZonificacion.getGeneradores().size(); i++) {
+                                        for (int j = 0; j < creaZonificacion.getGeneradores().get(i).getDetalle().size(); j++) {
                                             detallesGen.add(creaZonificacion.getGeneradores().get(i).getDetalle().get(j));
                                         }
                                     }
 
 
-                                    if(detallesGen.size()==0){
-                                       // mdsNuevos = new LatLng(0.0, 0.0);
-                                       // colocarMarcadorZoni(mdsNuevos, mMapZona, 1,
-                                            //    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
-                                    }else{
-                                        for(int j=0;j<detallesGen.size();j++){
+                                    if (detallesGen.size() == 0) {
+                                        // mdsNuevos = new LatLng(0.0, 0.0);
+                                        // colocarMarcadorZoni(mdsNuevos, mMapZona, 1,
+                                        //    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
+                                    } else {
+                                        for (int j = 0; j < detallesGen.size(); j++) {
                                             mdsNuevos = new LatLng(Double.valueOf(detallesGen.get(j).getLatitud()),
                                                     Double.valueOf(detallesGen.get(j).getLongitud()));
 
@@ -2145,12 +2082,12 @@ public class FragmentModificar extends Fragment implements
                                         }
                                     }
 
-                                    if(detallesCom.size()==0){
-                                       // mdsNuevos = new LatLng(0.0, 0.0);
-                                      //  colocarMarcadorZoni(mdsNuevos, mMapZona, 1,
-                                                //usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
-                                    }else{
-                                        for(int j=0;j<detallesCom.size();j++){
+                                    if (detallesCom.size() == 0) {
+                                        // mdsNuevos = new LatLng(0.0, 0.0);
+                                        //  colocarMarcadorZoni(mdsNuevos, mMapZona, 1,
+                                        //usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
+                                    } else {
+                                        for (int j = 0; j < detallesCom.size(); j++) {
                                             mdsNuevos = new LatLng(Double.valueOf(detallesCom.get(j).getLatitud()),
                                                     Double.valueOf(detallesCom.get(j).getLongitud()));
                                             colocarMarcadorZoni(mdsNuevos, mMapZona, detallesCom.get(j).getGeneradorId(),
@@ -2160,14 +2097,15 @@ public class FragmentModificar extends Fragment implements
 
                                     listGeneradores = new ArrayList<>();
 
-                                }else{
+                                } else {
                                     Toast.makeText(getContext(), "Error al obtener los datos",
                                             Toast.LENGTH_LONG).show();
                                 }
                             }
 
                             @Override
-                            public void reject(Exception e) { }
+                            public void reject(Exception e) {
+                            }
                         });
 
 
@@ -2177,47 +2115,47 @@ public class FragmentModificar extends Fragment implements
                     @Override
                     public void resolve(CompetenciasGeneradoresV2 competenciasGeneradores) {
 
-                        if(competenciasGeneradores.getCodigo()==200){
-                            if(competenciasGeneradores!=null){
+                        if (competenciasGeneradores.getCodigo() == 200) {
+                            if (competenciasGeneradores != null) {
                                 listCompetencia = new ArrayList<>();
                                 listGeneradores = new ArrayList<>();
                                 listCompetenciaTiendaNeto = new ArrayList<>();
                                 listGeneradoresNegocios = new ArrayList<>();
-                                listGeneradoresTransporte= new ArrayList<>();
+                                listGeneradoresTransporte = new ArrayList<>();
 
                                 negociosDeComidaArrayList = new ArrayList<>();
                                 mercadoPublicoArrayList = new ArrayList<>();
                                 tianguiArrayList = new ArrayList<>();
 
-                                for(int i=0;i<competenciasGeneradores.getCompetencias().getCompetencias().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getCompetencias().getCompetencias().size(); i++) {
                                     listCompetencia.add(competenciasGeneradores.getCompetencias().getCompetencias().get(i));
                                 }
 
-                                for(int i=0;i<competenciasGeneradores.getCompetencias().getTiendaNeto().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getCompetencias().getTiendaNeto().size(); i++) {
                                     listCompetenciaTiendaNeto.add(competenciasGeneradores.getCompetencias().getTiendaNeto().get(i));
                                 }
 
-                                for(int i=0;i<competenciasGeneradores.getGeneradores().getOtrosGeneradores().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getOtrosGeneradores().size(); i++) {
                                     listGeneradores.add(competenciasGeneradores.getGeneradores().getOtrosGeneradores().get(i));
                                 }
 
-                                for(int i=0;i<competenciasGeneradores.getGeneradores().getNegocios().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegocios().size(); i++) {
                                     listGeneradoresNegocios.add(competenciasGeneradores.getGeneradores().getNegocios().get(i));
                                 }
 
-                                for(int i=0;i<competenciasGeneradores.getGeneradores().getTransportePublico().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getTransportePublico().size(); i++) {
                                     listGeneradoresTransporte.add(competenciasGeneradores.getGeneradores().getTransportePublico().get(i));
                                 }
                                 ///////
-                                for(int i=0;i<competenciasGeneradores.getGeneradores().getNegociosDeComida().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegociosDeComida().size(); i++) {
                                     negociosDeComidaArrayList.add(competenciasGeneradores.getGeneradores().getNegociosDeComida().get(i));
                                 }
 
-                                for(int i=0;i<competenciasGeneradores.getGeneradores().getMercadoPublico().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getMercadoPublico().size(); i++) {
                                     mercadoPublicoArrayList.add(competenciasGeneradores.getGeneradores().getMercadoPublico().get(i));
                                 }
 
-                                for(int i=0;i<competenciasGeneradores.getGeneradores().getTianguis().size();i++){
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getTianguis().size(); i++) {
                                     tianguiArrayList.add(competenciasGeneradores.getGeneradores().getTianguis().get(i));
                                 }
 
@@ -2348,7 +2286,7 @@ public class FragmentModificar extends Fragment implements
                     @Override
                     public void onClick(View view) {
                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                        a.show(getChildFragmentManager(),"child");
+                        a.show(getChildFragmentManager(), "child");
                     }
                 });
 
@@ -2415,7 +2353,6 @@ public class FragmentModificar extends Fragment implements
                 });
 
 
-
                 bindingZonificacion.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -2424,12 +2361,12 @@ public class FragmentModificar extends Fragment implements
                         final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                         String mdId = preferences.getString("mdIdterminar", "");
 
-                        if(mdId.length()==1){
+                        if (mdId.length() == 1) {
                             mdId = "";
                         }
 
-                        if(!mdId.equals("")){
-                            if(zonificacionJson.equals("")){
+                        if (!mdId.equals("")) {
+                            if (zonificacionJson.equals("")) {
 
 //                                detallesG = new ArrayList<>();;
 //
@@ -2481,37 +2418,39 @@ public class FragmentModificar extends Fragment implements
                                 ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
                                     @Override
                                     public void resolve(Codigos codigo) {
-                                        if(codigo.getCodigo()==200){
+                                        if (codigo.getCodigo() == 200) {
                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(),"child");
+                                            a.show(getChildFragmentManager(), "child");
                                             bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        }else {
+                                        } else {
                                             bindingZonificacion.toolbar.guardar.setEnabled(true);
                                             Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
                                     @Override
-                                    public void reject(Exception e) { }
+                                    public void reject(Exception e) {
+                                    }
                                 });
 
-                            }else{
+                            } else {
                                 ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
                                     @Override
                                     public void resolve(Codigos codigo) {
-                                        if(codigo.getCodigo()==200){
+                                        if (codigo.getCodigo() == 200) {
                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(),"child");
+                                            a.show(getChildFragmentManager(), "child");
                                             bindingZonificacion.toolbar.guardar.setEnabled(true);
 
-                                        }else {
+                                        } else {
                                             Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                             bindingZonificacion.toolbar.guardar.setEnabled(true);
                                         }
                                     }
 
                                     @Override
-                                    public void reject(Exception e) { }
+                                    public void reject(Exception e) {
+                                    }
                                 });
                             }
                         }
@@ -2522,29 +2461,29 @@ public class FragmentModificar extends Fragment implements
                 final SharedPreferences preferencesZonifica = getContext().getSharedPreferences("datosZonificacion", Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = null;
 
-                Timer timer = new Timer ();
-                hourlyTask = new TimerTask () {
+                Timer timer = new Timer();
+                hourlyTask = new TimerTask() {
                     @Override
-                    public void run () {
+                    public void run() {
 
                         getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
-                        if(zonificacionJson.length()>0){
+                        if (zonificacionJson.length() > 0) {
                             salvarDatosZonificacion(getContext(), zonificacionJson, editor, preferencesZonifica);
-                        }else{
+                        } else {
                             salvarDatosZonificacion(getContext(), "", editor, preferencesZonifica);
                         }
                     }
                 };
-                timer.schedule (hourlyTask, 100, 700);
+                timer.schedule(hourlyTask, 100, 700);
 
             }
 
 
             /*************************************** terminar zonificacion **************************************************/
 
-        }else if (position == 4) {
+        } else if (position == 4) {
 
-            bindingConstruccion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_4,container,false);
+            bindingConstruccion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_4, container, false);
             view = bindingConstruccion.getRoot();
 
             getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
@@ -2552,8 +2491,8 @@ public class FragmentModificar extends Fragment implements
             SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
             final String mdIdterminar = preferences.getString("mdIdterminar", "");
             final String usuarioId = preferences.getString("usuario", "");
-            final String nombreSitio = preferences.getString("nombreSitio","");
-            bindingConstruccion.titulo.setText(nombreSitio+"");
+            final String nombreSitio = preferences.getString("nombreSitio", "");
+            bindingConstruccion.titulo.setText(nombreSitio + "");
 
             bindingConstruccion.toolbar.nombreTitulo.setText(getString(R.string.construccion));
 
@@ -2562,8 +2501,8 @@ public class FragmentModificar extends Fragment implements
                         @Override
                         public void resolve(final FactoresConstruccion factoresConstruccion) {
 
-                            if(factoresConstruccion.getCodigo()==200){
-                                if(factoresConstruccion.getCatalogo()!=null) {
+                            if (factoresConstruccion.getCodigo() == 200) {
+                                if (factoresConstruccion.getCatalogo() != null) {
 
                                     ProviderDatosConstruccion.getInstance(getContext())
                                             .obtenerDatosConstruccion(mdIdterminar, usuarioId, new ProviderDatosConstruccion.ConsultaDatosConstruccion() {
@@ -2572,8 +2511,8 @@ public class FragmentModificar extends Fragment implements
                                                     datosSitios = datosSitio;
                                                     getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
 
-                                                    if(datosSitio!=null){
-                                                        if(datosSitio.getCodigo()==200 &&  datosSitio.getConstruccion().size() > 0) {
+                                                    if (datosSitio != null) {
+                                                        if (datosSitio.getCodigo() == 200 && datosSitio.getConstruccion().size() > 0) {
 
                                                             generarConstruccion(
                                                                     bindingConstruccion,
@@ -2593,7 +2532,7 @@ public class FragmentModificar extends Fragment implements
                                                             bindingConstruccion.cargar.setVisibility(View.GONE);
 
 
-                                                        } else{
+                                                        } else {
 
                                                             generarConstruccion(
                                                                     bindingConstruccion,
@@ -2616,10 +2555,11 @@ public class FragmentModificar extends Fragment implements
                                                 }
                                             });
                                 }
-                            }else{
+                            } else {
                                 Toast.makeText(getContext(), "Error al consultar factores de construcción", Toast.LENGTH_SHORT).show();
                             }
                         }
+
                         @Override
                         public void reject(Exception e) {
 
@@ -2627,12 +2567,11 @@ public class FragmentModificar extends Fragment implements
                     });
 
 
-
             bindingConstruccion.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(),"child");
+                    a.show(getChildFragmentManager(), "child");
                 }
             });
 
@@ -2640,7 +2579,7 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     FragmentDialogAceptar a = new FragmentDialogAceptar();
-                    a.show(getChildFragmentManager(),"child");
+                    a.show(getChildFragmentManager(), "child");
                 }
             });
 
@@ -2648,7 +2587,7 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelar a = new FragmentDialogCancelar();
-                    a.show(getChildFragmentManager(),"child");
+                    a.show(getChildFragmentManager(), "child");
                 }
             });
 
@@ -2660,18 +2599,18 @@ public class FragmentModificar extends Fragment implements
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     String mdIdterminar = preferences.getString("mdIdterminar", "");
 
-                    if(mdIdterminar.length()==1){
+                    if (mdIdterminar.length() == 1) {
                         mdIdterminar = "";
                     }
 
-                    if(!mdIdterminar.equals("")){
-                        if(nivelId==0 || nivelIdCondicion==0){
+                    if (!mdIdterminar.equals("")) {
+                        if (nivelId == 0 || nivelIdCondicion == 0) {
 
-                        }else{
+                        } else {
 
                             niveles = new ArrayList<>();
 
-                            if(nivelIdCondicion==5 || nivelIdCondicion == 4 || nivelIdCondicion == 3){
+                            if (nivelIdCondicion == 5 || nivelIdCondicion == 4 || nivelIdCondicion == 3) {
 
                                 detallesCondicion = new ArrayList<>();
 
@@ -2682,35 +2621,35 @@ public class FragmentModificar extends Fragment implements
 
                             }
 
-                            if(nivelId==1 || nivelId==2){
+                            if (nivelId == 1 || nivelId == 2) {
 
                                 detallesContruccion = new ArrayList<>();
 
-                                if(nivelId==1){
+                                if (nivelId == 1) {
 
 
-                                }else if(nivelId==2){
-                                    for ( Map.Entry<Integer, String> entry : checks.entrySet()) {
+                                } else if (nivelId == 2) {
+                                    for (Map.Entry<Integer, String> entry : checks.entrySet()) {
                                         Integer valor = entry.getKey();
                                         String check = entry.getValue();
 
-                                        if(valor==0 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                        if (valor == 0 && check == "1") {
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
-                                        if(valor==1 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                        if (valor == 1 && check == "1") {
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
-                                        if(valor==2 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                        if (valor == 2 && check == "1") {
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
-                                        if(valor==3 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                        if (valor == 3 && check == "1") {
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                                             detallesContruccion.add(detalleConstruccion);
                                         }
                                     }
@@ -2737,13 +2676,13 @@ public class FragmentModificar extends Fragment implements
                                     new ProviderCrearConstruccion.InterfaceCrearDatosConstruccion() {
                                         @Override
                                         public void resolve(Codigos codigo) {
-                                            if(codigo.getCodigo()==200){
+                                            if (codigo.getCodigo() == 200) {
 
                                                 FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                a.show(getChildFragmentManager(),"child");
+                                                a.show(getChildFragmentManager(), "child");
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
 
-                                            }else{
+                                            } else {
                                                 Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
                                             }
@@ -2764,31 +2703,28 @@ public class FragmentModificar extends Fragment implements
             final SharedPreferences.Editor editor = preferencesConstruccion.edit();
 
 
-
-            Timer timer = new Timer ();
-            hourlyTask = new TimerTask () {
+            Timer timer = new Timer();
+            hourlyTask = new TimerTask() {
                 @Override
-                public void run () {
+                public void run() {
                     getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
                     datosConstruccion(mdIdterminar, usuarioId);
-                    if(datosConstruccionJson.length()>0 && !datosConstruccion.equals("")){
+                    if (datosConstruccionJson.length() > 0 && !datosConstruccion.equals("")) {
                         salvarDatosConstruccion(datosConstruccionJson, editor);
-                    }else{
+                    } else {
                         editor.putString("json", "");
                         editor.apply();
                     }
                 }
             };
 
-            timer.schedule (hourlyTask, 100, 700);
+            timer.schedule(hourlyTask, 100, 700);
 
 
-
-
-        }else if (position == 5) {
+        } else if (position == 5) {
 
             final FragmentAutoriza5Binding binding;
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_5,container,false);
+            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_5, container, false);
             view = binding.getRoot();
 
             getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
@@ -2818,26 +2754,26 @@ public class FragmentModificar extends Fragment implements
             ProviderDatosAmortizacion.getInstance(getContext()).obtenerDatosAmortizacion(mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
                 @Override
                 public void resolve(Amortizacion datosPredial) {
-                    if(datosPredial!=null){
+                    if (datosPredial != null) {
 
                         ArrayList<String> amortizacion = new ArrayList<>();
 
-                        for(int i = 0;i<datosPredial.getAmortizacion().size();i++){
+                        for (int i = 0; i < datosPredial.getAmortizacion().size(); i++) {
                             amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
                         }
 
                         ArrayList<String> gracia = new ArrayList<>();
 
-                        for(int j = 0;j<datosPredial.getGracia().size();j++){
+                        for (int j = 0; j < datosPredial.getGracia().size(); j++) {
                             gracia.add(datosPredial.getGracia().get(j).getOpcion());
                         }
 
-                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
                                 amortizacion);
                         amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
                         binding.periodoamotizacion.setAdapter(amortizacionSpinner);
 
-                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
                                 gracia);
                         graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
                         binding.periodogracia.setAdapter(graciaSpinner);
@@ -2855,11 +2791,11 @@ public class FragmentModificar extends Fragment implements
                     .obtenerDatosGeneralidades(mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
                         @Override
                         public void resolve(GeneralidadesSitio datosSitio) {
-                            if(datosSitio!=null && datosSitio.getCodigo()==200) {
+                            if (datosSitio != null && datosSitio.getCodigo() == 200) {
 
                                 getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
 
-                                if(datosSitio.getGeneralidades().size()>0){
+                                if (datosSitio.getGeneralidades().size() > 0) {
                                     String fecha = datosSitio.getGeneralidades().get(0).getFechadisponible();
 
                                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -2881,18 +2817,18 @@ public class FragmentModificar extends Fragment implements
 
                                     getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
 
-                                    for(int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
+                                    for (int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
+                                        if (datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
                                                 datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9){
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9) {
 
-                                            binding.renta.setText(datosSitio.getGeneralidades().get(i).getValor()+"");
+                                            binding.renta.setText(datosSitio.getGeneralidades().get(i).getValor() + "");
 
-                                            if(datosSitio.getGeneralidades().get(i).getDetalles()
+                                            if (datosSitio.getGeneralidades().get(i).getDetalles()
                                                     != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
                                                 int valor = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
-                                                switch (valor){
+                                                switch (valor) {
                                                     case 0:
                                                         binding.periodoamotizacion.setSelection(0);
                                                         break;
@@ -2945,9 +2881,9 @@ public class FragmentModificar extends Fragment implements
 
                                         }
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 4 || datosSitio.getGeneralidades().get(i).getNivelid() == 5 || datosSitio.getGeneralidades().get(i).getNivelid() == 6){
+                                        if (datosSitio.getGeneralidades().get(i).getNivelid() == 4 || datosSitio.getGeneralidades().get(i).getNivelid() == 5 || datosSitio.getGeneralidades().get(i).getNivelid() == 6) {
 
-                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 4){
+                                            if (datosSitio.getGeneralidades().get(i).getNivelid() == 4) {
                                                 binding.rinmediato.setChecked(true);
                                                 binding.rinmediato.setTextColor(Color.parseColor("#254581"));
                                                 binding.rinmediato.setButtonTintList(ColorStateList.valueOf(textColor));
@@ -2955,7 +2891,7 @@ public class FragmentModificar extends Fragment implements
                                                 binding.datepicker.setVisibility(View.GONE);
                                             }
 
-                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 5){
+                                            if (datosSitio.getGeneralidades().get(i).getNivelid() == 5) {
                                                 binding.rapartirde.setChecked(true);
                                                 binding.rapartirde.setTextColor(Color.parseColor("#254581"));
                                                 binding.rapartirde.setButtonTintList(ColorStateList.valueOf(textColor));
@@ -2963,7 +2899,7 @@ public class FragmentModificar extends Fragment implements
                                                 binding.datepicker.setVisibility(View.VISIBLE);
                                             }
 
-                                            if(datosSitio.getGeneralidades().get(i).getNivelid() == 6){
+                                            if (datosSitio.getGeneralidades().get(i).getNivelid() == 6) {
                                                 binding.rocupado.setChecked(true);
                                                 binding.rocupado.setTextColor(Color.parseColor("#254581"));
                                                 binding.rocupado.setButtonTintList(ColorStateList.valueOf(textColor));
@@ -2975,14 +2911,14 @@ public class FragmentModificar extends Fragment implements
 
                                         }
 
-                                        if(datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
+                                        if (datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
                                                 datosSitio.getGeneralidades().get(i).getNivelid() == 2 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 3){
+                                                datosSitio.getGeneralidades().get(i).getNivelid() == 3) {
 
                                             String valor = datosSitio.getGeneralidades().get(i).getValor().toString();
                                             binding.amortizaciontotal.setText(valor);
                                             int valor2 = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
-                                            switch (valor2){
+                                            switch (valor2) {
                                                 case 0:
                                                     binding.periodogracia.setSelection(0);
                                                     break;
@@ -3054,27 +2990,27 @@ public class FragmentModificar extends Fragment implements
 
                                 final CrearGeneralidades[] crearGeneralidades = {null};
 
-                                Timer timer = new Timer ();
-                                hourlyTask = new TimerTask () {
+                                Timer timer = new Timer();
+                                hourlyTask = new TimerTask() {
                                     @Override
-                                    public void run () {
+                                    public void run() {
                                         getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
                                         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                                         int day = binding.datepicker.getDayOfMonth();
                                         int month = binding.datepicker.getMonth();
-                                        int year =  binding.datepicker.getYear();
+                                        int year = binding.datepicker.getYear();
 
                                         Calendar calendar = Calendar.getInstance();
                                         calendar.set(year, month, day);
 
                                         String usuarioId = preferences.getString("usuario", "");
-                                        String renta = binding.renta.getText().toString()+"";
+                                        String renta = binding.renta.getText().toString() + "";
                                         String fechadisponible = dateFormat.format(calendar.getTime());
-                                        String porcentajeamortiza = binding.amortizaciontotal.getText().toString()+"";
+                                        String porcentajeamortiza = binding.amortizaciontotal.getText().toString() + "";
 
-                                        String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString()+"";
-                                        String periodogracia = binding.periodogracia.getSelectedItem().toString()+"";
+                                        String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString() + "";
+                                        String periodogracia = binding.periodogracia.getSelectedItem().toString() + "";
                                         String numtelefono = NUM_TELEFONO;
                                         String versionapp = VERSION_APP;
 
@@ -3084,11 +3020,11 @@ public class FragmentModificar extends Fragment implements
                                         String arra[] = periodogracia.split(" ", 2);
                                         periodogracia = arra[0];
 
-                                        if(!renta.equals("") || !porcentajeamortiza.equals("")){
-                                            if(disponibilidad[0]!=null){
+                                        if (!renta.equals("") || !porcentajeamortiza.equals("")) {
+                                            if (disponibilidad[0] != null) {
 
-                                                if(disponibilidad[0].equals("1")
-                                                        || disponibilidad[0].equals("2")){
+                                                if (disponibilidad[0].equals("1")
+                                                        || disponibilidad[0].equals("2")) {
 
                                                     crearGeneralidades[0] = new CrearGeneralidades(
                                                             mdIdterminar,
@@ -3102,7 +3038,7 @@ public class FragmentModificar extends Fragment implements
                                                             numtelefono,
                                                             versionapp
                                                     );
-                                                }else{
+                                                } else {
                                                     crearGeneralidades[0] = new CrearGeneralidades(
                                                             mdIdterminar,
                                                             usuarioId,
@@ -3117,8 +3053,8 @@ public class FragmentModificar extends Fragment implements
                                                     );
                                                 }
 
-                                                if(!crearGeneralidades[0].getRenta().equals("") &&
-                                                        !crearGeneralidades[0].getPorcentajeamortiza().equals("")){
+                                                if (!crearGeneralidades[0].getRenta().equals("") &&
+                                                        !crearGeneralidades[0].getPorcentajeamortiza().equals("")) {
                                                     GuardarDatosGeneralidades.salvarDatosGeneralidades(getContext(),
                                                             crearGeneralidades[0], editor, preferencesGeneralidades);
                                                     crearGeneralidades[0] = null;
@@ -3130,7 +3066,7 @@ public class FragmentModificar extends Fragment implements
                                     }
                                 };
 
-                                timer.schedule (hourlyTask, 100, 700);
+                                timer.schedule(hourlyTask, 100, 700);
 
 
                                 binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
@@ -3140,23 +3076,26 @@ public class FragmentModificar extends Fragment implements
 
                                         final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
 
-                                        if(!mdIdterminar.equals("") || !mdIdterminar.equals("0")){
+                                        if (!mdIdterminar.equals("") || !mdIdterminar.equals("0")) {
                                             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                                             int day = binding.datepicker.getDayOfMonth();
                                             int month = binding.datepicker.getMonth();
-                                            int year =  binding.datepicker.getYear();
+                                            int year = binding.datepicker.getYear();
 
                                             Calendar calendar = Calendar.getInstance();
                                             calendar.set(year, month, day);
 
                                             String usuarioId = preferences.getString("usuario", "");
                                             String renta = binding.renta.getText().toString();
-                                            String fechadisponible = dateFormat.format(calendar.getTime());;
-                                            String porcentajeamortiza = binding.amortizaciontotal.getText().toString();;
+                                            String fechadisponible = dateFormat.format(calendar.getTime());
+                                            ;
+                                            String porcentajeamortiza = binding.amortizaciontotal.getText().toString();
+                                            ;
 
                                             String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString();
-                                            String periodogracia = binding.periodogracia.getSelectedItem().toString();;
+                                            String periodogracia = binding.periodogracia.getSelectedItem().toString();
+                                            ;
                                             String numtelefono = NUM_TELEFONO;
                                             String versionapp = VERSION_APP;
 
@@ -3166,9 +3105,9 @@ public class FragmentModificar extends Fragment implements
                                             String arra[] = periodogracia.split(" ", 2);
                                             periodogracia = arra[0];
 
-                                            if(disponibilidad[0]!=null && !porcentajeamortiza.equals("")){
-                                                if(disponibilidad[0].equals("1")
-                                                        || disponibilidad[0].equals("2")){
+                                            if (disponibilidad[0] != null && !porcentajeamortiza.equals("")) {
+                                                if (disponibilidad[0].equals("1")
+                                                        || disponibilidad[0].equals("2")) {
 
                                                     crearGeneralidades[0] = new CrearGeneralidades(
                                                             mdIdterminar,
@@ -3182,7 +3121,7 @@ public class FragmentModificar extends Fragment implements
                                                             numtelefono,
                                                             versionapp
                                                     );
-                                                }else{
+                                                } else {
                                                     crearGeneralidades[0] = new CrearGeneralidades(
                                                             mdIdterminar,
                                                             usuarioId,
@@ -3201,13 +3140,13 @@ public class FragmentModificar extends Fragment implements
                                                         crearGeneralidades[0], new ProviderCrearGeneralidades.InterfaceCrearDatosGeneralidades() {
                                                             @Override
                                                             public void resolve(Codigos codigo) {
-                                                                if(codigo.getCodigo()==200){
+                                                                if (codigo.getCodigo() == 200) {
 
                                                                     FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                                    a.show(getChildFragmentManager(),"child");
+                                                                    a.show(getChildFragmentManager(), "child");
                                                                     binding.toolbar.guardar.setEnabled(true);
 
-                                                                }else{
+                                                                } else {
                                                                     Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                                     binding.toolbar.guardar.setEnabled(true);
                                                                 }
@@ -3220,7 +3159,7 @@ public class FragmentModificar extends Fragment implements
                                                         });
 
 
-                                            }else{
+                                            } else {
                                                 Toast.makeText(getContext(), R.string.datos_faltantes, Toast.LENGTH_SHORT).show();
                                                 binding.toolbar.guardar.setEnabled(true);
                                             }
@@ -3256,12 +3195,13 @@ public class FragmentModificar extends Fragment implements
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(),"child");
+                                        a.show(getChildFragmentManager(), "child");
                                     }
                                 });
 
                             }
                         }
+
                         @Override
                         public void reject(Exception e) {
 
@@ -3269,11 +3209,10 @@ public class FragmentModificar extends Fragment implements
                     });
 
 
-
-        }else {
+        } else {
 
             final FragmentAutoriza6Binding binding;
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_6,container,false);
+            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_6, container, false);
             view = binding.getRoot();
             final ArrayList<String> horarios = new ArrayList<>();
 
@@ -3285,7 +3224,7 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(),"child");
+                    a.show(getChildFragmentManager(), "child");
                 }
             });
 
@@ -3309,12 +3248,12 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void onClick(View view) {
 
-                    if (conteos[0]==0) {
+                    if (conteos[0] == 0) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             binding.peatonalConteo.chronometer1.setCountDown(true);
                         }
 
-                        int sec = 60* tiempo[0];
+                        int sec = 60 * tiempo[0];
                         //int sec = 60* 1;
 
                         downTimer[0] = new CountDownTimer(1000 * sec, 1000) {
@@ -3344,37 +3283,37 @@ public class FragmentModificar extends Fragment implements
 
 
                     conteos[0]++;
-                    if(conteos[0]<=9){
-                        binding.peatonalConteo.real.setText(conteos[0]+"");
+                    if (conteos[0] <= 9) {
+                        binding.peatonalConteo.real.setText(conteos[0] + "");
                     }
 
-                    if (conteos[0]>9) {
+                    if (conteos[0] > 9) {
                         String real = String.valueOf(conteos[0]).substring(String.valueOf(conteos[0]).length() - 1);
                         char first = String.valueOf(conteos[0]).charAt(0);
-                        binding.peatonalConteo.real.setText(real+"");
-                        binding.peatonalConteo.diez.setText(first+"");
+                        binding.peatonalConteo.real.setText(real + "");
+                        binding.peatonalConteo.diez.setText(first + "");
                     }
 
-                    if (conteos[0]>99) {
+                    if (conteos[0] > 99) {
                         char primerNumero = String.valueOf(conteos[0]).charAt(0);
                         char segundoNumero = String.valueOf(conteos[0]).charAt(1);
                         char tercerNumero = String.valueOf(conteos[0]).charAt(2);
-                        binding.peatonalConteo.cien.setText(primerNumero+"");
-                        binding.peatonalConteo.diez.setText(segundoNumero+"");
-                        binding.peatonalConteo.real.setText(tercerNumero+"");
+                        binding.peatonalConteo.cien.setText(primerNumero + "");
+                        binding.peatonalConteo.diez.setText(segundoNumero + "");
+                        binding.peatonalConteo.real.setText(tercerNumero + "");
                     }
 
-                    if (conteos[0]>999) {
+                    if (conteos[0] > 999) {
 
                         char primerNumero = String.valueOf(conteos[0]).charAt(0);
                         char segundoNumero = String.valueOf(conteos[0]).charAt(1);
                         char tercerNumero = String.valueOf(conteos[0]).charAt(2);
                         char cuartoNumero = String.valueOf(conteos[0]).charAt(3);
 
-                        binding.peatonalConteo.mil.setText(primerNumero+"");
-                        binding.peatonalConteo.cien.setText(segundoNumero+"");
-                        binding.peatonalConteo.diez.setText(tercerNumero+"");
-                        binding.peatonalConteo.real.setText(cuartoNumero+"");
+                        binding.peatonalConteo.mil.setText(primerNumero + "");
+                        binding.peatonalConteo.cien.setText(segundoNumero + "");
+                        binding.peatonalConteo.diez.setText(tercerNumero + "");
+                        binding.peatonalConteo.real.setText(cuartoNumero + "");
 
                     }
 
@@ -3400,7 +3339,7 @@ public class FragmentModificar extends Fragment implements
 
                     binding.peatonalConteo.presion.setEnabled(true);
 
-                    if(downTimer[0]!=null){
+                    if (downTimer[0] != null) {
                         downTimer[0].cancel();
                     }
 
@@ -3415,20 +3354,20 @@ public class FragmentModificar extends Fragment implements
                     new ProviderHorasPeatonales.InterfaceObtieneHoras() {
                         @Override
                         public void resolve(final HorasPeatonales horasPeatonales) {
-                            if(horasPeatonales.getCodigo()==200){
+                            if (horasPeatonales.getCodigo() == 200) {
                                 tiempo[0] = Integer.parseInt(horasPeatonales.getTiempoConteos());
 
                                 binding.peatonalConteo.chronometer1.setBase(SystemClock.elapsedRealtime() - (tiempo[0] * 60000 + 0 * 1000));
                                 tiempos[0] = TimeUnit.MINUTES.toMillis(tiempo[0]);
-                                if(horasPeatonales.getDetalle().size()<0){
+                                if (horasPeatonales.getDetalle().size() < 0) {
                                     binding.btnFinalizar.setAlpha(0.35f);
-                                }else{
+                                } else {
                                     binding.botones.setVisibility(View.VISIBLE);
                                     binding.btnFinalizar.setEnabled(true);
                                 }
 
-                                for(int i=0;i<horasPeatonales.getDetalle().size();i++){
-                                    horarios.add(horasPeatonales.getDetalle().get(i).getHoraMin()+" - "+
+                                for (int i = 0; i < horasPeatonales.getDetalle().size(); i++) {
+                                    horarios.add(horasPeatonales.getDetalle().get(i).getHoraMin() + " - " +
                                             horasPeatonales.getDetalle().get(i).getHoraMax());
                                 }
 
@@ -3476,13 +3415,13 @@ public class FragmentModificar extends Fragment implements
                                         hoI = hoI.substring(0, 5);
                                         hoF = hoF.substring(0, 5);
 
-                                        hora [0] =  isHourInInterval(strDate, hoI, hoF);
-                                        if(hora [0]!=false){
+                                        hora[0] = isHourInInterval(strDate, hoI, hoF);
+                                        if (hora[0] != false) {
                                             binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
                                             binding.peatonalConteo.btnGuardar.setEnabled(true);
                                             horaInicio = hoI;
                                             horaFinal = hoF;
-                                        }else{
+                                        } else {
                                             binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
                                             binding.peatonalConteo.btnGuardar.setEnabled(false);
                                             hora[0] = false;
@@ -3496,59 +3435,60 @@ public class FragmentModificar extends Fragment implements
                                         final String finalHoI = hoI;
                                         final String finalHoF = hoF;
                                         binding.peatonalConteo.spinnerHora.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-                                            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                                            @Override
+                                            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
 
-                                                if(position==0){
-                                                    hora [0] = isHourInInterval(strDate, finalHoI, finalHoF);
-                                                    if(hora [0]!=false){
+                                                if (position == 0) {
+                                                    hora[0] = isHourInInterval(strDate, finalHoI, finalHoF);
+                                                    if (hora[0] != false) {
                                                         binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
                                                         binding.peatonalConteo.btnGuardar.setEnabled(true);
                                                         horaInicio = finalHoI;
                                                         horaFinal = finalHoF;
-                                                    }else{
+                                                    } else {
                                                         binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
                                                         binding.peatonalConteo.btnGuardar.setEnabled(false);
                                                         hora[0] = false;
                                                     }
                                                 }
 
-                                                if(position==1){
+                                                if (position == 1) {
 
                                                     String hoI = horasPeatonales.getDetalle().get(1).getHoraMin();
                                                     String hoF = horasPeatonales.getDetalle().get(1).getHoraMax();
 
-                                                    hora [0] =  isHourInInterval(strDate, hoI, hoF);
+                                                    hora[0] = isHourInInterval(strDate, hoI, hoF);
 
-                                                    if(hora [0]!=false){
+                                                    if (hora[0] != false) {
                                                         binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
                                                         binding.peatonalConteo.btnGuardar.setEnabled(true);
                                                         horaInicio = hoI;
                                                         horaFinal = hoF;
-                                                    }else{
+                                                    } else {
                                                         binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
                                                         binding.peatonalConteo.btnGuardar.setEnabled(false);
                                                         hora[0] = false;
                                                     }
                                                 }
 
-                                                if(position==2){
+                                                if (position == 2) {
                                                     String hoI;
                                                     String hoF;
-                                                    if(horarios.size()>1){
+                                                    if (horarios.size() > 1) {
                                                         hoI = horasPeatonales.getDetalle().get(2).getHoraMin();
                                                         hoF = horasPeatonales.getDetalle().get(2).getHoraMax();
-                                                    }else{
+                                                    } else {
                                                         hoI = "";
                                                         hoF = "";
                                                     }
 
-                                                    hora [0] = isHourInInterval(strDate, hoI, hoF);
-                                                    if(hora [0]!=false){
+                                                    hora[0] = isHourInInterval(strDate, hoI, hoF);
+                                                    if (hora[0] != false) {
                                                         binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
                                                         binding.peatonalConteo.btnGuardar.setEnabled(true);
                                                         horaInicio = hoI;
                                                         horaFinal = hoF;
-                                                    }else{
+                                                    } else {
                                                         binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
                                                         binding.peatonalConteo.btnGuardar.setEnabled(false);
                                                         hora[0] = false;
@@ -3565,7 +3505,7 @@ public class FragmentModificar extends Fragment implements
                                             @Override
                                             public void onClick(View view) {
                                                 FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                                a.show(getChildFragmentManager(),"child");
+                                                a.show(getChildFragmentManager(), "child");
                                             }
                                         });
 
@@ -3573,7 +3513,7 @@ public class FragmentModificar extends Fragment implements
                                             @Override
                                             public void onClick(View view) {
                                                 binding.peatonalConteo.btnGuardar.setEnabled(false);
-                                                if(conteos[0]>0 && hora [0]){
+                                                if (conteos[0] > 0 && hora[0]) {
 
                                                     ServicioGPS n = new ServicioGPS(getContext());
                                                     CrearPeatonal crearPeatonal = new CrearPeatonal(
@@ -3593,7 +3533,7 @@ public class FragmentModificar extends Fragment implements
                                                     ProviderCrearPeatonal.getInstance(getContext()).guardarPeatonal(crearPeatonal, new ProviderCrearPeatonal.InterfaceCrearDatosPeatonal() {
                                                         @Override
                                                         public void resolve(Codigos codigo) {
-                                                            if(codigo.getCodigo()==200){
+                                                            if (codigo.getCodigo() == 200) {
                                                                 Toast.makeText(getContext(), "Flujo peatonal guardado con éxito", Toast.LENGTH_SHORT).show();
                                                                 binding.peaton.setVisibility(View.GONE);
                                                                 binding.recyclerPeatonal.setVisibility(View.VISIBLE);
@@ -3624,17 +3564,18 @@ public class FragmentModificar extends Fragment implements
                                                                 binding.peatonalConteo.diez.setText("0");
                                                                 binding.peatonalConteo.presion.setEnabled(true);
 
-                                                                if(downTimer[0]!=null){
+                                                                if (downTimer[0] != null) {
                                                                     downTimer[0].cancel();
                                                                 }
-                                                            }else{
+                                                            } else {
                                                                 Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                                 binding.peatonalConteo.btnGuardar.setEnabled(true);
                                                             }
                                                         }
 
                                                         @Override
-                                                        public void reject(Exception e) { }
+                                                        public void reject(Exception e) {
+                                                        }
                                                     });
                                                 } else {
                                                     binding.peatonalConteo.btnGuardar.setEnabled(true);
@@ -3669,7 +3610,7 @@ public class FragmentModificar extends Fragment implements
                                                 binding.peatonalConteo.diez.setText("0");
                                                 binding.peatonalConteo.presion.setEnabled(true);
                                                 binding.peatonalConteo.contador.setText("00:00");
-                                                if(downTimer[0]!=null){
+                                                if (downTimer[0] != null) {
                                                     downTimer[0].cancel();
                                                 }
                                             }
@@ -3705,13 +3646,13 @@ public class FragmentModificar extends Fragment implements
     }
 
     public static boolean isHourInInterval(String target, String start, String end) {
-        return ((target.compareTo(start) >= 0)&& (target.compareTo(end) <= 0));
+        return ((target.compareTo(start) >= 0) && (target.compareTo(end) <= 0));
     }
 
 
     public void generarDetalles(FragmentAutoriza4Binding binding,
                                 final FactoresConstruccion factoresConstruccion,
-                                DatosConstruccions datosConstruccion){
+                                DatosConstruccions datosConstruccion) {
 
         Resources resource = getContext().getResources();
         binding.factores.removeAllViews();
@@ -3722,7 +3663,7 @@ public class FragmentModificar extends Fragment implements
         checks = new HashMap<Integer, String>();
 
 
-        for(int i = 0;i<factoresConstruccion.getCatalogo().size(); i ++) {
+        for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
             if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
                 for (int j = 0; j < factoresConstruccion.getCatalogo().get(i).getDetalles().size(); j++) {
 
@@ -3735,11 +3676,11 @@ public class FragmentModificar extends Fragment implements
                     check.setId(niv);
                     check.setGravity(Gravity.CENTER);
 
-                    for(int n = 0;n<datosConstruccion.getConstruccion().size(); n ++) {
+                    for (int n = 0; n < datosConstruccion.getConstruccion().size(); n++) {
                         for (int m = 0; m < datosConstruccion.getConstruccion().get(n).getDetalles().size(); m++) {
                             int nivelId = datosConstruccion.getConstruccion().get(0).getDetalles().get(m).getDetalleid();
                             int factor = check.getId();
-                            if(factor==nivelId){
+                            if (factor == nivelId) {
                                 check.setChecked(true);
                             }
 
@@ -3788,8 +3729,10 @@ public class FragmentModificar extends Fragment implements
 
     File photoFile;
     Uri photoURI;
+
     /**
      * método para realizar la respuesta de cada intent que se hace en la actividad (ver pdf, tomar foto)
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -3799,69 +3742,25 @@ public class FragmentModificar extends Fragment implements
         super.onActivityResult(requestCode, resultCode, data);
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         String mdIdterminar = preferences.getString("mdIdterminar", "");
-        if (requestCode == CAMERA_FRONTAL && resultCode==-1) {
-            if(resultCode==0){
-//                try {
-//                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoURI);
-//                     base64frente = encodeTobase64(bitmap);
-//                     base64frente = b64(bitmap);
-//                     fechaFrente = getFechaHora();
-//                     obtenerUrl(random()+"_frente", base64frente, mdIdterminar);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+        if (requestCode == CAMERA_FRONTAL && resultCode == -1) {
+            fechaFrente = getFechaHora();
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
+        } else if (requestCode == CAMERA_LATERAL_1 && resultCode == -1) {
+            fechaEntorno1 = getFechaHora();
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));
+        } else if (requestCode == CAMERA_PREDIAL && resultCode == -1) {
+            fechaPredial = getFechaHora();
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "1", Uri.parse(imageFilePath));
 
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64frente = b64(bit);
-                fechaFrente = getFechaHora();
-                obtenerUrl(random()+"_frente", base64frente, mdIdterminar);
-
-            }
-        }else if(requestCode == CAMERA_LATERAL_1 && resultCode==-1){
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64Lateral1 = b64(bit);
-                fechaEntorno1 = getFechaHora();
-                obtenerUrl(random()+"_lateral1", base64Lateral1, mdIdterminar);
-
-            }
-        }else if(requestCode == CAMERA_PREDIAL && resultCode==-1){
-            if(resultCode==0){
-
-            }else{
-
-                fechaPredial = getFechaHora();
-                Bitmap bitfromPath = getBitmap(imageFilePath);
-                base64Predial = getStringImage(compressImage(bitfromPath, 650));
-                obtenerUrl("6"+random()+"_predial", base64Predial, mdIdterminar);
-
-            }
-        }else if(requestCode == CAMERA_LATERAL_2 && resultCode==-1){
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64Lateral2 = b64(bit);
-                fechaEntorno2 = getFechaHora();
-                obtenerUrl(random()+"_lateral2", base64Lateral2, mdIdterminar);
-            }
-        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
+        } else if (requestCode == CAMERA_LATERAL_2 && resultCode == -1) {
+            fechaEntorno2 = getFechaHora();
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_lateral2", "png", "1", Uri.parse(imageFilePath));
+        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
-            try {
-                fechaPredial = getFechaHora();
-                //Cómo obtener el mapa de bits de la Galería
-                Bitmap bitfromPath = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
-                base64Predial = getStringImage(compressImage(bitfromPath, 650));
-                obtenerUrl("6",random()+"_predial", base64Predial, mdIdterminar);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }else if(resultCode == 0){
+            fechaPredial = getFechaHora();
+            String filePathUri = saveFile(filePath,random() + "_predial" );
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "1", Uri.parse(filePathUri));
+        } else if (resultCode == 0) {
 
 
         }
@@ -3875,14 +3774,16 @@ public class FragmentModificar extends Fragment implements
 
     ProgressDialog progressDialog;
 
-    public void obtenerUrl(String foto, String b64, String mdId){
+    //public void obtenerUrl(String foto, String b64, String mdId){
+    public void obtenerUrl(final String mdId, final String nombreImg, final String formato, final String tipoArchivo, final Uri uri) {
         loadingProgress(progressDialog, 0);
-        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
+        //ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
+        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, nombreImg, formato, tipoArchivo, uri, new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
-                if(codigo.getCodigo()==200){
-                    if(codigo!= null && codigo.getResultado().getSecureUrl()!=null){
-                        if(codigo.getResultado().getSecureUrl().contains("frente")){
+                if (codigo.getCodigo() == 200) {
+                    if (codigo != null && codigo.getResultado().getSecureUrl() != null) {
+                        if (codigo.getResultado().getSecureUrl().contains("frente")) {
                             bindingSuperficie.frontal.setEnabled(false);
                             urlFrente = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
@@ -3891,7 +3792,7 @@ public class FragmentModificar extends Fragment implements
                             hourlyTask.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
 
-                        }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
+                        } else if (codigo.getResultado().getSecureUrl().contains("lateral1")) {
                             bindingSuperficie.lateral1.setEnabled(false);
                             urlLateral1 = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
@@ -3900,7 +3801,7 @@ public class FragmentModificar extends Fragment implements
                             hourlyTask.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
 
-                        }else if(codigo.getResultado().getSecureUrl().contains("predial")){
+                        } else if (codigo.getResultado().getSecureUrl().contains("predial")) {
                             bindingSuperficie.predial.setEnabled(false);
                             urlPredial = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
@@ -3909,7 +3810,7 @@ public class FragmentModificar extends Fragment implements
                             hourlyTask.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
 
-                        } else{
+                        } else {
                             bindingSuperficie.lateral2.setEnabled(false);
                             urlLateral2 = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
@@ -3919,12 +3820,12 @@ public class FragmentModificar extends Fragment implements
                             loadingProgress(progressDialog, 1);
 
                         }
-                    }else{
+                    } else {
                         loadingProgress(progressDialog, 1);
                         Toast.makeText(getContext(), R.string.err_foto,
                                 Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     loadingProgress(progressDialog, 1);
                     Toast.makeText(getContext(), R.string.err_foto,
                             Toast.LENGTH_SHORT).show();
@@ -3932,10 +3833,11 @@ public class FragmentModificar extends Fragment implements
             }
 
             @Override
-            public void reject(Exception e) { }
+            public void reject(Exception e) {
+            }
         });
     }
-
+/*
     public void obtenerUrl(String tipoPredial, String foto, String b64, String mdId){
         loadingProgress(progressDialog, 0);
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(tipoPredial, mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
@@ -3987,9 +3889,10 @@ public class FragmentModificar extends Fragment implements
 
             }
         });
-    }
+    }*/
 
     String imageFilePath;
+
     private File createImageFile(Context c) throws IOException {
         String timeStamp =
                 new SimpleDateFormat("yyyyMMdd_HHmmss",
@@ -4015,23 +3918,23 @@ public class FragmentModificar extends Fragment implements
     private String b64(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
     public static String encodeTobase64(Bitmap image) {
-        Bitmap immagex=image;
+        Bitmap immagex = image;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         immagex.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
         return imageEncoded;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_usuario, menu);
-        menu.add(0,1,1, Util.menuIcon(getResources().getDrawable(R.drawable.ic_vpn_key_black_24dp),
+        menu.add(0, 1, 1, Util.menuIcon(getResources().getDrawable(R.drawable.ic_vpn_key_black_24dp),
                 getResources().getString(R.string.cambiarContra)));
         menu.add(0, 2, 2, Util.menuIcon(getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),
                 getResources().getString(R.string.salir)));
@@ -4039,6 +3942,7 @@ public class FragmentModificar extends Fragment implements
 
     /**
      * Método que tiene la acción del menu posterior derecha
+     *
      * @param item
      * @return
      */
@@ -4046,7 +3950,7 @@ public class FragmentModificar extends Fragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case 1:
                 //  Log.e("contra", "contra");
 
@@ -4060,7 +3964,7 @@ public class FragmentModificar extends Fragment implements
 
     String mensaje = null;
 
-    public void slideUX(final FragmentAutoriza3Binding binding){
+    public void slideUX(final FragmentAutoriza3Binding binding) {
         slideGenerador = new SlideUpBuilder(binding.content2.slideView)
                 .withListeners(new SlideUp.Listener.Events() {
                     @Override
@@ -4070,7 +3974,7 @@ public class FragmentModificar extends Fragment implements
 
                     @Override
                     public void onVisibilityChanged(int visibility) {
-                        if (visibility == 0){
+                        if (visibility == 0) {
 
                         }
                     }
@@ -4089,8 +3993,8 @@ public class FragmentModificar extends Fragment implements
 
                     @Override
                     public void onVisibilityChanged(int visibility) {
-                        if (visibility == View.GONE){
-                            if (visibility == 0){
+                        if (visibility == View.GONE) {
+                            if (visibility == 0) {
 
                             }
                         }
@@ -4104,34 +4008,35 @@ public class FragmentModificar extends Fragment implements
     }
 
     ArrayList<Peatonal> peatonales;
-    public void listaPeatonal(final FragmentAutoriza6Binding binding){
+
+    public void listaPeatonal(final FragmentAutoriza6Binding binding) {
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         String mdid = preferences.getString("mdIdterminar", "");
         String usuario = preferences.getString("usuario", "");
-        ProviderDatosPeatonal.getInstance(getContext()).obtenerDatosPeatonal(mdid, usuario,new ProviderDatosPeatonal.ConsultaPeatonal() {
+        ProviderDatosPeatonal.getInstance(getContext()).obtenerDatosPeatonal(mdid, usuario, new ProviderDatosPeatonal.ConsultaPeatonal() {
             @Override
             public void resolve(Peatonales peatonal) {
                 peatonales = new ArrayList<>();
-                if(peatonal!=null && peatonal.getCodigo()==200){
-                    if(peatonal.getConteos().size()>0){
-                        for(int i=0;i<peatonal.getConteos().size();i++){
-                            if(peatonal.getConteos().get(i).getDetalle().size()>=3){
+                if (peatonal != null && peatonal.getCodigo() == 200) {
+                    if (peatonal.getConteos().size() > 0) {
+                        for (int i = 0; i < peatonal.getConteos().size(); i++) {
+                            if (peatonal.getConteos().get(i).getDetalle().size() >= 3) {
                                 binding.btnFinalizar.setAlpha(1.0f);
                                 binding.btnFinalizar.setEnabled(true);
-                            }else{
+                            } else {
                                 binding.btnFinalizar.setAlpha(0.35f);
                                 binding.btnFinalizar.setEnabled(false);
                             }
 
-                            for(int j=0;j<peatonal.getConteos().get(i).getDetalle().size();j++){
+                            for (int j = 0; j < peatonal.getConteos().get(i).getDetalle().size(); j++) {
                                 peatonales.add(new Peatonal(j,
                                         peatonal.getConteos().get(i).getDetalle().get(j).getFecha(),
                                         Integer.valueOf(peatonal.getConteos().get(i).getDetalle().get(j).getValor()),
-                                        0.0,0.0, peatonal.getConteos().get(i).getDetalle().get(j).getNombreGenerador()));
+                                        0.0, 0.0, peatonal.getConteos().get(i).getDetalle().get(j).getNombreGenerador()));
                             }
                         }
                         binding.ciudad.setVisibility(View.VISIBLE);
-                        binding.promedio.setText("Promedio peatonal "+ peatonal.getConteos().get(0).getPromedioPeatonal()+"");
+                        binding.promedio.setText("Promedio peatonal " + peatonal.getConteos().get(0).getPromedioPeatonal() + "");
                         binding.recyclerPeatonal.setHasFixedSize(true);
                         AdapterAutorizaPeatonal adapter = new AdapterAutorizaPeatonal(getContext(), ALPHABETICAL_COMPARATOR, n);
                         binding.recyclerPeatonal.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -4140,24 +4045,26 @@ public class FragmentModificar extends Fragment implements
                         adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
 
                         int i = binding.peaton.getVisibility();
-                        if(i==8){
+                        if (i == 8) {
                             binding.ciudad.setVisibility(View.VISIBLE);
-                        }else{
+                        } else {
                             binding.ciudad.setVisibility(View.GONE);
                         }
 
-                    }else{
+                    } else {
                         binding.btnFinalizar.setAlpha(0.35f);
                         binding.btnFinalizar.setEnabled(false);
                     }
-                }else{
+                } else {
                     binding.ciudad.setVisibility(View.GONE);
                     binding.btnFinalizar.setAlpha(0.35f);
                     binding.btnFinalizar.setEnabled(false);
                 }
             }
+
             @Override
-            public void reject(Exception e) { }
+            public void reject(Exception e) {
+            }
         });
     }
 
@@ -4254,21 +4161,21 @@ public class FragmentModificar extends Fragment implements
             longitude = gpsUbicas.getLongitude();
             ubicacion = new Ubicacion(latitude, longitude, true);
         } else {
-            if(latitudeLast!=null){
+            if (latitudeLast != null) {
                 ubicacion = new Ubicacion(latitudeLast, longitudeLast, false);
-            }else{
+            } else {
                 ubicacion = new Ubicacion(0.0, 0.0, false);
             }
         }
         return ubicacion;
     }
 
-    public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng){
+    public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng) {
         Geocoder geocoder;
         List<Address> addresses = null;
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
-            if(mCenterLatLong!=null){
+            if (mCenterLatLong != null) {
                 addresses = geocoder.getFromLocation(lat, lng, 1);
                 String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                 String city = addresses.get(0).getLocality();
@@ -4296,8 +4203,10 @@ public class FragmentModificar extends Fragment implements
     ArrayList<Marker> markers = new ArrayList<>();
     ArrayList<CrearZonificacion.Zonificacion> competencia;
     ArrayList<CrearZonificacion.Zonificacion> generadores;
-    ArrayList<CrearZonificacion.Detalle> detallesC = new ArrayList<>();;
-    ArrayList<CrearZonificacion.Detalle> detallesG = new ArrayList<>();;
+    ArrayList<CrearZonificacion.Detalle> detallesC = new ArrayList<>();
+    ;
+    ArrayList<CrearZonificacion.Detalle> detallesG = new ArrayList<>();
+    ;
 
     CrearZonificacion.Detalle detalleC;
     CrearZonificacion.Detalle detalleG;
@@ -4307,45 +4216,45 @@ public class FragmentModificar extends Fragment implements
 
     public void colocarMarcador(LatLng latLng, GoogleMap mMap, int valor,
                                 String usuario, LatLng mds, String mdIdZ,
-                                ArrayList<Zonificacion.Detalle> detallesGene, ArrayList<Zonificacion.Detalle> detallesCompe){
+                                ArrayList<Zonificacion.Detalle> detallesGene, ArrayList<Zonificacion.Detalle> detallesCompe) {
 
-        if(valor==1){
+        if (valor == 1) {
             icon = getBitmapDescriptor(R.drawable.bbb);
-        }else if(valor==2){
+        } else if (valor == 2) {
             icon = getBitmapDescriptor(R.drawable.oxxo);
-        }else if(valor==3){
+        } else if (valor == 3) {
             icon = getBitmapDescriptor(R.drawable.bodegaa);
-        }else if(valor==4){
+        } else if (valor == 4) {
             icon = getBitmapDescriptor(R.drawable.abarrotes);
-        }else if(valor==5){
+        } else if (valor == 5) {
             icon = getBitmapDescriptor(R.drawable.g_iglesia);
-        }else if(valor==6){
+        } else if (valor == 6) {
             icon = getBitmapDescriptor(R.drawable.g_mercado);
-        }else if(valor==7){
+        } else if (valor == 7) {
             icon = getBitmapDescriptor(R.drawable.escuela);
-        }else if(valor==8){
+        } else if (valor == 8) {
             icon = getBitmapDescriptor(R.drawable.g_busstop);
-        }else if(valor==9){
+        } else if (valor == 9) {
             icon = getBitmapDescriptor(R.drawable.otros);
-        }else if(valor==10){
+        } else if (valor == 10) {
             icon = getBitmapDescriptor(R.drawable.netos);
-        }else if(valor==11){
+        } else if (valor == 11) {
             icon = getBitmapDescriptor(R.drawable.g_recauderia);
-        }else if(valor==12){
+        } else if (valor == 12) {
             icon = getBitmapDescriptor(R.drawable.g_comida);
-        }else if(valor==13){
+        } else if (valor == 13) {
             icon = getBitmapDescriptor(R.drawable.g_mercado);
-        }else if(valor==14){
+        } else if (valor == 14) {
             icon = getBitmapDescriptor(R.drawable.g_tianguis);
-        }else if(valor==15){
+        } else if (valor == 15) {
             icon = getBitmapDescriptor(R.drawable.g_tortilleria);
-        }else if(valor==16){
+        } else if (valor == 16) {
             icon = getBitmapDescriptor(R.drawable.g_carniceria);
-        }else if(valor==17){
+        } else if (valor == 17) {
             icon = getBitmapDescriptor(R.drawable.g_busstop);
         }
 
-        if(mMap!=null){
+        if (mMap != null) {
             market = mMap.addMarker(new
                     MarkerOptions().
                     position(latLng).
@@ -4354,8 +4263,8 @@ public class FragmentModificar extends Fragment implements
             market.setVisible(true);
             markers.add(market);
 
-            if(valor == 1 || valor == 2 || valor == 3
-                    || valor == 4 || valor == 10 ){
+            if (valor == 1 || valor == 2 || valor == 3
+                    || valor == 4 || valor == 10) {
 
                 detalleC = new CrearZonificacion.Detalle(
                         String.valueOf(valor),
@@ -4371,10 +4280,10 @@ public class FragmentModificar extends Fragment implements
                 competencia = new ArrayList<>();
                 competencia.add(zonificacionC);
 
-            }else if(valor == 5 || valor == 6 || valor == 7 ||
+            } else if (valor == 5 || valor == 6 || valor == 7 ||
                     valor == 8 || valor == 9 ||
                     valor == 11 || valor == 12 || valor == 13 || valor == 14
-                    || valor == 15 || valor == 16 || valor == 17){
+                    || valor == 15 || valor == 16 || valor == 17) {
 
                 detalleG = new CrearZonificacion.Detalle(
                         String.valueOf(valor),
@@ -4391,12 +4300,14 @@ public class FragmentModificar extends Fragment implements
                 generadores.add(zonificacionG);
             }
 
-            if(generadores==null){}
+            if (generadores == null) {
+            }
 
-            if(competencia==null){}
+            if (competencia == null) {
+            }
 
-            if(detallesGene!=null){
-                if(detallesGene.size()==0){
+            if (detallesGene != null) {
+                if (detallesGene.size() == 0) {
 //                    detallesG = new ArrayList<>();;
 //
 //                    detalleG = new CrearZonificacion.Detalle(
@@ -4411,8 +4322,8 @@ public class FragmentModificar extends Fragment implements
                 }
             }
 
-            if(detallesCompe!=null){
-                if(detallesCompe.size()==0){
+            if (detallesCompe != null) {
+                if (detallesCompe.size() == 0) {
 //                    detallesC = new ArrayList<>();
 //                    detalleC = new CrearZonificacion.Detalle(
 //                            "1"
@@ -4460,12 +4371,13 @@ public class FragmentModificar extends Fragment implements
     }
 
     DatosConstruccions datosSitios;
-    public void getIdConstruccion(DatosConstruccions construccion){
 
-        for(int i=0;i<construccion.getConstruccion().size();i++){
-            for(int j=0;j<construccion.getConstruccion().get(i).getDetalles().size();j++){
+    public void getIdConstruccion(DatosConstruccions construccion) {
 
-                if(construccion.getConstruccion().get(i).getDetalles().size()==4){
+        for (int i = 0; i < construccion.getConstruccion().size(); i++) {
+            for (int j = 0; j < construccion.getConstruccion().get(i).getDetalles().size(); j++) {
+
+                if (construccion.getConstruccion().get(i).getDetalles().size() == 4) {
 
                 }
             }
@@ -4473,7 +4385,7 @@ public class FragmentModificar extends Fragment implements
     }
 
 
-    public String distancia(LatLng latLng, LatLng mdId, String tipo){
+    public String distancia(LatLng latLng, LatLng mdId, String tipo) {
         Location loc1 = new Location("");
         loc1.setLatitude(latLng.latitude);
         loc1.setLongitude(latLng.longitude);
@@ -4484,20 +4396,20 @@ public class FragmentModificar extends Fragment implements
 
         float distanciaMetros = loc1.distanceTo(loc2);
 
-        if(tipo.equals("competencia")){
-            if(distanciaMetros <= 500){
+        if (tipo.equals("competencia")) {
+            if (distanciaMetros <= 500) {
                 return "8";
-            }else if(distanciaMetros>=500 && distanciaMetros<=1500){
+            } else if (distanciaMetros >= 500 && distanciaMetros <= 1500) {
                 return "8";
-            }else{
+            } else {
                 return "8";
             }
-        }else{
-            if(distanciaMetros <= 500){
+        } else {
+            if (distanciaMetros <= 500) {
                 return "8";
-            }else if(distanciaMetros>=500 && distanciaMetros<=1500){
+            } else if (distanciaMetros >= 500 && distanciaMetros <= 1500) {
                 return "8";
-            }else{
+            } else {
                 return "8";
             }
         }
@@ -4514,45 +4426,45 @@ public class FragmentModificar extends Fragment implements
 
     public void colocarMarcadorZoni(LatLng latLng, GoogleMap mMap, int valor,
                                     String usuario, LatLng mds, String mdIdZ,
-                                    ArrayList<Zonificacion.Detalle> detallesGene, ArrayList<Zonificacion.Detalle> detallesCompe, String nivel){
+                                    ArrayList<Zonificacion.Detalle> detallesGene, ArrayList<Zonificacion.Detalle> detallesCompe, String nivel) {
 
-        if(valor==1){
+        if (valor == 1) {
             icon = getBitmapDescriptor(R.drawable.bbb);
-        }else if(valor==2){
+        } else if (valor == 2) {
             icon = getBitmapDescriptor(R.drawable.oxxo);
-        }else if(valor==3){
+        } else if (valor == 3) {
             icon = getBitmapDescriptor(R.drawable.bodegaa);
-        }else if(valor==4){
+        } else if (valor == 4) {
             icon = getBitmapDescriptor(R.drawable.abarrotes);
-        }else if(valor==5){
+        } else if (valor == 5) {
             icon = getBitmapDescriptor(R.drawable.g_iglesia);
-        }else if(valor==6){
+        } else if (valor == 6) {
             icon = getBitmapDescriptor(R.drawable.g_mercado);
-        }else if(valor==7){
+        } else if (valor == 7) {
             icon = getBitmapDescriptor(R.drawable.g_escuela);
-        }else if(valor==8){
+        } else if (valor == 8) {
             icon = getBitmapDescriptor(R.drawable.g_busstop);
-        }else if(valor==9){
+        } else if (valor == 9) {
             icon = getBitmapDescriptor(R.drawable.otros);
-        }else if(valor==10){
+        } else if (valor == 10) {
             icon = getBitmapDescriptor(R.drawable.netos);
-        }else if(valor==11){
+        } else if (valor == 11) {
             icon = getBitmapDescriptor(R.drawable.g_recauderia);
-        }else if(valor==12){
+        } else if (valor == 12) {
             icon = getBitmapDescriptor(R.drawable.g_comida);
-        }else if(valor==13){
+        } else if (valor == 13) {
             icon = getBitmapDescriptor(R.drawable.g_mercado);
-        }else if(valor==14){
+        } else if (valor == 14) {
             icon = getBitmapDescriptor(R.drawable.g_tianguis);
-        }else if(valor==15){
+        } else if (valor == 15) {
             icon = getBitmapDescriptor(R.drawable.g_tortilleria);
-        }else if(valor==16){
+        } else if (valor == 16) {
             icon = getBitmapDescriptor(R.drawable.g_carniceria);
-        }else if(valor==17){
+        } else if (valor == 17) {
             icon = getBitmapDescriptor(R.drawable.g_busstop);
         }
 
-        if(mMap!=null){
+        if (mMap != null) {
             market = mMap.addMarker(new
                     MarkerOptions().
                     position(latLng).
@@ -4562,9 +4474,8 @@ public class FragmentModificar extends Fragment implements
             markers.add(market);
 
 
-
-            if(valor == 1 || valor == 2 || valor == 3
-                    || valor == 4 || valor == 10 ){
+            if (valor == 1 || valor == 2 || valor == 3
+                    || valor == 4 || valor == 10) {
 
                 detalleC = new CrearZonificacion.Detalle(
                         String.valueOf(valor),
@@ -4580,10 +4491,10 @@ public class FragmentModificar extends Fragment implements
                 competencia = new ArrayList<>();
                 competencia.add(zonificacionC);
 
-            }else if(valor == 5 || valor == 6 || valor == 7 ||
+            } else if (valor == 5 || valor == 6 || valor == 7 ||
                     valor == 8 || valor == 9 ||
                     valor == 11 || valor == 12 || valor == 13 || valor == 14
-                    || valor == 15 || valor == 16 || valor == 17){
+                    || valor == 15 || valor == 16 || valor == 17) {
 
                 detalleG = new CrearZonificacion.Detalle(
                         String.valueOf(valor),
@@ -4600,12 +4511,14 @@ public class FragmentModificar extends Fragment implements
                 generadores.add(zonificacionG);
             }
 
-            if(generadores==null){}
+            if (generadores == null) {
+            }
 
-            if(competencia==null){}
+            if (competencia == null) {
+            }
 
-            if(detallesGene!=null){
-                if(detallesGene.size()==0){
+            if (detallesGene != null) {
+                if (detallesGene.size() == 0) {
 //                    detallesG = new ArrayList<>();;
 //
 //                    detalleG = new CrearZonificacion.Detalle(
@@ -4620,8 +4533,8 @@ public class FragmentModificar extends Fragment implements
                 }
             }
 
-            if(detallesCompe!=null){
-                if(detallesCompe.size()==0){
+            if (detallesCompe != null) {
+                if (detallesCompe.size() == 0) {
 //                    detallesC = new ArrayList<>();
 //                    detalleC = new CrearZonificacion.Detalle(
 //                            "1"
@@ -4690,15 +4603,15 @@ public class FragmentModificar extends Fragment implements
     public void generarConstruccion(final FragmentAutoriza4Binding binding,
                                     final FactoresConstruccion factoresConstruccion,
                                     DatosConstruccions listaSubfactores) {
-        if(factoresConstruccion!=null){
+        if (factoresConstruccion != null) {
             final RadioButton[] rb = new RadioButton[2];
             RadioGroup rg = new RadioGroup(getContext());
             rg.setOrientation(RadioGroup.VERTICAL);
-            for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
-                if(factoresConstruccion.getCatalogo().get(i).getNivelid()==1
-                        || factoresConstruccion.getCatalogo().get(i).getNivelid()==2){
+            for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
+                if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 1
+                        || factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
 
-                    rb[i]  = new RadioButton(getContext());
+                    rb[i] = new RadioButton(getContext());
                     rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
                     rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
 
@@ -4713,10 +4626,10 @@ public class FragmentModificar extends Fragment implements
                     int radioButtonID = group.getCheckedRadioButtonId();
                     View radioButton = group.findViewById(radioButtonID);
                     nivelId = group.indexOfChild(radioButton);
-                    if(checkedId==1){
+                    if (checkedId == 1) {
                         nivelId = 1;
                         binding.linearLayout.setVisibility(View.GONE);
-                    }else if(checkedId==2){
+                    } else if (checkedId == 2) {
                         nivelId = 2;
                         binding.linearLayout.setVisibility(View.VISIBLE);
 
@@ -4726,14 +4639,14 @@ public class FragmentModificar extends Fragment implements
 
             binding.local.addView(rg);
 
-            if(listaSubfactores.getConstruccion()!=null){
-                if(listaSubfactores.getConstruccion().get(0).getNivelid()==1){
+            if (listaSubfactores.getConstruccion() != null) {
+                if (listaSubfactores.getConstruccion().get(0).getNivelid() == 1) {
                     rb[0].setChecked(true);
                     //nivelId = 1;
-                }else if(listaSubfactores.getConstruccion().get(0).getNivelid()==2){
+                } else if (listaSubfactores.getConstruccion().get(0).getNivelid() == 2) {
                     rb[1].setChecked(true);
                     //nivelId = 1;
-                }else{
+                } else {
                     binding.linearLayout.setVisibility(View.VISIBLE);
                     //nivelId = 2;
                     rb[1].setChecked(true);
@@ -4747,10 +4660,10 @@ public class FragmentModificar extends Fragment implements
         final RadioButton[] rb = new RadioButton[2];
         RadioGroup rg = new RadioGroup(getContext());
         rg.setOrientation(RadioGroup.VERTICAL);
-        for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
-            if(factoresConstruccion.getCatalogo().get(i).getNivelid()==1
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==2){
-                rb[i]  = new RadioButton(getContext());
+        for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
+            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 1
+                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
+                rb[i] = new RadioButton(getContext());
                 rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
                 rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
                 rg.addView(rb[i]);
@@ -4764,10 +4677,10 @@ public class FragmentModificar extends Fragment implements
                 int radioButtonID = group.getCheckedRadioButtonId();
                 View radioButton = group.findViewById(radioButtonID);
                 nivelId = group.indexOfChild(radioButton);
-                if(checkedId==1){
+                if (checkedId == 1) {
                     nivelId = 1;
                     binding.linearLayout.setVisibility(View.GONE);
-                }else if(checkedId==2){
+                } else if (checkedId == 2) {
                     nivelId = 2;
                     binding.linearLayout.setVisibility(View.VISIBLE);
 
@@ -4779,6 +4692,7 @@ public class FragmentModificar extends Fragment implements
     }
 
     int nivelIdCondicion;
+
     public void generarCondiciones(final FragmentAutoriza4Binding binding,
                                    final FactoresConstruccion factoresConstruccion,
                                    DatosConstruccions datosConstruccion) {
@@ -4787,32 +4701,32 @@ public class FragmentModificar extends Fragment implements
         RadioGroup rg = new RadioGroup(getContext());
         rg.setOrientation(RadioGroup.VERTICAL);
         final int textColor = Color.parseColor("#254581");
-        for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
-            if(factoresConstruccion.getCatalogo().get(i).getNivelid()==3
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==4
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==5){
+        for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
+            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 3
+                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 4
+                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 5) {
 
-                rb[i]  = new RadioButton(getContext());
+                rb[i] = new RadioButton(getContext());
                 rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
                 int niv = factoresConstruccion.getCatalogo().get(i).getNivelid();
                 rb[i].setId(niv);
                 rg.addView(rb[i]);
 
-                if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
+                if (rb[i].getId() == datosConstruccion.getConstruccion().get(1).getNivelid()) {
                     // nivelIdCondicion = 3;
                     rb[i].setChecked(true);
                     rb[i].setTextColor(Color.parseColor("#254581"));
                     rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
                 }
 
-                if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
+                if (rb[i].getId() == datosConstruccion.getConstruccion().get(1).getNivelid()) {
                     //nivelIdCondicion = 4;
                     rb[i].setChecked(true);
                     rb[i].setTextColor(Color.parseColor("#254581"));
                     rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
                 }
 
-                if(rb[i].getId()==datosConstruccion.getConstruccion().get(1).getNivelid()){
+                if (rb[i].getId() == datosConstruccion.getConstruccion().get(1).getNivelid()) {
                     // nivelIdCondicion = 5;
                     rb[i].setChecked(true);
                     rb[i].setTextColor(Color.parseColor("#254581"));
@@ -4827,11 +4741,11 @@ public class FragmentModificar extends Fragment implements
                 int radioBttonID = group.getCheckedRadioButtonId();
                 View radioButton = group.findViewById(radioBttonID);
                 int nivelId = group.indexOfChild(radioButton);
-                if(checkedId==3){
+                if (checkedId == 3) {
                     nivelIdCondicion = 3;
-                }else if(checkedId == 4){
+                } else if (checkedId == 4) {
                     nivelIdCondicion = 4;
-                }else if(checkedId == 5){
+                } else if (checkedId == 5) {
                     nivelIdCondicion = 5;
                 }
             }
@@ -4845,13 +4759,13 @@ public class FragmentModificar extends Fragment implements
         final RadioButton[] rb = new RadioButton[factoresConstruccion.getCatalogo().size()];
         RadioGroup rg = new RadioGroup(getContext());
         rg.setOrientation(RadioGroup.VERTICAL);
-        for(int i=0; i<factoresConstruccion.getCatalogo().size(); i++){
+        for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
 
-            if(factoresConstruccion.getCatalogo().get(i).getNivelid()==3
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==4
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid()==5){
+            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 3
+                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 4
+                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 5) {
 
-                rb[i]  = new RadioButton(getContext());
+                rb[i] = new RadioButton(getContext());
                 rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
                 rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
                 rg.addView(rb[i]);
@@ -4867,11 +4781,11 @@ public class FragmentModificar extends Fragment implements
                 int radioBttonID = group.getCheckedRadioButtonId();
                 View radioButton = group.findViewById(radioBttonID);
                 int nivelId = group.indexOfChild(radioButton);
-                if(checkedId==3){
+                if (checkedId == 3) {
                     nivelIdCondicion = 3;
-                }else if(checkedId == 4){
+                } else if (checkedId == 4) {
                     nivelIdCondicion = 4;
-                }else if(checkedId == 5){
+                } else if (checkedId == 5) {
                     nivelIdCondicion = 5;
                 }
             }
@@ -4881,7 +4795,7 @@ public class FragmentModificar extends Fragment implements
 
     }
 
-    public void generarDetalles(FragmentAutoriza4Binding binding, final FactoresConstruccion factoresConstruccion){
+    public void generarDetalles(FragmentAutoriza4Binding binding, final FactoresConstruccion factoresConstruccion) {
 
         Resources resource = getContext().getResources();
         binding.factores.removeAllViews();
@@ -4891,7 +4805,7 @@ public class FragmentModificar extends Fragment implements
 
         checks = new HashMap<Integer, String>();
 
-        for(int i = 0;i<factoresConstruccion.getCatalogo().size(); i ++) {
+        for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
             if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
                 for (int j = 0; j < factoresConstruccion.getCatalogo().get(i).getDetalles().size(); j++) {
 
@@ -4939,7 +4853,7 @@ public class FragmentModificar extends Fragment implements
         }
     }
 
-    public String getFechaHora(){
+    public String getFechaHora() {
         long timeInMillis = System.currentTimeMillis();
         Calendar cal1 = Calendar.getInstance();
         cal1.setTimeInMillis(timeInMillis);
@@ -4950,12 +4864,12 @@ public class FragmentModificar extends Fragment implements
     }
 
 
-    public void datosConstruccion(String md, String usuarioId, DatosConstruccions datosConstruccions){
+    public void datosConstruccion(String md, String usuarioId, DatosConstruccions datosConstruccions) {
 
-        if(datosConstruccions!=null){
-            if(datosConstruccions.getConstruccion().get(0).getDetalles().size()>0){
+        if (datosConstruccions != null) {
+            if (datosConstruccions.getConstruccion().get(0).getDetalles().size() > 0) {
                 nivelId = 2;
-            }else{
+            } else {
                 nivelId = 1;
             }
 
@@ -4963,39 +4877,39 @@ public class FragmentModificar extends Fragment implements
 
             niveles = new ArrayList<>();
 
-            if(nivelIdCondicion==5 || nivelIdCondicion == 4 || nivelIdCondicion == 3){
+            if (nivelIdCondicion == 5 || nivelIdCondicion == 4 || nivelIdCondicion == 3) {
                 detallesCondicion = new ArrayList<>();
                 DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
                         nivelIdCondicion, detallesCondicion);
                 niveles.add(detalleCondicion);
             }
 
-            if(nivelId==1 || nivelId==2){
+            if (nivelId == 1 || nivelId == 2) {
                 detallesContruccion = new ArrayList<>();
-                if(nivelId==1){
+                if (nivelId == 1) {
 
-                }else if(nivelId==2){
-                    for ( Map.Entry<Integer, String> entry : checks.entrySet()) {
+                } else if (nivelId == 2) {
+                    for (Map.Entry<Integer, String> entry : checks.entrySet()) {
                         Integer valor = entry.getKey();
                         String check = entry.getValue();
 
-                        if(valor==0 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 0 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
 
-                        if(valor==1 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 1 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
 
-                        if(valor==2 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 2 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
 
-                        if(valor==3 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 3 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
                     }
@@ -5023,12 +4937,12 @@ public class FragmentModificar extends Fragment implements
 
     }
 
-    public void datosConstruccion(String md, String usuarioId){
-        if(nivelId==0 || nivelIdCondicion==0){
+    public void datosConstruccion(String md, String usuarioId) {
+        if (nivelId == 0 || nivelIdCondicion == 0) {
 
-        }else{
+        } else {
             niveles = new ArrayList<>();
-            if(nivelIdCondicion==5 || nivelIdCondicion == 4 || nivelIdCondicion == 3){
+            if (nivelIdCondicion == 5 || nivelIdCondicion == 4 || nivelIdCondicion == 3) {
 
                 detallesCondicion = new ArrayList<>();
 
@@ -5039,35 +4953,35 @@ public class FragmentModificar extends Fragment implements
 
             }
 
-            if(nivelId==1 || nivelId==2){
+            if (nivelId == 1 || nivelId == 2) {
 
                 detallesContruccion = new ArrayList<>();
 
-                if(nivelId==1){
+                if (nivelId == 1) {
 
 
-                }else if(nivelId==2){
-                    for ( Map.Entry<Integer, String> entry : checks.entrySet()) {
+                } else if (nivelId == 2) {
+                    for (Map.Entry<Integer, String> entry : checks.entrySet()) {
                         Integer valor = entry.getKey();
                         String check = entry.getValue();
 
-                        if(valor==0 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 0 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
 
-                        if(valor==1 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 1 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
 
-                        if(valor==2 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 2 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
 
-                        if(valor==3 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                        if (valor == 3 && check == "1") {
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
                             detallesContruccion.add(detalleConstruccion);
                         }
                     }
@@ -5097,7 +5011,7 @@ public class FragmentModificar extends Fragment implements
     @Override
     public void onStop() {
         super.onStop();
-        if(hourlyTask != null){
+        if (hourlyTask != null) {
             hourlyTask.cancel();
             getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
             getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
@@ -5109,7 +5023,7 @@ public class FragmentModificar extends Fragment implements
         }
     }
 
-    public void clearZoni(){
+    public void clearZoni() {
         zonificacion = new CrearZonificacion(null,
                 null,
                 null,
@@ -5135,5 +5049,65 @@ public class FragmentModificar extends Fragment implements
 
         zonificacionC = new CrearZonificacion.Zonificacion();
         zonificacionG = new CrearZonificacion.Zonificacion();
+    }
+    private String saveFile(Uri pdfUri, String nombreImagenPdf) {
+        try {
+            InputStream is = getActivity().getContentResolver().openInputStream(pdfUri);
+            byte[] bytesArray = new byte[is.available()];
+            int read = is.read(bytesArray);
+            //write to sdcard
+
+            File dir = new File(Environment.getExternalStorageDirectory(), "/pdfneto");
+            boolean mkdirs = dir.mkdirs();
+            File myPdf = new File(Environment.getExternalStorageDirectory(), "/pdfneto/" + nombreImagenPdf + ".pdf");
+            if (read == -1 && mkdirs) {
+
+            }
+            FileOutputStream fos = new FileOutputStream(myPdf.getPath());
+            fos.write(bytesArray);
+            fos.close();
+            //            System.out.println(fileString);
+            return myPdf.getPath();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public void intentGaleria(int NumerodePikect){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile(getContext());
+            } catch (IOException ex) {
+
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(intent, NumerodePikect);
+            }
+        }
+    }
+
+    public void intentFoto(int lugarFoto){
+        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (pictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile(getContext());
+            } catch (IOException ex) {
+
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(pictureIntent, lugarFoto);
+            }
+        }
     }
 }

@@ -19,13 +19,11 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.mancj.slideup.SlideUp;
-import com.mancj.slideup.SlideUpBuilder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,8 +36,7 @@ import expansion.neto.com.mx.jefeapp.modelView.loginModel.UsuarioLogin;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Proceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Totales;
 import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderDatosProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderTotales;
-import expansion.neto.com.mx.jefeapp.sorted.autorizadas.AdapterAutorizadas;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.tiempos.ProviderTotales;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.AdapterProceso;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.ProcesoHolder;
 import expansion.neto.com.mx.jefeapp.ui.proceso.ActivityProceso;
@@ -462,6 +459,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
             editor.putString("mdIdterminar", model.getMemoriaid());
             editor.putString("nombreSitio", model.getNombresitio());
             editor.putInt("atrasa", model.getAtrasada());
+            editor.putInt("estatusIds", model.getEstatusid());
 
             editor.apply();
             Intent main = new Intent(getContext(), ActivityProceso.class);
@@ -558,6 +556,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         editor.putString("mdIdterminar", model.getMemoriaid());
         editor.putString("nombreSitio", model.getNombresitio());
         editor.putInt("atrasa", model.getAtrasada());
+        editor.putInt("estatusIds", model.getEstatusid());
 
         editor.apply();
         Intent main = new Intent(getContext(), ActivityProceso.class);

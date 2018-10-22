@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,18 +27,13 @@ import java.util.Date;
 import java.util.List;
 
 import expansion.neto.com.mx.jefeapp.R;
-import expansion.neto.com.mx.jefeapp.databinding.FragmentChatBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentChatRechazadasBinding;
-import expansion.neto.com.mx.jefeapp.modelView.loginModel.Permiso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatGuardaProceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatProceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.TiemposProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderChatProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderGuardaMensaje;
-import expansion.neto.com.mx.jefeapp.provider.rechazadasProvider.ProviderChatRechazadas;
-import expansion.neto.com.mx.jefeapp.provider.rechazadasProvider.ProviderGuardaMensajeRechazadas;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat.ProviderChatProceso;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat.ProviderGuardaMensaje;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.adapter.MensajeChatAdapter;
-import expansion.neto.com.mx.jefeapp.sorted.rechazadas.adapter.MensajeChatAdapterRechazadas;
 import expansion.neto.com.mx.jefeapp.ui.rechazadas.ActivityDetalleModifica;
 
 public class FragmentChatRechazadas extends Fragment {
@@ -450,10 +443,10 @@ public class FragmentChatRechazadas extends Fragment {
                         if(chat.getCodigo() == 200) {
                             ChatProceso.MensajeChat mensaje = new ChatProceso.MensajeChat();
                             mensaje.setComentario(binding.edittextChatbox.getText().toString());
-                            mensaje.setTipocomentario(TIPO_COMENTARIO_CHAT_GRAL);
-                            mensaje.setUsuarioid(Integer.parseInt(usuarioId));
+                            mensaje.setTipoComentario(TIPO_COMENTARIO_CHAT_GRAL);
+                            mensaje.setUsuarioId(Integer.parseInt(usuarioId));
                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                            mensaje.setFecharegistro(sdf.format(new Date()));
+                            mensaje.setFecha(sdf.format(new Date()));
                             listaMensajes.add(mensaje);
 
                             mMessageRecycler.removeAllViews();
@@ -606,15 +599,15 @@ public class FragmentChatRechazadas extends Fragment {
 
                 if(chat.getComentarios() != null && chat.getComentarios().size() > 0) {
                     for (int i=0;i<chat.getComentarios().size();i++) {
-                        if(Integer.valueOf(chat.getComentarios().get(i).getCorreccionesMD())>Integer.valueOf(chat.getCorreccionesMaximas())){
-                            Toast.makeText(getContext(), getString(R.string.correciones),
-                                    Toast.LENGTH_LONG).show();
-                            binding.modifica.setEnabled(false);
-                            binding.modifica.setAlpha(0.3f);
-                        }else{
-                            binding.modifica.setEnabled(true);
-                            binding.modifica.setAlpha(1.0f);
-                        }
+//                        if(Integer.valueOf(chat.getComentarios().get(i).getCorreccionesMD())>Integer.valueOf(chat.getCorreccionesMaximas())){
+//                            Toast.makeText(getContext(), getString(R.string.correciones),
+//                                    Toast.LENGTH_LONG).show();
+//                            binding.modifica.setEnabled(false);
+//                            binding.modifica.setAlpha(0.3f);
+//                        }else{
+//                            binding.modifica.setEnabled(true);
+//                            binding.modifica.setAlpha(1.0f);
+//                        }
                     }
                 }
 

@@ -10,11 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -25,17 +23,9 @@ import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentChatBinding;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatGuardaProceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderChatProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderGuardaMensaje;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat.ProviderChatProceso;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat.ProviderGuardaMensaje;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.adapter.MensajeChatAdapter;
-
-import static android.widget.LinearLayout.*;
-import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_AUDITORIA;
-import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_CONSTRUCCION;
-import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_EXPANSION;
-import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_GESTORIA;
-import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_GEXPANSION;
-import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_OPERACIONES;
 
 public class FragmentChat extends Fragment {
 
@@ -450,19 +440,19 @@ public class FragmentChat extends Fragment {
                     @Override
                     public void resolve(ChatGuardaProceso chat) {
                         if(chat.getCodigo() == 200) {
-                            ChatProceso.MensajeChat mensaje = new ChatProceso.MensajeChat();
-                            mensaje.setComentario(binding.edittextChatbox.getText().toString());
-                            mensaje.setTipocomentario(TIPO_COMENTARIO_CHAT_GRAL);
-                            mensaje.setUsuarioid(Integer.parseInt(usuarioId));
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                            mensaje.setFecharegistro(sdf.format(new Date()));
-                            listaMensajes.add(mensaje);
-
-                            mMessageRecycler.removeAllViews();
-                            mMessageAdapter = new MensajeChatAdapter(getContext(), listaMensajes);
-                            mMessageRecycler.setAdapter(mMessageAdapter);
-                            mMessageRecycler.scrollToPosition(listaMensajes.size() - 1);
-                            binding.edittextChatbox.setText("");
+//                            ChatProceso.MensajeChat mensaje = new ChatProceso.MensajeChat();
+//                            mensaje.setComentario(binding.edittextChatbox.getText().toString());
+//                            mensaje.setTipocomentario(TIPO_COMENTARIO_CHAT_GRAL);
+//                            mensaje.setUsuarioid(Integer.parseInt(usuarioId));
+//                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//                            mensaje.setFecharegistro(sdf.format(new Date()));
+//                            listaMensajes.add(mensaje);
+//
+//                            mMessageRecycler.removeAllViews();
+//                            mMessageAdapter = new MensajeChatAdapter(getContext(), listaMensajes);
+//                            mMessageRecycler.setAdapter(mMessageAdapter);
+//                            mMessageRecycler.scrollToPosition(listaMensajes.size() - 1);
+//                            binding.edittextChatbox.setText("");
                         } else {
                             Toast.makeText(getContext(), "Error al cargar los datos",
                                     Toast.LENGTH_LONG).show();

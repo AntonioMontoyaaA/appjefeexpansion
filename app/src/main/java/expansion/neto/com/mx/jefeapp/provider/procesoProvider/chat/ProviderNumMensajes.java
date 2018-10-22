@@ -1,4 +1,4 @@
-package expansion.neto.com.mx.jefeapp.provider.procesoProvider;
+package expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,48 +6,47 @@ import android.os.AsyncTask;
 import com.google.gson.Gson;
 
 import expansion.neto.com.mx.jefeapp.constantes.RestUrl;
-import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatGuardaProceso;
+import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatNumMensajes;
+import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatProceso;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ProviderGuardaMensaje {
+public class ProviderNumMensajes {
 
-    private static ProviderGuardaMensaje instance;
+    private static ProviderNumMensajes instance;
     Context context;
     String respuesta;
-    ChatGuardaProceso callback = null;
+    ChatNumMensajes callback = null;
 
-    public ProviderGuardaMensaje() {}
+    public ProviderNumMensajes() {}
 
-    public static ProviderGuardaMensaje getInstance(Context context) {
+    public static ProviderNumMensajes getInstance(Context context) {
         if(instance == null) {
-            instance = new ProviderGuardaMensaje();
+            instance = new ProviderNumMensajes();
         }
         instance.context = context;
         return instance;
     }
 
-    public void guardarChatProceso(final String mdId, final String comentarios, final String usuarioId, final int areaId, final GuardaMensajeChatProceso promise){
+    public void obtenerNumMensajes(final String mdId, final String usuario , final ConsultaNumMensajes promise){
         final OkHttpClient client = new OkHttpClient();
-        (new AsyncTask<Void, Void, ChatGuardaProceso>() {
+        (new AsyncTask<Void, Void, ChatNumMensajes>() {
             @Override
-            protected ChatGuardaProceso doInBackground(Void... voids) {
+            protected ChatNumMensajes doInBackground(Void... voids) {
                 //TODO CONNECT AND GET DATA
                 try {
 
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("mdId", mdId)
-                            .add("comentarios", comentarios)
-                            .add("usuarioId", usuarioId)
-                            .add("areaId", String.valueOf(areaId));
+                            .add("usuarioId", usuario);
 
                     RequestBody formBody = formBuilder.build();
 
                     Request request = new Request.Builder()
-                            .url(RestUrl.REST_ACTION_GUARDAR_CHAT_EN_PROCESO)
+                            .url(RestUrl.REST_ACTION_NUM_MENSAJES)
                             .post(formBody)
                             .build();
 
@@ -56,29 +55,30 @@ public class ProviderGuardaMensaje {
                     Gson gson = new Gson();
                     String jsonInString = respuesta;
 
-                    return callback = gson.fromJson(jsonInString, ChatGuardaProceso.class);
+                    return callback = gson.fromJson(jsonInString, ChatNumMensajes.class);
 
                 }catch (Exception e){
+                    e.printStackTrace();
                     if(e.getMessage().contains("Failed to connect to")){
-                        callback = new ChatGuardaProceso();
+                        callback = new ChatNumMensajes();
                         callback.setCodigo(1);
                         return callback;
                     }else{
-                        callback = new ChatGuardaProceso();
+                        callback = new ChatNumMensajes();
                         callback.setCodigo(404);
                         return callback;
                     }
                 }
             }
             @Override
-            protected void onPostExecute(ChatGuardaProceso chat){
+            protected void onPostExecute(ChatNumMensajes chat){
                 promise.resolve(chat);
             }
         }).execute();
     }
 
-    public interface GuardaMensajeChatProceso {
-        void resolve(ChatGuardaProceso chat);
+    public interface ConsultaNumMensajes {
+        void resolve(ChatNumMensajes chat);
         void reject(Exception e);
     }
 }

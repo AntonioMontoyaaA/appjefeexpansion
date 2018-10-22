@@ -10,6 +10,8 @@ public class RestUrl {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+    public static String dominioFile = "voksedesfiles"; // desarrollo
+
     public static String ip = "206.189.68.177"; // desarrollo
     //public static String ip = "167.99.102.173"; // QA 36
     //public static String ip = "206.189.223.154"; // produccion
@@ -135,6 +137,16 @@ public class RestUrl {
     public static String REST_ACTION_CONSULTAR_RADIOS = "http://"+ ip +"/"+ dominio +"/consultaRadiosAsignados/";
 
     public static String REST_ACTION_CAMBIA_ESTATUS_RADIOS = "http://"+ ip +"/"+ dominio +"/cambiaestatusradio/";
+
+    public static String REST_ACTION_NUM_MENSAJES = "http://"+ ip +"/"+ dominio +"/obtienenummensajes/";
+
+    public static String REST_ACTION_GUARDA_TODO_TIPO_DOCUMENTO = "http://"+ ip +"/"+ dominioFile +"/cloudinaryset/";
+
+    public static String REST_ACTION_CONSULTAR_CHAT_ESTATUS = "http://"+ ip +"/"+ dominio +"/obtienemensajes/";
+
+    public static String REST_ACTION_GUARDAR_CHAT_EN_STATUS = "http://"+ ip +"/"+ dominio +"/agregamensajenivelestatus/";
+
+    public static String REST_ACTION_GUARDAR_VALIDACION = "http://"+ ip +"/"+ dominio +"/validacionmensajes/";
 
 }
 

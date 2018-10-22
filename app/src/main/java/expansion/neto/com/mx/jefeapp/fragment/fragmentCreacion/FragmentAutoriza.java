@@ -81,7 +81,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -185,7 +188,7 @@ import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 
 public class FragmentAutoriza extends Fragment implements
-         AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
+        AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
 
     TimerTask hourlyTask;
     private View view;
@@ -234,6 +237,8 @@ public class FragmentAutoriza extends Fragment implements
     private int PICK_IMAGE_REQUEST = 5;
     String municipio;
     ProgressDialog progressDialog;
+
+
 
     private AdapterListaPropietarios.OnItemClick clickPropietario = new AdapterListaPropietarios.OnItemClick() {
         @Override
@@ -350,7 +355,7 @@ public class FragmentAutoriza extends Fragment implements
                         .build();
 
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-               // googleMap.setMyLocationEnabled(true);
+                // googleMap.setMyLocationEnabled(true);
 
             }
 
@@ -1003,7 +1008,7 @@ public class FragmentAutoriza extends Fragment implements
 
                         return true;
                     }
-                   // Log.e("*****", "no tecleaste");
+                    // Log.e("*****", "no tecleaste");
                     return false;
                 }
             });
@@ -1065,21 +1070,21 @@ public class FragmentAutoriza extends Fragment implements
                                 bindingSuperficie.predial.setVisibility(View.VISIBLE);
                             }else{
                                 bindingSuperficie.predial.setVisibility(View.GONE);
-                                urlPredial = " ";
-                                fechaPredial = " ";
+                                urlPredial = "";
+                                fechaPredial = "";
                             }
                         }
                     }else{
                         bindingSuperficie.predial.setVisibility(View.GONE);
-                        urlPredial = " ";
-                        fechaPredial = " ";
+                        urlPredial = "";
+                        fechaPredial = "";
                     }
                 }
                 @Override
                 public void reject(Exception e) {
                     bindingSuperficie.predial.setVisibility(View.GONE);
-                    urlPredial = " ";
-                    fechaPredial = " ";
+                    urlPredial = "";
+                    fechaPredial = "";
                 }
             });
 
@@ -1183,10 +1188,7 @@ public class FragmentAutoriza extends Fragment implements
                                     .setCancelable(false)
                                     .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            Intent intent = new Intent();
-                                            intent.setType("image/*");
-                                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                                            startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                            intentGaleria(PICK_IMAGE_REQUEST);
                                         }
                                     })
                                     .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
@@ -1220,10 +1222,7 @@ public class FragmentAutoriza extends Fragment implements
                                 .setCancelable(false)
                                 .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        Intent intent = new Intent();
-                                        intent.setType("image/*");
-                                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                                        startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                        intentGaleria(PICK_IMAGE_REQUEST);
                                     }
                                 })
                                 .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
@@ -1274,8 +1273,7 @@ public class FragmentAutoriza extends Fragment implements
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA);
+                            intentFoto(CAMERA);
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1306,8 +1304,7 @@ public class FragmentAutoriza extends Fragment implements
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_LATERAL_1);
+                            intentFoto(CAMERA_LATERAL_1);
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1340,8 +1337,7 @@ public class FragmentAutoriza extends Fragment implements
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_LATERAL_2);
+                            intentFoto(CAMERA_LATERAL_2);
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1362,43 +1358,23 @@ public class FragmentAutoriza extends Fragment implements
                                     .setCancelable(false)
                                     .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            Intent intent = new Intent();
-                                            intent.setType("image/*");
-                                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                                            startActivityForResult(Intent.createChooser(intent, "Select Imagen"), PICK_IMAGE_REQUEST);
+                                            intentGaleria(PICK_IMAGE_REQUEST);
                                         }
                                     })
                                     .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                            if (pictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
-                                                File photoFile = null;
-                                                try {
-                                                    photoFile = createImageFile(getContext());
-                                                } catch (IOException ex) {
-
-                                                }
-                                                if (photoFile != null) {
-                                                    Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
-                                                    pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                    startActivityForResult(pictureIntent,
-                                                            CAMERA_PREDIAL);
-                                                }
-                                            }
+                                            intentFoto(CAMERA_PREDIAL);
                                         }
                                     });
                             AlertDialog alert = builder.create();
                             alert.setTitle("PREDIAL");
                             alert.show();
                         } else if(banderaCamara[0] ==1){
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA);
+                            intentFoto(CAMERA);
                         } else if(banderaCamara[0] ==2){
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_LATERAL_1);
+                            intentFoto(CAMERA_LATERAL_1);
                         } else if(banderaCamara[0] ==3){
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, CAMERA_LATERAL_2);
+                            intentFoto(CAMERA_LATERAL_2);
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1811,7 +1787,7 @@ public class FragmentAutoriza extends Fragment implements
 //                            zonificacionG.setDetalles(detallesG);
 //
                             generadores = new ArrayList<>();
-                           // generadores.add(zonificacionG);
+                            // generadores.add(zonificacionG);
 //
 //                            detallesC = new ArrayList<>();
 //                            detalleC = new CrearZonificacion.Detalle(
@@ -1822,7 +1798,7 @@ public class FragmentAutoriza extends Fragment implements
 //                            zonificacionC.setDetalles(detallesC);
 
                             competencia = new ArrayList<>();
-                           // competencia.add(zonificacionC);
+                            // competencia.add(zonificacionC);
 
                             zonificacion = new CrearZonificacion(
                                     usuario,
@@ -2325,7 +2301,7 @@ public class FragmentAutoriza extends Fragment implements
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, month, day);
 
-                            mdId = String.valueOf(preferences.getLong("mdId", 0));
+                        mdId = String.valueOf(preferences.getLong("mdId", 0));
                         String usuarioId = preferences.getString("usuario", "");
                         String renta = binding.renta.getText().toString();
                         String fechadisponible = dateFormat.format(calendar.getTime());;
@@ -2952,10 +2928,10 @@ public class FragmentAutoriza extends Fragment implements
         }
     }
 
-    String fechaFrente;
-    String fechaEntorno1;
-    String fechaEntorno2;
-    String fechaPredial;
+    String fechaFrente = "";
+    String fechaEntorno1 = "";
+    String fechaEntorno2 = "";
+    String fechaPredial = "";
 
     /**
      * método para realizar la respuesta de cada intent que se hace en la actividad (ver pdf, tomar foto)
@@ -2971,56 +2947,22 @@ public class FragmentAutoriza extends Fragment implements
         long mdid = preferences.getLong("mdId", 0);
 
         if (requestCode == CAMERA_FRONTAL && resultCode==RESULT_OK) {
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64frente = b64(bit);
-                fechaFrente = getFechaHora();
-                obtenerUrl(random()+"_frente", base64frente, String.valueOf(mdid));
-            }
+            fechaFrente = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_LATERAL_1 && resultCode==RESULT_OK){
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64Lateral1 = b64(bit);
-                fechaEntorno1 = getFechaHora();
-                obtenerUrl(random()+"_lateral1", base64Lateral1, String.valueOf(mdid));
-            }
+            fechaEntorno1 = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_PREDIAL && resultCode==RESULT_OK){
-            if(resultCode==0){
-
-            }else{
-
-                fechaPredial = getFechaHora();
-                Bitmap bitfromPath = getBitmap(imageFilePath);
-                base64Predial = getStringImage(compressImage(bitfromPath, 1000));
-                obtenerUrl("6",random()+"_predial", base64Predial, String.valueOf(mdid));
-
-
-            }
+            fechaPredial = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_predial", "png", "1", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_LATERAL_2 && resultCode==RESULT_OK){
-            if(resultCode==0){
-
-            }else{
-                bit = (Bitmap) data.getExtras().get("data");
-                base64Lateral2 = b64(bit);
-                fechaEntorno2 = getFechaHora();
-                obtenerUrl(random()+"_lateral2", base64Lateral2, String.valueOf(mdid));
-            }
+            fechaEntorno2 = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_lateral2", "png", "1", Uri.parse(imageFilePath));
         }else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
             Uri filePath = data.getData();
-            try {
-                fechaPredial = getFechaHora();
-                //Cómo obtener el mapa de bits de la Galería
-                Bitmap bitfromPath = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
-                base64Predial = getStringImage(compressImage(bitfromPath, 1200));
-                obtenerUrl("6",random()+"_predial", base64Predial, String.valueOf(mdid));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            fechaPredial = getFechaHora();
+            String filePathUri = saveFile(filePath,random() + "_predial" );
+            obtenerUrl(String.valueOf(mdid), random() + "_predial", "png", "1", Uri.parse(filePathUri));
         } else if(resultCode == 0){
 
         }
@@ -3032,9 +2974,11 @@ public class FragmentAutoriza extends Fragment implements
     String urlLateral2 = "";
     String urlPredial = "";
 
-    public void obtenerUrl(String foto, String b64, String mdId){
+    //public void obtenerUrl(String foto, String b64, String mdId){
+    public void obtenerUrl(final String mdId, final String nombreImg, final String formato, final String tipoArchivo, final Uri uri) {
         loadingProgress(progressDialog, 0);
-        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
+        //ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
+        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, nombreImg, formato, tipoArchivo, uri, new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
                 if(codigo.getCodigo()==200){
@@ -3096,7 +3040,7 @@ public class FragmentAutoriza extends Fragment implements
         });
     }
 
-
+/*
     public void obtenerUrl(String tipoPredial, String foto, String b64, String mdId){
         loadingProgress(progressDialog, 0);
         ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(tipoPredial, mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
@@ -3159,7 +3103,7 @@ public class FragmentAutoriza extends Fragment implements
 
             }
         });
-    }
+    }*/
 
     HashMap<Integer, String> checks;
     String base64frente;
@@ -3539,7 +3483,7 @@ public class FragmentAutoriza extends Fragment implements
         }
 
         if(competencia==null){
-           // detallesC = new ArrayList<>();;
+            // detallesC = new ArrayList<>();;
             //detallesC.add(detalleC);
             //zonificacionC.setDetalles(detallesC);
             competencia = new ArrayList<>();
@@ -3547,9 +3491,9 @@ public class FragmentAutoriza extends Fragment implements
         }
 
         if(generadores==null){
-           // detallesG = new ArrayList<>();;
-           // detallesG.add(detalleG);
-           // zonificacionG.setDetalles(detallesG);
+            // detallesG = new ArrayList<>();;
+            // detallesG.add(detalleG);
+            // zonificacionG.setDetalles(detallesG);
             generadores = new ArrayList<>();
             //generadores.add(zonificacionG);
         }
@@ -3611,7 +3555,7 @@ public class FragmentAutoriza extends Fragment implements
 
         float distanciaMetros = loc1.distanceTo(loc2);
         if(distanciaMetros <= 500){
-                return true;
+            return true;
         }
         return false;
     }
@@ -4034,4 +3978,65 @@ public class FragmentAutoriza extends Fragment implements
         return image;
     }
 
+    private String saveFile(Uri pdfUri, String nombreImagenPdf) {
+        try {
+            InputStream is = getActivity().getContentResolver().openInputStream(pdfUri);
+            byte[] bytesArray = new byte[is.available()];
+            int read = is.read(bytesArray);
+            //write to sdcard
+
+            File dir = new File(Environment.getExternalStorageDirectory(), "/pdfneto");
+            boolean mkdirs = dir.mkdirs();
+            File myPdf = new File(Environment.getExternalStorageDirectory(), "/pdfneto/" + nombreImagenPdf + ".pdf");
+            if (read == -1 && mkdirs) {
+
+            }
+            FileOutputStream fos = new FileOutputStream(myPdf.getPath());
+            fos.write(bytesArray);
+            fos.close();
+            //            System.out.println(fileString);
+            return myPdf.getPath();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void intentGaleria(int NumerodePikect){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile(getContext());
+            } catch (IOException ex) {
+
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(intent, NumerodePikect);
+            }
+        }
+    }
+
+    public void intentFoto(int lugarFoto){
+        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (pictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile(getContext());
+            } catch (IOException ex) {
+
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(pictureIntent, lugarFoto);
+            }
+        }
+    }
 }

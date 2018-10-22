@@ -1,4 +1,4 @@
-package expansion.neto.com.mx.jefeapp.provider.procesoProvider;
+package expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,46 +6,47 @@ import android.os.AsyncTask;
 import com.google.gson.Gson;
 
 import expansion.neto.com.mx.jefeapp.constantes.RestUrl;
-import expansion.neto.com.mx.jefeapp.modelView.procesoModel.TiemposProceso;
+import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatProceso;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ProviderTiemposProceso {
+public class ProviderChatProceso {
 
-    private static ProviderTiemposProceso instance;
+    private static ProviderChatProceso instance;
     Context context;
     String respuesta;
-    TiemposProceso callback = null;
+    ChatProceso callback = null;
 
-    public ProviderTiemposProceso() {}
+    public ProviderChatProceso() {}
 
-    public static ProviderTiemposProceso getInstance(Context context) {
+    public static ProviderChatProceso getInstance(Context context) {
         if(instance == null) {
-            instance = new ProviderTiemposProceso();
+            instance = new ProviderChatProceso();
         }
         instance.context = context;
         return instance;
     }
 
-    public void obtenerTiemposProceso(final String mdId, final String usuario, final ConsultaTiemposProceso promise){
+    public void obtenerChatProceso(final String mdId, final int areaId, final String usuario , final ConsultaChatProceso promise){
         final OkHttpClient client = new OkHttpClient();
-        (new AsyncTask<Void, Void, TiemposProceso>() {
+        (new AsyncTask<Void, Void, ChatProceso>() {
             @Override
-            protected TiemposProceso doInBackground(Void... voids) {
+            protected ChatProceso doInBackground(Void... voids) {
                 //TODO CONNECT AND GET DATA
                 try {
-                    //180816085527
+
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("mdId", mdId)
-                            .add("usuarioId", usuario);
+                            .add("areaId", String.valueOf(areaId))
+                                    .add("usuarioId", usuario);
 
                     RequestBody formBody = formBuilder.build();
 
                     Request request = new Request.Builder()
-                            .url(RestUrl.REST_ACTION_CONSULTAR_TIEMPOS_EN_PROCESO)
+                            .url(RestUrl.REST_ACTION_CONSULTAR_CHAT_EN_PROCESO)
                             .post(formBody)
                             .build();
 
@@ -54,30 +55,30 @@ public class ProviderTiemposProceso {
                     Gson gson = new Gson();
                     String jsonInString = respuesta;
 
-                    return callback = gson.fromJson(jsonInString, TiemposProceso.class);
+                    return callback = gson.fromJson(jsonInString, ChatProceso.class);
 
                 }catch (Exception e){
                     e.printStackTrace();
                     if(e.getMessage().contains("Failed to connect to")){
-                        callback = new TiemposProceso();
+                        callback = new ChatProceso();
                         callback.setCodigo(1);
                         return callback;
                     }else{
-                        callback = new TiemposProceso();
+                        callback = new ChatProceso();
                         callback.setCodigo(404);
                         return callback;
                     }
                 }
             }
             @Override
-            protected void onPostExecute(TiemposProceso tiempos){
-                promise.resolve(tiempos);
+            protected void onPostExecute(ChatProceso chat){
+                promise.resolve(chat);
             }
         }).execute();
     }
 
-    public interface ConsultaTiemposProceso {
-        void resolve(TiemposProceso tiempos);
+    public interface ConsultaChatProceso {
+        void resolve(ChatProceso chat);
         void reject(Exception e);
     }
 }

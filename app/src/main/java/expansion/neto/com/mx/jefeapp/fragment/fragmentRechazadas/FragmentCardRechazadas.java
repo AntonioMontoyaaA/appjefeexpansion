@@ -18,15 +18,10 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.mancj.slideup.SlideUp;
-import com.mancj.slideup.SlideUpBuilder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,12 +29,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import expansion.neto.com.mx.jefeapp.R;
-import expansion.neto.com.mx.jefeapp.databinding.ActivityProcesoListBinding;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityRechazadasListBinding;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Proceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Totales;
 import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderDatosProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderTotales;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.tiempos.ProviderTotales;
 import expansion.neto.com.mx.jefeapp.provider.rechazadasProvider.ProviderDatosRechazadas;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.ProcesoHolder;
 import expansion.neto.com.mx.jefeapp.sorted.rechazadas.AdapterRechazadas;
@@ -523,7 +517,7 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
         editor.putString("mdIdterminar", "");
         editor.apply();
         editor.putString("mdIdterminar", model.getMemoriaid());
-        editor.putInt("estatusId", model.getEstatusid());
+        editor.putInt("estatusIds", model.getEstatusid());
         editor.putString("nombreSitio", model.getNombresitio());
         editor.putInt("atrasa", model.getAtrasada());
 

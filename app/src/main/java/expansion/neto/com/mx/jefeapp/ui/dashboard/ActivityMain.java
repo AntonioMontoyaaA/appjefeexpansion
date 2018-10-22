@@ -437,7 +437,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
 
     Boolean permisoAutorizar;
-    Boolean permisoProceso;
+    Boolean permisoProceso = true;
     Boolean permisoAutorizadas;
     Boolean permisoRechazadas;
     Boolean permisoAgenda;

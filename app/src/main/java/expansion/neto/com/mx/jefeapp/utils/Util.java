@@ -53,7 +53,12 @@ import static android.content.Context.TELEPHONY_SERVICE;
  */
 public class Util {
 
-
+    public static String getFechaKk(){
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss");
+        Date date = new Date();
+        String fecha = dateFormat.format(date);
+        return fecha;
+    }
 
     public static final String md5(final String s) {
         final String MD5 = "MD5";

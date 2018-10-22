@@ -9,7 +9,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,11 @@ import java.util.List;
 import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentTiemposBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentInicioRechazadas;
-import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Proceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.TiemposProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderTiemposProceso;
-import expansion.neto.com.mx.jefeapp.sorted.proceso.AdapterProceso;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.tiempos.ProviderTiemposProceso;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.AdapterTiempos;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.TiemposHolder;
 import expansion.neto.com.mx.jefeapp.ui.detalle.ActivityDetalle;
-import io.fabric.sdk.android.services.common.CommonUtils;
 
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
 

@@ -1,4 +1,4 @@
-package expansion.neto.com.mx.jefeapp.provider.procesoProvider;
+package expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -13,24 +13,25 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ProviderChatProceso {
+public class ProviderChatProcesoEstatus {
 
-    private static ProviderChatProceso instance;
+    private static ProviderChatProcesoEstatus instance;
     Context context;
     String respuesta;
     ChatProceso callback = null;
 
-    public ProviderChatProceso() {}
+    public ProviderChatProcesoEstatus() {}
 
-    public static ProviderChatProceso getInstance(Context context) {
+    public static ProviderChatProcesoEstatus getInstance(Context context) {
         if(instance == null) {
-            instance = new ProviderChatProceso();
+            instance = new ProviderChatProcesoEstatus();
         }
         instance.context = context;
         return instance;
     }
 
-    public void obtenerChatProceso(final String mdId, final int areaId, final String usuario , final ConsultaChatProceso promise){
+    public void obtenerChatProcesoEstatus(final String mdId, final int areaId, final String usuario ,
+                                          final ConsultaChatProceso promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, ChatProceso>() {
             @Override
@@ -40,13 +41,13 @@ public class ProviderChatProceso {
 
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("mdId", mdId)
-                            .add("areaId", String.valueOf(areaId))
-                                    .add("usuarioId", usuario);
+                            .add("nivelesEstatus", String.valueOf(areaId))
+                            .add("usuarioId", usuario);
 
                     RequestBody formBody = formBuilder.build();
 
                     Request request = new Request.Builder()
-                            .url(RestUrl.REST_ACTION_CONSULTAR_CHAT_EN_PROCESO)
+                            .url(RestUrl.REST_ACTION_CONSULTAR_CHAT_ESTATUS)
                             .post(formBody)
                             .build();
 

@@ -1,6 +1,8 @@
 package expansion.neto.com.mx.jefeapp.ui.proceso;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -8,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -17,6 +20,8 @@ import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityProcesoBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentChat;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentDialogCancelarMdProceso;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentGrupos;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentGruposBack;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentTiempos;
 import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivityMain;
 
@@ -40,9 +45,11 @@ public class ActivityProceso extends AppCompatActivity {
         binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentDialogCancelarMdProceso dFragment = new FragmentDialogCancelarMdProceso();
                 dFragment.show(fm, "Dialog Fragment");
+
             }
         });
 
@@ -96,7 +103,7 @@ public class ActivityProceso extends AppCompatActivity {
                 case 0:
                     return FragmentTiempos.newInstance(PANTALLA_EN_PROCESO);
                 case 1:
-                    return FragmentChat.newInstance();
+                    return FragmentGrupos.newInstance(PANTALLA_EN_PROCESO);
                 default:
                     return null;
             }
@@ -110,13 +117,13 @@ public class ActivityProceso extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
-            getSupportFragmentManager().popBackStack();
-        } else {
+       // if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+       ///     getSupportFragmentManager().popBackStack();
+        //} else {
             FragmentManager fm = getSupportFragmentManager();
             FragmentDialogCancelarMdProceso dFragment = new FragmentDialogCancelarMdProceso();
             dFragment.show(fm, "Dialog Fragment");
-        }
+       // }
     }
 
 }

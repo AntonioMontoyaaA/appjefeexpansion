@@ -1,4 +1,4 @@
-package expansion.neto.com.mx.jefeapp.provider.procesoProvider;
+package expansion.neto.com.mx.jefeapp.provider.procesoProvider.tiempos;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import com.google.gson.Gson;
 
 import expansion.neto.com.mx.jefeapp.constantes.RestUrl;
-import expansion.neto.com.mx.jefeapp.modelView.agendaModel.Eventos;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.Totales;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;

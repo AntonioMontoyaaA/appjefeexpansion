@@ -21,12 +21,10 @@ import java.util.List;
 import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentTiemposBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentInicioProceso;
-import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentTiempos;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.TiemposProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderTiemposProceso;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.tiempos.ProviderTiemposProceso;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.AdapterTiempos;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.TiemposHolder;
-import expansion.neto.com.mx.jefeapp.ui.detalle.ActivityDetalle;
 import expansion.neto.com.mx.jefeapp.ui.detalle.ActivityDetalleRechazadas;
 
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;

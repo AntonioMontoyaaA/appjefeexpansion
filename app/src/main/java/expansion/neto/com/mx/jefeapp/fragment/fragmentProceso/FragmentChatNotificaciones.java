@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +24,10 @@ import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentChatNotificacionBinding;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatGuardaProceso;
 import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderChatProceso;
-import expansion.neto.com.mx.jefeapp.provider.procesoProvider.ProviderGuardaMensaje;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat.ProviderChatProceso;
+import expansion.neto.com.mx.jefeapp.provider.procesoProvider.chat.ProviderGuardaMensaje;
 import expansion.neto.com.mx.jefeapp.sorted.proceso.adapter.MensajeChatAdapter;
 import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityNotificaciones;
-import expansion.neto.com.mx.jefeapp.ui.dashboard.ActivityMain;
-
-import static android.widget.LinearLayout.LayoutParams;
-import static android.widget.LinearLayout.OnClickListener;
 
 public class FragmentChatNotificaciones extends Fragment {
 
@@ -460,10 +455,10 @@ public class FragmentChatNotificaciones extends Fragment {
                         if(chat.getCodigo() == 200) {
                             ChatProceso.MensajeChat mensaje = new ChatProceso.MensajeChat();
                             mensaje.setComentario(binding.edittextChatbox.getText().toString());
-                            mensaje.setTipocomentario(TIPO_COMENTARIO_CHAT_GRAL);
-                            mensaje.setUsuarioid(Integer.parseInt(usuarioId));
+                            mensaje.setTipoComentario(TIPO_COMENTARIO_CHAT_GRAL);
+                            mensaje.setUsuarioId(Integer.parseInt(usuarioId));
                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                            mensaje.setFecharegistro(sdf.format(new Date()));
+                            mensaje.setFecha(sdf.format(new Date()));
                             listaMensajes.add(mensaje);
 
                             mMessageRecycler.removeAllViews();
