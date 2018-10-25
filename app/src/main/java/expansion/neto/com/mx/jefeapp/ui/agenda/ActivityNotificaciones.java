@@ -146,9 +146,13 @@ public class ActivityNotificaciones extends AppCompatActivity{
                 editor.putString("num", getString(R.string.zero));
                 editor.putString("estatusNombre", getString(R.string.general));
                 editor.apply();
-                navFragment = new FragmentEstatusChatNotificaciones();
-                args.putInt("index", 1);
-                navFragment.setArguments(args);
+//                navFragment = new FragmentEstatusChatNotificaciones();
+
+                main = new Intent(getApplicationContext(), FragmentEstatusChatNotificaciones.class);
+                startActivity(main);
+
+                ///args.putInt("index", 1);
+             //   navFragment.setArguments(args);
                 break;
             case "2":
                 editor.putString("mdIdterminar", mdId);
@@ -169,10 +173,13 @@ public class ActivityNotificaciones extends AppCompatActivity{
                 editor.putString("estatusNombre", getString(R.string.genera));
 
                 editor.apply();
-                navFragment = new FragmentEstatusChatNotificaciones();
-                args = new Bundle();
-                args.putInt("index", 1);
-                navFragment.setArguments(args);
+//                navFragment = new FragmentEstatusChatNotificaciones();
+//                args = new Bundle();
+//                args.putInt("index", 1);
+//                navFragment.setArguments(args);
+
+                main = new Intent(getApplicationContext(), FragmentEstatusChatNotificaciones.class);
+                startActivity(main);
                 break;
             default :
                 break;
