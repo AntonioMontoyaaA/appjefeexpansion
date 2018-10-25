@@ -104,9 +104,11 @@ public class FragmentGruposBack extends Fragment implements NumMensajesHolder.Li
                         comentarios = new ArrayList<>();
 
                         for(int i = 0;i<tiempos.getComentarios().size();i++){
-                            if(tiempos.getComentarios().get(i).getEstatusId()!=1){
-                                comentarios.add(tiempos.getComentarios().get(i));
-                            }
+                         //   if(tiempos.getComentarios().get(i).getEstatusId()!=1 ){
+                                if(tiempos.getComentarios().get(i).getEstatusEvaluacion()!=0){
+                                    comentarios.add(tiempos.getComentarios().get(i));
+                                }
+                         //   }
                         }
 
                         for(int j=0;j<comentarios.size();j++){
@@ -121,6 +123,8 @@ public class FragmentGruposBack extends Fragment implements NumMensajesHolder.Li
                         preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                         int modifica = preferences.getInt("estatusIds",0);
 
+                        final SharedPreferences.Editor editor = preferences.edit();
+
                         if(modifica==4 || modifica==17){
                             binding.rechazo.setVisibility(View.VISIBLE);
                             binding.modifica.setVisibility(View.VISIBLE);
@@ -134,7 +138,8 @@ public class FragmentGruposBack extends Fragment implements NumMensajesHolder.Li
                             binding.modifica.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-
+                                    editor.putString("banderaMapa", "1");
+                                    editor.apply();
                                     Intent main = new Intent(getContext(), ActivityDetalleModifica.class);
                                     getContext().startActivity(main);
                                     getActivity().finish();

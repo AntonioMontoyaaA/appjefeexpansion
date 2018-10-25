@@ -115,7 +115,7 @@
     <string name="evento">Evento</string>
     <string name="tododia">Todo el dia</string>
     <string name="accion_hoy">Hoy</string>
-    <string name="accion_ver">Ver 1.2.2</string>
+    <string name="accion_ver">Ver 1.2.3</string>
     <string name="accion_tres">Ver 3 días</string>
     <string name="accion_semana">Ver la semana</string>
     <string name="calendario">Calendario</string>
@@ -315,5 +315,7 @@
     <string name="celular">El celular</string>
     <string name="foto">Tomar foto</string>
     <string name="comp">Debes seleccionar alguna compentencia y generador</string>
+    <string name="genera">GENERAL</string>
+    <string name="escribir_mensaje">Escribir mensaje</string>
 
 </resources>

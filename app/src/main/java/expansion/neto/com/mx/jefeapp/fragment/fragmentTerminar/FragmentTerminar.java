@@ -353,6 +353,7 @@ public class FragmentTerminar extends Fragment implements
         @SuppressLint("MissingPermission")
         @Override
         public void onMapReady(final GoogleMap googleMap) {
+
             mMap = googleMap;
             final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
             mdLat = preferences.getFloat("latMd", 0);
@@ -364,7 +365,7 @@ public class FragmentTerminar extends Fragment implements
             googleMap.animateCamera(CameraUpdateFactory.zoomIn());
             googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 
-            CameraPosition cameraPosition = new CameraPosition.Builder()
+            final CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(mCenterLatLong)
                     .zoom(14)
                     .bearing(0)
@@ -372,23 +373,37 @@ public class FragmentTerminar extends Fragment implements
                     .build();
 
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            // googleMap.setMyLocationEnabled(true);
+
+
             googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
                     mCenterLatLong = cameraPosition.target;
                     googleMap.clear();
                     try {
+                        final String bandera = preferences.getString("banderaMapa","");
                         Location mLocation = new Location("");
                         mLocation.setLatitude(mCenterLatLong.latitude);
                         mLocation.setLongitude(mCenterLatLong.longitude);
-                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
+
+                        if(bandera.equals("1")){
+                            //setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
+                            setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "no");
+
+                        }else{
+                            setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude,"si");
+                        }
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+
             });
+
+
+
 
         }
     };
@@ -679,9 +694,9 @@ public class FragmentTerminar extends Fragment implements
             urlPredial = "";
 
             binding.toolbar.nombreTitulo.setText(getString(R.string.datossitio));
-            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(onMapReadyCallback);
+//            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+//                    .findFragmentById(R.id.map);
+//            mapFragment.getMapAsync(onMapReadyCallback);
 
             binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -767,6 +782,9 @@ public class FragmentTerminar extends Fragment implements
                             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                                     .findFragmentById(R.id.map);
                             mapFragment.getMapAsync(onMapReadyCallback);
+
+
+
                         }
                     } else {
                         loadingProgress(progressDialog, 1);
@@ -794,6 +812,9 @@ public class FragmentTerminar extends Fragment implements
                     String pais = binding.pais.getText().toString();
                     SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     String choices = preferences.getString("tipoSitio", "");
+                    SharedPreferences.Editor editorDatos = preferences.edit();
+                    editorDatos.putString("banderaMapa", "2");
+                    editorDatos.apply();
 
                     if (mCenterLatLong != null) {
                         if (mCenterLatLong.latitude != 0) {
@@ -817,7 +838,10 @@ public class FragmentTerminar extends Fragment implements
                     }
                 }
             };
-            timer.schedule(hourlyTask, 100, 700);
+            timer.schedule(hourlyTask, 3000, 4000);
+
+
+
             //TODO Hacer estos casos para las demás pantallas
             binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -904,7 +928,7 @@ public class FragmentTerminar extends Fragment implements
                         Location mLocation = new Location("");
                         mLocation.setLatitude(mCenterLatLong.latitude);
                         mLocation.setLongitude(mCenterLatLong.longitude);
-                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
+                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "si");
                     }
 
                 }
@@ -4369,34 +4393,73 @@ public class FragmentTerminar extends Fragment implements
         return ubicacion;
     }
 
-    public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng) {
+//    public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng) {
+//        Geocoder geocoder;
+//        List<Address> addresses = null;
+//        geocoder = new Geocoder(getContext(), Locale.getDefault());
+//        try {
+//            if (mCenterLatLong != null) {
+//                addresses = geocoder.getFromLocation(lat, lng, 1);
+//                String address = addresses.get(0).getAddressLine(0);
+//                // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+//                String city = addresses.get(0).getLocality();
+//                String state = addresses.get(0).getAdminArea();
+//                String country = addresses.get(0).getCountryName();
+//                municipio = addresses.get(0).getLocality();
+//
+//
+//                String postalCode = addresses.get(0).getPostalCode();
+//                binding.direccionsitio.setText(address);
+//                binding.ciudadsitio.setText(city);
+//                binding.estadositio.setText(state);
+//                binding.municipiositio.setText(municipio);
+//                binding.pais.setText(country);
+//                binding.codigopostalsitio.setText(postalCode);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+
+    public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng, String no) {
         Geocoder geocoder;
         List<Address> addresses = null;
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
             if (mCenterLatLong != null) {
-                addresses = geocoder.getFromLocation(lat, lng, 1);
-                String address = addresses.get(0).getAddressLine(0);
-                // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                municipio = addresses.get(0).getLocality();
+                if(no.equals("no")){
+                    addresses = geocoder.getFromLocation(lat, lng, 1);
+                    String address = addresses.get(0).getAddressLine(0);
+                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                    String city = addresses.get(0).getLocality();
+                    String state = addresses.get(0).getAdminArea();
+                    String country = addresses.get(0).getCountryName();
+                    municipio = addresses.get(0).getLocality();
+                    String postalCode = addresses.get(0).getPostalCode();
+                    //binding.direccionsitio.setText(address);
+                    binding.ciudadsitio.setText(city);
+                    binding.estadositio.setText(state);
+                    binding.municipiositio.setText(municipio);
+                    binding.pais.setText(country);
+                    binding.codigopostalsitio.setText(postalCode);
+                }else{
+                    addresses = geocoder.getFromLocation(lat, lng, 1);
+                    String address = addresses.get(0).getAddressLine(0);
+                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                    String city = addresses.get(0).getLocality();
+                    String state = addresses.get(0).getAdminArea();
+                    String country = addresses.get(0).getCountryName();
+                    municipio = addresses.get(0).getLocality();
+                    String postalCode = addresses.get(0).getPostalCode();
+                    binding.direccionsitio.setText(address);
+                    binding.ciudadsitio.setText(city);
+                    binding.estadositio.setText(state);
+                    binding.municipiositio.setText(municipio);
+                    binding.pais.setText(country);
+                    binding.codigopostalsitio.setText(postalCode);
+                }
 
-                String proof = addresses.get(0).getFeatureName();
-                String proof2 = addresses.get(0).getAdminArea();
-                String proof3 = addresses.get(0).getSubAdminArea();
-                String proof4 = addresses.get(0).getSubLocality();
-                String proof5 = addresses.get(0).getThoroughfare();
-
-
-                String postalCode = addresses.get(0).getPostalCode();
-                binding.direccionsitio.setText(address);
-                binding.ciudadsitio.setText(city);
-                binding.estadositio.setText(state);
-                binding.municipiositio.setText(municipio);
-                binding.pais.setText(country);
-                binding.codigopostalsitio.setText(postalCode);
             }
         } catch (IOException e) {
             e.printStackTrace();

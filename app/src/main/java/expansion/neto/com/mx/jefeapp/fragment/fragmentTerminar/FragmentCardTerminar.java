@@ -196,6 +196,8 @@ public class FragmentCardTerminar extends Fragment implements AutorizaHolder.Lis
 		editor.apply();
 		String md = model.getMemoriaid();
 		editor.putString("mdIdterminar", md);
+		editor.putString("banderaMapa", "1");
+
 		editor.apply();
 		getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
 		Intent main = new Intent(getContext(), ActivityPorTerminar.class);

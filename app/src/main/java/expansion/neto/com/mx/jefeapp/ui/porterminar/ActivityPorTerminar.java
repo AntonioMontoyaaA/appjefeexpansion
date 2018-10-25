@@ -335,7 +335,6 @@ public class ActivityPorTerminar extends AppCompatActivity{
 
         @Override
         public Fragment getItem(int position) {
-
             if (position == 0) {
                 return FragmentTerminar.newInstance(position);
             } else if (position == 1) {

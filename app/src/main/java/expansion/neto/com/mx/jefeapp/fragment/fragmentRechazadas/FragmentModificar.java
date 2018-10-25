@@ -380,10 +380,19 @@ public class FragmentModificar extends Fragment implements
                     mCenterLatLong = cameraPosition.target;
                     googleMap.clear();
                     try {
+
+                        final String bandera = preferences.getString("banderaMapa","");
+
                         Location mLocation = new Location("");
                         mLocation.setLatitude(mCenterLatLong.latitude);
                         mLocation.setLongitude(mCenterLatLong.longitude);
-                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
+                        if(bandera.equals("1")){
+                            //setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
+                            setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "no");
+
+                        }else{
+                            setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude,"si");
+                        }
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -778,6 +787,10 @@ public class FragmentModificar extends Fragment implements
                     String pais = binding.pais.getText().toString();
                     SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     String choices = preferences.getString("tipoSitio", "");
+                    SharedPreferences.Editor editorDatos = preferences.edit();
+                    editorDatos.putString("banderaMapa", "2");
+                    editorDatos.apply();
+
 
                     if (mCenterLatLong != null) {
                         if (mCenterLatLong.latitude != 0) {
@@ -801,7 +814,7 @@ public class FragmentModificar extends Fragment implements
                     }
                 }
             };
-            timer.schedule(hourlyTask, 100, 700);
+            timer.schedule(hourlyTask, 3000, 4000);
 
             //TODO Hacer estos casos para las demás pantallas
             binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
@@ -886,7 +899,7 @@ public class FragmentModificar extends Fragment implements
                         Location mLocation = new Location("");
                         mLocation.setLatitude(mCenterLatLong.latitude);
                         mLocation.setLongitude(mCenterLatLong.longitude);
-                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
+                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "si");
                     }
 
                 }
@@ -4170,26 +4183,44 @@ public class FragmentModificar extends Fragment implements
         return ubicacion;
     }
 
-    public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng) {
+    public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng, String no) {
         Geocoder geocoder;
         List<Address> addresses = null;
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
             if (mCenterLatLong != null) {
-                addresses = geocoder.getFromLocation(lat, lng, 1);
-                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                municipio = addresses.get(0).getLocality();
-                String postalCode = addresses.get(0).getPostalCode();
+                if(no.equals("no")){
+                    addresses = geocoder.getFromLocation(lat, lng, 1);
+                    String address = addresses.get(0).getAddressLine(0);
+                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                    String city = addresses.get(0).getLocality();
+                    String state = addresses.get(0).getAdminArea();
+                    String country = addresses.get(0).getCountryName();
+                    municipio = addresses.get(0).getLocality();
+                    String postalCode = addresses.get(0).getPostalCode();
+                    //binding.direccionsitio.setText(address);
+                    binding.ciudadsitio.setText(city);
+                    binding.estadositio.setText(state);
+                    binding.municipiositio.setText(municipio);
+                    binding.pais.setText(country);
+                    binding.codigopostalsitio.setText(postalCode);
+                }else{
+                    addresses = geocoder.getFromLocation(lat, lng, 1);
+                    String address = addresses.get(0).getAddressLine(0);
+                    // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                    String city = addresses.get(0).getLocality();
+                    String state = addresses.get(0).getAdminArea();
+                    String country = addresses.get(0).getCountryName();
+                    municipio = addresses.get(0).getLocality();
+                    String postalCode = addresses.get(0).getPostalCode();
+                    binding.direccionsitio.setText(address);
+                    binding.ciudadsitio.setText(city);
+                    binding.estadositio.setText(state);
+                    binding.municipiositio.setText(municipio);
+                    binding.pais.setText(country);
+                    binding.codigopostalsitio.setText(postalCode);
+                }
 
-                binding.direccionsitio.setText(address);
-                binding.ciudadsitio.setText(city);
-                binding.estadositio.setText(state);
-                binding.municipiositio.setText(municipio);
-                binding.pais.setText(country);
-                binding.codigopostalsitio.setText(postalCode);
             }
         } catch (IOException e) {
             e.printStackTrace();

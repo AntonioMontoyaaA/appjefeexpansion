@@ -109,9 +109,11 @@ public class FragmentGrupos extends Fragment implements NumMensajesHolder.Listen
                         comentarios = new ArrayList<>();
 
                         for(int i = 0;i<tiempos.getComentarios().size();i++){
-                            if(tiempos.getComentarios().get(i).getEstatusId()!=1){
-                                comentarios.add(tiempos.getComentarios().get(i));
-                            }
+                           // if(tiempos.getComentarios().get(i).getEstatusId()!=1 ){
+                                if(tiempos.getComentarios().get(i).getEstatusEvaluacion()!=0){
+                                    comentarios.add(tiempos.getComentarios().get(i));
+                                }
+                          //  }
                         }
 
                         for(int j=0;j<comentarios.size();j++){
@@ -123,7 +125,7 @@ public class FragmentGrupos extends Fragment implements NumMensajesHolder.Listen
                         loadingProgress(progressDialog, 1);
                         binding.motivoRechazoGeneral.setText(tiempos.getMtvRechazo()+"");
 
-                        SharedPreferences.Editor editor = preferences.edit();
+                        final SharedPreferences.Editor editor = preferences.edit();
                         editor.putBoolean("backPressed", false);
                         editor.apply();
 
@@ -144,6 +146,8 @@ public class FragmentGrupos extends Fragment implements NumMensajesHolder.Listen
                                 @Override
                                 public void onClick(View view) {
 
+                                    editor.putString("banderaMapa", "1");
+                                    editor.apply();
                                     Intent main = new Intent(getContext(), ActivityDetalleModifica.class);
                                     getContext().startActivity(main);
                                     getActivity().finish();
@@ -209,14 +213,15 @@ public class FragmentGrupos extends Fragment implements NumMensajesHolder.Listen
 
         editor.apply();
 
-        binding.recyclerGrupos.setVisibility(View.GONE);
+        binding.recyclerGrupos.setVisibility(View.INVISIBLE);
 
         leerMensajes(getContext(), String.valueOf(model.getEstatusId()), mdId, usuario);
 
         FragmentEstatusChat fragment = new FragmentEstatusChat();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.bodys, fragment);
+        transaction.add(R.id.bodys, fragment);
         transaction.addToBackStack(null);
+
         transaction.commit();
 
     }

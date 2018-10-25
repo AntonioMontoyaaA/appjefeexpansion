@@ -16,7 +16,7 @@ import expansion.neto.com.mx.jefeapp.modelView.procesoModel.ChatProceso;
 
 public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
     TextView messageText, timeText, nameText;
-    ImageView profileImage;
+    //ImageView profileImage;
 
     private final int AREA_EXPANSION = 1;
     private final int AREA_GESTORIA = 2;
@@ -33,7 +33,7 @@ public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         messageText = (TextView) itemView.findViewById(R.id.text_message_body);
         timeText = (TextView) itemView.findViewById(R.id.text_message_time);
         nameText = (TextView) itemView.findViewById(R.id.text_message_name);
-        profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
+       // profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
     }
 
     public void bind(ChatProceso.MensajeChat message, Context context, int tipoComentario) {
@@ -69,21 +69,21 @@ public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         timeText.setText(message.getFecha());
         nameText.setText(message.getArea());
 
-        final Resources resource = context.getResources();
+        //final Resources resource = context.getResources();
 
-        switch (message.getAreaId()) {
-            case AREA_EXPANSION:
-                profileImage.setImageDrawable(resource.getDrawable(R.drawable.expansioazul));
-                break;
-            case AREA_GESTORIA:
-                profileImage.setImageDrawable(resource.getDrawable(R.drawable.gestoriaazul));
-                break;
-            case AREA_CONSTRUCCION:
-                profileImage.setImageDrawable(resource.getDrawable(R.drawable.construccionazul));
-                break;
-            case AREA_OPERACIONES:
-                profileImage.setImageDrawable(resource.getDrawable(R.drawable.operacionesazul));
-                break;
-        };
+//        switch (message.getAreaId()) {
+//            case AREA_EXPANSION:
+//                profileImage.setImageDrawable(resource.getDrawable(R.drawable.expansioazul));
+//                break;
+//            case AREA_GESTORIA:
+//                profileImage.setImageDrawable(resource.getDrawable(R.drawable.gestoriaazul));
+//                break;
+//            case AREA_CONSTRUCCION:
+//                profileImage.setImageDrawable(resource.getDrawable(R.drawable.construccionazul));
+//                break;
+//            case AREA_OPERACIONES:
+//                profileImage.setImageDrawable(resource.getDrawable(R.drawable.operacionesazul));
+//                break;
+//        };
     }
 }

@@ -737,9 +737,7 @@ public class FragmentAutoriza extends Fragment implements
                             new ProviderCrearDatosSitio.InterfaceCrearDatosSitio() {
                                 @Override
                                 public void resolve(Codigos codigo) {
-
                                     if(codigo.getCodigo()==200){
-
                                         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor editorExpansion = preferences.edit();
                                         editorExpansion.putFloat("latMd", (float) mCenterLatLong.latitude);
@@ -749,7 +747,6 @@ public class FragmentAutoriza extends Fragment implements
                                         editorExpansion.apply();
                                         binding.toolbar.guardar.setEnabled(true);
                                         loadingProgress(progressDialog, 1);
-
                                         FragmentDialogGuardar a = new FragmentDialogGuardar();
                                         a.show(getChildFragmentManager(),"child");
                                     }else{
