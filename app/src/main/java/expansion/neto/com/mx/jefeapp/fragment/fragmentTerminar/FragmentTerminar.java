@@ -115,6 +115,7 @@ import expansion.neto.com.mx.jefeapp.databinding.FragmentAutorizaPorterminarBind
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogAceptar;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogCancelar;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogError405;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogGuardar;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogTipoSitio;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosGeneralidades;
@@ -1115,6 +1116,9 @@ public class FragmentTerminar extends Fragment implements
                                     }
                                 });
 
+                    }else{
+                        loadingProgress(progressDialog, 1);
+                        bindingPropietario.toolbar.guardar.setEnabled(true);
                     }
 
                 }
@@ -1691,10 +1695,16 @@ public class FragmentTerminar extends Fragment implements
 
                                                 if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")) {
 
-                                                    Toast.makeText(getContext(), R.string.mensaje_fotos,
-                                                            Toast.LENGTH_SHORT).show();
-                                                    bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                    FragmentDialogError405 a = new FragmentDialogError405();
+                                                    Bundle arguments = new Bundle();
+                                                    arguments.putString( "mensaje" , getString(R.string.mensaje_fotos));
+                                                    a.setArguments(arguments);
+                                                    a.show(getChildFragmentManager(),"child");
                                                     loadingProgress(progressDialog, 1);
+
+                                                    bindingSuperficie.toolbar.guardar.setEnabled(true);
+
+
 
                                                 } else {
                                                     String usuario = preferences.getString("usuario", "");
@@ -1715,6 +1725,17 @@ public class FragmentTerminar extends Fragment implements
                                                                 a.show(getChildFragmentManager(), "child");
                                                                 bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                                 loadingProgress(progressDialog, 1);
+
+                                                            }else if(codigo.getCodigo()==405){
+
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                FragmentDialogError405 a = new FragmentDialogError405();
+                                                                Bundle arguments = new Bundle();
+                                                                arguments.putString( "mensaje" , codigo.getMensaje());
+                                                                a.setArguments(arguments);
+                                                                a.show(getChildFragmentManager(),"child");
+                                                                loadingProgress(progressDialog, 1);
+
                                                             } else if(codigo.getCodigo()==1){
                                                                 Toast.makeText(getContext(), getString(R.string.errorInternet),
                                                                         Toast.LENGTH_SHORT).show();
@@ -2053,9 +2074,14 @@ public class FragmentTerminar extends Fragment implements
                                                 mdLot = preferences.getFloat("lotMd", 0);
 
                                                 if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")) {
-                                                    Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
-                                                            Toast.LENGTH_SHORT).show();
+
+                                                    FragmentDialogError405 a = new FragmentDialogError405();
+                                                    Bundle arguments = new Bundle();
+                                                    arguments.putString( "mensaje" , getString(R.string.mensaje_fotos));
+                                                    a.setArguments(arguments);
+                                                    a.show(getChildFragmentManager(),"child");
                                                     loadingProgress(progressDialog, 1);
+
                                                     bindingSuperficie.toolbar.guardar.setEnabled(true);
 
                                                 } else {
@@ -2077,10 +2103,17 @@ public class FragmentTerminar extends Fragment implements
                                                                 a.show(getChildFragmentManager(), "child");
                                                                 bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                                 loadingProgress(progressDialog, 1);
-
+                                                            }else if(codigo.getCodigo()==405){
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                FragmentDialogError405 a = new FragmentDialogError405();
+                                                                Bundle arguments = new Bundle();
+                                                                arguments.putString( "mensaje" , codigo.getMensaje());
+                                                                a.setArguments(arguments);
+                                                                a.show(getChildFragmentManager(),"child");
+                                                                loadingProgress(progressDialog, 1);
                                                             } else if(codigo.getCodigo()==1){
                                                                 Toast.makeText(getContext(), getString(R.string.errorInternet),
-                                                                        Toast.LENGTH_SHORT).show();
+                                                                        Toast.LENGTH_LONG).show();
                                                                 bindingSuperficie.toolbar.guardar.setEnabled(true);                                                                loadingProgress(progressDialog, 1);
                                                                 loadingProgress(progressDialog, 1);
 
@@ -2088,12 +2121,12 @@ public class FragmentTerminar extends Fragment implements
 
                                                                 if (datos.getFechaPredial() == null) {
                                                                     Toast.makeText(getContext(), "Se necesita la foto del predial",
-                                                                            Toast.LENGTH_SHORT).show();
+                                                                            Toast.LENGTH_LONG).show();
                                                                     loadingProgress(progressDialog, 1);
                                                                 } else {
                                                                     bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                                     Toast.makeText(getContext(), codigo.getMensaje(),
-                                                                            Toast.LENGTH_SHORT).show();
+                                                                            Toast.LENGTH_LONG).show();
                                                                     loadingProgress(progressDialog, 1);
                                                                 }
                                                             }

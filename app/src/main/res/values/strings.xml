@@ -82,6 +82,8 @@
     <string name="salirproceso">Deseas salir del detalle de esta MD</string>
     <string name="guardarmd">Se guardo correctamente el sitio para editarlo, entra en la opción "Por terminar" en tu menú.</string>
     <string name="disponibilidad">Disponibilidad</string>
+    <string name="sitio">El nombre del sitio ya ha sido utilizado.</string>
+
     <string name="inmediata">\u2022 Inmediata</string>
     <string name="guardo">Se guardo correctamente el sitio para editarlo entra en la opción "Por terminar" en tu menú.</string>
     <string name="autorizadas">Autorizadas</string>

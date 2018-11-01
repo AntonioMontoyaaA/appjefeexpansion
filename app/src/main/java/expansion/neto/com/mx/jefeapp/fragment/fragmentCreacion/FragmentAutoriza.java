@@ -749,6 +749,18 @@ public class FragmentAutoriza extends Fragment implements
                                             loadingProgress(progressDialog, 1);
                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
                                             a.show(getChildFragmentManager(),"child");
+                                        }else if(codigo.getCodigo()==405){
+                                            binding.toolbar.guardar.setEnabled(true);
+
+                                            FragmentDialogError405 a = new FragmentDialogError405();
+
+
+                                            Bundle arguments = new Bundle();
+                                            arguments.putString( "mensaje" , codigo.getMensaje());
+                                            a.setArguments(arguments);
+                                            a.show(getChildFragmentManager(),"child");
+
+                                            loadingProgress(progressDialog, 1);
                                         }else if(codigo.getCodigo()==1){
                                             binding.toolbar.guardar.setEnabled(true);
                                             Toast.makeText(getContext(), getString(R.string.errorInternet),
@@ -961,9 +973,15 @@ public class FragmentAutoriza extends Fragment implements
                                             loadingProgress(progressDialog, 1);
                                         }else{
                                             bindingPropietario.toolbar.guardar.setEnabled(true);
-                                            Toast.makeText(getContext(), codigo.getMensaje(),
-                                                    Toast.LENGTH_SHORT).show();
+
+                                            FragmentDialogError405 a = new FragmentDialogError405();
+                                            Bundle arguments = new Bundle();
+                                            arguments.putString( "mensaje" , codigo.getMensaje());
+                                            a.setArguments(arguments);
+                                            a.show(getChildFragmentManager(),"child");
+
                                             loadingProgress(progressDialog, 1);
+
                                         }
 
                                     }
@@ -973,6 +991,10 @@ public class FragmentAutoriza extends Fragment implements
 
                                     }
                                 });
+                    }else{
+                        loadingProgress(progressDialog, 1);
+                        bindingPropietario.toolbar.guardar.setEnabled(true);
+
                     }
 
                 }
@@ -1435,10 +1457,15 @@ public class FragmentAutoriza extends Fragment implements
                         String convertido = String.valueOf(mdid);
 
                         if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
-                            Toast.makeText(getContext(), R.string.mandar,
-                                    Toast.LENGTH_SHORT).show();
-                            bindingSuperficie.toolbar.guardar.setEnabled(true);
+
+                            FragmentDialogError405 a = new FragmentDialogError405();
+                            Bundle arguments = new Bundle();
+                            arguments.putString( "mensaje" , getString(R.string.mensaje_fotos));
+                            a.setArguments(arguments);
+                            a.show(getChildFragmentManager(),"child");
                             loadingProgress(progressDialog, 1);
+
+                            bindingSuperficie.toolbar.guardar.setEnabled(true);
 
                         }else{
                             String usuario = preferences.getString("usuario", "");
@@ -1459,6 +1486,18 @@ public class FragmentAutoriza extends Fragment implements
                                         a.show(getChildFragmentManager(), "child");
                                         bindingSuperficie.toolbar.guardar.setEnabled(true);
                                         loadingProgress(progressDialog, 1);
+
+
+                                    }else if(codigo.getCodigo()==405){
+
+                                        bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                        FragmentDialogError405 a = new FragmentDialogError405();
+                                        Bundle arguments = new Bundle();
+                                        arguments.putString( "mensaje" , codigo.getMensaje());
+                                        a.setArguments(arguments);
+                                        a.show(getChildFragmentManager(),"child");
+                                        loadingProgress(progressDialog, 1);
+
                                     } else if(codigo.getCodigo()==1){
                                         Toast.makeText(getContext(), getString(R.string.errorInternet),
                                                 Toast.LENGTH_SHORT).show();
