@@ -23,7 +23,8 @@
 
     <string name="usuarioIncorrecto">Tu usuario y contraseña no son correctos</string>
     <string name="sizeContra">Usuario y contraseña debe tener más de 10 carácteres</string>
-    <string name="conexionInternet">Tu conexión a Internet es inestable</string>
+    <string name="conexionInternet">Tu conexión a internet es inestable</string>
+    <string name="errorInternet">Error de conexión, intenta nuevamente</string>
 
     <string name="mdnull">En este mes no existe ninguna MD por autorizar</string>
     <string name="mdnT">En este mes no existe ninguna MD por terminar</string>

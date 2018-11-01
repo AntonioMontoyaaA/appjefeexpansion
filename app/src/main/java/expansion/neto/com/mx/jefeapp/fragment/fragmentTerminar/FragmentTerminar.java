@@ -840,8 +840,6 @@ public class FragmentTerminar extends Fragment implements
             };
             timer.schedule(hourlyTask, 3000, 4000);
 
-
-
             //TODO Hacer estos casos para las demás pantallas
             binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -874,29 +872,39 @@ public class FragmentTerminar extends Fragment implements
                             new ProviderCrearDatosSitio.InterfaceCrearDatosSitio() {
                                 @Override
                                 public void resolve(Codigos codigo) {
+                                    if(codigo!=null){
+                                        if (codigo.getCodigo() == 200) {
 
-                                    if (codigo.getCodigo() == 200) {
+                                            SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editorExpansion = preferences.edit();
+                                            editorExpansion.putFloat("latMd", (float) mCenterLatLong.latitude);
+                                            editorExpansion.putFloat("lotMd", (float) mCenterLatLong.longitude);
+                                            editorExpansion.putLong("mdId", codigo.getMdId());
+                                            editorExpansion.putString("nombreSitio", nombreSitio);
+                                            editorExpansion.apply();
 
-                                        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor editorExpansion = preferences.edit();
-                                        editorExpansion.putFloat("latMd", (float) mCenterLatLong.latitude);
-                                        editorExpansion.putFloat("lotMd", (float) mCenterLatLong.longitude);
-                                        editorExpansion.putLong("mdId", codigo.getMdId());
-                                        editorExpansion.putString("nombreSitio", nombreSitio);
-                                        editorExpansion.apply();
+                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                            a.show(getChildFragmentManager(), "child");
+                                            binding.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
-                                        FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                        a.show(getChildFragmentManager(), "child");
+                                        } else if(codigo.getCodigo()==1){
+                                            binding.toolbar.guardar.setEnabled(true);
+                                            Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                    Toast.LENGTH_SHORT).show();
+                                            loadingProgress(progressDialog, 1);
+                                        }else{
+                                            binding.toolbar.guardar.setEnabled(true);
+                                            Toast.makeText(getContext(), codigo.getMensaje(),
+                                                    Toast.LENGTH_SHORT).show();
+                                            loadingProgress(progressDialog, 1);
+                                        }
+                                    }else{
                                         binding.toolbar.guardar.setEnabled(true);
-                                        loadingProgress(progressDialog, 1);
-
-                                    } else {
-                                        binding.toolbar.guardar.setEnabled(true);
-                                        Toast.makeText(getContext(), codigo.getMensaje(),
+                                        Toast.makeText(getContext(), getString(R.string.errorInternet),
                                                 Toast.LENGTH_SHORT).show();
                                         loadingProgress(progressDialog, 1);
                                     }
-
                                 }
 
                                 @Override
@@ -1088,14 +1096,17 @@ public class FragmentTerminar extends Fragment implements
                                             bindingPropietario.toolbar.guardar.setEnabled(true);
                                             loadingProgress(progressDialog, 1);
 
-                                        } else {
+                                        } else if(codigo.getCodigo()==1){
+                                            bindingPropietario.toolbar.guardar.setEnabled(true);
+                                            Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                    Toast.LENGTH_SHORT).show();
+                                            loadingProgress(progressDialog, 1);
+                                        }else{
                                             bindingPropietario.toolbar.guardar.setEnabled(true);
                                             Toast.makeText(getContext(), codigo.getMensaje(),
                                                     Toast.LENGTH_SHORT).show();
                                             loadingProgress(progressDialog, 1);
-
                                         }
-
                                     }
 
                                     @Override
@@ -1208,6 +1219,9 @@ public class FragmentTerminar extends Fragment implements
                                 urlPredial = "";
                                 fechaPredial = "";
                             }
+                        }else if(datosPredial.getCodigo().equals("1")){
+                            Toast.makeText(getContext(), getString(R.string.errorInternet), Toast.LENGTH_SHORT).show();
+                            loadingProgress(progressDialog, 1);
                         }
                     } else {
                         bindingSuperficie.predial.setVisibility(View.GONE);
@@ -1701,13 +1715,16 @@ public class FragmentTerminar extends Fragment implements
                                                                 a.show(getChildFragmentManager(), "child");
                                                                 bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                                 loadingProgress(progressDialog, 1);
-
-                                                            } else {
+                                                            } else if(codigo.getCodigo()==1){
+                                                                Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                                        Toast.LENGTH_SHORT).show();
                                                                 bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                                loadingProgress(progressDialog, 1);
+                                                            }else{
                                                                 Toast.makeText(getContext(), codigo.getMensaje(),
                                                                         Toast.LENGTH_SHORT).show();
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                                 loadingProgress(progressDialog, 1);
-
                                                             }
                                                         }
 
@@ -2061,6 +2078,11 @@ public class FragmentTerminar extends Fragment implements
                                                                 bindingSuperficie.toolbar.guardar.setEnabled(true);
                                                                 loadingProgress(progressDialog, 1);
 
+                                                            } else if(codigo.getCodigo()==1){
+                                                                Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                                        Toast.LENGTH_SHORT).show();
+                                                                bindingSuperficie.toolbar.guardar.setEnabled(true);                                                                loadingProgress(progressDialog, 1);
+                                                                loadingProgress(progressDialog, 1);
 
                                                             } else {
 
@@ -2243,140 +2265,147 @@ public class FragmentTerminar extends Fragment implements
                 ProviderDatosCompetencias.getInstance(getContext()).obtenerDatosCompetencias(usuario, mdIdterminar, new ProviderDatosCompetencias.ConsultaDatosCompetencia() {
                     @Override
                     public void resolve(CompetenciasGeneradoresV2 competenciasGeneradores) {
-                        if (competenciasGeneradores != null && competenciasGeneradores.getCodigo() == 200) {
-                            loadingProgress(progressDialog, 1);
+                        if(competenciasGeneradores!=null){
+                            if (competenciasGeneradores != null && competenciasGeneradores.getCodigo() == 200) {
+                                loadingProgress(progressDialog, 1);
 
-                            listCompetencia = new ArrayList<>();
-                            listGeneradores = new ArrayList<>();
-                            listCompetenciaTiendaNeto = new ArrayList<>();
-                            listGeneradoresNegocios = new ArrayList<>();
-                            listGeneradoresTransporte = new ArrayList<>();
+                                listCompetencia = new ArrayList<>();
+                                listGeneradores = new ArrayList<>();
+                                listCompetenciaTiendaNeto = new ArrayList<>();
+                                listGeneradoresNegocios = new ArrayList<>();
+                                listGeneradoresTransporte = new ArrayList<>();
 
-                            negociosDeComidaArrayList = new ArrayList<>();
-                            mercadoPublicoArrayList = new ArrayList<>();
-                            tianguiArrayList = new ArrayList<>();
+                                negociosDeComidaArrayList = new ArrayList<>();
+                                mercadoPublicoArrayList = new ArrayList<>();
+                                tianguiArrayList = new ArrayList<>();
 
-                            for (int i = 0; i < competenciasGeneradores.getCompetencias().getCompetencias().size(); i++) {
-                                listCompetencia.add(competenciasGeneradores.getCompetencias().getCompetencias().get(i));
+                                for (int i = 0; i < competenciasGeneradores.getCompetencias().getCompetencias().size(); i++) {
+                                    listCompetencia.add(competenciasGeneradores.getCompetencias().getCompetencias().get(i));
+                                }
+
+                                for (int i = 0; i < competenciasGeneradores.getCompetencias().getTiendaNeto().size(); i++) {
+                                    listCompetenciaTiendaNeto.add(competenciasGeneradores.getCompetencias().getTiendaNeto().get(i));
+                                }
+
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getOtrosGeneradores().size(); i++) {
+                                    listGeneradores.add(competenciasGeneradores.getGeneradores().getOtrosGeneradores().get(i));
+                                }
+
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegocios().size(); i++) {
+                                    listGeneradoresNegocios.add(competenciasGeneradores.getGeneradores().getNegocios().get(i));
+                                }
+
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getTransportePublico().size(); i++) {
+                                    listGeneradoresTransporte.add(competenciasGeneradores.getGeneradores().getTransportePublico().get(i));
+                                }
+                                ///////
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegociosDeComida().size(); i++) {
+                                    negociosDeComidaArrayList.add(competenciasGeneradores.getGeneradores().getNegociosDeComida().get(i));
+                                }
+
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getMercadoPublico().size(); i++) {
+                                    mercadoPublicoArrayList.add(competenciasGeneradores.getGeneradores().getMercadoPublico().get(i));
+                                }
+
+                                for (int i = 0; i < competenciasGeneradores.getGeneradores().getTianguis().size(); i++) {
+                                    tianguiArrayList.add(competenciasGeneradores.getGeneradores().getTianguis().get(i));
+                                }
+
+
+                                /****** transporte negocio comida *******/
+
+                                adapterListaGeneradoresNegociosComida = new AdapterListaGeneradoresNegociosComida(negociosDeComidaArrayList, getContext(), clickNegociosComida);
+                                bindingZonificacion.content2.contentListaComida.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.content2.contentListaComida.setAdapter(adapterListaGeneradoresNegociosComida);
+                                RecyclerView.LayoutManager mLayoutManagerNegociosComida = new GridLayoutManager(getContext(), 4);
+
+                                bindingZonificacion.content2.contentListaComida.setLayoutManager(mLayoutManagerNegociosComida);
+                                bindingZonificacion.content2.contentListaComida.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
+                                bindingZonificacion.content2.contentListaComida.setItemAnimator(new DefaultItemAnimator());
+
+                                /****** mercado publico *******/
+                                adapterListaGeneradoresMercadoPublico = new AdapterListaGeneradoresMercadoPublico(mercadoPublicoArrayList, getContext(), clickMercadoPublico);
+                                bindingZonificacion.content2.contentListaMercado.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.content2.contentListaMercado.setAdapter(adapterListaGeneradoresMercadoPublico);
+                                RecyclerView.LayoutManager mLayoutManagerMercado = new GridLayoutManager(getContext(), 4);
+
+                                bindingZonificacion.content2.contentListaMercado.setLayoutManager(mLayoutManagerMercado);
+                                bindingZonificacion.content2.contentListaMercado.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
+                                bindingZonificacion.content2.contentListaMercado.setItemAnimator(new DefaultItemAnimator());
+
+                                /****** tianguis *******/
+                                adapterListaGeneradoresTianguis = new AdapterListaGeneradoresTianguis(tianguiArrayList, getContext(), clickTiaguis);
+                                bindingZonificacion.content2.contentListaTianguis.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.content2.contentListaTianguis.setAdapter(adapterListaGeneradoresTianguis);
+
+
+                                RecyclerView.LayoutManager mLayoutManagerTianguis = new GridLayoutManager(getContext(), 4);
+
+                                bindingZonificacion.content2.contentListaTianguis.setLayoutManager(mLayoutManagerTianguis);
+                                bindingZonificacion.content2.contentListaTianguis.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
+                                bindingZonificacion.content2.contentListaTianguis.setItemAnimator(new DefaultItemAnimator());
+
+
+                                /****** transporte publico *******/
+                                adapterTransporte = new AdapterListaGeneradoresTransporte(listGeneradoresTransporte, getContext(), clickTransporte);
+                                bindingZonificacion.content2.contentListaTransporte.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.content2.contentListaTransporte.setAdapter(adapterTransporte);
+
+                                RecyclerView.LayoutManager mLayoutManagerTransporte = new GridLayoutManager(getContext(), 4);
+
+                                bindingZonificacion.content2.contentListaTransporte.setLayoutManager(mLayoutManagerTransporte);
+                                bindingZonificacion.content2.contentListaTransporte.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
+                                bindingZonificacion.content2.contentListaTransporte.setItemAnimator(new DefaultItemAnimator());
+
+                                /****** otros generadores *******/
+                                adapterNegocios = new AdapterListaGeneradoresNegocios(listGeneradoresNegocios, getContext(), clickNegocio);
+                                bindingZonificacion.content2.contentListaNegocios.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.content2.contentListaNegocios.setAdapter(adapterNegocios);
+
+                                RecyclerView.LayoutManager mLayoutManagerNegocios = new GridLayoutManager(getContext(), 4);
+                                bindingZonificacion.content2.contentListaNegocios.setLayoutManager(mLayoutManagerNegocios);
+                                bindingZonificacion.content2.contentListaNegocios.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
+                                bindingZonificacion.content2.contentListaNegocios.setItemAnimator(new DefaultItemAnimator());
+
+                                /****** otros generadores *******/
+                                adapter2 = new AdapterListaGeneradores(listGeneradores, getContext(), clicks);
+                                bindingZonificacion.content2.contentLista.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.content2.contentLista.setAdapter(adapter2);
+
+                                RecyclerView.LayoutManager mLayoutManager2 = new GridLayoutManager(getContext(), 4);
+                                bindingZonificacion.content2.contentLista.setLayoutManager(mLayoutManager2);
+                                bindingZonificacion.content2.contentLista.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
+                                bindingZonificacion.content2.contentLista.setItemAnimator(new DefaultItemAnimator());
+
+                                /****** competencias *******/
+                                adapter = new AdapterListaCompetencia(listCompetencia, getContext(), click);
+                                bindingZonificacion.contenido.contentLista.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.contenido.contentLista.setAdapter(adapter);
+
+                                RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
+                                bindingZonificacion.contenido.contentLista.setLayoutManager(mLayoutManager);
+                                bindingZonificacion.contenido.contentLista.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(4), true));
+                                bindingZonificacion.contenido.contentLista.setItemAnimator(new DefaultItemAnimator());
+
+                                /****** tiendas neto *******/
+                                adapterTiendaNeto = new AdapterListaTiendaNeto(listCompetenciaTiendaNeto, getContext(), clickTiendaNeto);
+                                bindingZonificacion.contenido.contentListaTienda.setLayoutManager(new LinearLayoutManager(getContext()));
+                                bindingZonificacion.contenido.contentListaTienda.setAdapter(adapterTiendaNeto);
+
+                                RecyclerView.LayoutManager mLayoutManagerTienda = new GridLayoutManager(getContext(), 3);
+                                bindingZonificacion.contenido.contentListaTienda.setLayoutManager(mLayoutManagerTienda);
+                                bindingZonificacion.contenido.contentListaTienda.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(4), true));
+                                bindingZonificacion.contenido.contentListaTienda.setItemAnimator(new DefaultItemAnimator());
+
+                            } else if(competenciasGeneradores.getCodigo()==1){
+                                Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                        Toast.LENGTH_SHORT).show();
+                            }else{
+                                loadingProgress(progressDialog, 1);
+
                             }
-
-                            for (int i = 0; i < competenciasGeneradores.getCompetencias().getTiendaNeto().size(); i++) {
-                                listCompetenciaTiendaNeto.add(competenciasGeneradores.getCompetencias().getTiendaNeto().get(i));
-                            }
-
-                            for (int i = 0; i < competenciasGeneradores.getGeneradores().getOtrosGeneradores().size(); i++) {
-                                listGeneradores.add(competenciasGeneradores.getGeneradores().getOtrosGeneradores().get(i));
-                            }
-
-                            for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegocios().size(); i++) {
-                                listGeneradoresNegocios.add(competenciasGeneradores.getGeneradores().getNegocios().get(i));
-                            }
-
-                            for (int i = 0; i < competenciasGeneradores.getGeneradores().getTransportePublico().size(); i++) {
-                                listGeneradoresTransporte.add(competenciasGeneradores.getGeneradores().getTransportePublico().get(i));
-                            }
-                            ///////
-                            for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegociosDeComida().size(); i++) {
-                                negociosDeComidaArrayList.add(competenciasGeneradores.getGeneradores().getNegociosDeComida().get(i));
-                            }
-
-                            for (int i = 0; i < competenciasGeneradores.getGeneradores().getMercadoPublico().size(); i++) {
-                                mercadoPublicoArrayList.add(competenciasGeneradores.getGeneradores().getMercadoPublico().get(i));
-                            }
-
-                            for (int i = 0; i < competenciasGeneradores.getGeneradores().getTianguis().size(); i++) {
-                                tianguiArrayList.add(competenciasGeneradores.getGeneradores().getTianguis().get(i));
-                            }
-
-
-                            /****** transporte negocio comida *******/
-
-                            adapterListaGeneradoresNegociosComida = new AdapterListaGeneradoresNegociosComida(negociosDeComidaArrayList, getContext(), clickNegociosComida);
-                            bindingZonificacion.content2.contentListaComida.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.content2.contentListaComida.setAdapter(adapterListaGeneradoresNegociosComida);
-                            RecyclerView.LayoutManager mLayoutManagerNegociosComida = new GridLayoutManager(getContext(), 4);
-
-                            bindingZonificacion.content2.contentListaComida.setLayoutManager(mLayoutManagerNegociosComida);
-                            bindingZonificacion.content2.contentListaComida.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
-                            bindingZonificacion.content2.contentListaComida.setItemAnimator(new DefaultItemAnimator());
-
-                            /****** mercado publico *******/
-                            adapterListaGeneradoresMercadoPublico = new AdapterListaGeneradoresMercadoPublico(mercadoPublicoArrayList, getContext(), clickMercadoPublico);
-                            bindingZonificacion.content2.contentListaMercado.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.content2.contentListaMercado.setAdapter(adapterListaGeneradoresMercadoPublico);
-                            RecyclerView.LayoutManager mLayoutManagerMercado = new GridLayoutManager(getContext(), 4);
-
-                            bindingZonificacion.content2.contentListaMercado.setLayoutManager(mLayoutManagerMercado);
-                            bindingZonificacion.content2.contentListaMercado.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
-                            bindingZonificacion.content2.contentListaMercado.setItemAnimator(new DefaultItemAnimator());
-
-                            /****** tianguis *******/
-                            adapterListaGeneradoresTianguis = new AdapterListaGeneradoresTianguis(tianguiArrayList, getContext(), clickTiaguis);
-                            bindingZonificacion.content2.contentListaTianguis.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.content2.contentListaTianguis.setAdapter(adapterListaGeneradoresTianguis);
-
-
-                            RecyclerView.LayoutManager mLayoutManagerTianguis = new GridLayoutManager(getContext(), 4);
-
-                            bindingZonificacion.content2.contentListaTianguis.setLayoutManager(mLayoutManagerTianguis);
-                            bindingZonificacion.content2.contentListaTianguis.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
-                            bindingZonificacion.content2.contentListaTianguis.setItemAnimator(new DefaultItemAnimator());
-
-
-                            /****** transporte publico *******/
-                            adapterTransporte = new AdapterListaGeneradoresTransporte(listGeneradoresTransporte, getContext(), clickTransporte);
-                            bindingZonificacion.content2.contentListaTransporte.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.content2.contentListaTransporte.setAdapter(adapterTransporte);
-
-                            RecyclerView.LayoutManager mLayoutManagerTransporte = new GridLayoutManager(getContext(), 4);
-
-                            bindingZonificacion.content2.contentListaTransporte.setLayoutManager(mLayoutManagerTransporte);
-                            bindingZonificacion.content2.contentListaTransporte.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
-                            bindingZonificacion.content2.contentListaTransporte.setItemAnimator(new DefaultItemAnimator());
-
-                            /****** otros generadores *******/
-                            adapterNegocios = new AdapterListaGeneradoresNegocios(listGeneradoresNegocios, getContext(), clickNegocio);
-                            bindingZonificacion.content2.contentListaNegocios.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.content2.contentListaNegocios.setAdapter(adapterNegocios);
-
-                            RecyclerView.LayoutManager mLayoutManagerNegocios = new GridLayoutManager(getContext(), 4);
-                            bindingZonificacion.content2.contentListaNegocios.setLayoutManager(mLayoutManagerNegocios);
-                            bindingZonificacion.content2.contentListaNegocios.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
-                            bindingZonificacion.content2.contentListaNegocios.setItemAnimator(new DefaultItemAnimator());
-
-                            /****** otros generadores *******/
-                            adapter2 = new AdapterListaGeneradores(listGeneradores, getContext(), clicks);
-                            bindingZonificacion.content2.contentLista.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.content2.contentLista.setAdapter(adapter2);
-
-                            RecyclerView.LayoutManager mLayoutManager2 = new GridLayoutManager(getContext(), 4);
-                            bindingZonificacion.content2.contentLista.setLayoutManager(mLayoutManager2);
-                            bindingZonificacion.content2.contentLista.addItemDecoration(new GridSpacingItemDecoration(4, dpToPx(5), true));
-                            bindingZonificacion.content2.contentLista.setItemAnimator(new DefaultItemAnimator());
-
-                            /****** competencias *******/
-                            adapter = new AdapterListaCompetencia(listCompetencia, getContext(), click);
-                            bindingZonificacion.contenido.contentLista.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.contenido.contentLista.setAdapter(adapter);
-
-                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
-                            bindingZonificacion.contenido.contentLista.setLayoutManager(mLayoutManager);
-                            bindingZonificacion.contenido.contentLista.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(4), true));
-                            bindingZonificacion.contenido.contentLista.setItemAnimator(new DefaultItemAnimator());
-
-                            /****** tiendas neto *******/
-                            adapterTiendaNeto = new AdapterListaTiendaNeto(listCompetenciaTiendaNeto, getContext(), clickTiendaNeto);
-                            bindingZonificacion.contenido.contentListaTienda.setLayoutManager(new LinearLayoutManager(getContext()));
-                            bindingZonificacion.contenido.contentListaTienda.setAdapter(adapterTiendaNeto);
-
-                            RecyclerView.LayoutManager mLayoutManagerTienda = new GridLayoutManager(getContext(), 3);
-                            bindingZonificacion.contenido.contentListaTienda.setLayoutManager(mLayoutManagerTienda);
-                            bindingZonificacion.contenido.contentListaTienda.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(4), true));
-                            bindingZonificacion.contenido.contentListaTienda.setItemAnimator(new DefaultItemAnimator());
-
-                        } else {
-                            loadingProgress(progressDialog, 1);
                         }
+
 
                         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                                 .findFragmentById(R.id.map);
@@ -2524,6 +2553,7 @@ public class FragmentTerminar extends Fragment implements
                                             bindingZonificacion.toolbar.guardar.setEnabled(true);
                                             loadingProgress(progressDialog, 1);
 
+
                                         } else {
                                             bindingZonificacion.toolbar.guardar.setEnabled(true);
                                             Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
@@ -2548,6 +2578,11 @@ public class FragmentTerminar extends Fragment implements
                                             bindingZonificacion.toolbar.guardar.setEnabled(true);
                                             loadingProgress(progressDialog, 1);
 
+                                        } else if(codigo.getCodigo()==1){
+                                            Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                    Toast.LENGTH_SHORT).show();
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
                                         } else {
                                             Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
@@ -2670,6 +2705,7 @@ public class FragmentTerminar extends Fragment implements
                                             });
                                 }
                             } else {
+                                loadingProgress(progressDialog, 1);
                                 Toast.makeText(getContext(), "Error al consultar factores de construcción", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -2813,13 +2849,16 @@ public class FragmentTerminar extends Fragment implements
                                                 a.show(getChildFragmentManager(), "child");
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
                                                 loadingProgress(progressDialog, 1);
-
-                                            } else {
+                                            } else if(codigo.getCodigo()==1){
+                                                Toast.makeText(getContext(), getString(R.string.errorInternet), Toast.LENGTH_SHORT).show();
+                                                bindingConstruccion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
+                                            }else{
                                                 Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
                                                 loadingProgress(progressDialog, 1);
-
                                             }
+
                                         }
 
                                         @Override
@@ -2890,30 +2929,33 @@ public class FragmentTerminar extends Fragment implements
                 @Override
                 public void resolve(Amortizacion datosPredial) {
                     if (datosPredial != null) {
-                        loadingProgress(progressDialog, 1);
+                        if(datosPredial.getCodigo()==200){
+                            loadingProgress(progressDialog, 1);
 
-                        ArrayList<String> amortizacion = new ArrayList<>();
+                            ArrayList<String> amortizacion = new ArrayList<>();
 
-                        for (int i = 0; i < datosPredial.getAmortizacion().size(); i++) {
-                            amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                            for (int i = 0; i < datosPredial.getAmortizacion().size(); i++) {
+                                amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                            }
+
+                            ArrayList<String> gracia = new ArrayList<>();
+
+                            for (int j = 0; j < datosPredial.getGracia().size(); j++) {
+                                gracia.add(datosPredial.getGracia().get(j).getOpcion());
+                            }
+
+                            ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
+                                    amortizacion);
+                            amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                            binding.periodoamotizacion.setAdapter(amortizacionSpinner);
+
+                            ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
+                                    gracia);
+                            graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                            binding.periodogracia.setAdapter(graciaSpinner);
+                        }else{
+                            loadingProgress(progressDialog, 1);
                         }
-
-                        ArrayList<String> gracia = new ArrayList<>();
-
-                        for (int j = 0; j < datosPredial.getGracia().size(); j++) {
-                            gracia.add(datosPredial.getGracia().get(j).getOpcion());
-                        }
-
-                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
-                                amortizacion);
-                        amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodoamotizacion.setAdapter(amortizacionSpinner);
-
-                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
-                                gracia);
-                        graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodogracia.setAdapter(graciaSpinner);
-
                     } else {
                         loadingProgress(progressDialog, 1);
 
@@ -3293,18 +3335,19 @@ public class FragmentTerminar extends Fragment implements
                                                         @Override
                                                         public void resolve(Codigos codigo) {
                                                             if (codigo.getCodigo() == 200) {
-
                                                                 FragmentDialogGuardar a = new FragmentDialogGuardar();
                                                                 a.show(getChildFragmentManager(), "child");
                                                                 binding.toolbar.guardar.setEnabled(true);
                                                                 loadingProgress(progressDialog, 1);
-
-
-                                                            } else {
+                                                            } else if(codigo.getCodigo()==1){
+                                                                    binding.toolbar.guardar.setEnabled(true);
+                                                                    Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                                            Toast.LENGTH_SHORT).show();
+                                                                    loadingProgress(progressDialog, 1);
+                                                            }else{
                                                                 Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                                 binding.toolbar.guardar.setEnabled(true);
                                                                 loadingProgress(progressDialog, 1);
-
                                                             }
                                                         }
 
@@ -3714,6 +3757,10 @@ public class FragmentTerminar extends Fragment implements
                                                                 if (downTimer[0] != null) {
                                                                     downTimer[0].cancel();
                                                                 }
+
+                                                            } else if(codigo.getCodigo()==1){
+                                                                Toast.makeText(getContext(), getString(R.string.errorInternet), Toast.LENGTH_SHORT).show();
+                                                                binding.peatonalConteo.btnGuardar.setEnabled(true);
                                                             } else {
                                                                 Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                                 binding.peatonalConteo.btnGuardar.setEnabled(true);

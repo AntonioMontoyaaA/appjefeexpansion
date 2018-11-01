@@ -10,16 +10,16 @@ public class RestUrl {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public static String dominioFileDes = "voksedesfiles"; // desarrollo cloudinary
+    //public static String dominioFileDes = "voksedesfiles"; // desarrollo cloudinary
 
-    //public static String dominioFileProd = "voksefiles"; // produccion cloudinary
+    public static String dominioFileProd = "voksefiles"; // produccion cloudinary
 
-    //public static String ip = "206.189.68.177"; // desarrollo
-    public static String ip = "167.99.102.173"; // QA 36
+    public static String ip = "206.189.68.177"; // desarrollo
+    //public static String ip = "167.99.102.173"; // QA 36
     //public static String ip = "206.189.223.154"; // produccion
 
-    //public static String dominio = "voksedesapi"; // desarrollo
-    public static String dominio = "vokseqaapi"; // QA
+    public static String dominio = "voksedesapi"; // desarrollo
+    //public static String dominio = "vokseqaapi"; // QA
     //public static String dominio = "vokseapi"; // produccion
 
     public static String NUM_TELEFONO = "0";
@@ -142,7 +142,7 @@ public class RestUrl {
 
     public static String REST_ACTION_NUM_MENSAJES = "http://"+ ip +"/"+ dominio +"/obtienenummensajes/";
 
-    public static String REST_ACTION_GUARDA_TODO_TIPO_DOCUMENTO = "http://"+ ip +"/"+ dominioFileDes +"/cloudinaryset/";
+    public static String REST_ACTION_GUARDA_TODO_TIPO_DOCUMENTO = "http://"+ ip +"/"+ dominioFileProd +"/cloudinaryset/";
 
     public static String REST_ACTION_CONSULTAR_CHAT_ESTATUS = "http://"+ ip +"/"+ dominio +"/obtienemensajes/";
 

@@ -61,11 +61,11 @@ public class ProviderDatosPredial {
                 }catch (Exception e){
                     if(e.getMessage().contains("Failed to connect to")){
                         usuarioCallback = new DatosPredial();
-                        //usuarioCallback.setCodigo(1);
+                        usuarioCallback.setCodigo("1");
                         return usuarioCallback;
                     }else{
                         usuarioCallback = new DatosPredial();
-                        //usuarioCallback.setCodigo(404);
+                        usuarioCallback.setCodigo("404");
                         return usuarioCallback;
                     }
                 }

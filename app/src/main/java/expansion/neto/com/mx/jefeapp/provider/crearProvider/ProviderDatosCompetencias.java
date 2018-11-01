@@ -62,11 +62,11 @@ public class ProviderDatosCompetencias {
                     e.printStackTrace();
                     if(e.getMessage().contains("Failed to connect to")){
                         callback = new CompetenciasGeneradoresV2();
-                        //callback.setCodigo(1);
+                        callback.setCodigo(1);
                         return callback;
                     }else{
                         callback = new CompetenciasGeneradoresV2();
-                        //callback.setCodigo(404);
+                        callback.setCodigo(404);
                         return callback;
                     }
                 }

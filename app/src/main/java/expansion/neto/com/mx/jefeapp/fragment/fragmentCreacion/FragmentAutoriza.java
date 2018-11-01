@@ -173,6 +173,7 @@ import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.FACTOR_ID;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
+import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogCancelarMd.cleanShared;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosConstruccion.salvarDatosConstruccion;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosPropietario.salvarDatosPropietario;
@@ -2143,28 +2144,32 @@ public class FragmentAutoriza extends Fragment implements
                 @Override
                 public void resolve(Amortizacion datosPredial) {
                     if(datosPredial!=null){
+                        if(datosPredial.getCodigo()==200){
+                            ArrayList<String> amortizacion = new ArrayList<>();
 
-                        ArrayList<String> amortizacion = new ArrayList<>();
+                            for(int i = 0;i<datosPredial.getAmortizacion().size();i++){
+                                amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                            }
 
-                        for(int i = 0;i<datosPredial.getAmortizacion().size();i++){
-                            amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                            ArrayList<String> gracia = new ArrayList<>();
+
+                            for(int j = 0;j<datosPredial.getGracia().size();j++){
+                                gracia.add(datosPredial.getGracia().get(j).getOpcion());
+                            }
+
+                            ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                    amortizacion);
+                            amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                            binding.periodoamotizacion.setAdapter(amortizacionSpinner);
+
+                            ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
+                                    gracia);
+                            graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                            binding.periodogracia.setAdapter(graciaSpinner);
+                        }else{
+
                         }
-
-                        ArrayList<String> gracia = new ArrayList<>();
-
-                        for(int j = 0;j<datosPredial.getGracia().size();j++){
-                            gracia.add(datosPredial.getGracia().get(j).getOpcion());
-                        }
-
-                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
-                                amortizacion);
-                        amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodoamotizacion.setAdapter(amortizacionSpinner);
-
-                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(),   android.R.layout.simple_spinner_item,
-                                gracia);
-                        graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodogracia.setAdapter(graciaSpinner);
+                    } else {
 
                     }
                 }
