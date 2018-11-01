@@ -1220,7 +1220,7 @@ public class FragmentTerminar extends Fragment implements
                                 fechaPredial = "";
                             }
                         }else if(datosPredial.getCodigo().equals("1")){
-                            Toast.makeText(getContext(), getString(R.string.errorInternet), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), getString(R.string.errorInternet), Toast.LENGTH_SHORT).show();
                             loadingProgress(progressDialog, 1);
                         }
                     } else {
