@@ -14,13 +14,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import com.crashlytics.android.Crashlytics;
 
 import expansion.neto.com.mx.jefeapp.cron.Cron;
 import expansion.neto.com.mx.jefeapp.cron.CronJob;
 import expansion.neto.com.mx.jefeapp.cron.ReminderUtilitiesJob;
 import expansion.neto.com.mx.jefeapp.utils.ServicioRutas;
-import io.fabric.sdk.android.Fabric;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -65,7 +63,6 @@ public class ActivitySplashScreen extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Fabric.with(this, new Crashlytics());
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		binding  = DataBindingUtil.setContentView(this, R.layout.activity_splash_screen);
 

@@ -354,7 +354,7 @@
                                 app:typeface="robotoBold" />
 
                             <EditText
-                                android:maxLength="30"
+                                android:maxLength="31"
                                 android:id="@+id/email"
                                 android:layout_marginTop="-10dp"
                                 android:layout_marginStart="12dp"

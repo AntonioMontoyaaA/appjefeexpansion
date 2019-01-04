@@ -45,6 +45,7 @@ public class ProviderDatosDashboard {
 
     public void obtenerDatosAutorizadas(final String semana,
                                         final String mes,
+                                        final String anio,
                                         final String usuarioId,
                                         final String area, final ConsultaDatosDashboard promise){
         final OkHttpClient client = new OkHttpClient();
@@ -59,7 +60,7 @@ public class ProviderDatosDashboard {
                             .add("area", area)
                             .add("mes", mes)
                             .add("semana", semana)
-                            .add("anio", String.valueOf(ANIO_ACTUAL))
+                            .add("anio", anio)
                             .add("tipoconsulta", TIPO_CONSULTA)
                             .add("tipoapp", TIPO_APP)
                             .add("usuarioId", usuarioId);
