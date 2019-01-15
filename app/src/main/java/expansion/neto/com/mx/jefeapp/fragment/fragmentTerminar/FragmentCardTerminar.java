@@ -139,10 +139,11 @@ public class FragmentCardTerminar extends Fragment implements AutorizaHolder.Lis
 		SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
 		String usuarioId = preferences.getString("usuario","");
 		String area = preferences.getString("areaxpuesto","");
-		String meses = preferences.getString("mesTaco","");
+		String meses = preferences.getString("mesDasbord","");
+		String anio = preferences.getString("anioConsulta","");
 
 		ProviderDatosPorTerminar.getInstance(getContext()).obtenerDatosAutorizadas(
-				usuarioId, area, meses, new ProviderDatosPorTerminar.ConsultaDatosAutorizadas() {
+				usuarioId, area, meses, anio, new ProviderDatosPorTerminar.ConsultaDatosAutorizadas() {
 			@Override
 			public void resolve(PorTerminar datosSitio) {
 				if(datosSitio!=null){

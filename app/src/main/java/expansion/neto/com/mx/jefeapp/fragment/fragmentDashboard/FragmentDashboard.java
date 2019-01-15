@@ -57,6 +57,11 @@ public class FragmentDashboard extends Fragment {
     int totalDaysInYear;
     int totalWeeks;
 
+    int semanaRestaInt = 1;
+    String semanaResta;
+    int mesRestaInt = 0;
+    String mesResta;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,7 +84,9 @@ public class FragmentDashboard extends Fragment {
         final int meses = fecha.get(Calendar.MONTH) + 1;
         getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editorExpansion = preferences.edit();
+        final SharedPreferences.Editor editorExpansion = preferences.edit();
+        editorExpansion.putString("anioConsulta", String.valueOf(anio));
+        editorExpansion.putString("mesDasbord", String.valueOf(meses));
         editorExpansion.putString("mesTaco", String.valueOf(meses));
         editorExpansion.putString("tipoSitio", "");
         editorExpansion.apply();
@@ -208,26 +215,11 @@ public class FragmentDashboard extends Fragment {
                 binding.derMes.setEnabled(true);
                 binding.derMes.setAlpha(1.0f);
                 binding.izqMes.setEnabled(true);
-                Calendar fecha = Calendar.getInstance();
-                final int meses = fecha.get(Calendar.MONTH) + 1;
-                if (mesRestaInt == 0){
-                    mesRestaInt = meses-1;
-                    if(mesRestaInt == 0) {
-                        mesRestaInt = 12;
-                        anio--;
-                        anioString = String.valueOf(anio);
-                        binding.setAnioString(" "+anioString);
-                    }
-                } else {
-                    mesRestaInt--;
-                }
+                mesRestaInt--;
                 mesResta = String.valueOf(mesRestaInt);
                 getDatos(mesResta, "0");
                 String nombreMes = getMes(mesRestaInt);
                 binding.setMes(nombreMes);
-
-                SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editorExpansion = preferences.edit();
                 editorExpansion.putString("mesTaco", mesResta);
                 editorExpansion.apply();
 
@@ -247,7 +239,7 @@ public class FragmentDashboard extends Fragment {
                     anioString = String.valueOf(anio);
                     binding.setAnioString(" "+anioString);
                 }
-
+                editorExpansion.putString("anioConsulta", String.valueOf(anio));
                 Calendar fecha = Calendar.getInstance();
                 int mesActual = fecha.get(Calendar.MONTH) + 1;
                 if(mesRestaInt==mesActual && anio == Calendar.getInstance().get(Calendar.YEAR)){
@@ -257,8 +249,7 @@ public class FragmentDashboard extends Fragment {
                     binding.derMes.setAlpha(0.0f);
                     binding.derMes.setEnabled(false);
 
-                    SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editorExpansion = preferences.edit();
+                    editorExpansion.putString("mesDasbord", String.valueOf(mesRestaInt));
                     editorExpansion.putString("mesTaco", String.valueOf(mesRestaInt));
                     editorExpansion.apply();
 
@@ -268,8 +259,7 @@ public class FragmentDashboard extends Fragment {
                     binding.setMes(mesNombre);
                     binding.derMes.setAlpha(1.0f);
                     binding.derMes.setEnabled(true);
-                    SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editorExpansion = preferences.edit();
+                    editorExpansion.putString("mesDasbord", String.valueOf(mesRestaInt));
                     editorExpansion.putString("mesTaco", String.valueOf(mesRestaInt));
                     editorExpansion.apply();
                 }
@@ -282,13 +272,6 @@ public class FragmentDashboard extends Fragment {
         return v;
     }
 
-
-
-    int semanaRestaInt = 1;
-    String semanaResta;
-
-    int mesRestaInt = 0;
-    String mesResta;
 
     public String getMesSemana(){
         Date date = new Date();
@@ -373,6 +356,7 @@ public class FragmentDashboard extends Fragment {
     }
     public void getDatos(String buscaMes, String semanas){
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editorExpansion = preferences.edit();
         String usuarioId = preferences.getString("usuario","");
         String area = preferences.getString("areaxpuesto","");
         //blockUI();
@@ -388,12 +372,14 @@ public class FragmentDashboard extends Fragment {
         int mesSolicitud = Integer.valueOf(buscaMes);
         if(mesSolicitud > 0 ){
             buscaMes = String.valueOf(--mesSolicitud);
+            editorExpansion.putString("mesDasbord", String.valueOf(mesSolicitud));
         }else if(semana > totalWeeks){
             semanas = "1";
             anio++;
             anioString = String.valueOf(anio);
             binding.setAnioString(" "+anioString);
-
+            editorExpansion.putString("anioConsulta", String.valueOf(anio));
+            editorExpansion.putString("mesDasbord", "0");
         }else if (semana == 0){
             anio--;
             anioString = String.valueOf(anio);
@@ -404,7 +390,10 @@ public class FragmentDashboard extends Fragment {
             totalDaysInYear = mCalendar.get(Calendar.DAY_OF_YEAR);
             totalWeeks = totalDaysInYear / 7;
             semanas = String.valueOf(totalWeeks);
+            editorExpansion.putString("anioConsulta", String.valueOf(anio));
+            editorExpansion.putString("mesDasbord", "11");
         }
+        editorExpansion.apply();
         String anio2 = String.valueOf(anio);
 
 
@@ -418,8 +407,6 @@ public class FragmentDashboard extends Fragment {
                             binding.derMes.setEnabled(true);
                             binding.derSemana.setEnabled(true);
                             binding.izqMes.setEnabled(true);
-
-
                             if(dashboard.getTotales().get(i).getEstatusid()==2){
                                 binding.totalProceso.setText(dashboard.getTotales().get(i).getTotal()+"");
                             }

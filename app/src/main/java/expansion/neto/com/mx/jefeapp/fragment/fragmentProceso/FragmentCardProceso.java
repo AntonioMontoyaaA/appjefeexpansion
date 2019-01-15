@@ -49,7 +49,7 @@ import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_GEXPANSION;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.ID_OPERACIONES;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.STATUS_TOTALES;
 
-public class FragmentCardProceso extends Fragment implements ProcesoHolder.Listener  {
+public class FragmentCardProceso extends Fragment implements ProcesoHolder.Listener {
 
     private ActivityProcesoListBinding binding;
     UsuarioLogin.Perfil perfil;
@@ -61,25 +61,23 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
     String usuario;
     String anio;
     Boolean atrasada = false;
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_proceso_list,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_proceso_list, container, false);
         View view = binding.getRoot();
 
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        mes = preferences.getString("mesTaco","");
-        area = preferences.getString("areaxpuesto","");
-        usuario = preferences.getString("usuario","");
-
-
-        Calendar calendar = Calendar.getInstance();
-        anio = String.valueOf(calendar.get(Calendar.YEAR));
+        mes = preferences.getString("mesDasbord", "");
+        area = preferences.getString("areaxpuesto", "");
+        usuario = preferences.getString("usuario", "");
+        anio = preferences.getString("anioConsulta", "");
 
 
         getListaProceso("0");
 
-        adapter = new AdapterProceso(getContext(),ALPHABETICAL_COMPARATOR, this);
+        adapter = new AdapterProceso(getContext(), ALPHABETICAL_COMPARATOR, this);
         binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerAutoriza.setAdapter(adapter);
 
@@ -103,7 +101,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
             @SuppressLint("DefaultLocale")
             @Override
             public void afterTextChanged(Editable editable) {
-                if(listaMemorias!=null){
+                if (listaMemorias != null) {
                     String texto = binding.buscar.getText().toString();
                     List<Proceso.Memoria> listaTemporal = new ArrayList<Proceso.Memoria>();
 
@@ -113,8 +111,8 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                         adapter.edit().replaceAll(listaMemorias).commit();
                         adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
                     } else {
-                        for(Proceso.Memoria memoria : listaMemorias) {
-                            if(memoria.getCreador().toLowerCase().contains(texto.toLowerCase()) || memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
+                        for (Proceso.Memoria memoria : listaMemorias) {
+                            if (memoria.getCreador().toLowerCase().contains(texto.toLowerCase()) || memoria.getNombresitio().toLowerCase().contains(texto.toLowerCase())) {
                                 listaTemporal.add(memoria);
                             }
                         }
@@ -128,27 +126,20 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         binding.content2.gexpansion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 getTotales(ID_GEXPANSION);
-
                 binding.content2.viewge.setAlpha(1);
                 binding.content2.imggerente.setAlpha(1.0f);
                 binding.content2.txtgexpansion.setAlpha(1.0f);
-
-
                 binding.content2.imgconstruccion.setAlpha(0.2f);
                 binding.content2.imgauditoria.setAlpha(0.2f);
                 binding.content2.imgoperaciones.setAlpha(0.2f);
                 binding.content2.imggestoria.setAlpha(0.2f);
                 binding.content2.imgexpansion.setAlpha(0.2f);
-
                 binding.content2.viewe.setAlpha(0.2f);
                 binding.content2.viewges.setAlpha(0.2f);
                 binding.content2.viewcon.setAlpha(0.2f);
                 binding.content2.viewope.setAlpha(0.2f);
                 binding.content2.viewaudi.setAlpha(0.2f);
-
-
                 binding.content2.txtoperaciones.setAlpha(0.2f);
                 binding.content2.txtexpansion.setAlpha(0.2f);
                 binding.content2.txtauditoria.setAlpha(0.2f);
@@ -164,34 +155,27 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         binding.content2.expansiones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 getTotales(ID_EXPANSION);
-
                 binding.esta.setVisibility(View.VISIBLE);
                 binding.content2.viewe.setAlpha(1);
                 binding.content2.imgexpansion.setAlpha(1.0f);
                 binding.content2.txtexpansion.setAlpha(1.0f);
-
                 binding.content2.imgconstruccion.setAlpha(0.2f);
                 binding.content2.imgauditoria.setAlpha(0.2f);
                 binding.content2.imgoperaciones.setAlpha(0.2f);
                 binding.content2.imggestoria.setAlpha(0.2f);
                 binding.content2.imggerente.setAlpha(0.2f);
-
                 binding.content2.viewge.setAlpha(0.2f);
                 binding.content2.viewges.setAlpha(0.2f);
                 binding.content2.viewcon.setAlpha(0.2f);
                 binding.content2.viewope.setAlpha(0.2f);
                 binding.content2.viewaudi.setAlpha(0.2f);
-
-
                 binding.content2.txtoperaciones.setAlpha(0.2f);
                 binding.content2.txtgestoria.setAlpha(0.2f);
                 binding.content2.txtauditoria.setAlpha(0.2f);
                 binding.content2.txtconstruccion.setAlpha(0.2f);
                 binding.content2.txtgexpansion.setAlpha(0.2f);
                 resizeRecycler(binding, 418);
-
             }
         });
 
@@ -361,7 +345,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                 binding.content2.txtauditoria.setAlpha(0.2f);
                 binding.content2.txtconstruccion.setAlpha(0.2f);
                 binding.content2.txtgexpansion.setAlpha(0.2f);
-                resizeRecycler(binding, 470 );
+                resizeRecycler(binding, 470);
 
                 binding.vermas.setEnabled(false);
                 binding.vermas.setAlpha(0.4f);
@@ -387,17 +371,17 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         }
     };
 
-    public void getListaProceso(UsuarioLogin.Perfil perfil){
+    public void getListaProceso(UsuarioLogin.Perfil perfil) {
 
         binding.prog.setVisibility(View.VISIBLE);
 
-        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso("", mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
+        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso("", mes, area, anio, new ProviderDatosProceso.ConsultaDatosProceso() {
             @Override
             public void resolve(Proceso memorias) {
-                if(memorias!=null){
-                    if(memorias.getCodigo()==200){
-                        if(memorias.getCodigo()!=404) {
-                            if(memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
+                if (memorias != null) {
+                    if (memorias.getCodigo() == 200) {
+                        if (memorias.getCodigo() != 404) {
+                            if (memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
 
                                 listaMemorias = memorias.getMemorias();
                                 adapter.edit().replaceAll(memorias.getMemorias()).commit();
@@ -417,7 +401,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                                 snackbar.show();
                             }
 
-                        }else{
+                        } else {
                             binding.prog.setVisibility(View.GONE);
                             Snackbar snackbar = Snackbar.make(binding.layout,
                                     Html.fromHtml("<b><font color=\"#254581\">" +
@@ -427,7 +411,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                             snackBarView.setBackgroundColor(getContext().getResources().getColor(R.color.snackBar));
                             snackbar.show();
                         }
-                    }else{
+                    } else {
                         binding.prog.setVisibility(View.GONE);
                         Snackbar snackbar = Snackbar.make(binding.layout,
                                 Html.fromHtml("<b><font color=\"#254581\">" +
@@ -468,21 +452,21 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         }
     };
 
-    public void getListaProceso(String vermas){
+    public void getListaProceso(String vermas) {
 
         binding.prog.setVisibility(View.VISIBLE);
 
-        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso(vermas, mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
+        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso(vermas, mes, area, anio, new ProviderDatosProceso.ConsultaDatosProceso() {
             @Override
             public void resolve(Proceso memorias) {
-                if(memorias!=null){
-                    if(memorias.getCodigo()==200){
-                        if(memorias.getCodigo()!=404) {
-                            if(memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
+                if (memorias != null) {
+                    if (memorias.getCodigo() == 200) {
+                        if (memorias.getCodigo() != 404) {
+                            if (memorias.getMemorias() != null && memorias.getMemorias().size() > 0) {
 
                                 //listaMemorias = new ArrayList<>();
-                                adapter = new AdapterProceso(getContext(),ALPHABETICAL_COMPARATOR, autorizaHolder);
-                                if(listaMemorias!=null){
+                                adapter = new AdapterProceso(getContext(), ALPHABETICAL_COMPARATOR, autorizaHolder);
+                                if (listaMemorias != null) {
                                     binding.recyclerAutoriza.setLayoutManager(new LinearLayoutManager(getContext()));
                                     listaMemorias.clear();
                                     adapter.edit().replaceAll(listaMemorias).commit();
@@ -511,7 +495,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                                 snackbar.show();
                             }
 
-                        }else{
+                        } else {
                             binding.prog.setVisibility(View.GONE);
                             Snackbar snackbar = Snackbar.make(binding.layout,
                                     Html.fromHtml("<b><font color=\"#254581\">" +
@@ -521,7 +505,7 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
                             snackBarView.setBackgroundColor(getContext().getResources().getColor(R.color.snackBar));
                             snackbar.show();
                         }
-                    }else{
+                    } else {
                         binding.prog.setVisibility(View.GONE);
                         Snackbar snackbar = Snackbar.make(binding.layout,
                                 Html.fromHtml("<b><font color=\"#254581\">" +
@@ -542,10 +526,11 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
     }
 
     private SlideUp slide;
+
     @Override
     public void onProcesoSelect(Proceso.Memoria model) {
 
-       // Log.e("*****", model.getMemoriaid()+"");
+        // Log.e("*****", model.getMemoriaid()+"");
 
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -604,29 +589,31 @@ public class FragmentCardProceso extends Fragment implements ProcesoHolder.Liste
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
-    public void resizeRecycler(ActivityProcesoListBinding binding, int tam){
+    public void resizeRecycler(ActivityProcesoListBinding binding, int tam) {
         ViewGroup.LayoutParams params = binding.recyclerAutoriza.getLayoutParams();
         final float scale = getContext().getResources().getDisplayMetrics().density;
         int pixels = (int) (tam * scale + 0.5f);
-        params.height=pixels;
+        params.height = pixels;
         binding.recyclerAutoriza.setLayoutParams(params);
     }
 
 
-    public void getTotales(String id){
+    public void getTotales(String id) {
         ProviderTotales.getInstance(getContext()).obtenerTotales(usuario,
                 STATUS_TOTALES, id, mes, getString(R.string.zero), anio, new ProviderTotales.InterfaceObtieneTotales() {
                     @Override
                     public void resolve(Totales totales) {
-                        if(totales!=null){
-                            if(totales.getCodigo()==200){
-                                binding.totalMd.setText(totales.getTotal()+"");
-                                binding.totalAtrasadas.setText(totales.getAtrasada()+"");
+                        if (totales != null) {
+                            if (totales.getCodigo() == 200) {
+                                binding.totalMd.setText(totales.getTotal() + "");
+                                binding.totalAtrasadas.setText(totales.getAtrasada() + "");
 
                             }
                         }
                     }
-                    @Override public void reject(Exception e) {
+
+                    @Override
+                    public void reject(Exception e) {
 
                     }
                 });

@@ -64,12 +64,10 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
         progressDialog = new ProgressDialog(getContext());
 
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        mes = preferences.getString("mesTaco","");
+        mes = preferences.getString("mesDasbord","");
         area = preferences.getString("areaxpuesto","");
         usuarioId = preferences.getString("usuario","");
-
-        Calendar calendar = Calendar.getInstance();
-        anio = String.valueOf(calendar.get(Calendar.YEAR));
+        anio =  usuarioId = preferences.getString("anioConsulta","");
 
 
         getDatos();
@@ -383,7 +381,7 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
         String mes = preferences.getString("mesTaco","");
         loadingProgress(progressDialog, 0);
 
-        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.one),mes, usuario,
+        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.one),mes, usuario,anio,
                 new ProviderDatosAutorizadas.ConsultaDatosSitio() {
                     @Override
                     public void resolve(Autorizadas datosSitio) {
@@ -442,7 +440,7 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
         String mes = preferences.getString("mesTaco","");
         loadingProgress(progressDialog, 0);
 
-        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.zero),mes, usuario,
+        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.zero),mes, usuario,anio,
                 new ProviderDatosAutorizadas.ConsultaDatosSitio() {
             @Override
             public void resolve(Autorizadas datosSitio) {

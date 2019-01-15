@@ -48,7 +48,7 @@ public class ProviderDatosPorTerminar {
     final int meses = fecha.get(Calendar.MONTH) + 1;
 
     public void obtenerDatosAutorizadas(final String usuarioId,
-                                        final String area, final String mes, final ProviderDatosPorTerminar.ConsultaDatosAutorizadas promise){
+                                        final String area, final String mes, final String anio, final ProviderDatosPorTerminar.ConsultaDatosAutorizadas promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, PorTerminar>() {
             @Override
@@ -63,7 +63,7 @@ public class ProviderDatosPorTerminar {
                             .add("area", area)
                             .add("mes", mes)
                             .add("semana", TIPO_CONSULTA_SEMANA)
-                            .add("anio", String.valueOf(ANIO_ACTUAL))
+                            .add("anio", anio)
                             .add("tipoapp", TIPO_APP)
                             .add("tipoconsulta", TIPO_CONSULTA_TIPO)
                             .add("usuarioId", usuarioId);

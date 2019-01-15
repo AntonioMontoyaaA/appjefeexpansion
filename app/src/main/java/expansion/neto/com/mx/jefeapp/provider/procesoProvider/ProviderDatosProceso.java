@@ -94,7 +94,7 @@ public class ProviderDatosProceso {
 //        }).execute();
 //    }
     
-    public void obtenerDatosProceso(final String vermas, final String mes, final String areaId, final ProviderDatosProceso.ConsultaDatosProceso promise){
+    public void obtenerDatosProceso(final String vermas, final String mes, final String areaId,final String anio, final ProviderDatosProceso.ConsultaDatosProceso promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, Proceso>() {
             @Override
@@ -102,15 +102,12 @@ public class ProviderDatosProceso {
                 //TODO CONNECT AND GET DATA
                 try {
 
-                    Calendar fecha = Calendar.getInstance();
-                    int anio = fecha.get(Calendar.YEAR);
-
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("estatus", ESTATUS_EN_PROCESO_APP_GERENTE)
                             .add("area", areaId)
                             .add("mes", mes)
                             .add("semana", SEMANA_0)
-                            .add("anio", String.valueOf(anio))
+                            .add("anio", anio)
                             .add("tipoconsulta", TIPO_CONSULTA_MD_POR_AUTORIZAR)
                             .add("tipoapp", TIPO_APP)
                             .add("vermas", vermas)

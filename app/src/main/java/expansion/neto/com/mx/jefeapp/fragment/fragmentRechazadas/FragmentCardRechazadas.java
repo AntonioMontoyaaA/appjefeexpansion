@@ -64,12 +64,10 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_rechazadas_list,container,false);
         View view = binding.getRoot();
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        mes = preferences.getString("mesTaco","");
+        mes = preferences.getString("mesDasbord","");
         area = preferences.getString("areaxpuesto","");
         usuarioId = preferences.getString("usuario","");
-
-        Calendar calendar = Calendar.getInstance();
-        anio = String.valueOf(calendar.get(Calendar.YEAR));
+        anio = preferences.getString("anioConsulta","");
 
         getListaRechazadas();
 
@@ -370,7 +368,7 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
 
     public void getListaProceso(){
         binding.prog.setVisibility(View.VISIBLE);
-        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso("0", mes, area, new ProviderDatosProceso.ConsultaDatosProceso() {
+        ProviderDatosProceso.getInstance(getContext()).obtenerDatosProceso("0", mes, area,anio, new ProviderDatosProceso.ConsultaDatosProceso() {
             @Override
             public void resolve(Proceso memorias) {
                 if(memorias!=null){
