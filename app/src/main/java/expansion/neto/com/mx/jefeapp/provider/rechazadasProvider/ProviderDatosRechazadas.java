@@ -16,7 +16,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard.ANIO_ACTUAL;
+//import static expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard.ANIO_ACTUAL;
 import static expansion.neto.com.mx.jefeapp.provider.dashboardProvider.ProviderDatosDashboard.TIPO_APP;
 
 /**
@@ -47,7 +47,7 @@ public class ProviderDatosRechazadas {
     final int meses = fecha.get(Calendar.MONTH) + 1;
 
     public void obtenerDatosRechazadas(final String usuarioId,
-                                       final String area, final String mes, final ConsultaDatosRechazadas promise){
+                                       final String area, final String mes,final String anio, final ConsultaDatosRechazadas promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, Proceso>() {
             @Override
@@ -60,7 +60,7 @@ public class ProviderDatosRechazadas {
                             .add("area", area)
                             .add("mes", mes)
                             .add("semana", TIPO_CONSULTA_SEMANA)
-                            .add("anio", String.valueOf(ANIO_ACTUAL))
+                            .add("anio", anio)
                             .add("tipoapp", TIPO_APP)
                             .add("tipoconsulta", TIPO_CONSULTA_TIPO)
                             .add("usuarioId", usuarioId);

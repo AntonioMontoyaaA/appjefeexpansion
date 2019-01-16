@@ -439,7 +439,7 @@ public class FragmentCardRechazadas extends Fragment implements ProcesoHolder.Li
 
     public void getListaRechazadas(){
         binding.prog.setVisibility(View.VISIBLE);
-        ProviderDatosRechazadas.getInstance(getContext()).obtenerDatosRechazadas(usuarioId, area, mes, new
+        ProviderDatosRechazadas.getInstance(getContext()).obtenerDatosRechazadas(usuarioId, area, mes,anio, new
                 ProviderDatosRechazadas.ConsultaDatosRechazadas() {
             @Override
             public void resolve(Proceso memorias) {
