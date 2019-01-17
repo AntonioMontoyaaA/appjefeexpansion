@@ -56,8 +56,10 @@ import expansion.neto.com.mx.jefeapp.ui.agenda.ActivityNotificaciones;
 import expansion.neto.com.mx.jefeapp.ui.autoriza.ActivityAutorizar;
 import expansion.neto.com.mx.jefeapp.utils.Util;
 import expansion.neto.com.mx.jefeapp.utils.desing.CustomTypefaceSpan;
+import expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView;
 
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.TIPO_NOTIFICACION;
+import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
 
 
 /**
@@ -76,7 +78,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     NavigationView mNavigationView;
     Intent main;
     LinearLayout notificacion;
-    TextView numNotificaciones;
+    TextView numNotificaciones  ;
+    RobotoTextView txt_app_version;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,6 +178,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             }
             applyFontToMenuItem(mi);
         }
+        txt_app_version = (RobotoTextView) findViewById(R.id.txt_app_version);
+        txt_app_version.setText(VERSION_APP);
 
     }
 

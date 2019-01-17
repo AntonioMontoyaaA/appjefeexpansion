@@ -5,11 +5,11 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        applicationId "expansion.neto.com.mx.jefeapp"
+        applicationId "expansion.neto.com.mx.jefeapp2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 16
-        versionName "1.2.3"
+        versionCode 2
+        versionName "2.0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -28,21 +28,17 @@ android {
         multiDexEnabled true
     }
 
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 
 }
 dependencies {
-
     /*************************** api 26 *********************************/
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-
     /***** firebase *******/
     implementation "com.firebase:firebase-jobdispatcher:$rootProject.ext.jobdispatcherVersion"
-    /*******************/
-
+    /** *****************/
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -51,9 +47,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:$rootProject.ext.supportLibraryVersion"
     implementation 'com.google.code.gson:gson:2.8.1'
     implementation "com.google.android.gms:play-services:$rootProject.ext.playServicesVersion"
-
     /*************************** terceros *********************************/
-
     implementation 'com.github.sundeepk:compact-calendar-view:2.0.2.2'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'io.github.yavski:fab-speed-dial:1.0.6'
@@ -70,8 +64,6 @@ dependencies {
     implementation project(':calendarlibrary')
     implementation 'com.ss.bannerslider:bannerslider:2.0.0'
     implementation 'com.android.support:percent:26+'
-
-
 }
 
 repositories {

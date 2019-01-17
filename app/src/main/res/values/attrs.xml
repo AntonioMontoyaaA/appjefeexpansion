@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
+<!--<attr name="dayNameLength">
+            <enum name="singleLetter" value="0"/>
+            <enum name="threeLetters" value="1"/>
+        </attr>-->
     <declare-styleable name="WeekCalendar">
         <attr name="numOfPages" format="integer"/>
         <attr name="daysTextSize" format="dimension"/>
@@ -12,10 +15,7 @@
         <attr name="weekBackgroundColor" format="color"/>
         <attr name="selectedBgColor" format="color"/>
         <attr name="todaysDateBgColor" format="color"/>
-        <attr name="dayNameLength">
-            <enum name="singleLetter" value="0"/>
-            <enum name="threeLetters" value="1"/>
-        </attr>
+
         <attr name="hideNames"  format="boolean"/>
         <attr name="todaysDateTextColor" format="color"/>
 
