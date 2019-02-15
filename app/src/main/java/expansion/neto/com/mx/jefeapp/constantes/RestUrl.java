@@ -24,7 +24,7 @@ public class RestUrl {
 
     public static String NUM_TELEFONO = "0";
 
-    public static String VERSION_APP = "1.2.3";
+    public static String VERSION_APP = "2.0.0";
 
     public static String TIPO_APP = "1";
 

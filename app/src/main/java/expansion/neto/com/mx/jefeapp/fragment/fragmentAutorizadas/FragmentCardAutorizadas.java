@@ -67,8 +67,7 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
         mes = preferences.getString("mesDasbord","");
         area = preferences.getString("areaxpuesto","");
         usuarioId = preferences.getString("usuario","");
-        anio =  usuarioId = preferences.getString("anioConsulta","");
-
+        anio = preferences.getString("anioConsulta","");
 
         getDatos();
 
@@ -376,12 +375,12 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
 
     public void getListaProceso(){
 
-        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        String usuario = preferences.getString("usuario", "");
-        String mes = preferences.getString("mesTaco","");
+        // SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+        // String usuario = preferences.getString("usuario", "");
+        // String mes = preferences.getString("mesTaco","");
         loadingProgress(progressDialog, 0);
 
-        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.one),mes, usuario,anio,
+        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.one),mes, usuarioId,anio,
                 new ProviderDatosAutorizadas.ConsultaDatosSitio() {
                     @Override
                     public void resolve(Autorizadas datosSitio) {
@@ -435,12 +434,12 @@ public class FragmentCardAutorizadas extends Fragment implements AutorizadasHold
 
     public void getDatos(){
 
-        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        String usuario = preferences.getString("usuario", "");
-        String mes = preferences.getString("mesTaco","");
+        //SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+        //String usuario = preferences.getString("usuario", "");
+        //String mes = preferences.getString("mesTaco","");
         loadingProgress(progressDialog, 0);
 
-        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.zero),mes, usuario,anio,
+        ProviderDatosAutorizadas.getInstance(getContext()).obtenerDatosAutorizadas(getString(R.string.zero),mes, usuarioId,anio,
                 new ProviderDatosAutorizadas.ConsultaDatosSitio() {
             @Override
             public void resolve(Autorizadas datosSitio) {

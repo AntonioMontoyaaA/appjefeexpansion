@@ -86,7 +86,7 @@ public class FragmentDashboard extends Fragment {
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editorExpansion = preferences.edit();
         editorExpansion.putString("anioConsulta", String.valueOf(anio));
-        editorExpansion.putString("mesDasbord", String.valueOf(meses));
+        editorExpansion.putString("mesDasbord", String.valueOf(meses-1));
         editorExpansion.putString("mesTaco", String.valueOf(meses));
         editorExpansion.putString("tipoSitio", "");
         editorExpansion.apply();

@@ -87,7 +87,12 @@ public class Util {
 
     public static String getFechaFormat(Date date){
         SimpleDateFormat parseFormat = new SimpleDateFormat("dd MMMM yyyy");
-        String s = parseFormat.format(date);
+        String s = "";
+        try {
+             s = parseFormat.format(date);
+        }catch (Exception e){
+            e.getStackTrace();
+        }
         return s;
     }
 

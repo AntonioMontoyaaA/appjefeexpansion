@@ -80,6 +80,14 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     LinearLayout notificacion;
     TextView numNotificaciones  ;
     RobotoTextView txt_app_version;
+
+    Boolean permisoAutorizar;
+    Boolean permisoProceso = true;
+    Boolean permisoAutorizadas;
+    Boolean permisoRechazadas;
+    Boolean permisoAgenda;
+    Boolean permisoColaboradores;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +99,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         notificacion = (LinearLayout) findViewById(R.id.linearNotificacion);
         numNotificaciones = (TextView) findViewById(R.id.numNotificacion);
+
+        View header = mNavigationView.getHeaderView(0);
+        txt_app_version = (RobotoTextView) header.findViewById(R.id.txt_app_version);
+        txt_app_version.setText(VERSION_APP);
 
         SharedPreferences preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         //startService(new Intent(getApplicationContext(), ServicioRutas.class));
@@ -178,8 +190,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             }
             applyFontToMenuItem(mi);
         }
-        txt_app_version = (RobotoTextView) findViewById(R.id.txt_app_version);
-        txt_app_version.setText(VERSION_APP);
 
     }
 
@@ -242,35 +252,35 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
             case R.id.txt_autorizadas:
 
-                if(permisoAutorizadas){
+                //if(permisoAutorizadas){
                     main = new Intent(this, FragmentInicioRechazadas.class);
                     startActivity(main);
-                }
+                //}
 
                 mPrevSelectedId = itemId;
                 break;
 
             case R.id.txt_proceso:
-                if(permisoProceso){
+                //if(permisoProceso){
                     main = new Intent(this, FragmentInicioProceso.class);
                     startActivity(main);
-                }
+                //}
                 mPrevSelectedId = itemId;
 
                 break;
             case R.id.txt_rechazadas:
-                if(permisoRechazadas){
+                //if(permisoRechazadas){
                     Intent main = new Intent(this, FragmentInicioAutorizadas.class);
                     startActivity(main);
-                }
+                //}
                 mPrevSelectedId = itemId;
 
                 break;
             case R.id.txt_agenda:
-                if(permisoAgenda){
+                //if(permisoAgenda){
                     main = new Intent(this, FragmentInicioAgenda.class);
                     startActivity(main);
-                }
+                //}
                 mPrevSelectedId = itemId;
                 break;
             case R.id.txt_misradios:
@@ -441,11 +451,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private static final int MODULO_COLABORADORES_ID = 8;
 
 
-    Boolean permisoAutorizar;
-    Boolean permisoProceso = true;
-    Boolean permisoAutorizadas;
-    Boolean permisoRechazadas;
-    Boolean permisoAgenda;
-    Boolean permisoColaboradores;
+
 
 }
