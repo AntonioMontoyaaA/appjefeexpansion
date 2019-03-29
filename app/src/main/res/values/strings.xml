@@ -57,9 +57,14 @@
     <string name="profundidad">Profundidad</string>
     <string name="total">Total</string>
     <string name="frontal">Frontal</string>
-    <string name="prefial">Predial</string>
+    <string name="reciboPredial">Predial</string>
+    <string name="reciboAgua">Recibo Agua</string>
+    <string name="reciboLuz">Recibo Luz</string>
     <string name="lateral1">Lateral 1</string>
     <string name="lateral2">Lateral 2</string>
+    <string name="entorno1">Entorno 1</string>
+    <string name="entorno2">Entorno 2</string>
+    <string name="entorno3">Entorno 3</string>
     <string name="soloterreno">Solo terreno</string>
     <string name="localsolo">Local</string>
     <string name="nombre">Nombre</string>

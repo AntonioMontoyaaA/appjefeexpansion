@@ -138,6 +138,31 @@ public class Superficie {
         @SerializedName("fecha_fente")
         @Expose
         private String fecha_fente;
+        @SerializedName("imgEntorno1Id")
+        @Expose
+        private String imgEntorno1Id;
+        @SerializedName("fecha_entorno1")
+        @Expose
+        private String fecha_entorno1;
+        @SerializedName("imgEntorno2Id")
+        @Expose
+        private String imgEntorno2Id;
+        @SerializedName("fecha_entorno2")
+        @Expose
+        private String fecha_entorno2;
+        @SerializedName("imgEntorno3Id")
+        @Expose
+        private String imgEntorno3Id;
+        @SerializedName("fecha_entorno3")
+        @Expose
+        private String fecha_entorno3;
+        @SerializedName("imgReciboAgua")
+        @Expose
+        private String imgReciboAgua;
+        @SerializedName("imgReciboLuz")
+        @Expose
+        private String imgReciboLuz;
+
 
         public String getFecha_lat1() {
             return fecha_lat1;
@@ -227,9 +252,7 @@ public class Superficie {
             this.valorreal = valorreal;
         }
 
-        public String getImgLateral2Id() {
-            return imgLateral2Id;
-        }
+        public String getImgLateral2Id() { return imgLateral2Id; }
 
         public void setImgLateral2Id(String imgLateral2Id) {
             this.imgLateral2Id = imgLateral2Id;
@@ -241,6 +264,54 @@ public class Superficie {
 
         public void setImgLateral1Id(String imgLateral1Id) {
             this.imgLateral1Id = imgLateral1Id;
+        }
+
+        public String getImgEntorno1Id() { return imgEntorno1Id; }
+
+        public void setImgEntorno1Id(String imgEntorno1Id) {
+            this.imgEntorno1Id = imgEntorno1Id;
+        }
+
+        public String getFecha_entorno1() { return fecha_entorno1; }
+
+        public void setFecha_entorno1(String fecha_entorno1) {
+            this.fecha_entorno1 = fecha_entorno1;
+        }
+
+        public String getImgEntorno2Id() { return imgEntorno2Id; }
+
+        public void setImgEntorno2Id(String imgEntorno1Id) {
+            this.imgEntorno2Id = imgEntorno2Id;
+        }
+
+        public String getFecha_entorno2() { return fecha_entorno2; }
+
+        public void setFecha_entorno2(String fecha_entorno2) {
+            this.fecha_entorno2 = fecha_entorno2;
+        }
+
+        public String getImgEntorno3Id() { return imgEntorno3Id; }
+
+        public void setImgEntorno3Id(String imgEntorno3Id) {
+            this.imgEntorno3Id = imgEntorno3Id;
+        }
+
+        public String getFecha_entorno3() { return fecha_entorno3; }
+
+        public void setFecha_entorno3(String fecha_entorno3) {
+            this.fecha_entorno3 = fecha_entorno3;
+        }
+
+        public String getImgReciboAgua() { return imgReciboAgua; }
+
+        public void setImgReciboAgua(String imgReciboAgua) {
+            this.imgReciboAgua = imgReciboAgua;
+        }
+
+        public String getImgReciboLuz() { return imgReciboLuz; }
+
+        public void setImgReciboLuz(String imgReciboLuz) {
+            this.imgReciboLuz = imgReciboLuz;
         }
 
     }
@@ -260,5 +331,9 @@ public class Superficie {
         }
 
     }
+
+
+
+
 
 }

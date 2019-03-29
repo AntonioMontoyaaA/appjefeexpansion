@@ -15,8 +15,8 @@ public class GuardarDatosSuperficie {
             editor.putString("mdId", superficie.getMdId());
             editor.putString("frente", superficie.getFrente());
             editor.putString("fondo", superficie.getFondo());
-            editor.putString("imgEntorno2Id", superficie.getImgEntorno2Id());
-            editor.putString("imgEntorno1Id", superficie.getImgEntorno1Id());
+            editor.putString("imgEntorno2Id", superficie.getImgLateral2());
+            editor.putString("imgEntorno1Id", superficie.getImgLateral1());
             editor.putString("imgFrenteId", superficie.getImgFrenteId());
             editor.putString("latitud", superficie.getLatitud());
             editor.putString("longitud", superficie.getLongitud());
@@ -42,8 +42,8 @@ public class GuardarDatosSuperficie {
         crearDatosSuperficie.setMdId(preferences.getString("mdId", ""));
         crearDatosSuperficie.setFrente(preferences.getString("frente", ""));
         crearDatosSuperficie.setFondo(preferences.getString("fondo", ""));
-        crearDatosSuperficie.setImgEntorno2Id(preferences.getString("imgEntorno2Id", ""));
-        crearDatosSuperficie.setImgEntorno1Id(preferences.getString("imgEntorno1Id", ""));
+        crearDatosSuperficie.setImgLateral2(preferences.getString("imgEntorno2Id", ""));
+        crearDatosSuperficie.setImgLateral1(preferences.getString("imgEntorno1Id", ""));
         crearDatosSuperficie.setImgFrenteId(preferences.getString("imgFrenteId", ""));
         crearDatosSuperficie.setLatitud(preferences.getString("latitud", ""));
         crearDatosSuperficie.setLongitud(preferences.getString("longitud", ""));

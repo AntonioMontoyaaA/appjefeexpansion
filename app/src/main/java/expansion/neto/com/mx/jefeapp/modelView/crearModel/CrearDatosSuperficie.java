@@ -6,9 +6,12 @@ public class CrearDatosSuperficie {
     private String mdId;
     private String frente;
     private String fondo;
-    private String imgEntorno2Id;
-    private String imgEntorno1Id;
+    private String imgLateral1;
+    private String imgLateral2;
     private String imgFrenteId;
+    private String imgEntorno1;
+    private String imgEntorno2;
+    private String imgEntorno3;
     private String latitud;
     private String longitud;
     private String numTelefono;
@@ -23,8 +26,9 @@ public class CrearDatosSuperficie {
     public CrearDatosSuperficie (){}
 
     public CrearDatosSuperficie(String esquina, String usuarioid, String mdId,
-                                String frente, String fondo, String imgEntorno2Id,
-                                String imgEntorno1Id, String imgFrenteId, String latitud,
+                                String frente, String fondo, String imgLateral1,
+                                String imgLateral2, String imgFrenteId, String imgEntorno1,
+                                String imgEntorno2, String imgEntorno3, String latitud,
                                 String longitud, String numTelefono, String versionApp,
                                 String fechaFrente, String fechaEntorno1, String fechaEntorno2,
                                 String imgPredial, String fechaPredial) {
@@ -33,8 +37,9 @@ public class CrearDatosSuperficie {
         this.mdId = mdId;
         this.frente = frente;
         this.fondo = fondo;
-        this.imgEntorno2Id = imgEntorno2Id;
-        this.imgEntorno1Id = imgEntorno1Id;
+        this.imgLateral1 = imgLateral1;
+        this.imgLateral2 = imgLateral2;
+        this.imgEntorno1 = imgEntorno1;
         this.imgFrenteId = imgFrenteId;
         this.latitud = latitud;
         this.longitud = longitud;
@@ -104,20 +109,44 @@ public class CrearDatosSuperficie {
         this.fondo = fondo;
     }
 
-    public String getImgEntorno2Id() {
-        return imgEntorno2Id;
+    public String getImgLateral1() {
+        return imgLateral1;
     }
 
-    public void setImgEntorno2Id(String imgEntorno2Id) {
-        this.imgEntorno2Id = imgEntorno2Id;
+    public void setImgLateral1(String imgLateral1) {
+        this.imgLateral1 = imgLateral1;
     }
 
-    public String getImgEntorno1Id() {
-        return imgEntorno1Id;
+    public String getImgLateral2() {
+        return imgLateral2;
     }
 
-    public void setImgEntorno1Id(String imgEntorno1Id) {
-        this.imgEntorno1Id = imgEntorno1Id;
+    public void setImgLateral2(String imgLateral2) {
+        this.imgLateral2 = imgLateral2;
+    }
+
+    public String getImgEntorno1() {
+        return imgEntorno1;
+    }
+
+    public void setImgEntorno1(String imgEntorno1) {
+        this.imgEntorno1 = imgEntorno1;
+    }
+
+    public String getImgEntorno2() {
+        return imgEntorno2;
+    }
+
+    public void setImgEntorno2(String imgEntorno2) {
+        this.imgEntorno2 = imgEntorno2;
+    }
+
+    public String getImgEntorno3() {
+        return imgEntorno3;
+    }
+
+    public void setImgEntorno3(String imgEntorno3) {
+        this.imgEntorno3 = imgEntorno3;
     }
 
     public String getImgFrenteId() {

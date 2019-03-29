@@ -191,6 +191,24 @@ import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 public class FragmentAutoriza extends Fragment implements
         AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
 
+    String urlFrente = "";
+    String urlLateral1 = "";
+    String urlLateral2 = "";
+    String urlPredial = "";
+    String urlEntorno1 = "";
+    String urlEntorno2 = "";
+    String urlEntorno3 = "";
+
+    String fechaFrente = "";
+    String fechaLateral1 = "";
+    String fechaLateral2 = "";
+    String fechaEntorno1 = "";
+    String fechaEntorno2 = "";
+    String fechaEntorno3 = "";
+    String fechaPredial = "";
+    String fechaReciboAgua = "";
+    String fechaReciboLuz = "";
+
     TimerTask hourlyTask;
     private View view;
     private static final String ARG_POSITION = "position";
@@ -236,6 +254,12 @@ public class FragmentAutoriza extends Fragment implements
     private int CAMERA_LATERAL_2 = 3;
     private int CAMERA_PREDIAL = 4;
     private int PICK_IMAGE_REQUEST = 5;
+    private int CAMERA_ENTORNO_1 = 6;
+    private int CAMERA_ENTORNO_2 = 7;
+    private int CAMERA_ENTORNO_3 = 8;
+    private int CAMERA_RECIBO_AGUA = 9;
+    private int CAMERA_RECIBO_LUZ = 10;
+
     String municipio;
     ProgressDialog progressDialog;
 
@@ -1145,8 +1169,8 @@ public class FragmentAutoriza extends Fragment implements
                         String frente = bindingSuperficie.frente.getText().toString();
                         String profundidad = bindingSuperficie.profundidad.getText().toString();
                         CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, convertido,
-                                frente, profundidad, urlLateral2, urlLateral1, urlFrente,
-                                String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
+                                frente, profundidad, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
+                                String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
                                 urlPredial,fechaPredial);
                         salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
                     }
@@ -1295,11 +1319,17 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.lateral1.setAlpha(0.35f);
                         bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.entorno1.setAlpha(0.35f);
+                        bindingSuperficie.entorno2.setAlpha(0.35f);
+                        bindingSuperficie.entorno3.setAlpha(0.35f);
 
-                        bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
+                        /*bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                        bindingSuperficie.entorno1.setVisibility(View.GONE);
+                        bindingSuperficie.entorno2.setVisibility(View.GONE);
+                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
 
                         banderaCamara[0] = 1;
                         if(urlFrente.length()>0){
@@ -1325,11 +1355,17 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.frontal.setAlpha(0.35f);
                         bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.entorno1.setAlpha(0.35f);
+                        bindingSuperficie.entorno2.setAlpha(0.35f);
+                        bindingSuperficie.entorno3.setAlpha(0.35f);
 
-                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                        bindingSuperficie.entorno1.setVisibility(View.GONE);
+                        bindingSuperficie.entorno2.setVisibility(View.GONE);
+                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
 
                         banderaCamara[0] = 2;
 
@@ -1359,11 +1395,17 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.frontal.setAlpha(0.35f);
                         bindingSuperficie.lateral1.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.entorno1.setAlpha(0.35f);
+                        bindingSuperficie.entorno2.setAlpha(0.35f);
+                        bindingSuperficie.entorno3.setAlpha(0.35f);
 
-                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                        bindingSuperficie.entorno1.setVisibility(View.GONE);
+                        bindingSuperficie.entorno2.setVisibility(View.GONE);
+                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
 
                         banderaCamara[0] = 3;
                         if(urlLateral2.length()>0){
@@ -1372,6 +1414,117 @@ public class FragmentAutoriza extends Fragment implements
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
                             intentFoto(CAMERA_LATERAL_2);
+                        }
+                    }else{
+                        Toast.makeText(getContext(), R.string.no_estas,
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
+            bindingSuperficie.entorno1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if(distancia){
+                        bindingSuperficie.frontal.setAlpha(0.35f);
+                        bindingSuperficie.lateral2.setAlpha(0.35f);
+                        bindingSuperficie.lateral1.setAlpha(0.35f);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.entorno1.setAlpha(1.0f);
+                        bindingSuperficie.entorno2.setAlpha(0.35f);
+                        bindingSuperficie.entorno3.setAlpha(0.35f);
+
+                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                        bindingSuperficie.entorno1.setVisibility(View.VISIBLE);
+                        bindingSuperficie.entorno2.setVisibility(View.GONE);
+                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
+
+                        banderaCamara[0] = 4;
+                        if(urlEntorno1.length()>0){
+                            Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
+                            bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                        }else{
+                            bindingSuperficie.volver.setVisibility(View.GONE);
+                            intentFoto(CAMERA_ENTORNO_1);
+                        }
+                    }else{
+                        Toast.makeText(getContext(), R.string.no_estas,
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
+            bindingSuperficie.entorno2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if(distancia){
+                        bindingSuperficie.frontal.setAlpha(0.35f);
+                        bindingSuperficie.lateral2.setAlpha(0.35f);
+                        bindingSuperficie.lateral1.setAlpha(0.35f);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.entorno1.setAlpha(0.35f);
+                        bindingSuperficie.entorno2.setAlpha(1.0f);
+                        bindingSuperficie.entorno3.setAlpha(0.35f);
+
+                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                        bindingSuperficie.entorno1.setVisibility(View.GONE);
+                        bindingSuperficie.entorno2.setVisibility(View.VISIBLE);
+                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
+
+                        banderaCamara[0] = 5;
+                        if(urlEntorno2.length()>0){
+                            Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
+                            bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                        }else{
+                            bindingSuperficie.volver.setVisibility(View.GONE);
+                            intentFoto(CAMERA_ENTORNO_2);
+                        }
+                    }else{
+                        Toast.makeText(getContext(), R.string.no_estas,
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
+            bindingSuperficie.entorno3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if(distancia){
+                        bindingSuperficie.frontal.setAlpha(0.35f);
+                        bindingSuperficie.lateral2.setAlpha(0.35f);
+                        bindingSuperficie.lateral1.setAlpha(0.35f);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.entorno1.setAlpha(0.35f);
+                        bindingSuperficie.entorno2.setAlpha(0.35f);
+                        bindingSuperficie.entorno3.setAlpha(1.0f);
+
+                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                        bindingSuperficie.entorno1.setVisibility(View.GONE);
+                        bindingSuperficie.entorno2.setVisibility(View.GONE);
+                        bindingSuperficie.entorno3.setVisibility(View.VISIBLE);*/
+
+                        banderaCamara[0] = 6;
+                        if(urlEntorno3.length()>0){
+                            Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
+                            bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                        }else{
+                            bindingSuperficie.volver.setVisibility(View.GONE);
+                            intentFoto(CAMERA_ENTORNO_3);
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1409,6 +1562,12 @@ public class FragmentAutoriza extends Fragment implements
                             intentFoto(CAMERA_LATERAL_1);
                         } else if(banderaCamara[0] ==3){
                             intentFoto(CAMERA_LATERAL_2);
+                        } else if(banderaCamara[0] ==6){
+                            intentFoto(CAMERA_ENTORNO_1);
+                        } else if(banderaCamara[0] ==7){
+                            intentFoto(CAMERA_ENTORNO_2);
+                        } else if(banderaCamara[0] ==8){
+                            intentFoto(CAMERA_ENTORNO_3);
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,
@@ -1474,8 +1633,8 @@ public class FragmentAutoriza extends Fragment implements
                             String profundidad = bindingSuperficie.profundidad.getText().toString();
 
                             CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, convertido,
-                                    frente, profundidad, urlLateral2, urlLateral1, urlFrente,
-                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaEntorno1, fechaEntorno2,
+                                    frente, profundidad, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
+                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
                                     urlPredial,fechaPredial);
                             bindingSuperficie.toolbar.guardar.setEnabled(true);
                             ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
@@ -3016,11 +3175,6 @@ public class FragmentAutoriza extends Fragment implements
         }
     }
 
-    String fechaFrente = "";
-    String fechaEntorno1 = "";
-    String fechaEntorno2 = "";
-    String fechaPredial = "";
-
     /**
      * método para realizar la respuesta de cada intent que se hace en la actividad (ver pdf, tomar foto)
      * @param requestCode
@@ -3038,14 +3192,26 @@ public class FragmentAutoriza extends Fragment implements
             fechaFrente = getFechaHora();
             obtenerUrl(String.valueOf(mdid), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_LATERAL_1 && resultCode==RESULT_OK){
-            fechaEntorno1 = getFechaHora();
+            fechaLateral1 = getFechaHora();
             obtenerUrl(String.valueOf(mdid), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));
-        }else if(requestCode == CAMERA_PREDIAL && resultCode==RESULT_OK){
-            fechaPredial = getFechaHora();
-            obtenerUrl(String.valueOf(mdid), random() + "_predial", "png", "1", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_LATERAL_2 && resultCode==RESULT_OK){
-            fechaEntorno2 = getFechaHora();
+            fechaLateral2 = getFechaHora();
             obtenerUrl(String.valueOf(mdid), random() + "_lateral2", "png", "1", Uri.parse(imageFilePath));
+        }else if(requestCode == CAMERA_ENTORNO_1 && resultCode==RESULT_OK){
+            fechaEntorno1 = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_entorno1", "png", "1", Uri.parse(imageFilePath));
+        }else if(requestCode == CAMERA_ENTORNO_2 && resultCode==RESULT_OK){
+            fechaEntorno2 = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_entorno2", "png", "1", Uri.parse(imageFilePath));
+        }else if(requestCode == CAMERA_ENTORNO_3 && resultCode==RESULT_OK){
+            fechaEntorno3 = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_entorno3", "png", "1", Uri.parse(imageFilePath));
+        }else if(requestCode == CAMERA_RECIBO_AGUA && resultCode==RESULT_OK){
+            fechaReciboAgua = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_reciboAgua", "png", "1", Uri.parse(imageFilePath));
+        }else if(requestCode == CAMERA_RECIBO_LUZ && resultCode==RESULT_OK){
+            fechaReciboLuz = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_reciboLuz", "png", "1", Uri.parse(imageFilePath));
         }else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
             Uri filePath = data.getData();
             fechaPredial = getFechaHora();
@@ -3056,11 +3222,6 @@ public class FragmentAutoriza extends Fragment implements
         }
 
     }
-
-    String urlFrente = "";
-    String urlLateral1 = "";
-    String urlLateral2 = "";
-    String urlPredial = "";
 
     //public void obtenerUrl(String foto, String b64, String mdId){
     public void obtenerUrl(final String mdId, final String nombreImg, final String formato, final String tipoArchivo, final Uri uri) {
@@ -3098,11 +3259,38 @@ public class FragmentAutoriza extends Fragment implements
                             hourlyTaskSuperficie.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
 
-                        } else{
+                        } else if(codigo.getResultado().getSecureUrl().contains("lateral2")){
                             bindingSuperficie.lateral2.setEnabled(false);
                             urlLateral2 = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
                             bindingSuperficie.lateral2.setEnabled(true);
+                            hourlyTaskSuperficie.run();
+                            hourlyTaskSuperficie.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
+
+                        } else if(codigo.getResultado().getSecureUrl().contains("entorno1")){
+                            bindingSuperficie.entorno1.setEnabled(false);
+                            urlEntorno1 = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
+                            bindingSuperficie.entorno1.setEnabled(true);
+                            hourlyTaskSuperficie.run();
+                            hourlyTaskSuperficie.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
+
+                        } else if(codigo.getResultado().getSecureUrl().contains("entorno2")){
+                            bindingSuperficie.entorno2.setEnabled(false);
+                            urlEntorno2 = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
+                            bindingSuperficie.entorno2.setEnabled(true);
+                            hourlyTaskSuperficie.run();
+                            hourlyTaskSuperficie.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
+
+                        } else if(codigo.getResultado().getSecureUrl().contains("entorno3")){
+                            bindingSuperficie.entorno3.setEnabled(false);
+                            urlEntorno3 = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
+                            bindingSuperficie.entorno3.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);

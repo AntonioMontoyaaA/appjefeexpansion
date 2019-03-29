@@ -58,8 +58,8 @@ public class ProviderCrearSuperficie {
                             .add("mdId", datosSuperficie.getMdId())
                             .add("frente", datosSuperficie.getFrente())
                             .add("fondo", datosSuperficie.getFondo())
-                            .add("imgEntorno2Id", datosSuperficie.getImgEntorno2Id())
-                            .add("imgEntorno1Id", datosSuperficie.getImgEntorno1Id())
+                            .add("imgEntorno2Id", datosSuperficie.getImgLateral2()) //Cambiar el servicio
+                            .add("imgEntorno1Id", datosSuperficie.getImgLateral1()) //Cambiar el servicio
                             .add("imgFrenteId", datosSuperficie.getImgFrenteId())
                             .add("latitud", datosSuperficie.getLatitud())
                             .add("longitud", datosSuperficie.getLongitud())
