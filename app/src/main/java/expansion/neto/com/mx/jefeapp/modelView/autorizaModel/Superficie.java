@@ -135,74 +135,40 @@ public class Superficie {
         @SerializedName("fecha_pred")
         @Expose
         private String fecha_pred;
+        @SerializedName("fecha_agua")
+        @Expose
+        private String fecha_agua;
+        @SerializedName("fecha_luz")
+        @Expose
+        private String fecha_luz;
         @SerializedName("fecha_fente")
         @Expose
         private String fecha_fente;
-        @SerializedName("imgEntorno1Id")
+        @SerializedName("imgEnt1Id")
         @Expose
-        private String imgEntorno1Id;
-        @SerializedName("fecha_entorno1")
+        private String imgEnt1Id;
+        @SerializedName("fecha_ent1")
         @Expose
-        private String fecha_entorno1;
-        @SerializedName("imgEntorno2Id")
+        private String fecha_ent1;
+        @SerializedName("imgEnt2Id")
         @Expose
-        private String imgEntorno2Id;
-        @SerializedName("fecha_entorno2")
+        private String imgEnt2Id;
+        @SerializedName("fecha_ent2")
         @Expose
-        private String fecha_entorno2;
-        @SerializedName("imgEntorno3Id")
+        private String fecha_ent2;
+        @SerializedName("imgEnt3Id")
         @Expose
-        private String imgEntorno3Id;
-        @SerializedName("fecha_entorno3")
+        private String imgEnt3Id;
+        @SerializedName("fecha_ent3")
         @Expose
-        private String fecha_entorno3;
-        @SerializedName("imgReciboAgua")
+        private String fecha_ent3;
+        @SerializedName("imgAgua")
         @Expose
-        private String imgReciboAgua;
-        @SerializedName("imgReciboLuz")
+        private String imgAgua;
+        @SerializedName("imgLuz")
         @Expose
-        private String imgReciboLuz;
+        private String imgLuz;
 
-
-        public String getFecha_lat1() {
-            return fecha_lat1;
-        }
-
-        public void setFecha_lat1(String fecha_lat1) {
-            this.fecha_lat1 = fecha_lat1;
-        }
-
-        public String getFecha_lat2() {
-            return fecha_lat2;
-        }
-
-        public void setFecha_lat2(String fecha_lat2) {
-            this.fecha_lat2 = fecha_lat2;
-        }
-
-        public String getFecha_pred() {
-            return fecha_pred;
-        }
-
-        public void setFecha_pred(String fecha_pred) {
-            this.fecha_pred = fecha_pred;
-        }
-
-        public String getFecha_fente() {
-            return fecha_fente;
-        }
-
-        public void setFecha_fente(String fecha_fente) {
-            this.fecha_fente = fecha_fente;
-        }
-
-        public String getImgPredial() {
-            return imgPredial;
-        }
-
-        public void setImgPredial(String imgPredial) {
-            this.imgPredial = imgPredial;
-        }
 
         public Integer getNivel() {
             return nivel;
@@ -252,7 +218,9 @@ public class Superficie {
             this.valorreal = valorreal;
         }
 
-        public String getImgLateral2Id() { return imgLateral2Id; }
+        public String getImgLateral2Id() {
+            return imgLateral2Id;
+        }
 
         public void setImgLateral2Id(String imgLateral2Id) {
             this.imgLateral2Id = imgLateral2Id;
@@ -266,54 +234,125 @@ public class Superficie {
             this.imgLateral1Id = imgLateral1Id;
         }
 
-        public String getImgEntorno1Id() { return imgEntorno1Id; }
-
-        public void setImgEntorno1Id(String imgEntorno1Id) {
-            this.imgEntorno1Id = imgEntorno1Id;
+        public String getImgPredial() {
+            return imgPredial;
         }
 
-        public String getFecha_entorno1() { return fecha_entorno1; }
-
-        public void setFecha_entorno1(String fecha_entorno1) {
-            this.fecha_entorno1 = fecha_entorno1;
+        public void setImgPredial(String imgPredial) {
+            this.imgPredial = imgPredial;
         }
 
-        public String getImgEntorno2Id() { return imgEntorno2Id; }
-
-        public void setImgEntorno2Id(String imgEntorno1Id) {
-            this.imgEntorno2Id = imgEntorno2Id;
+        public String getFecha_lat1() {
+            return fecha_lat1;
         }
 
-        public String getFecha_entorno2() { return fecha_entorno2; }
-
-        public void setFecha_entorno2(String fecha_entorno2) {
-            this.fecha_entorno2 = fecha_entorno2;
+        public void setFecha_lat1(String fecha_lat1) {
+            this.fecha_lat1 = fecha_lat1;
         }
 
-        public String getImgEntorno3Id() { return imgEntorno3Id; }
-
-        public void setImgEntorno3Id(String imgEntorno3Id) {
-            this.imgEntorno3Id = imgEntorno3Id;
+        public String getFecha_lat2() {
+            return fecha_lat2;
         }
 
-        public String getFecha_entorno3() { return fecha_entorno3; }
-
-        public void setFecha_entorno3(String fecha_entorno3) {
-            this.fecha_entorno3 = fecha_entorno3;
+        public void setFecha_lat2(String fecha_lat2) {
+            this.fecha_lat2 = fecha_lat2;
         }
 
-        public String getImgReciboAgua() { return imgReciboAgua; }
-
-        public void setImgReciboAgua(String imgReciboAgua) {
-            this.imgReciboAgua = imgReciboAgua;
+        public String getFecha_pred() {
+            return fecha_pred;
         }
 
-        public String getImgReciboLuz() { return imgReciboLuz; }
-
-        public void setImgReciboLuz(String imgReciboLuz) {
-            this.imgReciboLuz = imgReciboLuz;
+        public void setFecha_pred(String fecha_pred) {
+            this.fecha_pred = fecha_pred;
         }
 
+        public String getFecha_agua() {
+            return fecha_agua;
+        }
+
+        public void setFecha_agua(String fecha_agua) {
+            this.fecha_agua = fecha_agua;
+        }
+
+        public String getFecha_luz() {
+            return fecha_luz;
+        }
+
+        public void setFecha_luz(String fecha_luz) {
+            this.fecha_luz = fecha_luz;
+        }
+
+        public String getFecha_fente() {
+            return fecha_fente;
+        }
+
+        public void setFecha_fente(String fecha_fente) {
+            this.fecha_fente = fecha_fente;
+        }
+
+        public String getImgEnt1Id() {
+            return imgEnt1Id;
+        }
+
+        public void setImgEnt1Id(String imgEnt1Id) {
+            this.imgEnt1Id = imgEnt1Id;
+        }
+
+        public String getFecha_ent1() {
+            return fecha_ent1;
+        }
+
+        public void setFecha_ent1(String fecha_ent1) {
+            this.fecha_ent1 = fecha_ent1;
+        }
+
+        public String getImgEnt2Id() {
+            return imgEnt2Id;
+        }
+
+        public void setImgEnt2Id(String imgEnt2Id) {
+            this.imgEnt2Id = imgEnt2Id;
+        }
+
+        public String getFecha_ent2() {
+            return fecha_ent2;
+        }
+
+        public void setFecha_ent2(String fecha_ent2) {
+            this.fecha_ent2 = fecha_ent2;
+        }
+
+        public String getImgEnt3Id() {
+            return imgEnt3Id;
+        }
+
+        public void setImgEnt3Id(String imgEnt3Id) {
+            this.imgEnt3Id = imgEnt3Id;
+        }
+
+        public String getFecha_ent3() {
+            return fecha_ent3;
+        }
+
+        public void setFecha_ent3(String fecha_ent3) {
+            this.fecha_ent3 = fecha_ent3;
+        }
+
+        public String getImgAgua() {
+            return imgAgua;
+        }
+
+        public void setImgAgua(String imgAgua) {
+            this.imgAgua = imgAgua;
+        }
+
+        public String getImgLuz() {
+            return imgLuz;
+        }
+
+        public void setImgLuz(String imgLuz) {
+            this.imgLuz = imgLuz;
+        }
     }
 
     public class Tip {

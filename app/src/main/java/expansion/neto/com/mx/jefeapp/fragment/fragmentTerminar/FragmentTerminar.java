@@ -279,7 +279,8 @@ public class FragmentTerminar extends Fragment implements
     private int CAMERA_ENTORNO_3 = 8;
     private int CAMERA_RECIBO_AGUA = 9;
     private int CAMERA_RECIBO_LUZ = 10;
-
+    private int PICK_IMAGE_REQUEST_RECIBO_AGUA = 11;
+    private int PICK_IMAGE_REQUEST_RECIBO_LUZ = 12;
 
     ProgressDialog progressDialog;
 
@@ -1279,6 +1280,7 @@ public class FragmentTerminar extends Fragment implements
 
             final int[] banderaCamara = {0};
             final String[] tipoEsquina = {"0"};
+            final String[] conDrenaje = {"0"};
 
             bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1289,6 +1291,16 @@ public class FragmentTerminar extends Fragment implements
                     }
                 }
             });
+            bindingSuperficie.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        conDrenaje[0] = "1";
+                    }else{
+                        conDrenaje[0] = "0";
+                    }
+                }
+            });
+
             loadingProgress(progressDialog, 0);
 
             ProviderDatosSuperficie.getInstance(getContext())
@@ -1530,9 +1542,9 @@ public class FragmentTerminar extends Fragment implements
                                     urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
                                     urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
                                     urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
-                                    urlEntorno1 = superficie.getNiveles().get(finalValorFoto).getImgEntorno1Id();
-                                    urlEntorno2 = superficie.getNiveles().get(finalValorFoto).getImgEntorno2Id();
-                                    urlEntorno3 = superficie.getNiveles().get(finalValorFoto).getImgEntorno3Id();
+                                    urlEntorno1 = superficie.getNiveles().get(finalValorFoto).getImgEnt1Id();
+                                    urlEntorno2 = superficie.getNiveles().get(finalValorFoto).getImgEnt2Id();
+                                    urlEntorno3 = superficie.getNiveles().get(finalValorFoto).getImgEnt3Id();
 
 
                                     if (superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("") ||
@@ -1541,17 +1553,17 @@ public class FragmentTerminar extends Fragment implements
                                     } else {
                                         urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
                                     }
-                                    if (superficie.getNiveles().get(finalValorFoto).getImgReciboAgua().equals("") ||
-                                            superficie.getNiveles().get(finalValorFoto).getImgReciboAgua().equals(" ")) {
+                                    if (superficie.getNiveles().get(finalValorFoto).getImgAgua().equals("") ||
+                                            superficie.getNiveles().get(finalValorFoto).getImgAgua().equals(" ")) {
                                         urlReciboAgua = "";
                                     } else {
-                                        urlReciboAgua = superficie.getNiveles().get(finalValorFoto).getImgReciboAgua();
+                                        urlReciboAgua = superficie.getNiveles().get(finalValorFoto).getImgAgua();
                                     }
-                                    if (superficie.getNiveles().get(finalValorFoto).getImgReciboLuz().equals("") ||
-                                            superficie.getNiveles().get(finalValorFoto).getImgReciboLuz().equals(" ")) {
+                                    if (superficie.getNiveles().get(finalValorFoto).getImgLuz().equals("") ||
+                                            superficie.getNiveles().get(finalValorFoto).getImgLuz().equals(" ")) {
                                         urlReciboLuz = "";
                                     } else {
-                                        urlReciboLuz = superficie.getNiveles().get(finalValorFoto).getImgReciboLuz();
+                                        urlReciboLuz = superficie.getNiveles().get(finalValorFoto).getImgLuz();
                                     }
 
 
@@ -1595,13 +1607,13 @@ public class FragmentTerminar extends Fragment implements
                                             bindingSuperficie.entorno2.setAlpha(0.35f);
                                             bindingSuperficie.entorno3.setAlpha(0.35f);
 
-                                            banderaCamara[0] = 4;
-                                            if (superficie.getNiveles().get(finalValorFoto).getImgEntorno1Id().length() > 0) {
+                                            banderaCamara[0] = 5;
+                                            if (superficie.getNiveles().get(finalValorFoto).getImgEnt1Id().length() > 0) {
                                                 if (urlEntorno1.length() > 0) {
                                                     Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
                                                     bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                                 } else {
-                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEntorno1Id()).into(bindingSuperficie.imagen);
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEnt1Id()).into(bindingSuperficie.imagen);
                                                     bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                                 }
                                             } else {
@@ -1622,13 +1634,13 @@ public class FragmentTerminar extends Fragment implements
                                             bindingSuperficie.entorno2.setAlpha(1.0f);
                                             bindingSuperficie.entorno3.setAlpha(0.35f);
 
-                                            banderaCamara[0] = 5;
-                                            if (superficie.getNiveles().get(finalValorFoto).getImgEntorno2Id().length() > 0) {
+                                            banderaCamara[0] = 6;
+                                            if (superficie.getNiveles().get(finalValorFoto).getImgEnt2Id().length() > 0) {
                                                 if (urlEntorno2.length() > 0) {
                                                     Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
                                                     bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                                 } else {
-                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEntorno2Id()).into(bindingSuperficie.imagen);
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEnt2Id()).into(bindingSuperficie.imagen);
                                                     bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                                 }
                                             } else {
@@ -1650,13 +1662,13 @@ public class FragmentTerminar extends Fragment implements
                                             bindingSuperficie.entorno2.setAlpha(0.35f);
                                             bindingSuperficie.entorno3.setAlpha(1.0f);
 
-                                            banderaCamara[0] = 6;
-                                            if (superficie.getNiveles().get(finalValorFoto).getImgEntorno3Id().length() > 0) {
+                                            banderaCamara[0] = 7;
+                                            if (superficie.getNiveles().get(finalValorFoto).getImgEnt3Id().length() > 0) {
                                                 if (urlEntorno3.length() > 0) {
                                                     Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
                                                     bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                                 } else {
-                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEntorno3Id()).into(bindingSuperficie.imagen);
+                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEnt3Id()).into(bindingSuperficie.imagen);
                                                     bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                                 }
                                             } else {
@@ -1704,6 +1716,12 @@ public class FragmentTerminar extends Fragment implements
                                                         intentFoto(CAMERA_LATERAL_1);
                                                     } else if (banderaCamara[0] == 3) {
                                                         intentFoto(CAMERA_LATERAL_2);
+                                                    } else if(banderaCamara[0] ==5){
+                                                        intentFoto(CAMERA_ENTORNO_1);
+                                                    } else if(banderaCamara[0] ==6){
+                                                        intentFoto(CAMERA_ENTORNO_2);
+                                                    } else if(banderaCamara[0] ==7){
+                                                        intentFoto(CAMERA_ENTORNO_3);
                                                     }
                                                 } else {
                                                     Toast.makeText(getContext(), R.string.no_estas,
@@ -1737,9 +1755,10 @@ public class FragmentTerminar extends Fragment implements
                                             } else {
 
                                                 CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], finalUsuario, convertido,
-                                                        frentes, profundidads, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
+                                                        frentes, profundidads, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
                                                         String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
-                                                        urlPredial, fechaPredial);
+                                                        fechaEntorno1, fechaEntorno2, fechaEntorno3,
+                                                        urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
                                                 salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
                                             }
                                         }
@@ -1842,9 +1861,10 @@ public class FragmentTerminar extends Fragment implements
                                                     String profundidadr = bindingSuperficie.profundidad.getText().toString();
 
                                                     CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, mdId,
-                                                            frenter, profundidadr, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
-                                                            String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2, urlPredial,
-                                                            fechaPredial);
+                                                            frenter, profundidadr, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
+                                                            String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
+                                                            fechaEntorno1, fechaEntorno2, fechaEntorno3,
+                                                            urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
 
                                                     ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                         @Override
@@ -1934,9 +1954,10 @@ public class FragmentTerminar extends Fragment implements
                                                 getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                             } else {
                                                 CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], finalUsuario1, convertido,
-                                                        frente, profundidad, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
+                                                        frente, profundidad, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
                                                         String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
-                                                        urlPredial, fechaPredial);
+                                                        fechaEntorno1, fechaEntorno2, fechaEntorno3,
+                                                        urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
                                                 salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
 
                                             }
@@ -2070,6 +2091,82 @@ public class FragmentTerminar extends Fragment implements
                                                         });
                                                 AlertDialog alert = builder.create();
                                                 alert.setTitle("FOTO");
+                                                alert.show();
+                                            }
+
+                                        }
+                                    });
+
+                                    bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            /*bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(1.0f);
+                                            bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                            bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
+                                            banderaCamaraTermina[0] = 8;
+                                            if (urlReciboAgua.length() > 0) {
+                                                banderaCamara[0] = 8;
+                                                Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            } else {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                builder.setMessage("¿De donde quieres tomar la foto?")
+                                                        .setCancelable(true)
+                                                        .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                                            }
+                                                        })
+                                                        .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                intentFoto(CAMERA_RECIBO_AGUA);
+                                                            }
+                                                        });
+                                                AlertDialog alert = builder.create();
+                                                alert.setTitle("RECIBO AGUA");
+                                                alert.show();
+                                            }
+
+                                        }
+                                    });
+
+                                    bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            /*bindingSuperficie.frontal.setAlpha(0.35f);
+                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.predial.setAlpha(1.0f);
+                                            bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                                            bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                                            bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
+                                            banderaCamaraTermina[0] = 9;
+                                            if (urlReciboAgua.length() > 0) {
+                                                banderaCamara[0] = 9;
+                                                Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            } else {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                builder.setMessage("¿De donde quieres tomar la foto?")
+                                                        .setCancelable(true)
+                                                        .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                intentGaleria(PICK_IMAGE_REQUEST_RECIBO_LUZ);
+                                                            }
+                                                        })
+                                                        .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int id) {
+                                                                intentFoto(CAMERA_RECIBO_LUZ);
+                                                            }
+                                                        });
+                                                AlertDialog alert = builder.create();
+                                                alert.setTitle("RECIBO LUZ");
                                                 alert.show();
                                             }
 
@@ -2246,6 +2343,12 @@ public class FragmentTerminar extends Fragment implements
                                                     intentFoto(CAMERA_LATERAL_1);
                                                 } else if (banderaCamaraTermina[0] == 3) {
                                                     intentFoto(CAMERA_LATERAL_2);
+                                                } else if(banderaCamaraTermina[0] ==5){
+                                                    intentFoto(CAMERA_ENTORNO_1);
+                                                } else if(banderaCamaraTermina[0] ==6){
+                                                    intentFoto(CAMERA_ENTORNO_2);
+                                                } else if(banderaCamaraTermina[0] ==7){
+                                                    intentFoto(CAMERA_ENTORNO_3);
                                                 }
                                             } else {
                                                 Toast.makeText(getContext(), R.string.no_estas,
@@ -2311,8 +2414,9 @@ public class FragmentTerminar extends Fragment implements
 
                                                     final CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, mdId,
                                                             frente, profundidad, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
-                                                            String.valueOf(mdLat), String.valueOf(mdLot), "",
-                                                            VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2, urlPredial, fechaPredial);
+                                                            String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
+                                                            fechaEntorno1, fechaEntorno2, fechaEntorno3,
+                                                            urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
 
                                                     ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                         @Override
@@ -4229,7 +4333,7 @@ public class FragmentTerminar extends Fragment implements
             obtenerUrl(String.valueOf(mdIdterminar), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));
         } else if (requestCode == CAMERA_PREDIAL && resultCode == -1) {
             fechaPredial = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "6", Uri.parse(imageFilePath));
 
         } else if (requestCode == CAMERA_LATERAL_2 && resultCode == -1) {
             fechaLateral2 = getFechaHora();
@@ -4245,16 +4349,25 @@ public class FragmentTerminar extends Fragment implements
             obtenerUrl(String.valueOf(mdIdterminar), random() + "_entorno3", "png", "1", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_RECIBO_AGUA && resultCode==RESULT_OK){
             fechaReciboAgua = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboAgua", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboAgua", "png", "6", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_RECIBO_LUZ && resultCode==RESULT_OK){
             fechaReciboLuz = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboLuz", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboLuz", "png", "6", Uri.parse(imageFilePath));
         } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             fechaPredial = getFechaHora();
             String filePathUri = saveFile(filePath,random() + "_predial" );
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "1", Uri.parse(filePathUri));
-        } else if (resultCode == 0) {
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "6", Uri.parse(filePathUri));
+        } else if (requestCode == PICK_IMAGE_REQUEST_RECIBO_AGUA && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            fechaReciboAgua = getFechaHora();
+            String filePathUri = saveFile(filePath,random() + "_reciboAgua" );
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboAgua", "png", "6", Uri.parse(filePathUri));
+        } else if (requestCode == PICK_IMAGE_REQUEST_RECIBO_LUZ && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            fechaReciboLuz = getFechaHora();
+            String filePathUri = saveFile(filePath,random() + "_reciboLuz" );
+            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboLuz", "png", "6", Uri.parse(filePathUri));
         }
 
     }
@@ -5722,7 +5835,11 @@ public class FragmentTerminar extends Fragment implements
             try {
                 photoFile = createImageFile(getContext());
             } catch (IOException ex) {
-
+                FragmentDialogError405 a = new FragmentDialogError405();
+                Bundle arguments = new Bundle();
+                arguments.putString( "mensaje" , "Ocurrió un error al subir la imagen, vuelve a intentarlo");
+                a.setArguments(arguments);
+                a.show(getChildFragmentManager(),"child");
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
@@ -5739,7 +5856,11 @@ public class FragmentTerminar extends Fragment implements
             try {
                 photoFile = createImageFile(getContext());
             } catch (IOException ex) {
-
+                FragmentDialogError405 a = new FragmentDialogError405();
+                Bundle arguments = new Bundle();
+                arguments.putString( "mensaje" , "Ocurrió un error al subir la imagen, vuelve a intentarlo");
+                a.setArguments(arguments);
+                a.show(getChildFragmentManager(),"child");
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);

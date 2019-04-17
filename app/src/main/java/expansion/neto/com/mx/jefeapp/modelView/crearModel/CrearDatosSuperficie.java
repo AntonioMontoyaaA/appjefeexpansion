@@ -17,11 +17,19 @@ public class CrearDatosSuperficie {
     private String numTelefono;
     private String versionApp;
     private String fechaFrente;
+    private String fechaLateral1;
+    private String fechaLateral2;
     private String fechaEntorno1;
     private String fechaEntorno2;
+    private String fechaEntorno3;
     private String esquina;
     private String imgPredial;
     private String fechaPredial;
+    private String imgReciboAgua;
+    private String fechaReciboAgua;
+    private String imgReciboLuz;
+    private String fechaReciboLuz;
+    private String drenaje;
 
     public CrearDatosSuperficie (){}
 
@@ -30,8 +38,12 @@ public class CrearDatosSuperficie {
                                 String imgLateral2, String imgFrenteId, String imgEntorno1,
                                 String imgEntorno2, String imgEntorno3, String latitud,
                                 String longitud, String numTelefono, String versionApp,
-                                String fechaFrente, String fechaEntorno1, String fechaEntorno2,
-                                String imgPredial, String fechaPredial) {
+                                String fechaFrente, String fechaLateral1, String fechaLateral2,
+                                String fechaEntorno1, String fechaEntorno2, String fechaEntorno3,
+                                String imgPredial, String fechaPredial,
+                                String imgReciboAgua, String fechaReciboAgua,
+                                String imgReciboLuz, String fechaReciboLuz,
+                                String drenaje) {
         this.esquina = esquina;
         this.usuarioid = usuarioid;
         this.mdId = mdId;
@@ -39,42 +51,28 @@ public class CrearDatosSuperficie {
         this.fondo = fondo;
         this.imgLateral1 = imgLateral1;
         this.imgLateral2 = imgLateral2;
-        this.imgEntorno1 = imgEntorno1;
         this.imgFrenteId = imgFrenteId;
+        this.imgEntorno1 = imgEntorno1;
+        this.imgEntorno2 = imgEntorno2;
+        this.imgEntorno3 = imgEntorno3;
         this.latitud = latitud;
         this.longitud = longitud;
         this.numTelefono = numTelefono;
         this.versionApp = versionApp;
         this.fechaFrente = fechaFrente;
+        this.fechaLateral1 = fechaLateral1;
+        this.fechaLateral2 = fechaLateral2;
         this.fechaEntorno1 = fechaEntorno1;
         this.fechaEntorno2 = fechaEntorno2;
+        this.fechaEntorno3 = fechaEntorno3;
         this.imgPredial = imgPredial;
         this.fechaPredial = fechaPredial;
+        this.imgReciboAgua = imgReciboAgua;
+        this.fechaReciboAgua = fechaReciboAgua;
+        this.imgReciboLuz = imgReciboLuz;
+        this.fechaReciboLuz = fechaReciboLuz;
+        this.drenaje = drenaje;
 
-    }
-
-    public String getImgPredial() {
-        return imgPredial;
-    }
-
-    public void setImgPredial(String imgPredial) {
-        this.imgPredial = imgPredial;
-    }
-
-    public String getFechaPredial() {
-        return fechaPredial;
-    }
-
-    public void setFechaPredial(String fechaPredial) {
-        this.fechaPredial = fechaPredial;
-    }
-
-    public String getEsquina() {
-        return esquina;
-    }
-
-    public void setEsquina(String esquina) {
-        this.esquina = esquina;
     }
 
     public String getUsuarioid() {
@@ -125,6 +123,14 @@ public class CrearDatosSuperficie {
         this.imgLateral2 = imgLateral2;
     }
 
+    public String getImgFrenteId() {
+        return imgFrenteId;
+    }
+
+    public void setImgFrenteId(String imgFrenteId) {
+        this.imgFrenteId = imgFrenteId;
+    }
+
     public String getImgEntorno1() {
         return imgEntorno1;
     }
@@ -147,14 +153,6 @@ public class CrearDatosSuperficie {
 
     public void setImgEntorno3(String imgEntorno3) {
         this.imgEntorno3 = imgEntorno3;
-    }
-
-    public String getImgFrenteId() {
-        return imgFrenteId;
-    }
-
-    public void setImgFrenteId(String imgFrenteId) {
-        this.imgFrenteId = imgFrenteId;
     }
 
     public String getLatitud() {
@@ -197,6 +195,22 @@ public class CrearDatosSuperficie {
         this.fechaFrente = fechaFrente;
     }
 
+    public String getFechaLateral1() {
+        return fechaLateral1;
+    }
+
+    public void setFechaLateral1(String fechaLateral1) {
+        this.fechaLateral1 = fechaLateral1;
+    }
+
+    public String getFechaLateral2() {
+        return fechaLateral2;
+    }
+
+    public void setFechaLateral2(String fechaLateral2) {
+        this.fechaLateral2 = fechaLateral2;
+    }
+
     public String getFechaEntorno1() {
         return fechaEntorno1;
     }
@@ -211,5 +225,77 @@ public class CrearDatosSuperficie {
 
     public void setFechaEntorno2(String fechaEntorno2) {
         this.fechaEntorno2 = fechaEntorno2;
+    }
+
+    public String getFechaEntorno3() {
+        return fechaEntorno3;
+    }
+
+    public void setFechaEntorno3(String fechaEntorno3) {
+        this.fechaEntorno3 = fechaEntorno3;
+    }
+
+    public String getEsquina() {
+        return esquina;
+    }
+
+    public void setEsquina(String esquina) {
+        this.esquina = esquina;
+    }
+
+    public String getImgPredial() {
+        return imgPredial;
+    }
+
+    public void setImgPredial(String imgPredial) {
+        this.imgPredial = imgPredial;
+    }
+
+    public String getFechaPredial() {
+        return fechaPredial;
+    }
+
+    public void setFechaPredial(String fechaPredial) {
+        this.fechaPredial = fechaPredial;
+    }
+
+    public String getImgReciboAgua() {
+        return imgReciboAgua;
+    }
+
+    public void setImgReciboAgua(String imgReciboAgua) {
+        this.imgReciboAgua = imgReciboAgua;
+    }
+
+    public String getFechaReciboAgua() {
+        return fechaReciboAgua;
+    }
+
+    public void setFechaReciboAgua(String fechaReciboAgua) {
+        this.fechaReciboAgua = fechaReciboAgua;
+    }
+
+    public String getImgReciboLuz() {
+        return imgReciboLuz;
+    }
+
+    public void setImgReciboLuz(String imgReciboLuz) {
+        this.imgReciboLuz = imgReciboLuz;
+    }
+
+    public String getFechaReciboLuz() {
+        return fechaReciboLuz;
+    }
+
+    public void setFechaReciboLuz(String fechaReciboLuz) {
+        this.fechaReciboLuz = fechaReciboLuz;
+    }
+
+    public String getDrenaje() {
+        return drenaje;
+    }
+
+    public void setDrenaje(String drenaje) {
+        this.drenaje = drenaje;
     }
 }

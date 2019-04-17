@@ -70,7 +70,18 @@ public class ProviderCrearSuperficie {
                             .add("esquina", datosSuperficie.getEsquina())
                             .add("fechaEntorno2", datosSuperficie.getFechaEntorno2())
                             .add("imgPredial", datosSuperficie.getImgPredial())
-                            .add("fechaPredial", datosSuperficie.getFechaPredial());
+                            .add("fechaPredial", datosSuperficie.getFechaPredial())
+                            .add("imgEnt1", datosSuperficie.getImgEntorno1())
+                            .add("fechaEnt1", datosSuperficie.getFechaEntorno1())
+                            .add("imgEnt2", datosSuperficie.getImgEntorno2())
+                            .add("fechaEnt2", datosSuperficie.getFechaEntorno2())
+                            .add("imgEnt3", datosSuperficie.getImgEntorno3())
+                            .add("fechaEnt3", datosSuperficie.getFechaEntorno3())
+                            .add("imgReciboAgua", datosSuperficie.getImgReciboAgua())
+                            .add("fechaReciboAgua", datosSuperficie.getFechaReciboAgua())
+                            .add("imgReciboLuz", datosSuperficie.getImgReciboLuz())
+                            .add("fechaReciboLuz", datosSuperficie.getFechaReciboLuz())
+                            .add("drenaje", datosSuperficie.getDrenaje());
 
                     RequestBody formBody = formBuilder.build();
                     Request request = new Request.Builder()

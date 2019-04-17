@@ -195,6 +195,8 @@ public class FragmentAutoriza extends Fragment implements
     String urlLateral1 = "";
     String urlLateral2 = "";
     String urlPredial = "";
+    String urlReciboAgua = "";
+    String urlReciboLuz = "";
     String urlEntorno1 = "";
     String urlEntorno2 = "";
     String urlEntorno3 = "";
@@ -259,6 +261,8 @@ public class FragmentAutoriza extends Fragment implements
     private int CAMERA_ENTORNO_3 = 8;
     private int CAMERA_RECIBO_AGUA = 9;
     private int CAMERA_RECIBO_LUZ = 10;
+    private int PICK_IMAGE_REQUEST_RECIBO_AGUA = 11;
+    private int PICK_IMAGE_REQUEST_RECIBO_LUZ = 12;
 
     String municipio;
     ProgressDialog progressDialog;
@@ -1147,6 +1151,7 @@ public class FragmentAutoriza extends Fragment implements
             });
 
             final String[] tipoEsquina = {"0"};
+            final String[] conDrenaje = {"0"};
 
             bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1154,6 +1159,16 @@ public class FragmentAutoriza extends Fragment implements
                         tipoEsquina[0] = "1";
                     }else{
                         tipoEsquina[0] = "0";
+                    }
+                }
+            });
+
+            bindingSuperficie.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        conDrenaje[0] = "1";
+                    }else{
+                        conDrenaje[0] = "0";
                     }
                 }
             });
@@ -1169,9 +1184,10 @@ public class FragmentAutoriza extends Fragment implements
                         String frente = bindingSuperficie.frente.getText().toString();
                         String profundidad = bindingSuperficie.profundidad.getText().toString();
                         CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, convertido,
-                                frente, profundidad, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
+                                frente, profundidad, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
                                 String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
-                                urlPredial,fechaPredial);
+                                fechaEntorno1, fechaEntorno2, fechaEntorno3, urlPredial,fechaPredial,
+                                urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
                         salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
                     }
                 }
@@ -1224,7 +1240,7 @@ public class FragmentAutoriza extends Fragment implements
             bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    bindingSuperficie.frontal.setAlpha(0.35f);
+                    /*bindingSuperficie.frontal.setAlpha(0.35f);
                     bindingSuperficie.lateral1.setAlpha(0.35f);
                     bindingSuperficie.lateral2.setAlpha(0.35f);
                     bindingSuperficie.predial.setAlpha(1.0f);
@@ -1232,7 +1248,10 @@ public class FragmentAutoriza extends Fragment implements
                     bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                    bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
                     bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
+                    bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                    bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                     banderaCamara[0] = 4;
                     if(urlPredial.length()>0){
@@ -1303,6 +1322,188 @@ public class FragmentAutoriza extends Fragment implements
                                 });
                         AlertDialog alert = builder.create();
                         alert.setTitle("FOTO");
+                        alert.show();
+                    }
+
+
+                }
+            });
+
+            bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*bindingSuperficie.frontal.setAlpha(0.35f);
+                    bindingSuperficie.lateral1.setAlpha(0.35f);
+                    bindingSuperficie.lateral2.setAlpha(0.35f);
+                    bindingSuperficie.predial.setAlpha(1.0f);
+                    bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                    bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                    bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                    bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
+                    bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                    bindingSuperficie.viewReciboAgua.setVisibility(View.VISIBLE);
+                    bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+
+                    banderaCamara[0] = 8;
+                    if(urlReciboAgua.length()>0){
+                        if(!urlReciboAgua.isEmpty()){
+                            Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                            bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                        }else{
+                            bindingSuperficie.volver.setVisibility(View.GONE);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setMessage("¿De donde quieres tomar la foto?")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                        }
+                                    })
+                                    .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                                            if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                File photoFile = null;
+                                                try {
+                                                    photoFile = createImageFile(getContext());
+                                                } catch (IOException ex) {
+
+                                                }
+                                                if (photoFile != null) {
+                                                    Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                    pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                    startActivityForResult(pictureIntent, CAMERA_RECIBO_AGUA);
+                                                }
+                                            }
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.setTitle("RECIBO AGUA");
+                            alert.show();
+
+                        }
+
+                    }else{
+                        bindingSuperficie.volver.setVisibility(View.GONE);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("¿De donde quieres tomar la foto?")
+                                .setCancelable(false)
+                                .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                    }
+                                })
+                                .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                                        if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                            File photoFile = null;
+                                            try {
+                                                photoFile = createImageFile(getContext());
+                                            } catch (IOException ex) {
+
+                                            }
+                                            if (photoFile != null) {
+                                                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                startActivityForResult(pictureIntent, CAMERA_RECIBO_AGUA);
+                                            }
+                                        }
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.setTitle("RECIBO AGUA");
+                        alert.show();
+                    }
+
+
+                }
+            });
+
+            bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*bindingSuperficie.frontal.setAlpha(0.35f);
+                    bindingSuperficie.lateral1.setAlpha(0.35f);
+                    bindingSuperficie.lateral2.setAlpha(0.35f);
+                    bindingSuperficie.predial.setAlpha(1.0f);
+                    bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                    bindingSuperficie.viewlateral1.setVisibility(View.GONE);
+                    bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                    bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
+                    bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                    bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                    bindingSuperficie.viewReciboLuz.setVisibility(View.VISIBLE);
+
+                    banderaCamara[0] = 9;
+                    if(urlReciboLuz.length()>0){
+                        if(!urlReciboLuz.isEmpty()){
+                            Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                            bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                        }else{
+                            bindingSuperficie.volver.setVisibility(View.GONE);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setMessage("¿De donde quieres tomar la foto?")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            intentGaleria(PICK_IMAGE_REQUEST_RECIBO_LUZ);
+                                        }
+                                    })
+                                    .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                                            if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                                File photoFile = null;
+                                                try {
+                                                    photoFile = createImageFile(getContext());
+                                                } catch (IOException ex) {
+
+                                                }
+                                                if (photoFile != null) {
+                                                    Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                    pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                    startActivityForResult(pictureIntent, CAMERA_RECIBO_LUZ);
+                                                }
+                                            }
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.setTitle("RECIBO LUZ");
+                            alert.show();
+
+                        }
+
+                    }else{
+                        bindingSuperficie.volver.setVisibility(View.GONE);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("¿De donde quieres tomar la foto?")
+                                .setCancelable(false)
+                                .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                    }
+                                })
+                                .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                                        if(pictureIntent.resolveActivity(getContext().getPackageManager()) != null){
+                                            File photoFile = null;
+                                            try {
+                                                photoFile = createImageFile(getContext());
+                                            } catch (IOException ex) {
+
+                                            }
+                                            if (photoFile != null) {
+                                                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
+                                                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                startActivityForResult(pictureIntent, CAMERA_RECIBO_LUZ);
+                                            }
+                                        }
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.setTitle("RECIBO AGUA");
                         alert.show();
                     }
 
@@ -1444,7 +1645,7 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setVisibility(View.GONE);
                         bindingSuperficie.entorno3.setVisibility(View.GONE);*/
 
-                        banderaCamara[0] = 4;
+                        banderaCamara[0] = 5;
                         if(urlEntorno1.length()>0){
                             Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
@@ -1481,7 +1682,7 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setVisibility(View.VISIBLE);
                         bindingSuperficie.entorno3.setVisibility(View.GONE);*/
 
-                        banderaCamara[0] = 5;
+                        banderaCamara[0] = 6;
                         if(urlEntorno2.length()>0){
                             Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
@@ -1518,7 +1719,7 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setVisibility(View.GONE);
                         bindingSuperficie.entorno3.setVisibility(View.VISIBLE);*/
 
-                        banderaCamara[0] = 6;
+                        banderaCamara[0] = 7;
                         if(urlEntorno3.length()>0){
                             Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
@@ -1562,11 +1763,11 @@ public class FragmentAutoriza extends Fragment implements
                             intentFoto(CAMERA_LATERAL_1);
                         } else if(banderaCamara[0] ==3){
                             intentFoto(CAMERA_LATERAL_2);
-                        } else if(banderaCamara[0] ==6){
+                        } else if(banderaCamara[0] ==5){
                             intentFoto(CAMERA_ENTORNO_1);
-                        } else if(banderaCamara[0] ==7){
+                        } else if(banderaCamara[0] ==6){
                             intentFoto(CAMERA_ENTORNO_2);
-                        } else if(banderaCamara[0] ==8){
+                        } else if(banderaCamara[0] ==7){
                             intentFoto(CAMERA_ENTORNO_3);
                         }
                     }else{
@@ -1615,11 +1816,32 @@ public class FragmentAutoriza extends Fragment implements
                         long mdid = preferences.getLong("mdId", 0);
                         String convertido = String.valueOf(mdid);
 
-                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")){
+                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlEntorno1.equals("") || urlEntorno2.equals("") || urlEntorno3.equals("") || urlReciboAgua.equals("") || urlReciboLuz.equals("")) {
+                            String mensajeError = "";
+
+                            if(urlFrente.equals("")) {
+                                mensajeError = "Vuelve a tomar la foto frontal";
+                            } else if(urlLateral1.equals("")) {
+                                mensajeError = "Vuelve a tomar la foto lateral 1";
+                            } else if(urlLateral2.equals("")) {
+                                mensajeError = "Vuelve a tomar la foto lateral 2";
+                            } else if(urlEntorno1.equals("")) {
+                                mensajeError = "Vuelve a tomar la foto entorno 1";
+                            } else if(urlEntorno2.equals("")) {
+                                mensajeError = "Vuelve a tomar la foto entorno 2";
+                            } else if(urlEntorno3.equals("")) {
+                                mensajeError = "Vuelve a tomar la foto entorno 3";
+                            } else if(urlReciboAgua.equals("")) {
+                                mensajeError = "Vuelve a tomar o cargar el recibo de agua";
+                            } else if(urlReciboLuz.equals("")) {
+                                mensajeError = "Vuelve a tomar o cargar el recibo de luz";
+                            } else {
+                                mensajeError = getString(R.string.mensaje_fotos);
+                            }
 
                             FragmentDialogError405 a = new FragmentDialogError405();
                             Bundle arguments = new Bundle();
-                            arguments.putString( "mensaje" , getString(R.string.mensaje_fotos));
+                            arguments.putString( "mensaje" , mensajeError);
                             a.setArguments(arguments);
                             a.show(getChildFragmentManager(),"child");
                             loadingProgress(progressDialog, 1);
@@ -1633,9 +1855,10 @@ public class FragmentAutoriza extends Fragment implements
                             String profundidad = bindingSuperficie.profundidad.getText().toString();
 
                             CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, convertido,
-                                    frente, profundidad, urlLateral2, urlLateral1, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
+                                    frente, profundidad, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
                                     String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
-                                    urlPredial,fechaPredial);
+                                    fechaEntorno1, fechaEntorno2, fechaEntorno3,
+                                    urlPredial,fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
                             bindingSuperficie.toolbar.guardar.setEnabled(true);
                             ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                 @Override
@@ -3206,19 +3429,30 @@ public class FragmentAutoriza extends Fragment implements
         }else if(requestCode == CAMERA_ENTORNO_3 && resultCode==RESULT_OK){
             fechaEntorno3 = getFechaHora();
             obtenerUrl(String.valueOf(mdid), random() + "_entorno3", "png", "1", Uri.parse(imageFilePath));
+        }else if(requestCode == CAMERA_PREDIAL && resultCode==RESULT_OK){
+            fechaPredial = getFechaHora();
+            obtenerUrl(String.valueOf(mdid), random() + "_predial", "png", "6", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_RECIBO_AGUA && resultCode==RESULT_OK){
             fechaReciboAgua = getFechaHora();
-            obtenerUrl(String.valueOf(mdid), random() + "_reciboAgua", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl(String.valueOf(mdid), random() + "_reciboAgua", "png", "6", Uri.parse(imageFilePath));
         }else if(requestCode == CAMERA_RECIBO_LUZ && resultCode==RESULT_OK){
             fechaReciboLuz = getFechaHora();
-            obtenerUrl(String.valueOf(mdid), random() + "_reciboLuz", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl(String.valueOf(mdid), random() + "_reciboLuz", "png", "6", Uri.parse(imageFilePath));
         }else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
             Uri filePath = data.getData();
             fechaPredial = getFechaHora();
             String filePathUri = saveFile(filePath,random() + "_predial" );
-            obtenerUrl(String.valueOf(mdid), random() + "_predial", "png", "1", Uri.parse(filePathUri));
-        } else if(resultCode == 0){
-
+            obtenerUrl(String.valueOf(mdid), random() + "_predial", "png", "6", Uri.parse(filePathUri));
+        } else if (requestCode == PICK_IMAGE_REQUEST_RECIBO_AGUA && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            fechaReciboAgua = getFechaHora();
+            String filePathUri = saveFile(filePath,random() + "_reciboAgua" );
+            obtenerUrl(String.valueOf(mdid), random() + "_reciboAgua", "png", "6", Uri.parse(filePathUri));
+        } else if (requestCode == PICK_IMAGE_REQUEST_RECIBO_LUZ && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            fechaReciboLuz = getFechaHora();
+            String filePathUri = saveFile(filePath,random() + "_reciboLuz" );
+            obtenerUrl(String.valueOf(mdid), random() + "_reciboLuz", "png", "6", Uri.parse(filePathUri));
         }
 
     }
@@ -3291,6 +3525,24 @@ public class FragmentAutoriza extends Fragment implements
                             urlEntorno3 = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
                             bindingSuperficie.entorno3.setEnabled(true);
+                            hourlyTaskSuperficie.run();
+                            hourlyTaskSuperficie.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
+
+                        } else if(codigo.getResultado().getSecureUrl().contains("reciboAgua")){
+                            bindingSuperficie.reciboAgua.setEnabled(false);
+                            urlReciboAgua = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                            bindingSuperficie.reciboAgua.setEnabled(true);
+                            hourlyTaskSuperficie.run();
+                            hourlyTaskSuperficie.scheduledExecutionTime();
+                            loadingProgress(progressDialog, 1);
+
+                        } else if(codigo.getResultado().getSecureUrl().contains("reciboLuz")){
+                            bindingSuperficie.reciboLuz.setEnabled(false);
+                            urlReciboLuz = codigo.getResultado().getSecureUrl();
+                            Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                            bindingSuperficie.reciboLuz.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
@@ -4289,7 +4541,11 @@ public class FragmentAutoriza extends Fragment implements
             try {
                 photoFile = createImageFile(getContext());
             } catch (IOException ex) {
-
+                FragmentDialogError405 a = new FragmentDialogError405();
+                Bundle arguments = new Bundle();
+                arguments.putString( "mensaje" , "Ocurrió un error al subir la imagen, vuelve a intentarlo");
+                a.setArguments(arguments);
+                a.show(getChildFragmentManager(),"child");
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
@@ -4306,7 +4562,11 @@ public class FragmentAutoriza extends Fragment implements
             try {
                 photoFile = createImageFile(getContext());
             } catch (IOException ex) {
-
+                FragmentDialogError405 a = new FragmentDialogError405();
+                Bundle arguments = new Bundle();
+                arguments.putString( "mensaje" , "Ocurrió un error al subir la imagen, vuelve a intentarlo");
+                a.setArguments(arguments);
+                a.show(getChildFragmentManager(),"child");
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
