@@ -283,6 +283,8 @@
     <string name="profundidadm">PROFUNDIDAD</string>
     <string name="asignado_el">ASIGNADO EL</string>
     <string name="poblaci_n">Población</string>
+    <string name="esquinaDesc">¿Sitio en esquina?</string>
+    <string name="drenajeDesc">¿Con drenaje?</string>
 
     <string name="bueno">BUENO</string>
     <string name="regulars">REGULAR</string>

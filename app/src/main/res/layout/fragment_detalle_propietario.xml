@@ -163,153 +163,218 @@
 
                             </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/view3">
-
                             <LinearLayout
-                                android:layout_width="208dp"
+                                android:id="@+id/view4"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:id="@+id/direccionsitio"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="14dp"
-                                    android:textColor="@color/azul"
-                                    android:textSize="14sp"
-                                    app:typeface="robotoBold"
-                                    android:text="@string/frentemay" />
-1
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:id="@+id/frente"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="0dp"
-                                    android:textColor="@color/grisetxt"
-                                    android:textSize="18sp"
-                                    app:typeface="robotoBold"
-                                    tools:text="C" />
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:id="@+id/construccion"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="14dp"
-                                    android:textColor="@color/azul"
-                                    android:textSize="14sp"
-                                    app:typeface="robotoBold"
-                                    android:text="@string/terreno" />
+                                android:orientation="horizontal"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/view3">
 
                                 <LinearLayout
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="208dp"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
-                                    <ImageView
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginTop="2dp"
-                                        android:visibility="@{terreno == 1 ? View.GONE : View.VISIBLE}"
-                                        android:background="@{terreno == 1 ? @drawable/terreno : @drawable/terreno}"
-                                        app:typeface="robotoBold" />
+                                    android:orientation="vertical">
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/direccionsitio"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_marginTop="14dp"
+                                        android:textColor="@color/azul"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold"
+                                        android:text="@string/frentemay" />
+                                    1
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/frente"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_marginTop="0dp"
+                                        android:textColor="@color/grisetxt"
+                                        android:textSize="18sp"
+                                        app:typeface="robotoBold"
+                                        tools:text="C" />
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/construccion"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_marginTop="14dp"
+                                        android:textColor="@color/azul"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold"
+                                        android:text="@string/terreno" />
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:layout_marginStart="15dp"
+                                            android:layout_marginTop="2dp"
+                                            android:visibility="@{terreno == 1 ? View.GONE : View.VISIBLE}"
+                                            android:background="@{terreno == 1 ? @drawable/terreno : @drawable/terreno}"
+                                            app:typeface="robotoBold" />
+
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:layout_marginStart="15dp"
+                                            android:layout_marginTop="2dp"
+                                            android:visibility="@{local == 1 ? View.VISIBLE : View.GONE}"
+                                            android:background="@drawable/bodega"
+                                            app:typeface="robotoBold" />
+
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:layout_marginStart="15dp"
+                                            android:layout_marginTop="2dp"
+                                            android:visibility="@{acceso == 1 ? View.VISIBLE : View.GONE}"
+                                            android:background="@drawable/cedis"
+                                            app:typeface="robotoBold" />
+
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:layout_marginStart="15dp"
+                                            android:layout_marginTop="2dp"
+                                            android:visibility="@{techos == 1 ? View.VISIBLE : View.GONE}"
+                                            android:background="@drawable/goteras"
+                                            app:typeface="robotoBold" />
+
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:layout_marginStart="15dp"
+                                            android:layout_marginTop="2dp"
+                                            android:visibility="@{pisos == 1 ? View.VISIBLE : View.GONE}"
+                                            android:background="@drawable/piso"
+                                            app:typeface="robotoBold" />
+
+                                    </LinearLayout>
+
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_marginTop="14dp"
+                                        android:textColor="@color/azul"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold"
+                                        android:text="@string/condiciones_del_sitio" />
 
                                     <ImageView
+                                        android:layout_marginBottom="6dp"
                                         android:layout_width="32dp"
                                         android:layout_height="32dp"
                                         android:layout_marginStart="15dp"
                                         android:layout_marginTop="2dp"
-                                        android:visibility="@{local == 1 ? View.VISIBLE : View.GONE}"
-                                        android:background="@drawable/bodega"
-                                        app:typeface="robotoBold" />
-
-                                    <ImageView
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginTop="2dp"
-                                        android:visibility="@{acceso == 1 ? View.VISIBLE : View.GONE}"
-                                        android:background="@drawable/cedis"
-                                        app:typeface="robotoBold" />
-
-                                    <ImageView
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginTop="2dp"
-                                        android:visibility="@{techos == 1 ? View.VISIBLE : View.GONE}"
-                                        android:background="@drawable/goteras"
-                                        app:typeface="robotoBold" />
-
-                                    <ImageView
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:layout_marginStart="15dp"
-                                        android:layout_marginTop="2dp"
-                                        android:visibility="@{pisos == 1 ? View.VISIBLE : View.GONE}"
-                                        android:background="@drawable/piso"
+                                        android:src="@{condiciones.equals(@string/bueno) ? @drawable/bien : condiciones.equals(@string/regulars) ? @drawable/regular : condiciones.equals(@string/malos) ? @drawable/mal : @drawable/mal}"
                                         app:typeface="robotoBold" />
 
                                 </LinearLayout>
 
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                <LinearLayout
+                                    android:layout_marginTop="14dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="10dp"
-                                    android:layout_marginTop="14dp"
-                                    android:textColor="@color/azul"
-                                    android:textSize="14sp"
-                                    app:typeface="robotoBold"
-                                    android:text="@string/condiciones_del_sitio" />
+                                    android:layout_marginStart="4dp"
+                                    android:orientation="vertical">
 
-                                <ImageView
-                                    android:layout_marginBottom="6dp"
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_marginStart="15dp"
-                                    android:layout_marginTop="2dp"
-                                    android:src="@{condiciones.equals(@string/bueno) ? @drawable/bien : condiciones.equals(@string/regulars) ? @drawable/regular : condiciones.equals(@string/malos) ? @drawable/mal : @drawable/mal}"
-                                    app:typeface="robotoBold" />
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/azul"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold"
+                                        android:text="@string/profundidadm" />
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/profundidad"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/grisetxt"
+                                        android:textSize="18sp"
+                                        app:typeface="robotoBold"
+                                        tools:text="C" />
+
+
+                                </LinearLayout>
 
                             </LinearLayout>
 
                             <LinearLayout
-                                android:layout_marginTop="14dp"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="4dp"
-                                android:orientation="vertical">
+                                android:orientation="horizontal"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/view4">
 
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                <LinearLayout
+                                    android:layout_marginTop="14dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@color/azul"
-                                    android:textSize="14sp"
-                                    app:typeface="robotoBold"
-                                    android:text="@string/profundidadm" />
+                                    android:layout_marginStart="4dp"
+                                    android:orientation="vertical">
 
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:id="@+id/profundidad"
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/azul"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold"
+                                        android:text="@string/esquinaDesc" />
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/esquinaDetalle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/grisetxt"
+                                        android:textSize="18sp"
+                                        app:typeface="robotoBold"
+                                        tools:text="-" />
+
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_marginTop="14dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@color/grisetxt"
-                                    android:textSize="18sp"
-                                    app:typeface="robotoBold"
-                                    tools:text="C" />
+                                    android:layout_marginStart="50dp"
+                                    android:orientation="vertical">
 
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/azul"
+                                        android:textSize="14sp"
+                                        app:typeface="robotoBold"
+                                        android:text="@string/drenajeDesc" />
+
+                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/drenajeDetalle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="@color/grisetxt"
+                                        android:textSize="18sp"
+                                        app:typeface="robotoBold"
+                                        tools:text="-" />
+
+
+                                </LinearLayout>
 
                             </LinearLayout>
-
-                        </LinearLayout>
 
 
 

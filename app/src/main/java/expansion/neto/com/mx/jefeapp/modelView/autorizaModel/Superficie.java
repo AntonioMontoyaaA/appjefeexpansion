@@ -144,21 +144,21 @@ public class Superficie {
         @SerializedName("fecha_fente")
         @Expose
         private String fecha_fente;
-        @SerializedName("imgEnt1Id")
+        @SerializedName("imgEnt1")
         @Expose
-        private String imgEnt1Id;
+        private String imgEnt1;
         @SerializedName("fecha_ent1")
         @Expose
         private String fecha_ent1;
-        @SerializedName("imgEnt2Id")
+        @SerializedName("imgEnt2")
         @Expose
-        private String imgEnt2Id;
+        private String imgEnt2;
         @SerializedName("fecha_ent2")
         @Expose
         private String fecha_ent2;
-        @SerializedName("imgEnt3Id")
+        @SerializedName("imgEnt3")
         @Expose
-        private String imgEnt3Id;
+        private String imgEnt3;
         @SerializedName("fecha_ent3")
         @Expose
         private String fecha_ent3;
@@ -290,12 +290,12 @@ public class Superficie {
             this.fecha_fente = fecha_fente;
         }
 
-        public String getImgEnt1Id() {
-            return imgEnt1Id;
+        public String getImgEnt1() {
+            return imgEnt1;
         }
 
-        public void setImgEnt1Id(String imgEnt1Id) {
-            this.imgEnt1Id = imgEnt1Id;
+        public void setImgEnt1(String imgEnt1) {
+            this.imgEnt1 = imgEnt1;
         }
 
         public String getFecha_ent1() {
@@ -306,12 +306,12 @@ public class Superficie {
             this.fecha_ent1 = fecha_ent1;
         }
 
-        public String getImgEnt2Id() {
-            return imgEnt2Id;
+        public String getImgEnt2() {
+            return imgEnt2;
         }
 
-        public void setImgEnt2Id(String imgEnt2Id) {
-            this.imgEnt2Id = imgEnt2Id;
+        public void setImgEnt2(String imgEnt2) {
+            this.imgEnt2 = imgEnt2;
         }
 
         public String getFecha_ent2() {
@@ -322,12 +322,12 @@ public class Superficie {
             this.fecha_ent2 = fecha_ent2;
         }
 
-        public String getImgEnt3Id() {
-            return imgEnt3Id;
+        public String getImgEnt3() {
+            return imgEnt3;
         }
 
-        public void setImgEnt3Id(String imgEnt3Id) {
-            this.imgEnt3Id = imgEnt3Id;
+        public void setImgEnt3(String imgEnt3) {
+            this.imgEnt3 = imgEnt3;
         }
 
         public String getFecha_ent3() {

@@ -1240,15 +1240,21 @@ public class FragmentAutoriza extends Fragment implements
             bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*bindingSuperficie.frontal.setAlpha(0.35f);
+                    bindingSuperficie.frontal.setAlpha(0.35f);
                     bindingSuperficie.lateral1.setAlpha(0.35f);
                     bindingSuperficie.lateral2.setAlpha(0.35f);
+                    bindingSuperficie.entorno1.setAlpha(0.35f);
+                    bindingSuperficie.entorno2.setAlpha(0.35f);
+                    bindingSuperficie.entorno3.setAlpha(0.35f);
                     bindingSuperficie.predial.setAlpha(1.0f);
-
+                    bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                    bindingSuperficie.reciboLuz.setAlpha(0.35f);
                     bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                    bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
+                    bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                    bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                    bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                     bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
                     bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                     bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
@@ -1332,14 +1338,21 @@ public class FragmentAutoriza extends Fragment implements
             bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*bindingSuperficie.frontal.setAlpha(0.35f);
+                    bindingSuperficie.frontal.setAlpha(0.35f);
                     bindingSuperficie.lateral1.setAlpha(0.35f);
                     bindingSuperficie.lateral2.setAlpha(0.35f);
-                    bindingSuperficie.predial.setAlpha(1.0f);
+                    bindingSuperficie.entorno1.setAlpha(0.35f);
+                    bindingSuperficie.entorno2.setAlpha(0.35f);
+                    bindingSuperficie.entorno3.setAlpha(0.35f);
+                    bindingSuperficie.predial.setAlpha(0.35f);
+                    bindingSuperficie.reciboAgua.setAlpha(1.0f);
+                    bindingSuperficie.reciboLuz.setAlpha(0.35f);
                     bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                    bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
+                    bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                    bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                    bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                     bindingSuperficie.viewpredial.setVisibility(View.GONE);
                     bindingSuperficie.viewReciboAgua.setVisibility(View.VISIBLE);
                     bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
@@ -1423,14 +1436,21 @@ public class FragmentAutoriza extends Fragment implements
             bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*bindingSuperficie.frontal.setAlpha(0.35f);
+                    bindingSuperficie.frontal.setAlpha(0.35f);
                     bindingSuperficie.lateral1.setAlpha(0.35f);
                     bindingSuperficie.lateral2.setAlpha(0.35f);
-                    bindingSuperficie.predial.setAlpha(1.0f);
+                    bindingSuperficie.entorno1.setAlpha(0.35f);
+                    bindingSuperficie.entorno2.setAlpha(0.35f);
+                    bindingSuperficie.entorno3.setAlpha(0.35f);
+                    bindingSuperficie.predial.setAlpha(0.35f);
+                    bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                    bindingSuperficie.reciboLuz.setAlpha(1.0f);
                     bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                    bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);*/
+                    bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                    bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                    bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                     bindingSuperficie.viewpredial.setVisibility(View.GONE);
                     bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                     bindingSuperficie.viewReciboLuz.setVisibility(View.VISIBLE);
@@ -1481,7 +1501,7 @@ public class FragmentAutoriza extends Fragment implements
                                 .setCancelable(false)
                                 .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                        intentGaleria(PICK_IMAGE_REQUEST_RECIBO_LUZ);
                                     }
                                 })
                                 .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
@@ -1519,18 +1539,21 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.frontal.setAlpha(1.0f);
                         bindingSuperficie.lateral1.setAlpha(0.35f);
                         bindingSuperficie.lateral2.setAlpha(0.35f);
-                        bindingSuperficie.predial.setAlpha(0.35f);
                         bindingSuperficie.entorno1.setAlpha(0.35f);
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
-
-                        /*bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.entorno1.setVisibility(View.GONE);
-                        bindingSuperficie.entorno2.setVisibility(View.GONE);
-                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
+                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 1;
                         if(urlFrente.length()>0){
@@ -1552,21 +1575,24 @@ public class FragmentAutoriza extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     if(distancia){
-                        bindingSuperficie.lateral1.setAlpha(1.0f);
                         bindingSuperficie.frontal.setAlpha(0.35f);
+                        bindingSuperficie.lateral1.setAlpha(1.0f);
                         bindingSuperficie.lateral2.setAlpha(0.35f);
-                        bindingSuperficie.predial.setAlpha(0.35f);
                         bindingSuperficie.entorno1.setAlpha(0.35f);
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
-
-                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.entorno1.setVisibility(View.GONE);
-                        bindingSuperficie.entorno2.setVisibility(View.GONE);
-                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
+                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 2;
 
@@ -1592,21 +1618,24 @@ public class FragmentAutoriza extends Fragment implements
                 public void onClick(View view) {
 
                     if(distancia){
-                        bindingSuperficie.lateral2.setAlpha(1.0f);
                         bindingSuperficie.frontal.setAlpha(0.35f);
                         bindingSuperficie.lateral1.setAlpha(0.35f);
-                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.lateral2.setAlpha(1.0f);
                         bindingSuperficie.entorno1.setAlpha(0.35f);
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
-
-                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
+                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.entorno1.setVisibility(View.GONE);
-                        bindingSuperficie.entorno2.setVisibility(View.GONE);
-                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
+                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 3;
                         if(urlLateral2.length()>0){
@@ -1630,20 +1659,23 @@ public class FragmentAutoriza extends Fragment implements
 
                     if(distancia){
                         bindingSuperficie.frontal.setAlpha(0.35f);
-                        bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.lateral1.setAlpha(0.35f);
-                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.entorno1.setAlpha(1.0f);
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
-
-                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno1.setVisibility(View.VISIBLE);
+                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.entorno1.setVisibility(View.VISIBLE);
-                        bindingSuperficie.entorno2.setVisibility(View.GONE);
-                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
+                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 5;
                         if(urlEntorno1.length()>0){
@@ -1667,20 +1699,23 @@ public class FragmentAutoriza extends Fragment implements
 
                     if(distancia){
                         bindingSuperficie.frontal.setAlpha(0.35f);
-                        bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.lateral1.setAlpha(0.35f);
-                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.entorno1.setAlpha(0.35f);
                         bindingSuperficie.entorno2.setAlpha(1.0f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
-
-                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno2.setVisibility(View.VISIBLE);
+                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.entorno1.setVisibility(View.GONE);
-                        bindingSuperficie.entorno2.setVisibility(View.VISIBLE);
-                        bindingSuperficie.entorno3.setVisibility(View.GONE);*/
+                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 6;
                         if(urlEntorno2.length()>0){
@@ -1704,20 +1739,23 @@ public class FragmentAutoriza extends Fragment implements
 
                     if(distancia){
                         bindingSuperficie.frontal.setAlpha(0.35f);
-                        bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.lateral1.setAlpha(0.35f);
-                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.lateral2.setAlpha(0.35f);
                         bindingSuperficie.entorno1.setAlpha(0.35f);
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(1.0f);
-
-                        /*bindingSuperficie.viewfrontal.setVisibility(View.GONE);
+                        bindingSuperficie.predial.setAlpha(0.35f);
+                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
+                        bindingSuperficie.viewEntorno3.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.entorno1.setVisibility(View.GONE);
-                        bindingSuperficie.entorno2.setVisibility(View.GONE);
-                        bindingSuperficie.entorno3.setVisibility(View.VISIBLE);*/
+                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 7;
                         if(urlEntorno3.length()>0){
@@ -1769,6 +1807,42 @@ public class FragmentAutoriza extends Fragment implements
                             intentFoto(CAMERA_ENTORNO_2);
                         } else if(banderaCamara[0] ==7){
                             intentFoto(CAMERA_ENTORNO_3);
+                        } else if (banderaCamara[0] == 8) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            //Setting message manually and performing action on button click
+                            builder.setMessage("Seleccionar archivo desde")
+                                    .setCancelable(true)
+                                    .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                        }
+                                    })
+                                    .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            intentFoto(CAMERA_RECIBO_AGUA);
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.setTitle("RECIBO AGUA");
+                            alert.show();
+                        } else if (banderaCamara[0] == 9) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            //Setting message manually and performing action on button click
+                            builder.setMessage("Seleccionar archivo desde")
+                                    .setCancelable(true)
+                                    .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            intentGaleria(PICK_IMAGE_REQUEST_RECIBO_LUZ);
+                                        }
+                                    })
+                                    .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            intentFoto(CAMERA_RECIBO_LUZ);
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.setTitle("RECIBO LUZ");
+                            alert.show();
                         }
                     }else{
                         Toast.makeText(getContext(), R.string.no_estas,

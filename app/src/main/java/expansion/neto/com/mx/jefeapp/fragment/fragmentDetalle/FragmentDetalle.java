@@ -594,6 +594,7 @@ public class FragmentDetalle extends Fragment implements
                                 int valorFrente = 0;
                                 int valorFondo = 0;
                                 int valorEsquina = 0;
+                                int valorDrenaje = 0;
 
                                 for(int i = 0;i<superficie.getNiveles().size();i++){
                                     if(superficie.getNiveles().get(i).getNivel()==4 ||
@@ -612,14 +613,24 @@ public class FragmentDetalle extends Fragment implements
                                     if(superficie.getNiveles().get(i).getNivel()==8){
                                         valorEsquina = i;
                                     }
+
+                                    if(superficie.getNiveles().get(i).getNivel() == 9){
+                                        valorDrenaje = i;
+                                    }
                                 }
 
                                 Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+                                if(esquina==1) {
+                                    bindingSuperficie.esquinaDetalle.setText("SI");
+                                }else {
+                                    bindingSuperficie.esquinaDetalle.setText("NO");
+                                }
 
-                                if(esquina==1){
-
-                                }else{
-
+                                Double drenaje = superficie.getNiveles().get(valorDrenaje).getValorreal();
+                                if(drenaje==1) {
+                                    bindingSuperficie.drenajeDetalle.setText("SI");
+                                }else {
+                                    bindingSuperficie.drenajeDetalle.setText("NO");
                                 }
 
                                 String superficieS = String.valueOf(superficie.getNiveles().get(valorFrente).getValorreal());
@@ -644,7 +655,12 @@ public class FragmentDetalle extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgFrenteId(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgLateral1Id(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgLateral2Id(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
                                                 ));
                                         slider.setSelectedSlide(0);
                                     }
@@ -1148,10 +1164,6 @@ public class FragmentDetalle extends Fragment implements
                                     }
                                 }
 
-                                Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
-
-                                if(esquina==1){ }else{ }
-
                                 Slider.init(new PicassoImageLoadingService());
                                 slider = bindingSuperficie.map;
                                 final int finalValorFoto1 = valorFoto;
@@ -1163,7 +1175,12 @@ public class FragmentDetalle extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgFrenteId(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgLateral1Id(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgLateral2Id(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
                                         ));
                                         slider.setSelectedSlide(0);
                                     }
@@ -1338,7 +1355,12 @@ public class FragmentDetalle extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgFrenteId(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgLateral1Id(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgLateral2Id(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
+                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
                                         ));
                                         slider.setSelectedSlide(0);
                                     }
