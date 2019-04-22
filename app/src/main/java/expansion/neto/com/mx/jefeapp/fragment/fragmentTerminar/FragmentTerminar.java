@@ -796,7 +796,7 @@ public class FragmentTerminar extends Fragment implements
                                 }
                             });
 
-                            binding.nombresitio.setEnabled(false);
+                            //binding.nombresitio.setEnabled(false);
 
                             binding.nombresitio.setText(datosSitio.getDatossitio().get(0).getNombreSitio());
 
@@ -2182,6 +2182,62 @@ public class FragmentTerminar extends Fragment implements
                                                 mdId = "";
                                             }
 
+                                            //Establece check de fotos tomadas
+                                            //Frente
+                                            if(urlFrente.equals("")) {
+                                                bindingSuperficie.frontalText.setText(getResources().getString(R.string.frontal));
+                                            } else {
+                                                bindingSuperficie.frontalText.setText(getResources().getString(R.string.frontal) + "\u2713");
+                                            }
+                                            //Lateral 1
+                                            if(urlLateral1.equals("")) {
+                                                bindingSuperficie.lateral1Text.setText(getResources().getString(R.string.lateral1));
+                                            } else {
+                                                bindingSuperficie.lateral1Text.setText(getResources().getString(R.string.lateral1) + "\u2713");
+                                            }
+                                            //Lateral 2
+                                            if(urlLateral2.equals("")) {
+                                                bindingSuperficie.lateral2Text.setText(getResources().getString(R.string.lateral2));
+                                            } else {
+                                                bindingSuperficie.lateral2Text.setText(getResources().getString(R.string.lateral2) + "\u2713");
+                                            }
+                                            //Entorno 1
+                                            if(urlEntorno1.equals("")) {
+                                                bindingSuperficie.entorno1Text.setText(getResources().getString(R.string.entorno1));
+                                            } else {
+                                                bindingSuperficie.entorno1Text.setText(getResources().getString(R.string.entorno1) + "\u2713");
+                                            }
+                                            //Entorno 2
+                                            if(urlEntorno2.equals("")) {
+                                                bindingSuperficie.entorno2Text.setText(getResources().getString(R.string.entorno2));
+                                            } else {
+                                                bindingSuperficie.entorno2Text.setText(getResources().getString(R.string.entorno2) + "\u2713");
+                                            }
+                                            //Entorno 3
+                                            if(urlEntorno3.equals("")) {
+                                                bindingSuperficie.entorno3Text.setText(getResources().getString(R.string.entorno3));
+                                            } else {
+                                                bindingSuperficie.entorno3Text.setText(getResources().getString(R.string.entorno3) + "\u2713");
+                                            }
+                                            //Predial
+                                            if(urlPredial.equals("")) {
+                                                bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial));
+                                            } else {
+                                                bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial) + "\u2713");
+                                            }
+                                            //Recibo agua
+                                            if(urlReciboAgua.equals("")) {
+                                                bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua));
+                                            } else {
+                                                bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua) + "\u2713");
+                                            }
+                                            //Recibo Luz
+                                            if(urlReciboLuz.equals("")) {
+                                                bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz));
+                                            } else {
+                                                bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz) + "\u2713");
+                                            }
+
                                             if (!mdId.equals("") || mdId.equals("0")) {
                                                 mdLat = preferences.getFloat("latMd", 0);
                                                 mdLot = preferences.getFloat("lotMd", 0);
@@ -2866,6 +2922,62 @@ public class FragmentTerminar extends Fragment implements
 
                                             if (mdId.length() == 1) {
                                                 mdId = "";
+                                            }
+
+                                            //Establece check de fotos tomadas
+                                            //Frente
+                                            if(urlFrente.equals("")) {
+                                                bindingSuperficie.frontalText.setText(getResources().getString(R.string.frontal));
+                                            } else {
+                                                bindingSuperficie.frontalText.setText(getResources().getString(R.string.frontal) + "\u2713");
+                                            }
+                                            //Lateral 1
+                                            if(urlLateral1.equals("")) {
+                                                bindingSuperficie.lateral1Text.setText(getResources().getString(R.string.lateral1));
+                                            } else {
+                                                bindingSuperficie.lateral1Text.setText(getResources().getString(R.string.lateral1) + "\u2713");
+                                            }
+                                            //Lateral 2
+                                            if(urlLateral2.equals("")) {
+                                                bindingSuperficie.lateral2Text.setText(getResources().getString(R.string.lateral2));
+                                            } else {
+                                                bindingSuperficie.lateral2Text.setText(getResources().getString(R.string.lateral2) + "\u2713");
+                                            }
+                                            //Entorno 1
+                                            if(urlEntorno1.equals("")) {
+                                                bindingSuperficie.entorno1Text.setText(getResources().getString(R.string.entorno1));
+                                            } else {
+                                                bindingSuperficie.entorno1Text.setText(getResources().getString(R.string.entorno1) + "\u2713");
+                                            }
+                                            //Entorno 2
+                                            if(urlEntorno2.equals("")) {
+                                                bindingSuperficie.entorno2Text.setText(getResources().getString(R.string.entorno2));
+                                            } else {
+                                                bindingSuperficie.entorno2Text.setText(getResources().getString(R.string.entorno2) + "\u2713");
+                                            }
+                                            //Entorno 3
+                                            if(urlEntorno3.equals("")) {
+                                                bindingSuperficie.entorno3Text.setText(getResources().getString(R.string.entorno3));
+                                            } else {
+                                                bindingSuperficie.entorno3Text.setText(getResources().getString(R.string.entorno3) + "\u2713");
+                                            }
+                                            //Predial
+                                            if(urlPredial.equals("")) {
+                                                bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial));
+                                            } else {
+                                                bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial) + "\u2713");
+                                            }
+                                            //Recibo agua
+                                            if(urlReciboAgua.equals("")) {
+                                                bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua));
+                                            } else {
+                                                bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua) + "\u2713");
+                                            }
+                                            //Recibo Luz
+                                            if(urlReciboLuz.equals("")) {
+                                                bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz));
+                                            } else {
+                                                bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz) + "\u2713");
                                             }
 
 

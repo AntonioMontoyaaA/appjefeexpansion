@@ -179,6 +179,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/frontalText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="match_parent"
                                         android:layout_marginLeft="16dp"
@@ -208,6 +209,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/lateral1Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
@@ -237,6 +239,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/lateral2Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
@@ -277,6 +280,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/entorno1Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
@@ -306,6 +310,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/entorno2Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
@@ -335,6 +340,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/entorno3Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
@@ -426,6 +432,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/predialText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
@@ -456,6 +463,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/reciboAguaText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
@@ -486,6 +494,7 @@
                                     android:orientation="vertical">
 
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                        android:id="@+id/reciboLuzText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="16dp"
