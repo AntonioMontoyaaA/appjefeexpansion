@@ -26,7 +26,7 @@ public class GuardarDatosSuperficieCrear {
             editor.putString("fechaLateral1", superficie.getFechaLateral1());
             editor.putString("fechaLateral2", superficie.getFechaLateral2());
             editor.putString("fechaEntorno1", superficie.getFechaEntorno1());
-            editor.putString("fechaEntorno2", superficie.getFechaLateral2());
+            editor.putString("fechaEntorno2", superficie.getFechaEntorno2());
             editor.putString("fechaEntorno3", superficie.getFechaEntorno3());
             editor.putString("esquina", superficie.getEsquina());
             editor.putString("imgPredial", superficie.getImgPredial());
