@@ -2347,12 +2347,14 @@ public class FragmentAutoriza extends Fragment implements
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     Long md = preferences.getLong("mdId", 0);
                     String mdId = String.valueOf(md);
-                    loadingProgress(progressDialog, 0);
 
                     if(mdId.length()==1){ mdId = ""; }
 
                     if(!mdId.equals("")){
-                        if(zonificacionJson.equals("")){
+
+                        if(generadores != null && generadores.size() > 0 && generadores.get(0).getDetalles().size() >= 10) {
+                            loadingProgress(progressDialog, 0);
+                            if(zonificacionJson.equals("")){
 //                            detallesG = new ArrayList<>();;
 //
 //                            detalleG = new CrearZonificacion.Detalle(
@@ -2362,8 +2364,8 @@ public class FragmentAutoriza extends Fragment implements
 //                            detallesG.add(detalleG);
 //                            zonificacionG.setDetalles(detallesG);
 //
-                            generadores = new ArrayList<>();
-                            // generadores.add(zonificacionG);
+                                generadores = new ArrayList<>();
+                                // generadores.add(zonificacionG);
 //
 //                            detallesC = new ArrayList<>();
 //                            detalleC = new CrearZonificacion.Detalle(
@@ -2373,78 +2375,87 @@ public class FragmentAutoriza extends Fragment implements
 //                            detallesC.add(detalleC);
 //                            zonificacionC.setDetalles(detallesC);
 
-                            competencia = new ArrayList<>();
-                            // competencia.add(zonificacionC);
+                                competencia = new ArrayList<>();
+                                // competencia.add(zonificacionC);
 
-                            zonificacion = new CrearZonificacion(
-                                    usuario,
-                                    mdId,
-                                    competencia,
-                                    generadores,
-                                    String.valueOf(mdLat),
-                                    String.valueOf(mdLot),
-                                    NUM_TELEFONO,
-                                    VERSION_APP
-                            );
+                                zonificacion = new CrearZonificacion(
+                                        usuario,
+                                        mdId,
+                                        competencia,
+                                        generadores,
+                                        String.valueOf(mdLat),
+                                        String.valueOf(mdLot),
+                                        NUM_TELEFONO,
+                                        VERSION_APP
+                                );
 
-                            zonificacionJson = getJsonString(zonificacion);
+                                zonificacionJson = getJsonString(zonificacion);
 
-                            ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                @Override
-                                public void resolve(Codigos codigo) {
-                                    if (codigo.getCodigo() == 200) {
-                                        FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                        a.show(getChildFragmentManager(), "child");
-                                        bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        loadingProgress(progressDialog, 1);
+                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                    @Override
+                                    public void resolve(Codigos codigo) {
+                                        if (codigo.getCodigo() == 200) {
+                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                            a.show(getChildFragmentManager(), "child");
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
-                                    } else if(codigo.getCodigo()==1){
-                                        Toast.makeText(getContext(), getString(R.string.errorInternet),
-                                                Toast.LENGTH_SHORT).show();
-                                        bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        loadingProgress(progressDialog, 1);
+                                        } else if(codigo.getCodigo()==1){
+                                            Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                    Toast.LENGTH_SHORT).show();
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
-                                    } else {
-                                        Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                        bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        loadingProgress(progressDialog, 1);
+                                        } else {
+                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void reject(Exception e) { }
-                            });
-                        }else{
-                            zonificacionJson = getJsonString(zonificacion);
-                            ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                @Override
-                                public void resolve(Codigos codigo) {
-                                    if(codigo.getCodigo()==200){
-                                        FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                        a.show(getChildFragmentManager(),"child");
-                                        bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        loadingProgress(progressDialog, 1);
+                                    @Override
+                                    public void reject(Exception e) { }
+                                });
+                            }else{
+                                zonificacionJson = getJsonString(zonificacion);
+                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                    @Override
+                                    public void resolve(Codigos codigo) {
+                                        if(codigo.getCodigo()==200){
+                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                            a.show(getChildFragmentManager(),"child");
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
 
-                                    } else if(codigo.getCodigo()==1){
-                                        Toast.makeText(getContext(), getString(R.string.errorInternet),
-                                                Toast.LENGTH_SHORT).show();
-                                        bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        loadingProgress(progressDialog, 1);
+                                        } else if(codigo.getCodigo()==1){
+                                            Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                    Toast.LENGTH_SHORT).show();
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
-                                    }else {
-                                        Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                        bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        loadingProgress(progressDialog, 1);
+                                        }else {
+                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void reject(Exception e) { }
-                            });
+                                    @Override
+                                    public void reject(Exception e) { }
+                                });
+                            }
+                        } else {
+                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                            FragmentDialogError405 a = new FragmentDialogError405();
+                            Bundle arguments = new Bundle();
+                            arguments.putString( "mensaje" , "ERROR: Debes capturar más generadores de tráfico");
+                            a.setArguments(arguments);
+                            a.show(getChildFragmentManager(),"child");
                         }
+
                     }
 
                 }
@@ -3680,13 +3691,22 @@ public class FragmentAutoriza extends Fragment implements
                         }
                     }else{
                         loadingProgress(progressDialog, 1);
-                        Toast.makeText(getContext(), R.string.err_foto,
-                                Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
+                        bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
+                        FragmentDialogError405 a = new FragmentDialogError405();
+                        Bundle arguments = new Bundle();
+                        arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
+                        a.setArguments(arguments);
+                        a.show(getChildFragmentManager(),"child");
                     }
                 }else{
                     loadingProgress(progressDialog, 1);
-                    Toast.makeText(getContext(), R.string.err_foto,
-                            Toast.LENGTH_SHORT).show();
+                    bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
+                    FragmentDialogError405 a = new FragmentDialogError405();
+                    Bundle arguments = new Bundle();
+                    arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
+                    a.setArguments(arguments);
+                    a.show(getChildFragmentManager(),"child");
                 }
 
             }

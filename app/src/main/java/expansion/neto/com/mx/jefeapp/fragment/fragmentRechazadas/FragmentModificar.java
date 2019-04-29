@@ -3086,7 +3086,11 @@ public class FragmentModificar extends Fragment implements
                         }
 
                         if (!mdId.equals("")) {
-                            if (zonificacionJson.equals("")) {
+
+                            if(generadores != null && generadores.size() > 0 && generadores.get(0).getDetalles().size() >= 10) {
+                                loadingProgress(progressDialog, 0);
+
+                                if (zonificacionJson.equals("")) {
 
 //                                detallesG = new ArrayList<>();;
 //
@@ -3122,56 +3126,65 @@ public class FragmentModificar extends Fragment implements
 //                                        VERSION_APP
 //                                );
 
-                                zonificacion = new CrearZonificacion(
-                                        usuario,
-                                        mdIdterminar,
-                                        competencia,
-                                        generadores,
-                                        String.valueOf(mdLat),
-                                        String.valueOf(mdLot),
-                                        NUM_TELEFONO,
-                                        VERSION_APP
-                                );
+                                    zonificacion = new CrearZonificacion(
+                                            usuario,
+                                            mdIdterminar,
+                                            competencia,
+                                            generadores,
+                                            String.valueOf(mdLat),
+                                            String.valueOf(mdLot),
+                                            NUM_TELEFONO,
+                                            VERSION_APP
+                                    );
 
-                                zonificacionJson = getJsonString(zonificacion);
+                                    zonificacionJson = getJsonString(zonificacion);
 
-                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                    @Override
-                                    public void resolve(Codigos codigo) {
-                                        if (codigo.getCodigo() == 200) {
-                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(), "child");
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        } else {
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                        @Override
+                                        public void resolve(Codigos codigo) {
+                                            if (codigo.getCodigo() == 200) {
+                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                                a.show(getChildFragmentManager(), "child");
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            } else {
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void reject(Exception e) {
-                                    }
-                                });
+                                        @Override
+                                        public void reject(Exception e) {
+                                        }
+                                    });
+
+                                } else {
+                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                        @Override
+                                        public void resolve(Codigos codigo) {
+                                            if (codigo.getCodigo() == 200) {
+                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                                a.show(getChildFragmentManager(), "child");
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+
+                                            } else {
+                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void reject(Exception e) {
+                                        }
+                                    });
+                                }
 
                             } else {
-                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                    @Override
-                                    public void resolve(Codigos codigo) {
-                                        if (codigo.getCodigo() == 200) {
-                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(), "child");
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-
-                                        } else {
-                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void reject(Exception e) {
-                                    }
-                                });
+                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                FragmentDialogError405 a = new FragmentDialogError405();
+                                Bundle arguments = new Bundle();
+                                arguments.putString( "mensaje" , "ERROR: Debes capturar más generadores de tráfico");
+                                a.setArguments(arguments);
+                                a.show(getChildFragmentManager(),"child");
                             }
                         }
 
@@ -4593,13 +4606,25 @@ public class FragmentModificar extends Fragment implements
                         }
                     } else {
                         loadingProgress(progressDialog, 1);
-                        Toast.makeText(getContext(), R.string.err_foto,
-                                Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
+                        bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
+                        FragmentDialogError405 a = new FragmentDialogError405();
+                        Bundle arguments = new Bundle();
+                        arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
+                        a.setArguments(arguments);
+                        a.show(getChildFragmentManager(),"child");
                     }
                 } else {
                     loadingProgress(progressDialog, 1);
-                    Toast.makeText(getContext(), R.string.err_foto,
-                            Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
+                    bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
+                    FragmentDialogError405 a = new FragmentDialogError405();
+                    Bundle arguments = new Bundle();
+                    arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
+                    a.setArguments(arguments);
+                    a.show(getChildFragmentManager(),"child");
                 }
             }
 
