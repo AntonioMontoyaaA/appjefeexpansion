@@ -36,7 +36,6 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
@@ -104,20 +103,18 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import expansion.neto.com.mx.jefeapp.R;
+import expansion.neto.com.mx.jefeapp.cameraApi2.FragmentEditPhoto;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza1Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza2Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza3Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza4Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza5Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza6Binding;
-import expansion.neto.com.mx.jefeapp.databinding.FragmentAutorizaBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutorizaPorterminarBinding;
-import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogAceptar;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogCancelar;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogError405;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogGuardar;
-import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogTipoSitio;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosGeneralidades;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
@@ -194,7 +191,6 @@ import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.gu
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSuperficie.salvarDatosSuperficie;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosZonificacion.salvarDatosZonificacion;
 import static expansion.neto.com.mx.jefeapp.utils.Util.getFecha;
-import static expansion.neto.com.mx.jefeapp.utils.Util.isEmailValid;
 import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 
@@ -3469,90 +3465,79 @@ public class FragmentTerminar extends Fragment implements
 
                         final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                         String mdId = preferences.getString("mdIdterminar", "");
+                        loadingProgress(progressDialog, 0);
 
                         if (mdId.length() == 1) {
                             mdId = "";
                         }
 
                         if (!mdId.equals("")) {
+                            if (zonificacionJson.equals("")) {
+                                zonificacion = new CrearZonificacion(
+                                        usuario,
+                                        mdIdterminar,
+                                        competencia,
+                                        generadores,
+                                        String.valueOf(mdLat),
+                                        String.valueOf(mdLot),
+                                        "5555555555",
+                                        VERSION_APP
+                                );
 
-                            if(generadores != null && generadores.size() > 0 && generadores.get(0).getDetalles().size() >= 10) {
-                                loadingProgress(progressDialog, 0);
+                                zonificacionJson = getJsonString(zonificacion);
 
-                                if (zonificacionJson.equals("")) {
-                                    zonificacion = new CrearZonificacion(
-                                            usuario,
-                                            mdIdterminar,
-                                            competencia,
-                                            generadores,
-                                            String.valueOf(mdLat),
-                                            String.valueOf(mdLot),
-                                            "5555555555",
-                                            VERSION_APP
-                                    );
-
-                                    zonificacionJson = getJsonString(zonificacion);
-
-                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                        @Override
-                                        public void resolve(Codigos codigo) {
-                                            if (codigo.getCodigo() == 200) {
-                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                a.show(getChildFragmentManager(), "child");
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
+                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                    @Override
+                                    public void resolve(Codigos codigo) {
+                                        if (codigo.getCodigo() == 200) {
+                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                            a.show(getChildFragmentManager(), "child");
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
 
 
-                                            } else {
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                                loadingProgress(progressDialog, 1);
+                                        } else {
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                            loadingProgress(progressDialog, 1);
 
-                                            }
                                         }
+                                    }
 
-                                        @Override
-                                        public void reject(Exception e) {
-                                        }
-                                    });
+                                    @Override
+                                    public void reject(Exception e) {
+                                    }
+                                });
 
-                                } else {
-                                    zonificacionJson = getJsonString(zonificacion);
-                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                        @Override
-                                        public void resolve(Codigos codigo) {
-                                            if (codigo.getCodigo() == 200) {
-                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                a.show(getChildFragmentManager(), "child");
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
-
-                                            } else if(codigo.getCodigo()==1){
-                                                Toast.makeText(getContext(), getString(R.string.errorInternet),
-                                                        Toast.LENGTH_SHORT).show();
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
-
-                                            } else {
-                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
-
-                                            }
-                                        }
-
-                                        @Override
-                                        public void reject(Exception e) {
-                                        }
-                                    });
-                                }
                             } else {
-                                bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                FragmentDialogError405 a = new FragmentDialogError405();
-                                Bundle arguments = new Bundle();
-                                arguments.putString( "mensaje" , "ERROR: Debes capturar más generadores de tráfico");
-                                a.setArguments(arguments);
-                                a.show(getChildFragmentManager(),"child");
+                                zonificacionJson = getJsonString(zonificacion);
+                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                    @Override
+                                    public void resolve(Codigos codigo) {
+                                        if (codigo.getCodigo() == 200) {
+                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                            a.show(getChildFragmentManager(), "child");
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
+
+                                        } else if(codigo.getCodigo()==1){
+                                            Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                    Toast.LENGTH_SHORT).show();
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
+
+                                        } else {
+                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                            loadingProgress(progressDialog, 1);
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void reject(Exception e) {
+                                    }
+                                });
                             }
                         }
 
@@ -4925,10 +4910,20 @@ public class FragmentTerminar extends Fragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        String mdIdterminar = preferences.getString("mdIdterminar", "");
+        final String mdIdterminar = preferences.getString("mdIdterminar", "");
         if (requestCode == CAMERA_FRONTAL && resultCode == -1) {
             fechaFrente = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
+            final FragmentEditPhoto fep = new FragmentEditPhoto();
+            fep.setDirecionFile(imageFilePath);
+            fep.show(getChildFragmentManager(),"child");
+            fep.setListener(new FragmentEditPhoto.FragmentEditPhotoInterface() {
+                @Override
+                public void guardarFoto(String imgCuadro) {
+                    obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imgCuadro));
+                    fep.dismiss();
+                }
+            });
+            //obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
         } else if (requestCode == CAMERA_LATERAL_1 && resultCode == -1) {
             fechaLateral1 = getFechaHora();
             obtenerUrl(String.valueOf(mdIdterminar), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));
@@ -5099,36 +5094,15 @@ public class FragmentTerminar extends Fragment implements
                             }
                         } else {
                             loadingProgress(progressDialog, 1);
-                            //Toast.makeText(getContext(), R.string.err_foto,Toast.LENGTH_SHORT).show();
-                            //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
-                            bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
-                            FragmentDialogError405 a = new FragmentDialogError405();
-                            Bundle arguments = new Bundle();
-                            arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
-                            a.setArguments(arguments);
-                            a.show(getChildFragmentManager(),"child");
+                            Toast.makeText(getContext(), R.string.err_foto,Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         loadingProgress(progressDialog, 1);
-                        //Toast.makeText(getContext(), R.string.err_foto,Toast.LENGTH_SHORT).show();
-                        //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
-                        bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
-                        FragmentDialogError405 a = new FragmentDialogError405();
-                        Bundle arguments = new Bundle();
-                        arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
-                        a.setArguments(arguments);
-                        a.show(getChildFragmentManager(),"child");
+                        Toast.makeText(getContext(), R.string.err_foto,Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     loadingProgress(progressDialog, 1);
-                    //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
-                    bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
-                    FragmentDialogError405 a = new FragmentDialogError405();
-                    Bundle arguments = new Bundle();
-                    arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
-                    a.setArguments(arguments);
-                    a.show(getChildFragmentManager(),"child");
+                    Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
                 }
 
 

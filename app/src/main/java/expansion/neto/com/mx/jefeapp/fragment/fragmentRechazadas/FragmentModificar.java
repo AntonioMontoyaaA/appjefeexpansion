@@ -33,9 +33,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
@@ -53,7 +51,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableRow;
@@ -103,6 +100,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import expansion.neto.com.mx.jefeapp.R;
+import expansion.neto.com.mx.jefeapp.cameraApi2.FragmentEditPhoto;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza1Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza2Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza3Binding;
@@ -130,7 +128,6 @@ import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Superficie;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Zonificacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Amortizacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
-import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradores;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradoresV2;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CrearDatosPropietario;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CrearDatosSitio;
@@ -193,11 +190,7 @@ import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.gu
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSitio.salvarDatosSitio;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSuperficie.salvarDatosSuperficie;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosZonificacion.salvarDatosZonificacion;
-import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.compressImage;
-import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.getBitmap;
-import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.getStringImage;
 import static expansion.neto.com.mx.jefeapp.utils.Util.getFecha;
-import static expansion.neto.com.mx.jefeapp.utils.Util.isEmailValid;
 import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 
@@ -4469,10 +4462,20 @@ public class FragmentModificar extends Fragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        String mdIdterminar = preferences.getString("mdIdterminar", "");
+        final String mdIdterminar = preferences.getString("mdIdterminar", "");
         if (requestCode == CAMERA_FRONTAL && resultCode == -1) {
             fechaFrente = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
+            //obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
+            final FragmentEditPhoto fep = new FragmentEditPhoto();
+            fep.setDirecionFile(imageFilePath);
+            fep.show(getChildFragmentManager(),"child");
+            fep.setListener(new FragmentEditPhoto.FragmentEditPhotoInterface() {
+                @Override
+                public void guardarFoto(String imgCuadro) {
+                    obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imgCuadro));
+                    fep.dismiss();
+                }
+            });
         } else if (requestCode == CAMERA_LATERAL_1 && resultCode == -1) {
             fechaLateral1 = getFechaHora();
             obtenerUrl(String.valueOf(mdIdterminar), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));
@@ -5931,5 +5934,8 @@ public class FragmentModificar extends Fragment implements
                 startActivityForResult(pictureIntent, lugarFoto);
             }
         }
+    }
+
+    public void intentCameraAPi(){
     }
 }

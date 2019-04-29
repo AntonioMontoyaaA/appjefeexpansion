@@ -65,4 +65,8 @@ public class Codigos {
         }
     }
 
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

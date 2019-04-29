@@ -16,7 +16,6 @@ import android.graphics.drawable.VectorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -35,9 +33,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 import android.util.Base64;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -53,7 +49,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableRow;
@@ -86,9 +81,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,7 +95,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import expansion.neto.com.mx.jefeapp.R;
-import expansion.neto.com.mx.jefeapp.constantes.RestUrl;
+import expansion.neto.com.mx.jefeapp.cameraApi2.FragmentEditPhoto;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza1Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza2Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza3Binding;
@@ -113,7 +105,6 @@ import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza6Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutorizaBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosGeneralidades;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentDialogCancelarMdTerminar;
-import expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosPredial;
@@ -121,7 +112,6 @@ import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonal;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonales;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Amortizacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
-import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradores;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradoresV2;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CrearDatosPropietario;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CrearDatosSitio;
@@ -173,18 +163,13 @@ import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.FACTOR_ID;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.NUM_TELEFONO;
 import static expansion.neto.com.mx.jefeapp.constantes.RestUrl.VERSION_APP;
-import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAutoriza.loadingProgress;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentDialogCancelarMd.cleanShared;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosConstruccion.salvarDatosConstruccion;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosPropietario.salvarDatosPropietario;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSitio.salvarDatosSitio;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosSuperficieCrear.salvarDatosSuperficie;
 import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosZonificacion.salvarDatosZonificacion;
-import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.compressImage;
-import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.getBitmap;
-import static expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentTerminar.getStringImage;
 import static expansion.neto.com.mx.jefeapp.utils.Util.getFecha;
-import static expansion.neto.com.mx.jefeapp.utils.Util.isEmailValid;
 import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 
@@ -3550,11 +3535,21 @@ public class FragmentAutoriza extends Fragment implements
         super.onActivityResult(requestCode, resultCode, data);
 
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        long mdid = preferences.getLong("mdId", 0);
+        final long mdid = preferences.getLong("mdId", 0);
 
         if (requestCode == CAMERA_FRONTAL && resultCode==RESULT_OK) {
             fechaFrente = getFechaHora();
-            obtenerUrl(String.valueOf(mdid), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
+            //obtenerUrl(String.valueOf(mdid), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
+            final FragmentEditPhoto fep = new FragmentEditPhoto();
+            fep.setDirecionFile(imageFilePath);
+            fep.show(getChildFragmentManager(),"child");
+            fep.setListener(new FragmentEditPhoto.FragmentEditPhotoInterface() {
+                @Override
+                public void guardarFoto(String imgCuadro) {
+                    obtenerUrl(String.valueOf(mdid), random() + "_frente", "png", "1", Uri.parse(imgCuadro));
+                    fep.dismiss();
+                }
+            });
         }else if(requestCode == CAMERA_LATERAL_1 && resultCode==RESULT_OK){
             fechaLateral1 = getFechaHora();
             obtenerUrl(String.valueOf(mdid), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));

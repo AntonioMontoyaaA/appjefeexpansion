@@ -123,7 +123,7 @@
     <string name="evento">Evento</string>
     <string name="tododia">Todo el dia</string>
     <string name="accion_hoy">Hoy</string>
-<!--    <string name="accion_tres">Ver 3 días</string> -->
+    <!--    <string name="accion_tres">Ver 3 días</string> -->
     <string name="accion_semana">Ver la semana</string>
     <string name="calendario">Calendario</string>
     <string name="fin">Fin</string>
@@ -178,20 +178,20 @@
     <string name="buscar">Buscar</string>
     <string name="file_provider_authority">expansion.neto.com.mx.jefeapp.fileprovider</string>
 
-     <string-array name="meses">
-         <item>1 mes</item>
-         <item>2 meses</item>
-         <item>3 meses</item>
-         <item>4 meses</item>
-         <item>5 meses</item>
-         <item>6 meses</item>
-         <item>7 meses</item>
-         <item>8 meses</item>
-         <item>9 meses</item>
-         <item>10 meses</item>
-         <item>11 meses</item>
-         <item>12 meses</item>
-     </string-array>
+    <string-array name="meses">
+        <item>1 mes</item>
+        <item>2 meses</item>
+        <item>3 meses</item>
+        <item>4 meses</item>
+        <item>5 meses</item>
+        <item>6 meses</item>
+        <item>7 meses</item>
+        <item>8 meses</item>
+        <item>9 meses</item>
+        <item>10 meses</item>
+        <item>11 meses</item>
+        <item>12 meses</item>
+    </string-array>
 
     <!-- modulo por proceso -->
     <string name="enProceso">En proceso</string>
@@ -326,5 +326,16 @@
     <string name="comp">Debes seleccionar alguna compentencia y generador</string>
     <string name="genera">GENERAL</string>
     <string name="escribir_mensaje">Escribir mensaje</string>
+    <string name="intro_message">
+        <![CDATA[
 
+Si la foto se ve volteada o de cabeza, favor de regresar y tomar de nuevo la foto, el celular debe de estar acostado, los botones en tu mano derecha para una correcta fotografía.
+
+        ]]>
+    </string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="picture">Picture</string>
+    <string name="description_info">Info</string>
+    <string name="guardar">Guardar</string>
 </resources>
