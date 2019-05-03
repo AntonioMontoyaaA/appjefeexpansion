@@ -5019,6 +5019,7 @@ public class FragmentTerminar extends Fragment implements
                             if (codigo.getResultado().getSecureUrl().contains("frente")) {
                                 bindingSuperficie.frontal.setEnabled(false);
                                 urlFrente = codigo.getResultado().getSecureUrl();
+                                Log.d("urlFrente",urlFrente);
                                 Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
                                 bindingSuperficie.frontal.setEnabled(true);
                                 hourlyTask.run();

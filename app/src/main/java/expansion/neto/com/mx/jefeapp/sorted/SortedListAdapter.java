@@ -112,7 +112,7 @@ public abstract class SortedListAdapter<T extends SortedListAdapter.ViewModel> e
         return mSortedList.size();
     }
 
-    public final List<T> filter(Filter<T> filter) {
+    private List<T> filter(Filter<T> filter) {
         final List<T> list = new ArrayList<>();
         for (int i = 0, count = mSortedList.size(); i < count; i++) {
             final T item = mSortedList.get(i);

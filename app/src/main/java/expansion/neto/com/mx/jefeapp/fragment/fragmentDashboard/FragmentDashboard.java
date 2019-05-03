@@ -171,7 +171,7 @@ public class FragmentDashboard extends Fragment {
                     semanaRestaInt--;
                     semanaResta = String.valueOf(semanaRestaInt);
                     getDatos("0", semanaResta);
-                    binding.setSemana("Semana "+semanaResta);
+                    //binding.setSemana("Semana "+semanaResta);
                 }else{
                     binding.izqSemana.setEnabled(false);
                 }
@@ -197,13 +197,13 @@ public class FragmentDashboard extends Fragment {
                 int semanaActual = Integer.parseInt(getMesSemana());
                 if(semanaRestaInt==semanaActual){
                     getDatos("0", String.valueOf(semanaRestaInt));
-                    binding.setSemana("Semana "+String.valueOf(semanaRestaInt));
+                    //binding.setSemana("Semana "+String.valueOf(semanaRestaInt));
                     binding.derSemana.setAlpha(0.0f);
                     binding.derSemana.setEnabled(false);
 
                 }else {
                     getDatos("0", String.valueOf(semanaRestaInt));
-                    binding.setSemana("Semana "+String.valueOf(semanaRestaInt));
+                    //binding.setSemana("Semana "+String.valueOf(semanaRestaInt));
                     binding.derSemana.setAlpha(1.0f);
                 }
             }
@@ -218,8 +218,8 @@ public class FragmentDashboard extends Fragment {
                 mesRestaInt--;
                 mesResta = String.valueOf(mesRestaInt);
                 getDatos(mesResta, "0");
-                String nombreMes = getMes(mesRestaInt);
-                binding.setMes(nombreMes);
+                //String nombreMes = getMes(mesRestaInt);
+                //binding.setMes(nombreMes);
                 editorExpansion.putString("mesTaco", mesResta);
                 editorExpansion.apply();
 
@@ -371,7 +371,7 @@ public class FragmentDashboard extends Fragment {
         int semana = Integer.valueOf(semanas);
         int mesSolicitud = Integer.valueOf(buscaMes);
         if(mesSolicitud > 0 ){
-            buscaMes = String.valueOf(--mesSolicitud);
+            //buscaMes = String.valueOf(--mesSolicitud);
             editorExpansion.putString("mesDasbord", String.valueOf(mesSolicitud));
         }else if(semana > totalWeeks){
             semanas = "1";
@@ -379,7 +379,7 @@ public class FragmentDashboard extends Fragment {
             anioString = String.valueOf(anio);
             binding.setAnioString(" "+anioString);
             editorExpansion.putString("anioConsulta", String.valueOf(anio));
-            editorExpansion.putString("mesDasbord", "0");
+            editorExpansion.putString("mesDasbord", "1");
         }else if (semana == 0){
             anio--;
             anioString = String.valueOf(anio);
@@ -391,7 +391,7 @@ public class FragmentDashboard extends Fragment {
             totalWeeks = totalDaysInYear / 7;
             semanas = String.valueOf(totalWeeks);
             editorExpansion.putString("anioConsulta", String.valueOf(anio));
-            editorExpansion.putString("mesDasbord", "11");
+            editorExpansion.putString("mesDasbord", "12");
         }
         editorExpansion.apply();
         String anio2 = String.valueOf(anio);
@@ -491,6 +491,13 @@ public class FragmentDashboard extends Fragment {
                         perfil.setRealSemana(realSem);
                         binding.setPerfil(perfil);
                         binding.nombreJefe.setVisibility(View.VISIBLE);
+
+
+                        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                        final SharedPreferences.Editor editorExpansion = preferences.edit();
+                        editorExpansion.putString("mesDasbord", String.valueOf(dashboard.getProductividad().get(0).getMes()));
+                        editorExpansion.putString("mesTaco", String.valueOf(dashboard.getProductividad().get(0).getMes()));
+                        editorExpansion.apply();
                     }
                  //   unblockUI();
                 }else{

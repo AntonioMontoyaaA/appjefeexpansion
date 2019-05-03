@@ -2,6 +2,7 @@ package expansion.neto.com.mx.jefeapp.cameraApi2;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,11 +16,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import expansion.neto.com.mx.jefeapp.R;
+
 public class Lienzo extends View {
 
     private static Path drawPath;                              // trazo del que vamos pintando
     private static Paint drawPaint, canvasPaint;        // es como el pincel,
-    private static int paintColor = 0xFF660000;                //color inicial
+    private static int paintColor = 0xFFFA7E0A;                //color inicial
     private static Canvas drawCanvas;                   //lienzo, fondo
     private static Bitmap canvasBitmap;                 //tipo de archivo par apoder guardarlo
 
@@ -31,9 +34,17 @@ public class Lienzo extends View {
 
     int anchoNuevo, altoNuevo;
 
+    //marquesina
+    Bitmap marco;
+    float xMarco;
+    int xMArcoInt;
+    Bitmap marco2;
+
     public Lienzo(Context context, AttributeSet attrs) {
         super(context, attrs);
         setUpDrawing();
+        marco = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.marquesina);
+        marco = Bitmap.createScaledBitmap(marco, 600, 150, true);
     }
 
     private static void setUpDrawing() {
@@ -41,7 +52,7 @@ public class Lienzo extends View {
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(10);
+        drawPaint.setStrokeWidth(7);
         drawPaint.setStyle(Paint.Style.STROKE); //pintar solo bordes, trazos
         drawPaint.setStrokeJoin(Paint.Join.ROUND); //pintura sera redondeada
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -57,7 +68,7 @@ public class Lienzo extends View {
         //canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         //drawCanvas = new Canvas(canvasBitmap);
         //Toast.makeText(getContext(), "ancho: "+ canvasBitmap.getWidth()+ " alto:"+canvasBitmap.getHeight(), Toast.LENGTH_SHORT).show();
-        canvasBitmap = Bitmap.createScaledBitmap(canvasBitmap, 1200, 1200, true);
+        canvasBitmap = Bitmap.createScaledBitmap(canvasBitmap, 1100, 1100, true);
         Bitmap mutableBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, true);
         drawCanvas = new Canvas(mutableBitmap);
         drawCanvas.setBitmap(mutableBitmap);
@@ -97,6 +108,8 @@ public class Lienzo extends View {
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
+                xMarco = touchX - iniciotouchX ;
+                xMArcoInt = Math.round(xMarco);
                 break;
             default:
                 return false;
@@ -109,7 +122,11 @@ public class Lienzo extends View {
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
-        canvas.drawRect(new RectF(iniciotouchX, iniciotouchY, touchX, touchY),drawPaint);
+        canvas.drawRect(iniciotouchX, iniciotouchY, touchX, touchY,drawPaint);
+
+        xMArcoInt = xMArcoInt <1 ? 1: xMArcoInt;
+        marco2 = Bitmap.createScaledBitmap(marco, xMArcoInt, 150, true);
+        canvas.drawBitmap(marco2, iniciotouchX, iniciotouchY, drawPaint);
     }
 
     //actualiza color
