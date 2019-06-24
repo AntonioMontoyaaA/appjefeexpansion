@@ -5454,6 +5454,12 @@ public class FragmentModificar extends Fragment implements
                 }
             });
 
+            if(!rb[0].isChecked() && !rb[1].isChecked()){
+                rb[1].setChecked(true);
+                nivelId = 2;
+                binding.linearLayout.setVisibility(View.VISIBLE);
+            }
+
             binding.local.addView(rg);
 
             if (listaSubfactores.getConstruccion() != null) {
@@ -5504,6 +5510,12 @@ public class FragmentModificar extends Fragment implements
                 }
             }
         });
+
+        if(!rb[0].isChecked() && !rb[1].isChecked()){
+            rb[1].setChecked(true);
+            nivelId = 2;
+            binding.linearLayout.setVisibility(View.VISIBLE);
+        }
 
         binding.local.addView(rg);
     }

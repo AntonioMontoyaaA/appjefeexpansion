@@ -2436,7 +2436,7 @@ public class FragmentAutoriza extends Fragment implements
                             bindingZonificacion.toolbar.guardar.setEnabled(true);
                             FragmentDialogError405 a = new FragmentDialogError405();
                             Bundle arguments = new Bundle();
-                            arguments.putString( "mensaje" , "ERROR: Debes capturar más generadores de tráfico");
+                            arguments.putString( "mensaje" , "ERROR: Debes capturar más generadores de tráfico, minimo 10.");
                             a.setArguments(arguments);
                             a.show(getChildFragmentManager(),"child");
                         }
@@ -4290,7 +4290,11 @@ public class FragmentAutoriza extends Fragment implements
                 }
             }
         });
-
+        if(!rb[0].isChecked() && !rb[1].isChecked()){
+            rb[1].setChecked(true);
+            nivelId = 2;
+            binding.linearLayout.setVisibility(View.VISIBLE);
+        }
         binding.local.addView(rg);
     }
 
@@ -4458,6 +4462,12 @@ public class FragmentAutoriza extends Fragment implements
                     }
                 }
             });
+
+            if(!rb[0].isChecked() && !rb[1].isChecked()){
+                rb[1].setChecked(true);
+                nivelId = 2;
+                binding.linearLayout.setVisibility(View.VISIBLE);
+            }
 
             binding.local.addView(rg);
 

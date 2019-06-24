@@ -5975,6 +5975,12 @@ public class FragmentTerminar extends Fragment implements
                     rb[1].setChecked(true);
                 }
             }
+
+            if(!rb[0].isChecked() && !rb[1].isChecked()){
+                rb[1].setChecked(true);
+                nivelId = 2;
+                binding.linearLayout.setVisibility(View.VISIBLE);
+            }
         }
 
     }
@@ -6011,6 +6017,11 @@ public class FragmentTerminar extends Fragment implements
             }
         });
 
+        if(!rb[0].isChecked() && !rb[1].isChecked()){
+            rb[1].setChecked(true);
+            nivelId = 2;
+            binding.linearLayout.setVisibility(View.VISIBLE);
+        }
         binding.local.addView(rg);
     }
 
