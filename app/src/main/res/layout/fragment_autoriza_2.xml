@@ -453,68 +453,6 @@
                                         android:visibility="gone" />
                                 </LinearLayout>
 
-                                <LinearLayout
-                                    android:id="@+id/reciboAgua"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="4dp"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:orientation="vertical">
-
-                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                        android:id="@+id/reciboAguaText"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
-                                        android:backgroundTint="@color/azul"
-                                        android:text="@string/reciboAgua"
-                                        android:textAllCaps="true"
-                                        android:textColor="@color/colorPrimary"
-                                        android:textSize="12sp"
-                                        app:typeface="robotoBold" />
-
-                                    <View
-                                        android:id="@+id/viewReciboAgua"
-                                        android:layout_width="60dp"
-                                        android:layout_height="2dp"
-                                        android:layout_marginTop="4dp"
-                                        android:background="@color/colorPrimary"
-                                        android:visibility="gone" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/reciboLuz"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="4dp"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:orientation="vertical">
-
-                                    <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                        android:id="@+id/reciboLuzText"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
-                                        android:backgroundTint="@color/azul"
-                                        android:text="@string/reciboLuz"
-                                        android:textAllCaps="true"
-                                        android:textColor="@color/colorPrimary"
-                                        android:textSize="12sp"
-                                        app:typeface="robotoBold" />
-
-                                    <View
-                                        android:id="@+id/viewReciboLuz"
-                                        android:layout_width="60dp"
-                                        android:layout_height="2dp"
-                                        android:layout_marginTop="4dp"
-                                        android:background="@color/colorPrimary"
-                                        android:visibility="gone" />
-                                </LinearLayout>
-
 
                             </LinearLayout>
 
@@ -767,34 +705,7 @@
 
                             </LinearLayout>
 
-                            <LinearLayout
-                                android:id="@+id/drenaje"
-                                android:layout_width="match_parent"
-                                android:layout_height="27dp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="6dp"
-                                android:orientation="horizontal">
 
-
-                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="8dp"
-                                    android:backgroundTint="@color/azul"
-                                    android:text="¿El sitio cuenta con drenaje?"
-                                    android:textAllCaps="true"
-                                    android:textColor="@color/colorPrimary"
-                                    android:textSize="12sp"
-                                    app:typeface="robotoBold" />
-
-                                <Switch
-                                    android:id="@+id/escogeDrenaje"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="50dp"
-                                    android:textColorHint="@color/colorPrimary" />
-
-                            </LinearLayout>
 
 
                         </LinearLayout>

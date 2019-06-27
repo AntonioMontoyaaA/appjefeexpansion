@@ -208,15 +208,24 @@ public class FragmentModificar extends Fragment implements
     String urlReciboAgua = "";
     String urlReciboLuz = "";
 
-    String fechaFrente;
-    String fechaLateral1;
-    String fechaLateral2;
-    String fechaEntorno1;
-    String fechaEntorno2;
-    String fechaEntorno3;
-    String fechaPredial;
-    String fechaReciboAgua;
-    String fechaReciboLuz;
+    String fechaFrente = "";
+    String fechaLateral1 = "";
+    String fechaLateral2 = "";
+    String fechaEntorno1 = "";
+    String fechaEntorno2 = "";
+    String fechaEntorno3 = "";
+    String fechaPredial = "";
+    String fechaReciboAgua = "";
+    String fechaReciboLuz = "";
+
+    String banderaAguaConstruccion = "";
+    String banderaLuzConstruccion = "";
+    String banderaDrenajeConstruccion = "";
+    String banderaUsoSueloConstruccion = "";
+    String banderaPredialCorrienteConstruccion = "";
+    String banderaEscriturasConstruccion = "";
+    String banderaInahConstruccion = "";
+    String banderaConflictoConstruccion = "";
 
     String municipio = "";
     private View view;
@@ -697,6 +706,13 @@ public class FragmentModificar extends Fragment implements
             urlFrente = "";
             urlLateral2 = "";
             urlLateral1 = "";
+            urlPredial = "";
+            urlEntorno1 = "";
+            urlEntorno1 = "";
+            urlEntorno2 = "";
+            urlEntorno3 = "";
+            urlReciboAgua = "";
+            urlReciboLuz = "";
 
             binding.toolbar.nombreTitulo.setText(getString(R.string.datossitio));
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -1217,7 +1233,7 @@ public class FragmentModificar extends Fragment implements
                 }
             });
 
-            bindingSuperficie.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            /*bindingSuperficie.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
                         conDrenaje[0] = "1";
@@ -1225,7 +1241,7 @@ public class FragmentModificar extends Fragment implements
                         conDrenaje[0] = "0";
                     }
                 }
-            });
+            });*/
 
 
             ProviderDatosSuperficie.getInstance(getContext())
@@ -1261,18 +1277,18 @@ public class FragmentModificar extends Fragment implements
                                             fechaPredial = " ";
                                             urlPredial = " ";
                                         }
-                                        if (!superficie.getNiveles().get(i).getFecha_agua().equals("")) {
+                                        /*if (!superficie.getNiveles().get(i).getFecha_agua().equals("")) {
                                             fechaReciboAgua = superficie.getNiveles().get(i).getFecha_pred();
                                         } else {
                                             fechaReciboAgua = "";
                                             urlReciboAgua = "";
-                                        }
-                                        if (!superficie.getNiveles().get(i).getFecha_luz().equals("")) {
+                                        }*/
+                                        /*if (!superficie.getNiveles().get(i).getFecha_luz().equals("")) {
                                             fechaReciboLuz = superficie.getNiveles().get(i).getFecha_pred();
                                         } else {
                                             fechaReciboLuz = "";
                                             urlReciboAgua = "";
-                                        }
+                                        }*/
                                     }
 
                                     if (superficie.getNiveles().get(i).getNivel() == 6 ||
@@ -1298,14 +1314,14 @@ public class FragmentModificar extends Fragment implements
                                     tipoEsquina[0] = "0";
                                 }
 
-                                Double drenaje = superficie.getNiveles().get(valorDrenaje).getValorreal();
+                                /*Double drenaje = superficie.getNiveles().get(valorDrenaje).getValorreal();
                                 if (drenaje == 1) {
                                     bindingSuperficie.escogeDrenaje.setChecked(true);
                                     conDrenaje[0] = "1";
                                 } else {
                                     bindingSuperficie.escogeDrenaje.setChecked(false);
                                     conDrenaje[0] = "0";
-                                }
+                                }*/
 
                                 getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
                                 String superficieS = String.valueOf(superficie.getNiveles().get(valorFrente).getValorreal());
@@ -1349,8 +1365,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.entorno2.setAlpha(0.35f);
                                         bindingSuperficie.entorno3.setAlpha(0.35f);
                                         bindingSuperficie.predial.setAlpha(1.0f);
-                                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1358,8 +1374,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                                         bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
-                                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 4;
 
@@ -1394,7 +1410,7 @@ public class FragmentModificar extends Fragment implements
                                     }
                                 });
 
-                                bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
+                                /*bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
@@ -1456,9 +1472,9 @@ public class FragmentModificar extends Fragment implements
                                             alert.show();
                                         }
                                     }
-                                });
+                                });*/
 
-                                bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
+                                /*bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
@@ -1520,7 +1536,7 @@ public class FragmentModificar extends Fragment implements
                                             alert.show();
                                         }
                                     }
-                                });
+                                });*/
 
                                 bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1534,8 +1550,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.entorno2.setAlpha(0.35f);
                                         bindingSuperficie.entorno3.setAlpha(0.35f);
                                         bindingSuperficie.predial.setAlpha(0.35f);
-                                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                                         bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
                                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1543,8 +1559,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 1;
                                         if (superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length() > 0) {
@@ -1575,8 +1591,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.entorno2.setAlpha(0.35f);
                                         bindingSuperficie.entorno3.setAlpha(0.35f);
                                         bindingSuperficie.predial.setAlpha(0.35f);
-                                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
                                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1584,8 +1600,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 2;
 
@@ -1618,7 +1634,7 @@ public class FragmentModificar extends Fragment implements
                                 } else {
                                     urlPredial = " ";
                                 }
-                                if (superficie.getNiveles().get(finalValorFoto).getImgAgua().equals("") ||
+                                /*if (superficie.getNiveles().get(finalValorFoto).getImgAgua().equals("") ||
                                         superficie.getNiveles().get(finalValorFoto).getImgAgua().equals(" ")) {
                                     urlReciboAgua = "";
                                 } else {
@@ -1629,7 +1645,7 @@ public class FragmentModificar extends Fragment implements
                                     urlReciboLuz = "";
                                 } else {
                                     urlReciboLuz = superficie.getNiveles().get(finalValorFoto).getImgLuz();
-                                }
+                                }*/
 
 
                                 bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
@@ -1642,8 +1658,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.entorno2.setAlpha(0.35f);
                                         bindingSuperficie.entorno3.setAlpha(0.35f);
                                         bindingSuperficie.predial.setAlpha(0.35f);
-                                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
@@ -1651,8 +1667,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 3;
                                         if (superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length() > 0) {
@@ -1680,8 +1696,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.entorno2.setAlpha(0.35f);
                                         bindingSuperficie.entorno3.setAlpha(0.35f);
                                         bindingSuperficie.predial.setAlpha(0.35f);
-                                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1689,8 +1705,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                             banderaCamara[0] = 5;
                                             if (superficie.getNiveles().get(finalValorFoto).getImgEnt1().length() > 0) {
@@ -1718,8 +1734,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.entorno2.setAlpha(1.0f);
                                         bindingSuperficie.entorno3.setAlpha(0.35f);
                                         bindingSuperficie.predial.setAlpha(0.35f);
-                                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1727,8 +1743,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewEntorno2.setVisibility(View.VISIBLE);
                                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 6;
                                         if (superficie.getNiveles().get(finalValorFoto).getImgEnt2().length() > 0) {
@@ -1757,8 +1773,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.entorno2.setAlpha(0.35f);
                                         bindingSuperficie.entorno3.setAlpha(1.0f);
                                         bindingSuperficie.predial.setAlpha(0.35f);
-                                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1766,8 +1782,8 @@ public class FragmentModificar extends Fragment implements
                                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                                         bindingSuperficie.viewEntorno3.setVisibility(View.VISIBLE);
                                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 7;
                                         if (superficie.getNiveles().get(finalValorFoto).getImgEnt3().length() > 0) {
@@ -1786,7 +1802,7 @@ public class FragmentModificar extends Fragment implements
                                     }
                                 });
 
-                                bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
+                                /*bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         bindingSuperficie.frontal.setAlpha(0.35f);
@@ -1882,9 +1898,9 @@ public class FragmentModificar extends Fragment implements
 
 
                                     }
-                                });
+                                });*/
 
-                                bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
+                                /*bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         bindingSuperficie.frontal.setAlpha(0.35f);
@@ -1980,7 +1996,7 @@ public class FragmentModificar extends Fragment implements
 
 
                                     }
-                                });
+                                });*/
 //
                                 if (mdLat != null || mdLot != null) {
                                     ServicioGPS n = new ServicioGPS(getContext());
@@ -2217,17 +2233,17 @@ public class FragmentModificar extends Fragment implements
                                             bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial) + "\u2713");
                                         }
                                         //Recibo agua
-                                        if(urlReciboAgua.equals("")) {
+                                        /*if(urlReciboAgua.equals("")) {
                                             bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua));
                                         } else {
                                             bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua) + "\u2713");
-                                        }
+                                        }*/
                                         //Recibo Luz
-                                        if(urlReciboLuz.equals("")) {
+                                        /*if(urlReciboLuz.equals("")) {
                                             bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz));
                                         } else {
                                             bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz) + "\u2713");
-                                        }
+                                        }*/
 
                                         if (!mdId.equals("") || mdId.equals("0")) {
                                             mdLat = preferences.getFloat("latMd", 0);
@@ -3253,7 +3269,9 @@ public class FragmentModificar extends Fragment implements
                                                                     factoresConstruccion,
                                                                     datosSitio);
 
-                                                            datosConstruccion(mdIdterminar, usuarioId, datosSitios);
+                                                            //datosConstruccion(mdIdterminar, usuarioId, datosSitios);
+
+                                                            generarChecklist(bindingConstruccion,factoresConstruccion,datosSitio);
 
                                                             bindingConstruccion.cargar.setVisibility(View.GONE);
 
@@ -3269,6 +3287,9 @@ public class FragmentModificar extends Fragment implements
 
                                                             generarCondiciones(bindingConstruccion,
                                                                     factoresConstruccion);
+
+                                                            generarChecklist(bindingConstruccion,factoresConstruccion,datosSitio);
+
                                                             bindingConstruccion.cargar.setVisibility(View.GONE);
 
                                                         }
@@ -3317,10 +3338,94 @@ public class FragmentModificar extends Fragment implements
                 }
             });
 
+            bindingConstruccion.escogeAgua.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaAguaConstruccion = "1";
+                    }else{
+                        banderaAguaConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeLuz.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaLuzConstruccion = "1";
+                    }else{
+                        banderaLuzConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaDrenajeConstruccion = "1";
+                    }else{
+                        banderaDrenajeConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeUsoSuelo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaUsoSueloConstruccion = "1";
+                    }else{
+                        banderaUsoSueloConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogePredial.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaPredialCorrienteConstruccion = "1";
+                    }else{
+                        banderaPredialCorrienteConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeEscrituras.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaEscriturasConstruccion = "1";
+                    }else{
+                        banderaEscriturasConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeInah.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaInahConstruccion = "1";
+                    }else{
+                        banderaInahConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeConflictoLegal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaConflictoConstruccion = "1";
+                        bindingConstruccion.conflictoText.setEnabled(true);
+                    }else{
+                        banderaConflictoConstruccion = "0";
+                        bindingConstruccion.conflictoText.setText("");
+                        bindingConstruccion.conflictoText.setEnabled(true);
+                    }
+                }
+            });
+
             bindingConstruccion.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    bindingConstruccion.toolbar.guardar.setEnabled(false);
+                    //bindingConstruccion.toolbar.guardar.setEnabled(false);
+                    loadingProgress(progressDialog, 0);
 
                     final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                     String mdIdterminar = preferences.getString("mdIdterminar", "");
@@ -3341,7 +3446,7 @@ public class FragmentModificar extends Fragment implements
                                 detallesCondicion = new ArrayList<>();
 
                                 DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
-                                        nivelIdCondicion, detallesCondicion);
+                                        nivelIdCondicion, "", detallesCondicion);
 
                                 niveles.add(detalleCondicion);
 
@@ -3360,43 +3465,93 @@ public class FragmentModificar extends Fragment implements
                                         String check = entry.getValue();
 
                                         if (valor == 0 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
                                         if (valor == 1 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
                                         if (valor == 2 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
                                         if (valor == 3 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
                                     }
                                 }
 
                                 DatosConstruccion.Nivele detalleConstruccion = new DatosConstruccion.Nivele(
-                                        nivelId, detallesContruccion);
+                                        nivelId, "", detallesContruccion);
                                 niveles.add(detalleConstruccion);
 
                             }
 
-                            datosConstruccion = new DatosConstruccion(
+                            List nivelesTemp = new ArrayList<>();
+
+                            //Agrega los valores del checklist
+                            List detallesCheck = new ArrayList<>();
+
+                            //Agua
+                            DatosConstruccion.Nivele detalleAgua = new DatosConstruccion.Nivele(
+                                    AGUA_ID, banderaAguaConstruccion, detallesCheck);
+                            nivelesTemp.add(detalleAgua);
+
+                            //Luz
+                            DatosConstruccion.Nivele detalleLuz = new DatosConstruccion.Nivele(
+                                    LUZ_ID, banderaLuzConstruccion, detallesCheck);
+                            nivelesTemp.add(detalleLuz);
+
+                            //Drenaje
+                            DatosConstruccion.Nivele detalleDrenaje = new DatosConstruccion.Nivele(
+                                    DRENAJE_ID, banderaDrenajeConstruccion, detallesCheck);
+                            nivelesTemp.add(detalleDrenaje);
+
+                            //Uso de suelo
+                            DatosConstruccion.Nivele detalleUsoSuelo = new DatosConstruccion.Nivele(
+                                    USO_SUELO_ID, banderaUsoSueloConstruccion, detallesCheck);
+                            nivelesTemp.add(detalleUsoSuelo);
+
+                            //Predial al corriente
+                            DatosConstruccion.Nivele detallePredialCorriente = new DatosConstruccion.Nivele(
+                                    PREDIAL_CORRIENTE_ID, banderaPredialCorrienteConstruccion, detallesCheck);
+                            nivelesTemp.add(detallePredialCorriente);
+
+                            //Escrituras públicas
+                            DatosConstruccion.Nivele detalleEscrituras = new DatosConstruccion.Nivele(
+                                    ESCRITURAS_PUBLICAS_ID, banderaEscriturasConstruccion, detallesCheck);
+                            nivelesTemp.add(detalleEscrituras);
+
+                            //INAH
+                            DatosConstruccion.Nivele detalleInah = new DatosConstruccion.Nivele(
+                                    INAH_ID, banderaInahConstruccion, detallesCheck);
+                            nivelesTemp.add(detalleInah);
+
+                            //Conflictos
+                            List detallesConflictos = new ArrayList<>();
+                            DatosConstruccion.Detalle detalle = new DatosConstruccion.Detalle(CONFLICTOS_ID, bindingConstruccion.conflictoText.getText().toString());
+                            detallesConflictos.add(detalle);
+                            DatosConstruccion.Nivele detalleConflicto = new DatosConstruccion.Nivele(
+                                    CONFLICTOS_ID, banderaConflictoConstruccion, detallesConflictos);
+                            nivelesTemp.add(detalleConflicto);
+
+                            nivelesTemp.addAll(niveles);
+
+                            DatosConstruccion datosConstruccionLocal = new DatosConstruccion(
                                     mdIdterminar,
                                     usuarioId,
                                     FACTOR_ID,
                                     NUM_TELEFONO,
                                     VERSION_APP,
-                                    niveles
+                                    nivelesTemp
                             );
 
-                            datosConstruccionJson = getJsonString(datosConstruccion);
+                            final String datosConstruccionJsonLocal = getJsonString(datosConstruccionLocal);
 
                             ProviderCrearConstruccion.getInstance(getContext()).crearDatosConstruccion(datosConstruccionJson,
                                     new ProviderCrearConstruccion.InterfaceCrearDatosConstruccion() {
@@ -3407,16 +3562,26 @@ public class FragmentModificar extends Fragment implements
                                                 FragmentDialogGuardar a = new FragmentDialogGuardar();
                                                 a.show(getChildFragmentManager(), "child");
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
 
-                                            } else {
+                                                final SharedPreferences preferencesConstruccion = getContext().getSharedPreferences("datosConstruccion", Context.MODE_PRIVATE);
+                                                final SharedPreferences.Editor editor = preferencesConstruccion.edit();
+                                                salvarDatosConstruccion(datosConstruccionJsonLocal, editor);
+
+                                            } else if(codigo.getCodigo()==1){
+                                                Toast.makeText(getContext(), getString(R.string.errorInternet), Toast.LENGTH_SHORT).show();
+                                                bindingConstruccion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
+                                            } else{
                                                 Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
                                                 bindingConstruccion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
                                             }
                                         }
 
                                         @Override
                                         public void reject(Exception e) {
-
+                                            loadingProgress(progressDialog, 1);
                                         }
                                     });
                         }
@@ -3425,17 +3590,14 @@ public class FragmentModificar extends Fragment implements
                 }
             });
 
-            final SharedPreferences preferencesConstruccion = getContext().getSharedPreferences("datosConstruccion", Context.MODE_PRIVATE);
-            final SharedPreferences.Editor editor = preferencesConstruccion.edit();
 
-
-            Timer timer = new Timer();
+            /*Timer timer = new Timer();
             hourlyTask = new TimerTask() {
                 @Override
                 public void run() {
                     getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
                     datosConstruccion(mdIdterminar, usuarioId);
-                    if (datosConstruccionJson.length() > 0 && !datosConstruccion.equals("")) {
+                    if (datosConstruccionJson != null  && datosConstruccionJson.length() > 0 && datosConstruccion != null && !datosConstruccion.equals("")) {
                         salvarDatosConstruccion(datosConstruccionJson, editor);
                     } else {
                         editor.putString("json", "");
@@ -3444,7 +3606,7 @@ public class FragmentModificar extends Fragment implements
                 }
             };
 
-            timer.schedule(hourlyTask, 100, 700);
+            timer.schedule(hourlyTask, 100, 700);*/
 
 
         } else if (position == 5) {
@@ -4590,7 +4752,7 @@ public class FragmentModificar extends Fragment implements
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
-                        } else if (codigo.getResultado().getSecureUrl().contains("reciboAgua")) {
+                        } /*else if (codigo.getResultado().getSecureUrl().contains("reciboAgua")) {
                             bindingSuperficie.reciboAgua.setEnabled(false);
                             urlReciboAgua = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
@@ -4606,7 +4768,7 @@ public class FragmentModificar extends Fragment implements
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
-                        }
+                        }*/
                     } else {
                         loadingProgress(progressDialog, 1);
                         //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
@@ -5693,7 +5855,7 @@ public class FragmentModificar extends Fragment implements
     }
 
 
-    public void datosConstruccion(String md, String usuarioId, DatosConstruccions datosConstruccions) {
+    /*public void datosConstruccion(String md, String usuarioId, DatosConstruccions datosConstruccions) {
 
         if (datosConstruccions != null) {
             if (datosConstruccions.getConstruccion().get(0).getDetalles().size() > 0) {
@@ -5709,7 +5871,7 @@ public class FragmentModificar extends Fragment implements
             if (nivelIdCondicion == 5 || nivelIdCondicion == 4 || nivelIdCondicion == 3) {
                 detallesCondicion = new ArrayList<>();
                 DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
-                        nivelIdCondicion, detallesCondicion);
+                        nivelIdCondicion, "", detallesCondicion);
                 niveles.add(detalleCondicion);
             }
 
@@ -5723,29 +5885,29 @@ public class FragmentModificar extends Fragment implements
                         String check = entry.getValue();
 
                         if (valor == 0 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if (valor == 1 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if (valor == 2 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if (valor == 3 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
                     }
                 }
 
                 DatosConstruccion.Nivele detalleConstruccion = new DatosConstruccion.Nivele(
-                        nivelId, detallesContruccion);
+                        nivelId, "", detallesContruccion);
 
                 niveles.add(detalleConstruccion);
 
@@ -5764,9 +5926,9 @@ public class FragmentModificar extends Fragment implements
         }
 
 
-    }
+    }*/
 
-    public void datosConstruccion(String md, String usuarioId) {
+    /*public void datosConstruccion(String md, String usuarioId) {
         if (nivelId == 0 || nivelIdCondicion == 0) {
 
         } else {
@@ -5776,7 +5938,7 @@ public class FragmentModificar extends Fragment implements
                 detallesCondicion = new ArrayList<>();
 
                 DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
-                        nivelIdCondicion, detallesCondicion);
+                        nivelIdCondicion, "", detallesCondicion);
 
                 niveles.add(detalleCondicion);
 
@@ -5795,29 +5957,29 @@ public class FragmentModificar extends Fragment implements
                         String check = entry.getValue();
 
                         if (valor == 0 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if (valor == 1 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if (valor == 2 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if (valor == 3 && check == "1") {
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
                     }
                 }
 
                 DatosConstruccion.Nivele detalleConstruccion = new DatosConstruccion.Nivele(
-                        nivelId, detallesContruccion);
+                        nivelId, "", detallesContruccion);
 
                 niveles.add(detalleConstruccion);
 
@@ -5834,6 +5996,104 @@ public class FragmentModificar extends Fragment implements
 
             datosConstruccionJson = getJsonString(datosConstruccion);
 
+        }
+    }*/
+
+    private final int AGUA_ID = 6;
+    private final int LUZ_ID = 7;
+    private final int DRENAJE_ID = 8;
+    private final int USO_SUELO_ID = 9;
+    private final int PREDIAL_CORRIENTE_ID = 10;
+    private final int ESCRITURAS_PUBLICAS_ID = 11;
+    private final int INAH_ID = 12;
+    private final int CONFLICTOS_ID = 13;
+
+    public void generarChecklist(final FragmentAutoriza4Binding binding,
+                                 final FactoresConstruccion factoresConstruccion,
+                                 DatosConstruccions datosConstruccion) {
+
+        if(datosConstruccion.getConstruccion() != null && datosConstruccion.getConstruccion().size() > 0) {
+            for(int i = 0; i < datosConstruccion.getConstruccion().size(); i++) {
+                switch(datosConstruccion.getConstruccion().get(i).getNivelid()) {
+                    case AGUA_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeAgua.setChecked(true);
+                            banderaAguaConstruccion = "1";
+                        } else {
+                            binding.escogeAgua.setChecked(false);
+                            banderaAguaConstruccion = "0";
+                        }
+                        break;
+                    case LUZ_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeLuz.setChecked(true);
+                            banderaLuzConstruccion = "1";
+                        } else {
+                            binding.escogeLuz.setChecked(false);
+                            banderaLuzConstruccion = "0";
+                        }
+                        break;
+                    case DRENAJE_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeDrenaje.setChecked(true);
+                            banderaDrenajeConstruccion = "1";
+                        } else {
+                            binding.escogeDrenaje.setChecked(false);
+                            banderaDrenajeConstruccion = "0";
+                        }
+                        break;
+                    case USO_SUELO_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeUsoSuelo.setChecked(true);
+                            banderaUsoSueloConstruccion = "1";
+                        } else {
+                            binding.escogeUsoSuelo.setChecked(false);
+                            banderaUsoSueloConstruccion = "0";
+                        }
+                        break;
+                    case PREDIAL_CORRIENTE_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogePredial.setChecked(true);
+                            banderaPredialCorrienteConstruccion = "1";
+                        } else {
+                            binding.escogePredial.setChecked(false);
+                            banderaPredialCorrienteConstruccion = "0";
+                        }
+                        break;
+                    case ESCRITURAS_PUBLICAS_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeEscrituras.setChecked(true);
+                            banderaEscriturasConstruccion = "1";
+                        } else {
+                            binding.escogeEscrituras.setChecked(false);
+                            banderaEscriturasConstruccion = "0";
+                        }
+                        break;
+                    case INAH_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeInah.setChecked(true);
+                            banderaInahConstruccion = "1";
+                        } else {
+                            binding.escogeInah.setChecked(false);
+                            banderaInahConstruccion = "0";
+                        }
+                        break;
+                    case CONFLICTOS_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            String conflicto = "";
+                            if(datosConstruccion.getConstruccion().get(i).getDetalles() != null && datosConstruccion.getConstruccion().get(i).getDetalles().size() > 0) {
+                                conflicto = datosConstruccion.getConstruccion().get(i).getDetalles().get(0).getComentario();
+                            }
+                            binding.escogeConflictoLegal.setChecked(true);
+                            binding.conflictoText.setText(conflicto);
+                            banderaConflictoConstruccion = "1";
+                        } else {
+                            binding.escogeConflictoLegal.setChecked(false);
+                            banderaConflictoConstruccion = "0";
+                        }
+                        break;
+                }
+            }
         }
     }
 

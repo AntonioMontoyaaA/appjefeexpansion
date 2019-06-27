@@ -90,12 +90,16 @@ public class DatosConstruccion {
         @SerializedName("NIVELID")
         @Expose
         private Integer nivelId;
+        @SerializedName("VALOR")
+        @Expose
+        private String valor;
         @SerializedName("DETALLES")
         @Expose
         private List<Detalle> detalles = null;
 
-        public Nivele(Integer nivelId, List<Detalle> detalles) {
+        public Nivele(Integer nivelId, String valor, List<Detalle> detalles) {
             this.nivelId = nivelId;
+            this.valor = valor;
             this.detalles = detalles;
         }
 
@@ -114,6 +118,14 @@ public class DatosConstruccion {
         public void setDetalles(List<Detalle> detalles) {
             this.detalles = detalles;
         }
+
+        public String getValor() {
+            return valor;
+        }
+
+        public void setValor(String valor) {
+            this.valor = valor;
+        }
     }
 
     public static class Detalle {
@@ -121,8 +133,12 @@ public class DatosConstruccion {
         @SerializedName("DETALLEID")
         @Expose
         private Integer detalleId;
+        @SerializedName("COMENTARIO")
+        @Expose
+        private String comentario;
 
-        public Detalle(Integer detalleId) {
+        public Detalle(Integer detalleId, String comentario) {
+            this.comentario = comentario;
             this.detalleId = detalleId;
         }
 
@@ -134,6 +150,13 @@ public class DatosConstruccion {
             this.detalleId = detalleId;
         }
 
+        public String getComentario() {
+            return comentario;
+        }
+
+        public void setComentario(String comentario) {
+            this.comentario = comentario;
+        }
     }
 
 }

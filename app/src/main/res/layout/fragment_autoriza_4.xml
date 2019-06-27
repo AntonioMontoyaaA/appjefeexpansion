@@ -34,7 +34,7 @@
                     android:layout_marginTop="2dp"
                     android:padding="18dp"
                     android:layout_width="match_parent"
-                    android:layout_height="610dp"
+                    android:layout_height="660dp"
                     android:orientation="vertical">
 
                     <android.support.constraint.ConstraintLayout
@@ -111,7 +111,7 @@
                                             android:layout_weight="1"
                                             android:text=""
                                             android:textColor="@color/azultaco"
-                                            android:textSize="11dp"
+                                            android:textSize="10dp"
                                             app:typeface="robotoRegular" />
 
 
@@ -203,6 +203,247 @@
                                 app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
                                 app:layout_constraintVertical_bias="0.383" />
                         </android.support.v7.widget.CardView>
+
+                        <LinearLayout
+                            android:id="@+id/linearEstatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="220dp"
+                            android:layout_marginBottom="3dp"
+                            android:background="@drawable/estilo_boton_blanco"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_gravity="top"
+                                android:background="@drawable/estilo_boton_blanco_up_celeste"
+                                android:orientation="vertical">
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_gravity="left"
+                                android:layout_height="27dp"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:backgroundTint="@color/azul"
+                                    android:text="Agua"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogeAgua"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:layout_marginStart="20dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:layout_weight="1"
+                                    android:text="Luz"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogeLuz"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:layout_weight="1"
+                                    android:text="INAH"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogeInah"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="27dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:text="Drenaje"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogeDrenaje"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:text="Uso de suelo"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogeUsoSuelo"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="27dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:text="Predial al corriente"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogePredial"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="50dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="27dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:text="Escrituras públicas  "
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogeEscrituras"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="50dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="27dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:backgroundTint="@color/azul"
+                                    android:text="Conflicto legal del inmueble"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textSize="10sp"
+                                    app:typeface="robotoBold" />
+
+                                <Switch
+                                    android:id="@+id/escogeConflictoLegal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="20dp"
+                                    android:textColorHint="@color/colorPrimary" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="27dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <EditText
+                                    android:id="@+id/conflictoText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="35dp"
+                                    android:inputType="text"
+                                    android:hint="¿Que conflicto existe?"
+                                    android:enabled="false"
+                                    android:maxLength="30"
+                                    android:singleLine="true"
+                                    android:textColor="@color/grisetxt"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
 
                         <android.support.v7.widget.CardView
                             android:visibility="gone"

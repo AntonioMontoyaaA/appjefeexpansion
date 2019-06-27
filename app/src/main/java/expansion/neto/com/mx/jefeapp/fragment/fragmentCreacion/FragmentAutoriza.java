@@ -196,6 +196,15 @@ public class FragmentAutoriza extends Fragment implements
     String fechaReciboAgua = "";
     String fechaReciboLuz = "";
 
+    String banderaAguaConstruccion = "0";
+    String banderaLuzConstruccion = "0";
+    String banderaDrenajeConstruccion = "0";
+    String banderaUsoSueloConstruccion = "0";
+    String banderaPredialCorrienteConstruccion = "0";
+    String banderaEscriturasConstruccion = "0";
+    String banderaInahConstruccion = "0";
+    String banderaConflictoConstruccion = "0";
+
     TimerTask hourlyTask;
     private View view;
     private static final String ARG_POSITION = "position";
@@ -1148,7 +1157,7 @@ public class FragmentAutoriza extends Fragment implements
                 }
             });
 
-            bindingSuperficie.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            /*bindingSuperficie.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
                         conDrenaje[0] = "1";
@@ -1156,7 +1165,7 @@ public class FragmentAutoriza extends Fragment implements
                         conDrenaje[0] = "0";
                     }
                 }
-            });
+            });*/
 
             Timer timer = new Timer ();
             hourlyTaskSuperficie = new TimerTask () {
@@ -1232,8 +1241,8 @@ public class FragmentAutoriza extends Fragment implements
                     bindingSuperficie.entorno2.setAlpha(0.35f);
                     bindingSuperficie.entorno3.setAlpha(0.35f);
                     bindingSuperficie.predial.setAlpha(1.0f);
-                    bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                    bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                    //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                    //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                     bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                     bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1241,8 +1250,8 @@ public class FragmentAutoriza extends Fragment implements
                     bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                     bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                     bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
-                    bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                    bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                    //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                    //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                     banderaCamara[0] = 4;
                     if(urlPredial.length()>0){
@@ -1320,7 +1329,7 @@ public class FragmentAutoriza extends Fragment implements
                 }
             });
 
-            bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
+            /*bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     bindingSuperficie.frontal.setAlpha(0.35f);
@@ -1416,9 +1425,9 @@ public class FragmentAutoriza extends Fragment implements
 
 
                 }
-            });
+            });*/
 
-            bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
+            /*bindingSuperficie.reciboLuz.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     bindingSuperficie.frontal.setAlpha(0.35f);
@@ -1514,7 +1523,7 @@ public class FragmentAutoriza extends Fragment implements
 
 
                 }
-            });
+            });*/
 
             bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1528,8 +1537,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
-                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                         bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1537,8 +1546,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 1;
                         if(urlFrente.length()>0){
@@ -1567,8 +1576,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
-                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1576,8 +1585,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 2;
 
@@ -1610,8 +1619,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
-                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
@@ -1619,8 +1628,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 3;
                         if(urlLateral2.length()>0){
@@ -1650,8 +1659,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
-                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1659,8 +1668,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 5;
                         if(urlEntorno1.length()>0){
@@ -1690,8 +1699,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setAlpha(1.0f);
                         bindingSuperficie.entorno3.setAlpha(0.35f);
                         bindingSuperficie.predial.setAlpha(0.35f);
-                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1699,8 +1708,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.viewEntorno2.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 6;
                         if(urlEntorno2.length()>0){
@@ -1730,8 +1739,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.entorno2.setAlpha(0.35f);
                         bindingSuperficie.entorno3.setAlpha(1.0f);
                         bindingSuperficie.predial.setAlpha(0.35f);
-                        bindingSuperficie.reciboAgua.setAlpha(0.35f);
-                        bindingSuperficie.reciboLuz.setAlpha(0.35f);
+                        //bindingSuperficie.reciboAgua.setAlpha(0.35f);
+                        //bindingSuperficie.reciboLuz.setAlpha(0.35f);
                         bindingSuperficie.viewfrontal.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral1.setVisibility(View.GONE);
                         bindingSuperficie.viewlateral2.setVisibility(View.GONE);
@@ -1739,8 +1748,8 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
                         bindingSuperficie.viewEntorno3.setVisibility(View.VISIBLE);
                         bindingSuperficie.viewpredial.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
-                        bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
+                        //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                         banderaCamara[0] = 7;
                         if(urlEntorno3.length()>0){
@@ -1913,17 +1922,17 @@ public class FragmentAutoriza extends Fragment implements
                         bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial) + "\u2713");
                     }
                     //Recibo agua
-                    if(urlReciboAgua.equals("")) {
+                    /*if(urlReciboAgua.equals("")) {
                         bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua));
                     } else {
                         bindingSuperficie.reciboAguaText.setText(getResources().getString(R.string.reciboAgua) + "\u2713");
-                    }
+                    }*/
                     //Recibo Luz
-                    if(urlReciboLuz.equals("")) {
+                    /*if(urlReciboLuz.equals("")) {
                         bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz));
                     } else {
                         bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz) + "\u2713");
-                    }
+                    }*/
 
                     if(!mdId.equals("") || mdId.equals("0")){
                         mdLat = preferences.getFloat("latMd", 0);
@@ -1931,7 +1940,7 @@ public class FragmentAutoriza extends Fragment implements
                         long mdid = preferences.getLong("mdId", 0);
                         String convertido = String.valueOf(mdid);
 
-                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlEntorno1.equals("") || urlEntorno2.equals("") || urlEntorno3.equals("") || urlReciboAgua.equals("") || urlReciboLuz.equals("")) {
+                        if(urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlEntorno1.equals("") || urlEntorno2.equals("") || urlEntorno3.equals("")) {
                             String mensajeError = "";
 
                             if(urlFrente.equals("")) {
@@ -1946,10 +1955,6 @@ public class FragmentAutoriza extends Fragment implements
                                 mensajeError = "Vuelve a tomar la foto entorno 2";
                             } else if(urlEntorno3.equals("")) {
                                 mensajeError = "Vuelve a tomar la foto entorno 3";
-                            } else if(urlReciboAgua.equals("")) {
-                                mensajeError = "Vuelve a tomar o cargar el recibo de agua";
-                            } else if(urlReciboLuz.equals("")) {
-                                mensajeError = "Vuelve a tomar o cargar el recibo de luz";
                             } else {
                                 mensajeError = getString(R.string.mensaje_fotos);
                             }
@@ -2505,6 +2510,10 @@ public class FragmentAutoriza extends Fragment implements
                                                                         factoresConstruccion,
                                                                         datosSitio);
 
+                                                                generarChecklist(bindingConstruccion,
+                                                                        factoresConstruccion,
+                                                                        datosSitio);
+
                                                                 bindingConstruccion.cargar.setVisibility(View.GONE);
 
 
@@ -2519,6 +2528,11 @@ public class FragmentAutoriza extends Fragment implements
 
                                                                 generarCondiciones(bindingConstruccion,
                                                                         factoresConstruccion);
+
+                                                                generarChecklist(bindingConstruccion,
+                                                                        factoresConstruccion,
+                                                                        datosSitio);
+
                                                                 bindingConstruccion.cargar.setVisibility(View.GONE);
 
                                                             }
@@ -2568,6 +2582,89 @@ public class FragmentAutoriza extends Fragment implements
                 }
             });
 
+            bindingConstruccion.escogeAgua.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaAguaConstruccion = "1";
+                    }else{
+                        banderaAguaConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeLuz.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaLuzConstruccion = "1";
+                    }else{
+                        banderaLuzConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaDrenajeConstruccion = "1";
+                    }else{
+                        banderaDrenajeConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeUsoSuelo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaUsoSueloConstruccion = "1";
+                    }else{
+                        banderaUsoSueloConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogePredial.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaPredialCorrienteConstruccion = "1";
+                    }else{
+                        banderaPredialCorrienteConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeEscrituras.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaEscriturasConstruccion = "1";
+                    }else{
+                        banderaEscriturasConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeInah.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaInahConstruccion = "1";
+                    }else{
+                        banderaInahConstruccion = "0";
+                    }
+                }
+            });
+
+            bindingConstruccion.escogeConflictoLegal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        banderaConflictoConstruccion = "1";
+                        bindingConstruccion.conflictoText.setEnabled(true);
+                    }else{
+                        banderaConflictoConstruccion = "0";
+                        bindingConstruccion.conflictoText.setText("");
+                        bindingConstruccion.conflictoText.setEnabled(true);
+                    }
+                }
+            });
+
             bindingConstruccion.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -2596,7 +2693,7 @@ public class FragmentAutoriza extends Fragment implements
                                 detallesCondicion = new ArrayList<>();
 
                                 DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
-                                        nivelIdCondicion, detallesCondicion);
+                                        nivelIdCondicion, "", detallesCondicion);
 
                                 niveles.add(detalleCondicion);
 
@@ -2615,32 +2712,79 @@ public class FragmentAutoriza extends Fragment implements
                                         String check = entry.getValue();
 
                                         if(valor==0 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
                                         if(valor==1 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
                                         if(valor==2 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
 
                                         if(valor==3 && check =="1"){
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                                             detallesContruccion.add(detalleConstruccion);
                                         }
                                     }
                                 }
 
                                 DatosConstruccion.Nivele detalleConstruccion = new DatosConstruccion.Nivele(
-                                        nivelId, detallesContruccion);
+                                        nivelId, "", detallesContruccion);
                                 niveles.add(detalleConstruccion);
 
                             }
+
+                            //Agrega los valores del checklist
+                            List detallesCheck = new ArrayList<>();
+
+                            //Agua
+                            DatosConstruccion.Nivele detalleAgua = new DatosConstruccion.Nivele(
+                                    AGUA_ID, banderaAguaConstruccion, detallesCheck);
+                            niveles.add(detalleAgua);
+
+                            //Luz
+                            DatosConstruccion.Nivele detalleLuz = new DatosConstruccion.Nivele(
+                                    LUZ_ID, banderaLuzConstruccion, detallesCheck);
+                            niveles.add(detalleLuz);
+
+                            //Drenaje
+                            DatosConstruccion.Nivele detalleDrenaje = new DatosConstruccion.Nivele(
+                                    DRENAJE_ID, banderaDrenajeConstruccion, detallesCheck);
+                            niveles.add(detalleDrenaje);
+
+                            //Uso de suelo
+                            DatosConstruccion.Nivele detalleUsoSuelo = new DatosConstruccion.Nivele(
+                                    USO_SUELO_ID, banderaUsoSueloConstruccion, detallesCheck);
+                            niveles.add(detalleUsoSuelo);
+
+                            //Predial al corriente
+                            DatosConstruccion.Nivele detallePredialCorriente = new DatosConstruccion.Nivele(
+                                    PREDIAL_CORRIENTE_ID, banderaPredialCorrienteConstruccion, detallesCheck);
+                            niveles.add(detallePredialCorriente);
+
+                            //Escrituras públicas
+                            DatosConstruccion.Nivele detalleEscrituras = new DatosConstruccion.Nivele(
+                                    ESCRITURAS_PUBLICAS_ID, banderaEscriturasConstruccion, detallesCheck);
+                            niveles.add(detalleEscrituras);
+
+                            //INAH
+                            DatosConstruccion.Nivele detalleInah = new DatosConstruccion.Nivele(
+                                    INAH_ID, banderaInahConstruccion, detallesCheck);
+                            niveles.add(detalleInah);
+
+                            //Conflictos
+                            List detallesConflictos = new ArrayList<>();
+                            DatosConstruccion.Detalle detalle = new DatosConstruccion.Detalle(CONFLICTOS_ID, bindingConstruccion.conflictoText.getText().toString());
+                            detallesConflictos.add(detalle);
+                            DatosConstruccion.Nivele detalleConflicto = new DatosConstruccion.Nivele(
+                                    CONFLICTOS_ID, banderaConflictoConstruccion, detallesConflictos);
+                            niveles.add(detalleConflicto);
+
 
                             datosConstruccion = new DatosConstruccion(
                                     String.valueOf(mdIdterminar),
@@ -3665,7 +3809,7 @@ public class FragmentAutoriza extends Fragment implements
                             hourlyTaskSuperficie.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
 
-                        } else if(codigo.getResultado().getSecureUrl().contains("reciboAgua")){
+                        } /*else if(codigo.getResultado().getSecureUrl().contains("reciboAgua")){
                             bindingSuperficie.reciboAgua.setEnabled(false);
                             urlReciboAgua = codigo.getResultado().getSecureUrl();
                             Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
@@ -3683,7 +3827,7 @@ public class FragmentAutoriza extends Fragment implements
                             hourlyTaskSuperficie.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
 
-                        }
+                        }*/
                     }else{
                         loadingProgress(progressDialog, 1);
                         //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
@@ -4361,7 +4505,7 @@ public class FragmentAutoriza extends Fragment implements
                 detallesCondicion = new ArrayList<>();
 
                 DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
-                        nivelIdCondicion, detallesCondicion);
+                        nivelIdCondicion, "", detallesCondicion);
 
                 niveles.add(detalleCondicion);
 
@@ -4380,29 +4524,29 @@ public class FragmentAutoriza extends Fragment implements
                         String check = entry.getValue();
 
                         if(valor==0 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if(valor==1 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if(valor==2 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
 
                         if(valor==3 && check =="1"){
-                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1);
+                            detalleConstruccion = new DatosConstruccion.Detalle(valor+1, "");
                             detallesContruccion.add(detalleConstruccion);
                         }
                     }
                 }
 
                 DatosConstruccion.Nivele detalleConstruccion = new DatosConstruccion.Nivele(
-                        nivelId, detallesContruccion);
+                        nivelId, "", detallesContruccion);
 
                 niveles.add(detalleConstruccion);
 
@@ -4615,6 +4759,84 @@ public class FragmentAutoriza extends Fragment implements
             }
         }
     }
+
+    private final int AGUA_ID = 6;
+    private final int LUZ_ID = 7;
+    private final int DRENAJE_ID = 8;
+    private final int USO_SUELO_ID = 9;
+    private final int PREDIAL_CORRIENTE_ID = 10;
+    private final int ESCRITURAS_PUBLICAS_ID = 11;
+    private final int INAH_ID = 12;
+    private final int CONFLICTOS_ID = 13;
+
+    public void generarChecklist(final FragmentAutoriza4Binding binding,
+                                   final FactoresConstruccion factoresConstruccion,
+                                   DatosConstruccions datosConstruccion) {
+
+        if(datosConstruccion.getConstruccion() != null && datosConstruccion.getConstruccion().size() > 0) {
+            for(int i = 0; i < datosConstruccion.getConstruccion().size(); i++) {
+                switch(datosConstruccion.getConstruccion().get(i).getNivelid()) {
+                    case AGUA_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeAgua.setChecked(true);
+                        } else {
+                            binding.escogeAgua.setChecked(false);
+                        }
+                        break;
+                    case LUZ_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeLuz.setChecked(true);
+                        } else {
+                            binding.escogeLuz.setChecked(false);
+                        }
+                        break;
+                    case DRENAJE_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeDrenaje.setChecked(true);
+                        } else {
+                            binding.escogeDrenaje.setChecked(false);
+                        }
+                        break;
+                    case USO_SUELO_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeUsoSuelo.setChecked(true);
+                        } else {
+                            binding.escogeUsoSuelo.setChecked(false);
+                        }
+                        break;
+                    case PREDIAL_CORRIENTE_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogePredial.setChecked(true);
+                        } else {
+                            binding.escogePredial.setChecked(false);
+                        }
+                        break;
+                    case ESCRITURAS_PUBLICAS_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeEscrituras.setChecked(true);
+                        } else {
+                            binding.escogeEscrituras.setChecked(false);
+                        }
+                        break;
+                    case INAH_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeInah.setChecked(true);
+                        } else {
+                            binding.escogeInah.setChecked(false);
+                        }
+                        break;
+                    case CONFLICTOS_ID:
+                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                            binding.escogeConflictoLegal.setChecked(true);
+                        } else {
+                            binding.escogeConflictoLegal.setChecked(false);
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
 
     @Override
     public void onStop() {
