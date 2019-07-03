@@ -81,6 +81,7 @@ import expansion.neto.com.mx.jefeapp.databinding.FragmentDetalleGenBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDetallePropietarioBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDetalleSitioBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentDialogCancelarMdProceso;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentDialogMdProceso;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosSitio;
@@ -152,6 +153,15 @@ public class FragmentDetalle extends Fragment implements
     AdapterListaGeneradoresNegociosComida adapterListaGeneradoresNegociosComida;
     AdapterListaGeneradoresMercadoPublico adapterListaGeneradoresMercadoPublico;
     AdapterListaGeneradoresTianguis adapterListaGeneradoresTianguis;
+
+    private final int AGUA_ID = 6;
+    private final int LUZ_ID = 7;
+    private final int DRENAJE_ID = 8;
+    private final int USO_SUELO_ID = 9;
+    private final int PREDIAL_CORRIENTE_ID = 10;
+    private final int ESCRITURAS_PUBLICAS_ID = 11;
+    private final int INAH_ID = 12;
+    private final int CONFLICTOS_ID = 13;
 
 
     List<CompetenciasGeneradoresV2.TiendaNeto> listCompetenciaTiendaNeto = new ArrayList<>();
@@ -456,7 +466,7 @@ public class FragmentDetalle extends Fragment implements
                         Intent main = new Intent(getContext(), ActivityNotificaciones.class);
                         startActivity(main);
                     }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                        FragmentDialogMdProceso a = new FragmentDialogMdProceso();
                         a.show(getChildFragmentManager(),"child");
                     }
 
@@ -549,7 +559,7 @@ public class FragmentDetalle extends Fragment implements
                                     Intent main = new Intent(getContext(), ActivityNotificaciones.class);
                                     startActivity(main);
                                 }else{
-                                    FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                                    FragmentDialogMdProceso a = new FragmentDialogMdProceso();
                                     a.show(getChildFragmentManager(),"child");
                                 }
                             }
@@ -626,12 +636,13 @@ public class FragmentDetalle extends Fragment implements
                                     bindingSuperficie.esquinaDetalle.setText("NO");
                                 }
 
+                                /*
                                 Double drenaje = superficie.getNiveles().get(valorDrenaje).getValorreal();
                                 if(drenaje==1) {
                                     bindingSuperficie.drenajeDetalle.setText("SI");
                                 }else {
                                     bindingSuperficie.drenajeDetalle.setText("NO");
-                                }
+                                }*/
 
                                 String superficieS = String.valueOf(superficie.getNiveles().get(valorFrente).getValorreal());
                                 superficieS = superficieS.replace(" ", "");
@@ -658,9 +669,7 @@ public class FragmentDetalle extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
                                                 ));
                                         slider.setSelectedSlide(0);
                                     }
@@ -725,6 +734,69 @@ public class FragmentDetalle extends Fragment implements
 
                                                                     }
 
+                                                                    switch(datosSitio.getConstruccion().get(i).getNivelid()) {
+                                                                        case AGUA_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                bindingSuperficie.aguaCheck.setText("\u2713" + " AGUA");
+                                                                            } else {
+                                                                                bindingSuperficie.aguaCheck.setText("\u2717 " + " AGUA");
+                                                                            }
+                                                                            break;
+                                                                        case LUZ_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                bindingSuperficie.luzCheck.setText("\u2713" + " LUZ");
+                                                                            } else {
+                                                                                bindingSuperficie.luzCheck.setText("\u2717 " + " LUZ");
+                                                                            }
+                                                                            break;
+                                                                        case DRENAJE_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                bindingSuperficie.drenajeCheck.setText("\u2713" + " DRENAJE");
+                                                                            } else {
+                                                                                bindingSuperficie.drenajeCheck.setText("\u2717 " + " DRENAJE");
+                                                                            }
+                                                                            break;
+                                                                        case USO_SUELO_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                bindingSuperficie.usoSueloCheck.setText("\u2713" + " USO SUELO");
+                                                                            } else {
+                                                                                bindingSuperficie.usoSueloCheck.setText("\u2717 " + " USO SUELO");
+                                                                            }
+                                                                            break;
+                                                                        case PREDIAL_CORRIENTE_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                bindingSuperficie.predialCheck.setText("\u2713" + " PREDIAL");
+                                                                            } else {
+                                                                                bindingSuperficie.predialCheck.setText("\u2717 " + " PREDIAL");
+                                                                            }
+                                                                            break;
+                                                                        case ESCRITURAS_PUBLICAS_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                bindingSuperficie.escriturasCheck.setText("\u2713" + " ESCRITURAS");
+                                                                            } else {
+                                                                                bindingSuperficie.escriturasCheck.setText("\u2717 " + " ESCRITURAS");
+                                                                            }
+                                                                            break;
+                                                                        case INAH_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                bindingSuperficie.inahCheck.setText("\u2713" + " INAH");
+                                                                            } else {
+                                                                                bindingSuperficie.inahCheck.setText("\u2717 " + " INAH");
+                                                                            }
+                                                                            break;
+                                                                        case CONFLICTOS_ID:
+                                                                            if(datosSitio.getConstruccion().get(i).getValor().equals("1")) {
+                                                                                String conflicto = "";
+                                                                                if(datosSitio.getConstruccion().get(i).getDetalles() != null && datosSitio.getConstruccion().get(i).getDetalles().size() > 0) {
+                                                                                    conflicto = datosSitio.getConstruccion().get(i).getDetalles().get(0).getComentario();
+                                                                                }
+                                                                                bindingSuperficie.conflictoCheck.setText("\u2713" + " CONFLICTOS (" + conflicto + ")");
+                                                                            } else {
+                                                                                bindingSuperficie.conflictoCheck.setText("\u2717 " + " CONFLICTOS");
+                                                                            }
+                                                                            break;
+                                                                    }
+
                                                                 }
                                                             }
                                                         }
@@ -763,7 +835,7 @@ public class FragmentDetalle extends Fragment implements
                         Intent main = new Intent(getContext(), ActivityNotificaciones.class);
                         startActivity(main);
                     }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                        FragmentDialogMdProceso a = new FragmentDialogMdProceso();
                         a.show(getChildFragmentManager(),"child");
                     }
                 }
@@ -1045,7 +1117,7 @@ public class FragmentDetalle extends Fragment implements
                             Intent main = new Intent(getContext(), ActivityNotificaciones.class);
                             startActivity(main);
                         }else{
-                            FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                            FragmentDialogMdProceso a = new FragmentDialogMdProceso();
                             a.show(getChildFragmentManager(),"child");
                         }
                     }
@@ -1178,9 +1250,7 @@ public class FragmentDetalle extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
                                         ));
                                         slider.setSelectedSlide(0);
                                     }
@@ -1279,7 +1349,7 @@ public class FragmentDetalle extends Fragment implements
                         Intent main = new Intent(getContext(), ActivityNotificaciones.class);
                         startActivity(main);
                     }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                        FragmentDialogMdProceso a = new FragmentDialogMdProceso();
                         a.show(getChildFragmentManager(),"child");
                     }
                 }
@@ -1358,9 +1428,7 @@ public class FragmentDetalle extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
                                         ));
                                         slider.setSelectedSlide(0);
                                     }
@@ -1383,7 +1451,7 @@ public class FragmentDetalle extends Fragment implements
                         Intent main = new Intent(getContext(), ActivityNotificaciones.class);
                         startActivity(main);
                     }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                        FragmentDialogMdProceso a = new FragmentDialogMdProceso();
                         a.show(getChildFragmentManager(),"child");
                     }
                 }
@@ -1404,7 +1472,7 @@ public class FragmentDetalle extends Fragment implements
                         Intent main = new Intent(getContext(), ActivityNotificaciones.class);
                         startActivity(main);
                     }else{
-                        FragmentDialogCancelarMdProceso a = new FragmentDialogCancelarMdProceso();
+                        FragmentDialogMdProceso a = new FragmentDialogMdProceso();
                         a.show(getChildFragmentManager(),"child");
                     }
 

@@ -52,9 +52,9 @@ public class FragmentDialogCancelarMdProceso extends DialogFragment {
             public void onClick(View view) {
 
 
-                    Intent main = new Intent(getContext(), FragmentInicioProceso.class);
-                    getContext().startActivity(main);
-                    cleanShared(getContext());
+                Intent main = new Intent(getContext(), FragmentInicioRechazadas.class);
+                getContext().startActivity(main);
+                cleanShared(getContext());
 
 
 

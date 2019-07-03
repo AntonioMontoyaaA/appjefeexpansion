@@ -218,14 +218,14 @@ public class FragmentModificar extends Fragment implements
     String fechaReciboAgua = "";
     String fechaReciboLuz = "";
 
-    String banderaAguaConstruccion = "";
-    String banderaLuzConstruccion = "";
-    String banderaDrenajeConstruccion = "";
-    String banderaUsoSueloConstruccion = "";
-    String banderaPredialCorrienteConstruccion = "";
-    String banderaEscriturasConstruccion = "";
-    String banderaInahConstruccion = "";
-    String banderaConflictoConstruccion = "";
+    String banderaAguaConstruccion = "0";
+    String banderaLuzConstruccion = "0";
+    String banderaDrenajeConstruccion = "0";
+    String banderaUsoSueloConstruccion = "0";
+    String banderaPredialCorrienteConstruccion = "0";
+    String banderaEscriturasConstruccion = "0";
+    String banderaInahConstruccion = "0";
+    String banderaConflictoConstruccion = "0";
 
     String municipio = "";
     private View view;
@@ -3416,7 +3416,7 @@ public class FragmentModificar extends Fragment implements
                     }else{
                         banderaConflictoConstruccion = "0";
                         bindingConstruccion.conflictoText.setText("");
-                        bindingConstruccion.conflictoText.setEnabled(true);
+                        bindingConstruccion.conflictoText.setEnabled(false);
                     }
                 }
             });

@@ -2660,7 +2660,7 @@ public class FragmentAutoriza extends Fragment implements
                     }else{
                         banderaConflictoConstruccion = "0";
                         bindingConstruccion.conflictoText.setText("");
-                        bindingConstruccion.conflictoText.setEnabled(true);
+                        bindingConstruccion.conflictoText.setEnabled(false);
                     }
                 }
             });

@@ -218,14 +218,14 @@ public class FragmentTerminar extends Fragment implements
     String fechaReciboAgua = "";
     String fechaReciboLuz = "";
 
-    String banderaAguaConstruccion = "";
-    String banderaLuzConstruccion = "";
-    String banderaDrenajeConstruccion = "";
-    String banderaUsoSueloConstruccion = "";
-    String banderaPredialCorrienteConstruccion = "";
-    String banderaEscriturasConstruccion = "";
-    String banderaInahConstruccion = "";
-    String banderaConflictoConstruccion = "";
+    String banderaAguaConstruccion = "0";
+    String banderaLuzConstruccion = "0";
+    String banderaDrenajeConstruccion = "0";
+    String banderaUsoSueloConstruccion = "0";
+    String banderaPredialCorrienteConstruccion = "0";
+    String banderaEscriturasConstruccion = "0";
+    String banderaInahConstruccion = "0";
+    String banderaConflictoConstruccion = "0";
 
     private View view;
     private static final String ARG_POSITION = "position";
@@ -3475,79 +3475,88 @@ public class FragmentTerminar extends Fragment implements
 
                         final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
                         String mdId = preferences.getString("mdIdterminar", "");
-                        loadingProgress(progressDialog, 0);
 
                         if (mdId.length() == 1) {
                             mdId = "";
                         }
 
                         if (!mdId.equals("")) {
-                            if (zonificacionJson.equals("")) {
-                                zonificacion = new CrearZonificacion(
-                                        usuario,
-                                        mdIdterminar,
-                                        competencia,
-                                        generadores,
-                                        String.valueOf(mdLat),
-                                        String.valueOf(mdLot),
-                                        "5555555555",
-                                        VERSION_APP
-                                );
+                            if(generadores != null && generadores.size() > 0 && generadores.get(0).getDetalles().size() >= 10) {
+                                loadingProgress(progressDialog, 0);
+                                if (zonificacionJson.equals("")) {
+                                    zonificacion = new CrearZonificacion(
+                                            usuario,
+                                            mdIdterminar,
+                                            competencia,
+                                            generadores,
+                                            String.valueOf(mdLat),
+                                            String.valueOf(mdLot),
+                                            "5555555555",
+                                            VERSION_APP
+                                    );
 
-                                zonificacionJson = getJsonString(zonificacion);
+                                    zonificacionJson = getJsonString(zonificacion);
 
-                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                    @Override
-                                    public void resolve(Codigos codigo) {
-                                        if (codigo.getCodigo() == 200) {
-                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(), "child");
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                            loadingProgress(progressDialog, 1);
+                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                        @Override
+                                        public void resolve(Codigos codigo) {
+                                            if (codigo.getCodigo() == 200) {
+                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                                a.show(getChildFragmentManager(), "child");
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
 
 
-                                        } else {
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                            loadingProgress(progressDialog, 1);
+                                            } else {
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                                loadingProgress(progressDialog, 1);
 
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void reject(Exception e) {
-                                    }
-                                });
+                                        @Override
+                                        public void reject(Exception e) {
+                                        }
+                                    });
 
+                                } else {
+                                    zonificacionJson = getJsonString(zonificacion);
+                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                        @Override
+                                        public void resolve(Codigos codigo) {
+                                            if (codigo.getCodigo() == 200) {
+                                                FragmentDialogGuardar a = new FragmentDialogGuardar();
+                                                a.show(getChildFragmentManager(), "child");
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
+
+                                            } else if(codigo.getCodigo()==1){
+                                                Toast.makeText(getContext(), getString(R.string.errorInternet),
+                                                        Toast.LENGTH_SHORT).show();
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
+
+                                            } else {
+                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                loadingProgress(progressDialog, 1);
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void reject(Exception e) {
+                                        }
+                                    });
+                                }
                             } else {
-                                zonificacionJson = getJsonString(zonificacion);
-                                ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
-                                    @Override
-                                    public void resolve(Codigos codigo) {
-                                        if (codigo.getCodigo() == 200) {
-                                            FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(), "child");
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                            loadingProgress(progressDialog, 1);
-
-                                        } else if(codigo.getCodigo()==1){
-                                            Toast.makeText(getContext(), getString(R.string.errorInternet),
-                                                    Toast.LENGTH_SHORT).show();
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                            loadingProgress(progressDialog, 1);
-
-                                        } else {
-                                            Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                            bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                            loadingProgress(progressDialog, 1);
-
-                                        }
-                                    }
-
-                                    @Override
-                                    public void reject(Exception e) {
-                                    }
-                                });
+                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                FragmentDialogError405 a = new FragmentDialogError405();
+                                Bundle arguments = new Bundle();
+                                arguments.putString( "mensaje" , "ERROR: Debes capturar más generadores de tráfico, minimo 10.");
+                                a.setArguments(arguments);
+                                a.show(getChildFragmentManager(),"child");
                             }
                         }
 
@@ -3776,7 +3785,7 @@ public class FragmentTerminar extends Fragment implements
                     }else{
                         banderaConflictoConstruccion = "0";
                         bindingConstruccion.conflictoText.setText("");
-                        bindingConstruccion.conflictoText.setEnabled(true);
+                        bindingConstruccion.conflictoText.setEnabled(false);
                     }
                 }
             });
@@ -6517,7 +6526,7 @@ public class FragmentTerminar extends Fragment implements
             for(int i = 0; i < datosConstruccion.getConstruccion().size(); i++) {
                 switch(datosConstruccion.getConstruccion().get(i).getNivelid()) {
                     case AGUA_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             binding.escogeAgua.setChecked(true);
                             banderaAguaConstruccion = "1";
                         } else {
@@ -6526,7 +6535,7 @@ public class FragmentTerminar extends Fragment implements
                         }
                         break;
                     case LUZ_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             binding.escogeLuz.setChecked(true);
                             banderaLuzConstruccion = "1";
                         } else {
@@ -6535,7 +6544,7 @@ public class FragmentTerminar extends Fragment implements
                         }
                         break;
                     case DRENAJE_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             binding.escogeDrenaje.setChecked(true);
                             banderaDrenajeConstruccion = "1";
                         } else {
@@ -6544,7 +6553,7 @@ public class FragmentTerminar extends Fragment implements
                         }
                         break;
                     case USO_SUELO_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             binding.escogeUsoSuelo.setChecked(true);
                             banderaUsoSueloConstruccion = "1";
                         } else {
@@ -6553,7 +6562,7 @@ public class FragmentTerminar extends Fragment implements
                         }
                         break;
                     case PREDIAL_CORRIENTE_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             binding.escogePredial.setChecked(true);
                             banderaPredialCorrienteConstruccion = "1";
                         } else {
@@ -6562,7 +6571,7 @@ public class FragmentTerminar extends Fragment implements
                         }
                         break;
                     case ESCRITURAS_PUBLICAS_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             binding.escogeEscrituras.setChecked(true);
                             banderaEscriturasConstruccion = "1";
                         } else {
@@ -6571,7 +6580,7 @@ public class FragmentTerminar extends Fragment implements
                         }
                         break;
                     case INAH_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             binding.escogeInah.setChecked(true);
                             banderaInahConstruccion = "1";
                         } else {
@@ -6580,7 +6589,7 @@ public class FragmentTerminar extends Fragment implements
                         }
                         break;
                     case CONFLICTOS_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if(datosConstruccion.getConstruccion().get(i).getValor() != null && datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
                             String conflicto = "";
                             if(datosConstruccion.getConstruccion().get(i).getDetalles() != null && datosConstruccion.getConstruccion().get(i).getDetalles().size() > 0) {
                                 conflicto = datosConstruccion.getConstruccion().get(i).getDetalles().get(0).getComentario();

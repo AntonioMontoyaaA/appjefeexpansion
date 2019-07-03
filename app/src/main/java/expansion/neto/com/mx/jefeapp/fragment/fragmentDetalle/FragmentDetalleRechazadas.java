@@ -637,9 +637,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
                                                 ));
                                         slider.setSelectedSlide(0);
                                     }
@@ -1161,9 +1159,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
                                         ));
                                         slider.setSelectedSlide(0);
                                     }
@@ -1341,9 +1337,7 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt1(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt2(),
                                                 superficie.getNiveles().get(finalValorFoto1).getImgEnt3(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgAgua(),
-                                                superficie.getNiveles().get(finalValorFoto1).getImgLuz()
+                                                superficie.getNiveles().get(finalValorFoto1).getImgPredial()
                                         ));
                                         slider.setSelectedSlide(0);
                                     }
