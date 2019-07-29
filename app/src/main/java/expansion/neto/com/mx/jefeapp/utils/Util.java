@@ -1,5 +1,6 @@
 package expansion.neto.com.mx.jefeapp.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -236,7 +237,7 @@ public class Util {
 
     public static String getImei(Context context) {
         TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        String imei = mTelephonyManager.getImei();
+        @SuppressLint("MissingPermission") String imei = mTelephonyManager.getImei();
         return imei;
     }
 
