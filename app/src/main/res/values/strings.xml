@@ -25,6 +25,7 @@
     <string name="sizeContra">Usuario y contraseña debe tener más de 10 carácteres</string>
     <string name="conexionInternet">Tu conexión a internet es inestable</string>
     <string name="errorInternet">Error de conexión, intenta nuevamente</string>
+    <string name="errorFaltaNombre">Favor de llenar el campo nombre del Sitio</string>
 
     <string name="mdnull">En este mes no existe ninguna MD por autorizar</string>
     <string name="mdnT">En este mes no existe ninguna MD por terminar</string>
@@ -318,8 +319,11 @@
     <string name="entre_calle_1">Entre Calle 1</string>
     <string name="entre_calle_2">Entre calle 2</string>
     <string name="crear_md">Crear MD</string>
-    <string name="sin_sitios_disponibles">Sin sitios disponibles</string>
+    <string name="sin_sitios_disponibles">Radio sin sitio</string>
+
+    <string name="cancelar_Radio">Cancelar Radio</string>
     <string name="sin_radios">Se ha marcado este radio sin sitios disponibles</string>
+    <string name="cancelado">Se ha marcado este radio como Cancelado</string>
     <string name="sin_radios_asignados">No tienes radios asignados</string>
     <string name="predial">Seleccionar archivo desde</string>
     <string name="celular">El celular</string>

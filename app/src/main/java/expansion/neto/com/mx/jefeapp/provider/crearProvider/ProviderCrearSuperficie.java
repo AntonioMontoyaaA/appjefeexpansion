@@ -93,6 +93,7 @@ public class ProviderCrearSuperficie {
                     respuesta = response.body().string();
                     Gson gson = new Gson();
                     String jsonInString = respuesta;
+                    System.out.println( "respuesta Superficie "+ respuesta );
                     return codigo = gson.fromJson(jsonInString, Codigos.class);
 
                 }catch (Exception e){

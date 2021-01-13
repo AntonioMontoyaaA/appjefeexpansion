@@ -38,7 +38,7 @@
                     android:layout_marginTop="2dp"
                     android:padding="18dp"
                     android:layout_width="match_parent"
-                    android:layout_height="610dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
                     <!--android:background="@{String.valueOf(validacion).equals(@string/valida) ? @drawable/estilo_boton_blanco : @drawable/estilo_boton_borde_rojo}"-->
 
@@ -182,8 +182,8 @@
                                         android:id="@+id/frontalText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="match_parent"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
+                                        android:layout_marginLeft="@dimen/margin_text"
+                                        android:layout_marginRight="@dimen/margin_text"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/frontal"
                                         android:textAllCaps="true"
@@ -212,8 +212,8 @@
                                         android:id="@+id/lateral1Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
+                                        android:layout_marginLeft="@dimen/margin_text"
+                                        android:layout_marginRight="@dimen/margin_text"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/lateral1"
                                         android:textAllCaps="true"
@@ -242,8 +242,8 @@
                                         android:id="@+id/lateral2Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
+                                        android:layout_marginLeft="@dimen/margin_text"
+                                        android:layout_marginRight="@dimen/margin_text"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/lateral2"
                                         android:textAllCaps="true"
@@ -283,8 +283,8 @@
                                         android:id="@+id/entorno1Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
+                                        android:layout_marginLeft="@dimen/margin_text"
+                                        android:layout_marginRight="@dimen/margin_text"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/entorno1"
                                         android:textAllCaps="true"
@@ -313,8 +313,8 @@
                                         android:id="@+id/entorno2Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
+                                        android:layout_marginLeft="@dimen/margin_text"
+                                        android:layout_marginRight="@dimen/margin_text"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/entorno2"
                                         android:textAllCaps="true"
@@ -343,8 +343,8 @@
                                         android:id="@+id/entorno3Text"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
+                                        android:layout_marginLeft="@dimen/margin_text"
+                                        android:layout_marginRight="@dimen/margin_text"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/entorno3"
                                         android:textAllCaps="true"
@@ -435,8 +435,8 @@
                                         android:id="@+id/predialText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
+                                        android:layout_marginLeft="@dimen/margin_text"
+                                        android:layout_marginRight="@dimen/margin_text"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/reciboPredial"
                                         android:textAllCaps="true"
@@ -479,7 +479,7 @@
                         <LinearLayout
                             android:id="@+id/linearLayout17"
                             android:layout_width="match_parent"
-                            android:layout_height="146dp"
+                            android:layout_height="@dimen/size_Linear"
                             android:layout_marginBottom="12dp"
                             android:background="@drawable/estilo_boton_blanco"
                             android:orientation="vertical"
@@ -524,7 +524,7 @@
                                         android:text="@string/frente"
                                         android:textAllCaps="true"
                                         android:textColor="@color/colorPrimary"
-                                        android:textSize="12sp"
+                                        android:textSize="@dimen/size_text"
                                         app:typeface="robotoBold" />
 
                                     <LinearLayout
@@ -572,12 +572,12 @@
                                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginStart="2dp"
+                                        android:layout_marginStart="0dp"
                                         android:backgroundTint="@color/azul"
                                         android:text="@string/profundidad"
                                         android:textAllCaps="true"
                                         android:textColor="@color/colorPrimary"
-                                        android:textSize="12sp"
+                                        android:textSize="@dimen/size_text"
                                         app:typeface="robotoBold" />
 
 
@@ -639,7 +639,7 @@
                                         android:text="TOTAL"
                                         android:textAllCaps="true"
                                         android:textColor="@color/colorPrimary"
-                                        android:textSize="12sp"
+                                        android:textSize="@dimen/size_text"
                                         app:typeface="robotoBold" />
 
                                     <LinearLayout
@@ -694,13 +694,13 @@
                                     android:textAllCaps="true"
                                     android:textColor="@color/colorPrimary"
                                     android:textSize="12sp"
-                                    app:typeface="robotoBold" />
+                                    app:typeface="robotoBold"
+                                    android:layout_weight="1"/>
 
                                 <Switch
                                     android:id="@+id/escogeEsquina"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginStart="50dp"
                                     android:textColorHint="@color/colorPrimary" />
 
                             </LinearLayout>

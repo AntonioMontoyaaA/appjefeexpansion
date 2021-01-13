@@ -35,6 +35,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -45,12 +46,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableRow;
@@ -67,6 +70,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -160,6 +164,7 @@ import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderDatosCompete
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderDatosFactoresConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderHorasPeatonales;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderObtenerUrl;
+import expansion.neto.com.mx.jefeapp.radios.ui.radios.ActivityDetalleRadios;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.AdapterAutorizaPeatonal;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.AutorizaHolderPeatonal;
 import expansion.neto.com.mx.jefeapp.sorted.autoriza.adapter.AdapterListaCompetencia;
@@ -196,7 +201,14 @@ import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 public class FragmentModificar extends Fragment implements
         AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
-    NumberFormat format = new DecimalFormat("0.#");
+    NumberFormat format = new DecimalFormat( "0.#" );
+
+    ArrayList<Zonificacion.GeneradoresArregloInt> radiosArreglo = null;
+    ArrayList<String> radiosLong = null;
+    ArrayList<String> radiosLat = null;
+    ArrayList<String> radiosAnillo = null;
+    ArrayList<Zonificacion.GeneradoresArregloInt> generadoresArreglo = null;
+
 
     String urlFrente = "";
     String urlLateral1 = "";
@@ -297,11 +309,11 @@ public class FragmentModificar extends Fragment implements
             apellidoMPropietario = apellidoM;
             telefonoPropietario = telefono;
             emailPropietario = email;
-            bindingPropietario.nombre.setText(nombrePropietario + "");
-            bindingPropietario.apellidoP.setText(apellidoPropietario + "");
-            bindingPropietario.apellidoM.setText(apellidoMPropietario + "");
-            bindingPropietario.telefono.setText(telefonoPropietario + "");
-            bindingPropietario.email.setText(emailPropietario + "");
+            bindingPropietario.nombre.setText( nombrePropietario + "" );
+            bindingPropietario.apellidoP.setText( apellidoPropietario + "" );
+            bindingPropietario.apellidoM.setText( apellidoMPropietario + "" );
+            bindingPropietario.telefono.setText( telefonoPropietario + "" );
+            bindingPropietario.email.setText( emailPropietario + "" );
         }
     };
 
@@ -386,50 +398,50 @@ public class FragmentModificar extends Fragment implements
         @Override
         public void onMapReady(final GoogleMap googleMap) {
             mMap = googleMap;
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            mdLat = preferences.getFloat("latMd", 0);
-            mdLot = preferences.getFloat("lotMd", 0);
+            final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+            mdLat = preferences.getFloat( "latMd", 0 );
+            mdLot = preferences.getFloat( "lotMd", 0 );
 
-            mCenterLatLong = new LatLng(mdLat, mdLot);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(mCenterLatLong));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCenterLatLong, 15));
-            googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+            mCenterLatLong = new LatLng( mdLat, mdLot );
+            googleMap.moveCamera( CameraUpdateFactory.newLatLng( mCenterLatLong ) );
+            googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom( mCenterLatLong, 15 ) );
+            googleMap.animateCamera( CameraUpdateFactory.zoomIn() );
+            googleMap.animateCamera( CameraUpdateFactory.zoomTo( 10 ), 2000, null );
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(mCenterLatLong)
-                    .zoom(14)
-                    .bearing(0)
-                    .tilt(0)
+                    .target( mCenterLatLong )
+                    .zoom( 14 )
+                    .bearing( 0 )
+                    .tilt( 0 )
                     .build();
 
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            googleMap.animateCamera( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
             //  googleMap.setMyLocationEnabled(true);
-            googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            googleMap.setOnCameraChangeListener( new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
                     mCenterLatLong = cameraPosition.target;
                     googleMap.clear();
                     try {
 
-                        final String bandera = preferences.getString("banderaMapa","");
+                        final String bandera = preferences.getString( "banderaMapa", "" );
 
-                        Location mLocation = new Location("");
-                        mLocation.setLatitude(mCenterLatLong.latitude);
-                        mLocation.setLongitude(mCenterLatLong.longitude);
-                        if(bandera.equals("1")){
+                        Location mLocation = new Location( "" );
+                        mLocation.setLatitude( mCenterLatLong.latitude );
+                        mLocation.setLongitude( mCenterLatLong.longitude );
+                        if (bandera.equals( "1" )) {
                             //setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude);
-                            setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "no");
+                            setDireccion( binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "no" );
 
-                        }else{
-                            setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude,"si");
+                        } else {
+                            setDireccion( binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "si" );
                         }
 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            });
+            } );
 
         }
     };
@@ -440,9 +452,9 @@ public class FragmentModificar extends Fragment implements
     public void onLocationChanged(Location location) {
         try {
             if (location != null)
-                changeMap(location);
+                changeMap( location );
             LocationServices.FusedLocationApi.removeLocationUpdates(
-                    mGoogleApiClient, this);
+                    mGoogleApiClient, this );
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -455,19 +467,19 @@ public class FragmentModificar extends Fragment implements
     @SuppressLint("MissingPermission")
     private void changeMap(Location location) {
         if (mMap != null) {
-            mMap.getUiSettings().setZoomControlsEnabled(false);
+            mMap.getUiSettings().setZoomControlsEnabled( false );
             LatLng latLong;
 
 
-            latLong = new LatLng(location.getLatitude(), location.getLongitude());
+            latLong = new LatLng( location.getLatitude(), location.getLongitude() );
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(latLong).zoom(19f).tilt(70).build();
+                    .target( latLong ).zoom( 19f ).tilt( 70 ).build();
 
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            mMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(cameraPosition));
+            mMap.setMyLocationEnabled( true );
+            mMap.getUiSettings().setMyLocationButtonEnabled( true );
+            mMap.animateCamera( CameraUpdateFactory
+                    .newCameraPosition( cameraPosition ) );
         } else {
         }
     }
@@ -486,104 +498,514 @@ public class FragmentModificar extends Fragment implements
 
             mMapZona = googleMap;
 
-            SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            mdLat = preferences.getFloat("latMd", 0);
-            mdLot = preferences.getFloat("lotMd", 0);
-            final String mdIdZ = preferences.getString("mdIdterminar", "");
-            final String usuario = preferences.getString("usuario", "");
-            final Float mdLat = preferences.getFloat("latMd", 0);
-            final Float mdLot = preferences.getFloat("lotMd", 0);
+            SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+            mdLat = preferences.getFloat( "latMd", 0 );
+            mdLot = preferences.getFloat( "lotMd", 0 );
+            final String mdIdZ = preferences.getString( "mdIdterminar", "" );
+            final String usuario = preferences.getString( "usuario", "" );
+            final Float mdLat = preferences.getFloat( "latMd", 0 );
+            final Float mdLot = preferences.getFloat( "lotMd", 0 );
 
-            LatLng mds = new LatLng(mdLat, mdLot);
-            icon = getBitmapDescriptor(R.drawable.home);
+            LatLng mds = new LatLng( mdLat, mdLot );
+            icon = getBitmapDescriptor( R.drawable.home );
 
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(mds);
-            markerOptions.icon(icon);
-            googleMap.animateCamera(CameraUpdateFactory.newLatLng(mds));
-            googleMap.addMarker(markerOptions);
+            markerOptions.position( mds );
+            markerOptions.icon( icon );
+            googleMap.animateCamera( CameraUpdateFactory.newLatLng( mds ) );
+            googleMap.addMarker( markerOptions );
 
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(mds));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mds, 15));
-            googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+            Resources resource = FragmentModificar.this.getResources();
+            googleMap.addCircle( new CircleOptions()
+                    .center( mds )
+                    .radius( 500 )
+                    .strokeColor( resource.getColor( R.color.radios ) )
+                    .fillColor( resource.getColor( R.color.radios ) )
+                    .zIndex( 1.0f ) );
+
+            if (radiosLat != null) {
+                for (int i = 0; i < radiosLat.size(); i++) {
+                    googleMap.addCircle( new CircleOptions()
+                            .center( new LatLng( Double.parseDouble( radiosLat.get( i ) ), Double.parseDouble( radiosLong.get( i ) ) ) )
+                            .radius( Double.parseDouble( radiosAnillo.get( i ) ) )
+                            .strokeColor( resource.getColor( R.color.radiosReferencia ) )
+                            .fillColor( resource.getColor( R.color.radiosReferencia ) )
+                    );
+                }
+            }
+
+            if (radiosArreglo != null) {
+                for (int i = 0; i < radiosArreglo.size(); i++) {
+                    switch (radiosArreglo.get( i ).getGenerador()) {
+                        case "PANADERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ) );
+                            break;
+                        case "TORTILLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ) );
+                            break;
+                        case "ABARROTES":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ) );
+                            break;
+                        case "CARNICERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ) );
+                            break;
+                        case "POLLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ) );
+                            break;
+                        case "HOSPITAL":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ) );
+                            break;
+                        case "ESCUELA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ) );
+                            break;
+                        case "MERCADO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ) );
+                            break;
+                        case "OFICINA DE GOBIERNO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ) );
+                            break;
+                        case "RECAUDERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ) );
+                            break;
+                        case "IGLESIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ) );
+                            break;
+                        default:
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                    .title( radiosArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ) );
+                            break;
+
+
+                    }
+
+                }
+            }
+
+            if (generadoresArreglo != null) {
+                for (int i = 0; i < generadoresArreglo.size(); i++) {
+
+                    switch (generadoresArreglo.get( i ).getGenerador()) {
+                        case "PANADERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ) );
+                            break;
+                        case "TORTILLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ) );
+                            break;
+                        case "ABARROTES":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ) );
+                            break;
+                        case "CARNICERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ) );
+                            break;
+                        case "POLLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ) );
+                            break;
+                        case "HOSPITAL":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ) );
+                            break;
+                        case "ESCUELA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ) );
+                            break;
+                        case "MERCADO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ) );
+                            break;
+                        case "OFICINA DE GOBIERNO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ) );
+                            break;
+                        case "RECAUDERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ) );
+                            break;
+                        case "IGLESIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ) );
+                            break;
+                        default:
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f, 0.5f )
+                                    .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ) );
+                            break;
+
+
+                    }
+                }
+            }
+            googleMap.moveCamera( CameraUpdateFactory.newLatLng( mds ) );
+            googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom( mds, 15 ) );
+            googleMap.animateCamera( CameraUpdateFactory.zoomIn() );
+            googleMap.animateCamera( CameraUpdateFactory.zoomTo( 10 ), 2000, null );
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(mds)
-                    .zoom(14)
-                    .bearing(0)
-                    .tilt(0)
+                    .target( mds )
+                    .zoom( 14 )
+                    .bearing( 0 )
+                    .tilt( 0 )
                     .build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            googleMap.animateCamera( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
 
             if (mdLat != null || mdLot != null) {
-                mds = new LatLng(mdLat, mdLot);
-                icon = getBitmapDescriptor(R.drawable.home);
-                googleMap.addMarker(new MarkerOptions().position(mds)
-                        .title("")
-                        .icon(icon)
+                mds = new LatLng( mdLat, mdLot );
+                icon = getBitmapDescriptor( R.drawable.home );
+                googleMap.addMarker( new MarkerOptions().position( mds )
+                        .title( "" )
+                        .icon( icon )
                 );
+                googleMap.addCircle( new CircleOptions()
+                        .center( mds )
+                        .radius( 500 )
+                        .strokeColor( resource.getColor( R.color.radios ) )
+                        .fillColor( resource.getColor( R.color.radios ) )
+                        .zIndex( 1.0f ) );
 
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(mds));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mds, 15));
-                googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-                googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+                if (radiosLat != null) {
+                    for (int i = 0; i < radiosLat.size(); i++) {
+                        googleMap.addCircle( new CircleOptions()
+                                .center( new LatLng( Double.parseDouble( radiosLat.get( i ) ), Double.parseDouble( radiosLong.get( i ) ) ) )
+                                .radius( Double.parseDouble( radiosAnillo.get( i ) ) )
+                                .strokeColor( resource.getColor( R.color.radiosReferencia ) )
+                                .fillColor( resource.getColor( R.color.radiosReferencia ) )
+                        );
+                    }
+                }
+
+                if (radiosArreglo != null) {
+                    for (int i = 0; i < radiosArreglo.size(); i++) {
+                        switch (radiosArreglo.get( i ).getGenerador()) {
+                            case "PANADERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ) );
+                                break;
+                            case "TORTILLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ) );
+                                break;
+                            case "ABARROTES":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ) );
+                                break;
+                            case "CARNICERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ) );
+                                break;
+                            case "POLLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ) );
+                                break;
+                            case "HOSPITAL":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ) );
+                                break;
+                            case "ESCUELA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ) );
+                                break;
+                            case "MERCADO":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ) );
+                                break;
+                            case "OFICINA DE GOBIERNO":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ) );
+                                break;
+                            case "RECAUDERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ) );
+                                break;
+                            case "IGLESIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ) );
+                                break;
+                            default:
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( radiosArreglo.get( i ).getLatitud() ), Double.parseDouble( radiosArreglo.get( i ).getLongitud() ) ) )
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ) );
+                                break;
+
+
+                        }
+
+                    }
+                }
+
+                if (generadoresArreglo != null) {
+                    for (int i = 0; i < generadoresArreglo.size(); i++) {
+
+                        switch (generadoresArreglo.get( i ).getGenerador()) {
+                            case "PANADERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ) );
+                                break;
+                            case "TORTILLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ) );
+                                break;
+                            case "ABARROTES":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ) );
+                                break;
+                            case "CARNICERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ) );
+                                break;
+                            case "POLLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ) );
+                                break;
+                            case "HOSPITAL":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ) );
+                                break;
+                            case "ESCUELA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ) );
+                                break;
+                            case "MERCADO":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ) );
+                                break;
+                            case "OFICINA DE GOBIERNO":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ) );
+                                break;
+                            case "RECAUDERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ) );
+                                break;
+                            case "IGLESIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ) );
+                                break;
+                            default:
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f, 0.5f )
+                                        .position( new LatLng( Double.parseDouble( generadoresArreglo.get( i ).getLatitud() ), Double.parseDouble( generadoresArreglo.get( i ).getLongitud() ) ) )
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ) );
+                                break;
+
+
+                        }
+                    }
+                }
+                googleMap.moveCamera( CameraUpdateFactory.newLatLng( mds ) );
+                googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom( mds, 15 ) );
+                googleMap.animateCamera( CameraUpdateFactory.zoomIn() );
+                googleMap.animateCamera( CameraUpdateFactory.zoomTo( 10 ), 2000, null );
 
                 cameraPosition = new CameraPosition.Builder()
-                        .target(mds)
-                        .zoom(14)
-                        .bearing(0)
-                        .tilt(0)
+                        .target( mds )
+                        .zoom( 14 )
+                        .bearing( 0 )
+                        .tilt( 0 )
                         .build();
 
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                googleMap.animateCamera( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
 
                 final LatLng finalMds = mds;
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                googleMap.setOnMapClickListener( new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
 
-                        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                        SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
 
-                        int zonificacion = preferences.getInt("zonificacion", 0);
-                        String usuario = preferences.getString("usuario", "");
+                        int zonificacion = preferences.getInt( "zonificacion", 0 );
+                        String usuario = preferences.getString( "usuario", "" );
 
                         if (zonificacion == 0) {
                             if (valor == 0) {
-                                Toast.makeText(getContext(), "Debes seleccionar alguna compentencia y generador",
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText( getContext(), "Debes seleccionar alguna compentencia y generador",
+                                        Toast.LENGTH_SHORT ).show();
                             } else {
-                                colocarMarcador(latLng, googleMap, valor, usuario, finalMds, String.valueOf(mdIdZ), null, null);
+                                colocarMarcador( latLng, googleMap, valor, usuario, finalMds, String.valueOf( mdIdZ ), null, null );
                             }
                         } else if (zonificacion == 1) {
                             if (valor == 0) {
 
-                                Toast.makeText(getContext(), "Debes seleccionar alguna compentencia y generador",
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText( getContext(), "Debes seleccionar alguna compentencia y generador",
+                                        Toast.LENGTH_SHORT ).show();
                             } else {
-                                colocarMarcador(latLng, googleMap, valor, usuario, finalMds, String.valueOf(mdIdZ), null, null);
+                                colocarMarcador( latLng, googleMap, valor, usuario, finalMds, String.valueOf( mdIdZ ), null, null );
                             }
                         }
                     }
-                });
+                } );
 
-                bindingZonificacion.aceptar.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.aceptar.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
                         CameraUpdate center =
-                                CameraUpdateFactory.newLatLng(new LatLng(mdLat, mdLot));
-                        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-                        googleMap.moveCamera(center);
-                        googleMap.animateCamera(zoom);
+                                CameraUpdateFactory.newLatLng( new LatLng( mdLat, mdLot ) );
+                        CameraUpdate zoom = CameraUpdateFactory.zoomTo( 15 );
+                        googleMap.moveCamera( center );
+                        googleMap.animateCamera( zoom );
 
                     }
-                });
+                } );
 
-                bindingZonificacion.cancelar.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.cancelar.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
+                        getContext().getSharedPreferences( "datosZonificacion", 0 ).edit().clear().apply();
 
                         for (Marker marker : markers) {
                             marker.remove();
@@ -591,14 +1013,14 @@ public class FragmentModificar extends Fragment implements
 
                         markers.clear();
 
-                        zonificacion = new CrearZonificacion(null,
+                        zonificacion = new CrearZonificacion( null,
                                 null,
                                 null,
                                 null,
                                 null,
                                 null,
                                 null,
-                                null);
+                                null );
 
                         zonificacionJson = "";
 
@@ -614,9 +1036,9 @@ public class FragmentModificar extends Fragment implements
                         zonificacionG = new CrearZonificacion.Zonificacion();
 
                     }
-                });
+                } );
 
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                googleMap.setOnMarkerClickListener( new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker m) {
                         LatLng eliminar = m.getPosition();
@@ -627,11 +1049,11 @@ public class FragmentModificar extends Fragment implements
 
                         if (zonificacion != null && zonificacion.getCompetencia() != null) {
                             if (!zonificacion.getCompetencia().isEmpty()) {
-                                for (int i = 0; i < zonificacion.getCompetencia().get(0).getDetalles().size(); i++) {
-                                    latitudCompetencia = zonificacion.getCompetencia().get(0).getDetalles().get(i).getLatitud();
-                                    latitudCompetenciaMarcador = String.valueOf(eliminar.latitude);
-                                    if (latitudCompetencia.equals(latitudCompetenciaMarcador)) {
-                                        zonificacion.getCompetencia().get(0).getDetalles().remove(i);
+                                for (int i = 0; i < zonificacion.getCompetencia().get( 0 ).getDetalles().size(); i++) {
+                                    latitudCompetencia = zonificacion.getCompetencia().get( 0 ).getDetalles().get( i ).getLatitud();
+                                    latitudCompetenciaMarcador = String.valueOf( eliminar.latitude );
+                                    if (latitudCompetencia.equals( latitudCompetenciaMarcador )) {
+                                        zonificacion.getCompetencia().get( 0 ).getDetalles().remove( i );
                                         m.remove();
                                     }
                                 }
@@ -642,22 +1064,22 @@ public class FragmentModificar extends Fragment implements
 
                         if (zonificacion != null && zonificacion.getGeneradores() != null) {
                             if (!zonificacion.getGeneradores().isEmpty()) {
-                                for (int i = 0; i < zonificacion.getGeneradores().get(0).getDetalles().size(); i++) {
-                                    latitudGenerador = zonificacion.getGeneradores().get(0).getDetalles().get(i).getLatitud();
-                                    latitudGeneradorMarcador = String.valueOf(eliminar.latitude);
-                                    if (latitudGenerador.equals(latitudGeneradorMarcador)) {
-                                        zonificacion.getGeneradores().get(0).getDetalles().remove(i);
+                                for (int i = 0; i < zonificacion.getGeneradores().get( 0 ).getDetalles().size(); i++) {
+                                    latitudGenerador = zonificacion.getGeneradores().get( 0 ).getDetalles().get( i ).getLatitud();
+                                    latitudGeneradorMarcador = String.valueOf( eliminar.latitude );
+                                    if (latitudGenerador.equals( latitudGeneradorMarcador )) {
+                                        zonificacion.getGeneradores().get( 0 ).getDetalles().remove( i );
                                         m.remove();
                                     }
                                 }
                             }
                         }
 
-                        zonificacionJson = getJsonString(zonificacion);
+                        zonificacionJson = getJsonString( zonificacion );
                         return false;
 
                     }
-                });
+                } );
 
 
             }
@@ -669,15 +1091,15 @@ public class FragmentModificar extends Fragment implements
     public static FragmentTerminar newInstance(int position) {
         FragmentTerminar f = new FragmentTerminar();
         Bundle b = new Bundle();
-        b.putInt(ARG_POSITION, position);
-        f.setArguments(b);
+        b.putInt( ARG_POSITION, position );
+        f.setArguments( b );
         return f;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        position = getArguments().getInt(ARG_POSITION);
+        super.onCreate( savedInstanceState );
+        position = getArguments().getInt( ARG_POSITION );
     }
 
     private SlideUp slideCompetencia;
@@ -696,12 +1118,12 @@ public class FragmentModificar extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        progressDialog = new ProgressDialog(getContext());
+        progressDialog = new ProgressDialog( getContext() );
 
 
         if (position == 0) {
             mensaje = "fragment 1";
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_porterminar, container, false);
+            binding = DataBindingUtil.inflate( inflater, R.layout.fragment_autoriza_porterminar, container, false );
             view = binding.getRoot();
             urlFrente = "";
             urlLateral2 = "";
@@ -714,92 +1136,92 @@ public class FragmentModificar extends Fragment implements
             urlReciboAgua = "";
             urlReciboLuz = "";
 
-            binding.toolbar.nombreTitulo.setText(getString(R.string.datossitio));
+            binding.toolbar.nombreTitulo.setText( getString( R.string.datossitio ) );
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(onMapReadyCallback);
+                    .findFragmentById( R.id.map );
+            mapFragment.getMapAsync( onMapReadyCallback );
 
-            binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
+            binding.toolbar.back.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(), "child");
+                    a.show( getChildFragmentManager(), "child" );
                 }
-            });
+            } );
 
-            final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences("datosSitio", Context.MODE_PRIVATE);
+            final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences( "datosSitio", Context.MODE_PRIVATE );
             final SharedPreferences.Editor editor = preferencesSuperficie.edit();
-            getContext().getSharedPreferences("datosSitio", 0).edit().clear().apply();
+            getContext().getSharedPreferences( "datosSitio", 0 ).edit().clear().apply();
 
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String usuario = preferences.getString("usuario", "");
+            final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+            final String usuario = preferences.getString( "usuario", "" );
             final SharedPreferences.Editor editorPre = preferences.edit();
 
-            final String mdIdterminar = preferences.getString("mdIdterminar", "");
+            final String mdIdterminar = preferences.getString( "mdIdterminar", "" );
 
 
-            ProviderDatosSitio.getInstance(getContext()).obtenerDatosSitio(mdIdterminar, usuario, new ProviderDatosSitio.ConsultaDatosSitio() {
+            ProviderDatosSitio.getInstance( getContext() ).obtenerDatosSitio( mdIdterminar, usuario, new ProviderDatosSitio.ConsultaDatosSitio() {
                 @Override
                 public void resolve(DatosSitio datosSitio) {
 
                     if (datosSitio.getDatossitio() != null && datosSitio.getCodigo() == 200) {
-                        if (datosSitio.getDatossitio().get(0).getLongitud() == null) {
-                            ServicioGPS n = new ServicioGPS(getContext());
-                            datosSitio.getDatossitio().get(0).setLatitud(String.valueOf(n.getLatitude()));
-                            datosSitio.getDatossitio().get(0).setLongitud(String.valueOf(n.getLongitude()));
+                        if (datosSitio.getDatossitio().get( 0 ).getLongitud() == null) {
+                            ServicioGPS n = new ServicioGPS( getContext() );
+                            datosSitio.getDatossitio().get( 0 ).setLatitud( String.valueOf( n.getLatitude() ) );
+                            datosSitio.getDatossitio().get( 0 ).setLongitud( String.valueOf( n.getLongitude() ) );
                         }
 
 
-                        if (datosSitio.getDatossitio().get(0).getTipoUbicacionMD().equals("RURAL")) {
-                            binding.escogeSitio.setChecked(true);
-                            binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                            editorPre.putString("tipoSitio", "2");
+                        if (datosSitio.getDatossitio().get( 0 ).getTipoUbicacionMD().equals( "RURAL" )) {
+                            binding.escogeSitio.setChecked( true );
+                            binding.rural.setBackgroundTintList( getContext().getResources().getColorStateList( R.color.azul ) );
+                            editorPre.putString( "tipoSitio", "2" );
                             editorPre.apply();
                         } else {
-                            binding.escogeSitio.setChecked(false);
-                            binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                            editorPre.putString("tipoSitio", "1");
+                            binding.escogeSitio.setChecked( false );
+                            binding.ciudad.setBackgroundTintList( getContext().getResources().getColorStateList( R.color.azul ) );
+                            editorPre.putString( "tipoSitio", "1" );
                             editorPre.apply();
                         }
 
-                        binding.escogeSitio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        binding.escogeSitio.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                 if (isChecked) {
-                                    editorPre.putString("tipoSitio", "2");
+                                    editorPre.putString( "tipoSitio", "2" );
                                     editorPre.apply();
-                                    binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
-                                    binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
+                                    binding.ciudad.setBackgroundTintList( getContext().getResources().getColorStateList( R.color.grisedt ) );
+                                    binding.rural.setBackgroundTintList( getContext().getResources().getColorStateList( R.color.azul ) );
 
                                 } else {
-                                    editorPre.putString("tipoSitio", "1");
+                                    editorPre.putString( "tipoSitio", "1" );
                                     editorPre.apply();
-                                    binding.ciudad.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.azul));
-                                    binding.rural.setBackgroundTintList(getContext().getResources().getColorStateList(R.color.grisedt));
+                                    binding.ciudad.setBackgroundTintList( getContext().getResources().getColorStateList( R.color.azul ) );
+                                    binding.rural.setBackgroundTintList( getContext().getResources().getColorStateList( R.color.grisedt ) );
 
 
                                 }
                             }
-                        });
+                        } );
 
                         //binding.nombresitio.setEnabled(false);
 
-                        binding.nombresitio.setText(datosSitio.getDatossitio().get(0).getNombreSitio());
+                        binding.nombresitio.setText( datosSitio.getDatossitio().get( 0 ).getNombreSitio() );
 
 
-                        binding.direccionsitio.setText(datosSitio.getDatossitio().get(0).getDireccion() + "");
-                        binding.estadositio.setText(datosSitio.getDatossitio().get(0).getEstado() + "");
-                        lat = Float.valueOf(datosSitio.getDatossitio().get(0).getLatitud());
-                        lot = Float.valueOf(datosSitio.getDatossitio().get(0).getLongitud());
+                        binding.direccionsitio.setText( datosSitio.getDatossitio().get( 0 ).getDireccion() + "" );
+                        binding.estadositio.setText( datosSitio.getDatossitio().get( 0 ).getEstado() + "" );
+                        lat = Float.valueOf( datosSitio.getDatossitio().get( 0 ).getLatitud() );
+                        lot = Float.valueOf( datosSitio.getDatossitio().get( 0 ).getLongitud() );
 
                         SharedPreferences.Editor editorDatos = preferences.edit();
-                        editorDatos.putFloat("latMd", lat);
-                        editorDatos.putFloat("lotMd", lot);
-                        editorDatos.putString("nombreSitio", datosSitio.getDatossitio().get(0).getNombreSitio().toString());
+                        editorDatos.putFloat( "latMd", lat );
+                        editorDatos.putFloat( "lotMd", lot );
+                        editorDatos.putString( "nombreSitio", datosSitio.getDatossitio().get( 0 ).getNombreSitio().toString() );
                         editorDatos.apply();
 
                         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                                .findFragmentById(R.id.map);
-                        mapFragment.getMapAsync(onMapReadyCallback);
+                                .findFragmentById( R.id.map );
+                        mapFragment.getMapAsync( onMapReadyCallback );
                     }
 
                 }
@@ -807,7 +1229,7 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void reject(Exception e) {
                 }
-            });
+            } );
 
             Timer timer = new Timer();
             hourlyTask = new TimerTask() {
@@ -823,43 +1245,43 @@ public class FragmentModificar extends Fragment implements
                     municipio = binding.municipiositio.getText().toString();
                     String ciudad = binding.ciudadsitio.getText().toString();
                     String pais = binding.pais.getText().toString();
-                    SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                    String choices = preferences.getString("tipoSitio", "");
+                    SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+                    String choices = preferences.getString( "tipoSitio", "" );
                     SharedPreferences.Editor editorDatos = preferences.edit();
-                    editorDatos.putString("banderaMapa", "2");
+                    editorDatos.putString( "banderaMapa", "2" );
                     editorDatos.apply();
 
 
                     if (mCenterLatLong != null) {
                         if (mCenterLatLong.latitude != 0) {
-                            latitud[0] = String.valueOf(mCenterLatLong.latitude);
-                            longitud[0] = String.valueOf(mCenterLatLong.longitude);
+                            latitud[0] = String.valueOf( mCenterLatLong.latitude );
+                            longitud[0] = String.valueOf( mCenterLatLong.longitude );
                         }
                     }
 
                     if (nombreSitioGuardar != null) {
                         if (nombreSitioGuardar.length() > 0) {
-                            crearsitio = new CrearDatosSitio(usuario, nombreSitioGuardar, codigoPostal,
+                            crearsitio = new CrearDatosSitio( usuario, nombreSitioGuardar, codigoPostal,
                                     direccion, estado, municipio, ciudad, latitud[0], longitud[0],
-                                    choices, "", VERSION_APP, pais, mdIdterminar, "");
+                                    choices, "", VERSION_APP, pais, mdIdterminar, "" );
 
-                            if (nombreSitioGuardar.equals("")) {
+                            if (nombreSitioGuardar.equals( "" )) {
 
                             } else {
-                                salvarDatosSitio(crearsitio, editor);
+                                salvarDatosSitio( crearsitio, editor );
                             }
                         }
                     }
                 }
             };
-            timer.schedule(hourlyTask, 3000, 4000);
+            timer.schedule( hourlyTask, 3000, 4000 );
 
             //TODO Hacer estos casos para las demás pantallas
-            binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+            binding.toolbar.guardar.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
 
-                    binding.toolbar.guardar.setEnabled(false);
+                    binding.toolbar.guardar.setEnabled( false );
                     String[] latitud = {null};
                     String[] longitud = {null};
                     final String nombreSitio = binding.nombresitio.getText().toString();
@@ -871,39 +1293,39 @@ public class FragmentModificar extends Fragment implements
                     String pais = binding.pais.getText().toString();
 
                     if (mCenterLatLong.latitude != 0) {
-                        latitud[0] = String.valueOf(mCenterLatLong.latitude);
-                        longitud[0] = String.valueOf(mCenterLatLong.longitude);
+                        latitud[0] = String.valueOf( mCenterLatLong.latitude );
+                        longitud[0] = String.valueOf( mCenterLatLong.longitude );
                     }
 
-                    String usuario = preferences.getString("usuario", "");
-                    final String choices = preferences.getString("tipoSitio", "");
+                    String usuario = preferences.getString( "usuario", "" );
+                    final String choices = preferences.getString( "tipoSitio", "" );
 
-                    crearsitio = new CrearDatosSitio(usuario, nombreSitio, codigoPostal,
-                            direccion, estado, municipio, ciudad, latitud[0], longitud[0], choices, "", VERSION_APP, pais, "", "");
+                    crearsitio = new CrearDatosSitio( usuario, nombreSitio, codigoPostal,
+                            direccion, estado, municipio, ciudad, latitud[0], longitud[0], choices, "", VERSION_APP, pais, "", "" );
 
-                    ProviderCrearDatosSitio.getInstance(getContext()).guardarMd(crearsitio,
+                    ProviderCrearDatosSitio.getInstance( getContext() ).guardarMd( crearsitio,
                             new ProviderCrearDatosSitio.InterfaceCrearDatosSitio() {
                                 @Override
                                 public void resolve(Codigos codigo) {
 
                                     if (codigo.getCodigo() == 200) {
 
-                                        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                                        SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
                                         SharedPreferences.Editor editorExpansion = preferences.edit();
-                                        editorExpansion.putFloat("latMd", (float) mCenterLatLong.latitude);
-                                        editorExpansion.putFloat("lotMd", (float) mCenterLatLong.longitude);
-                                        editorExpansion.putLong("mdId", codigo.getMdId());
-                                        editorExpansion.putString("nombreSitio", nombreSitio);
+                                        editorExpansion.putFloat( "latMd", (float) mCenterLatLong.latitude );
+                                        editorExpansion.putFloat( "lotMd", (float) mCenterLatLong.longitude );
+                                        editorExpansion.putLong( "mdId", codigo.getMdId() );
+                                        editorExpansion.putString( "nombreSitio", nombreSitio );
                                         editorExpansion.apply();
 
                                         FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                        a.show(getChildFragmentManager(), "child");
-                                        binding.toolbar.guardar.setEnabled(true);
+                                        a.show( getChildFragmentManager(), "child" );
+                                        binding.toolbar.guardar.setEnabled( true );
 
                                     } else {
-                                        binding.toolbar.guardar.setEnabled(true);
-                                        Toast.makeText(getContext(), codigo.getMensaje(),
-                                                Toast.LENGTH_SHORT).show();
+                                        binding.toolbar.guardar.setEnabled( true );
+                                        Toast.makeText( getContext(), codigo.getMensaje(),
+                                                Toast.LENGTH_SHORT ).show();
                                     }
 
                                 }
@@ -912,96 +1334,96 @@ public class FragmentModificar extends Fragment implements
                                 public void reject(Exception e) {
 
                                 }
-                            });
+                            } );
                 }
-            });
+            } );
 
-            binding.gps.setOnClickListener(new View.OnClickListener() {
+            binding.gps.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     gpsUbica = gps();
                     if (gpsUbica.lat != 0 && gpsUbica.lng != 0) {
-                        mCenterLatLong = new LatLng(gpsUbica.lat, gpsUbica.lng);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(mCenterLatLong));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCenterLatLong, 15));
-                        mMap.animateCamera(CameraUpdateFactory.zoomIn());
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+                        mCenterLatLong = new LatLng( gpsUbica.lat, gpsUbica.lng );
+                        mMap.moveCamera( CameraUpdateFactory.newLatLng( mCenterLatLong ) );
+                        mMap.moveCamera( CameraUpdateFactory.newLatLngZoom( mCenterLatLong, 15 ) );
+                        mMap.animateCamera( CameraUpdateFactory.zoomIn() );
+                        mMap.animateCamera( CameraUpdateFactory.zoomTo( 10 ), 2000, null );
                         CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(mCenterLatLong)
-                                .zoom(14)
-                                .bearing(0)
-                                .tilt(0)
+                                .target( mCenterLatLong )
+                                .zoom( 14 )
+                                .bearing( 0 )
+                                .tilt( 0 )
                                 .build();
 
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        Location mLocation = new Location("");
-                        mLocation.setLatitude(mCenterLatLong.latitude);
-                        mLocation.setLongitude(mCenterLatLong.longitude);
-                        setDireccion(binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "si");
+                        mMap.animateCamera( CameraUpdateFactory.newCameraPosition( cameraPosition ) );
+                        Location mLocation = new Location( "" );
+                        mLocation.setLatitude( mCenterLatLong.latitude );
+                        mLocation.setLongitude( mCenterLatLong.longitude );
+                        setDireccion( binding, mCenterLatLong.latitude, mCenterLatLong.longitude, "si" );
                     }
 
                 }
-            });
+            } );
 
         } else if (position == 1) {
 
-            bindingPropietario = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_1, container, false);
+            bindingPropietario = DataBindingUtil.inflate( inflater, R.layout.fragment_autoriza_1, container, false );
             view = bindingPropietario.getRoot();
 
-            getContext().getSharedPreferences("datosPropietario", 0).edit().clear().apply();
+            getContext().getSharedPreferences( "datosPropietario", 0 ).edit().clear().apply();
 
 
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String usuario = preferences.getString("usuario", "");
-            String md = preferences.getString("mdIdterminar", "");
+            final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+            final String usuario = preferences.getString( "usuario", "" );
+            String md = preferences.getString( "mdIdterminar", "" );
             bindingPropietario.telefono.addTextChangedListener(
-                    new PhoneNumberTextWatcher(bindingPropietario.telefono));
+                    new PhoneNumberTextWatcher( bindingPropietario.telefono ) );
 
-            bindingPropietario.nombre.setText("");
-            bindingPropietario.apellidoP.setText("");
-            bindingPropietario.apellidoM.setText("");
-            bindingPropietario.telefono.setText("");
-            bindingPropietario.email.setText("");
+            bindingPropietario.nombre.setText( "" );
+            bindingPropietario.apellidoP.setText( "" );
+            bindingPropietario.apellidoM.setText( "" );
+            bindingPropietario.telefono.setText( "" );
+            bindingPropietario.email.setText( "" );
 
-            ProviderDatosPropietario.getInstance(getContext())
-                    .obtenerDatosPropietario(md, usuario, new ProviderDatosPropietario.ConsultaDatosPropietario() {
+            ProviderDatosPropietario.getInstance( getContext() )
+                    .obtenerDatosPropietario( md, usuario, new ProviderDatosPropietario.ConsultaDatosPropietario() {
                         @Override
                         public void resolve(Propietario propietario) {
                             if (propietario.getCodigo() == 200) {
 
-                                if (propietario.getMail().equals("null")) {
-                                    propietario.setMail("");
+                                if (propietario.getMail().equals( "null" )) {
+                                    propietario.setMail( "" );
                                 }
-                                bindingPropietario.nombre.setText(propietario.getNombrePropietario() + " ");
-                                bindingPropietario.telefono.setText(propietario.getTelefono());
-                                bindingPropietario.email.setText(propietario.getMail());
-                                bindingPropietario.apellidoP.setText(propietario.getAPaternoPropietario());
-                                bindingPropietario.apellidoM.setText(propietario.getAMaternoPropietario());
+                                bindingPropietario.nombre.setText( propietario.getNombrePropietario() + " " );
+                                bindingPropietario.telefono.setText( propietario.getTelefono() );
+                                bindingPropietario.email.setText( propietario.getMail() );
+                                bindingPropietario.apellidoP.setText( propietario.getAPaternoPropietario() );
+                                bindingPropietario.apellidoM.setText( propietario.getAMaternoPropietario() );
                             }
                         }
 
                         @Override
                         public void reject(Exception e) {
                         }
-                    });
+                    } );
 
-            bindingPropietario.toolbar.nombreTitulo.setText(getString(R.string.datospropietario));
-            bindingPropietario.toolbar.back.setOnClickListener(new View.OnClickListener() {
+            bindingPropietario.toolbar.nombreTitulo.setText( getString( R.string.datospropietario ) );
+            bindingPropietario.toolbar.back.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(), "child");
+                    a.show( getChildFragmentManager(), "child" );
                 }
-            });
+            } );
 
             final Ubicacion ubicacion = gps();
             final String[] latitudDatos = new String[1];
             final String[] longitudDatos = new String[1];
 
-            String nombreMd = preferences.getString("nombreSitio", "");
-            bindingPropietario.md.setText(nombreMd);
+            String nombreMd = preferences.getString( "nombreSitio", "" );
+            bindingPropietario.md.setText( nombreMd );
 
-            final SharedPreferences preferencesPropietario = getContext().getSharedPreferences("datosPropietario", Context.MODE_PRIVATE);
+            final SharedPreferences preferencesPropietario = getContext().getSharedPreferences( "datosPropietario", Context.MODE_PRIVATE );
             final SharedPreferences.Editor editor = preferencesPropietario.edit();
 
             Timer timer = new Timer();
@@ -1009,8 +1431,8 @@ public class FragmentModificar extends Fragment implements
                 @Override
                 public void run() {
 
-                    String usuarioId = preferences.getString("usuario", "");
-                    String mdIdterminar = preferences.getString("mdIdterminar", "");
+                    String usuarioId = preferences.getString( "usuario", "" );
+                    String mdIdterminar = preferences.getString( "mdIdterminar", "" );
                     String apaternoPropietario = bindingPropietario.apellidoP.getText().toString();
                     String nombrePropietario = bindingPropietario.nombre.getText().toString();
                     String amaternoPropietario = bindingPropietario.apellidoM.getText().toString();
@@ -1018,41 +1440,41 @@ public class FragmentModificar extends Fragment implements
 
                     String telefono = bindingPropietario.telefono.getText().toString();
 
-                    if (bindingPropietario.email.getText().toString().equals("")) {
+                    if (bindingPropietario.email.getText().toString().equals( "" )) {
                         email = "-";
                     }
 
                     if (ubicacion != null) {
-                        latitudDatos[0] = String.valueOf(ubicacion.getLat());
-                        longitudDatos[0] = String.valueOf(ubicacion.getLng());
+                        latitudDatos[0] = String.valueOf( ubicacion.getLat() );
+                        longitudDatos[0] = String.valueOf( ubicacion.getLng() );
                     } else {
-                        latitudDatos[0] = String.valueOf(mdLat);
-                        longitudDatos[0] = String.valueOf(mdLot);
+                        latitudDatos[0] = String.valueOf( mdLat );
+                        longitudDatos[0] = String.valueOf( mdLot );
                     }
 
-                    creapropietario = new CrearDatosPropietario(usuarioId, mdIdterminar, apaternoPropietario, nombrePropietario, amaternoPropietario,
-                            telefono, email, latitudDatos[0], longitudDatos[0]);
-                    salvarDatosPropietario(getContext(), creapropietario, editor, preferencesPropietario);
+                    creapropietario = new CrearDatosPropietario( usuarioId, mdIdterminar, apaternoPropietario, nombrePropietario, amaternoPropietario,
+                            telefono, email, latitudDatos[0], longitudDatos[0] );
+                    salvarDatosPropietario( getContext(), creapropietario, editor, preferencesPropietario );
 
 
                 }
             };
 
-            timer.schedule(hourlyTask, 100, 700);
+            timer.schedule( hourlyTask, 100, 700 );
 
-            bindingPropietario.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+            bindingPropietario.toolbar.guardar.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    bindingPropietario.toolbar.guardar.setEnabled(false);
-                    final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                    String mdIdterminar = preferences.getString("mdIdterminar", "");
+                    bindingPropietario.toolbar.guardar.setEnabled( false );
+                    final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+                    String mdIdterminar = preferences.getString( "mdIdterminar", "" );
 
                     if (mdIdterminar.length() == 1) {
                         mdIdterminar = "";
                     }
 
-                    if (!mdIdterminar.equals("") || mdIdterminar.equals("0")) {
-                        String usuarioId = preferences.getString("usuario", "");
+                    if (!mdIdterminar.equals( "" ) || mdIdterminar.equals( "0" )) {
+                        String usuarioId = preferences.getString( "usuario", "" );
                         String apaternoPropietario = bindingPropietario.apellidoP.getText().toString();
                         String nombrePropietario = bindingPropietario.nombre.getText().toString();
                         String amaternoPropietario = bindingPropietario.apellidoM.getText().toString();
@@ -1060,23 +1482,23 @@ public class FragmentModificar extends Fragment implements
                         String telefono = bindingPropietario.telefono.getText().toString();
                         String email = bindingPropietario.email.getText().toString();
 
-                        if (bindingPropietario.email.getText().toString().equals("")) {
+                        if (bindingPropietario.email.getText().toString().equals( "" )) {
                             email = "''";
                         }
 
                         if (ubicacion != null) {
-                            latitudDatos[0] = String.valueOf(ubicacion.getLat());
-                            longitudDatos[0] = String.valueOf(ubicacion.getLng());
+                            latitudDatos[0] = String.valueOf( ubicacion.getLat() );
+                            longitudDatos[0] = String.valueOf( ubicacion.getLng() );
                         } else {
-                            latitudDatos[0] = String.valueOf(mdLat);
-                            longitudDatos[0] = String.valueOf(mdLot);
+                            latitudDatos[0] = String.valueOf( mdLat );
+                            longitudDatos[0] = String.valueOf( mdLot );
                         }
 
 
-                        creapropietario = new CrearDatosPropietario(usuarioId, mdIdterminar, apaternoPropietario,
+                        creapropietario = new CrearDatosPropietario( usuarioId, mdIdterminar, apaternoPropietario,
                                 nombrePropietario, amaternoPropietario,
-                                telefono, email, latitudDatos[0], longitudDatos[0]);
-                        ProviderCrearDatosPropietario.getInstance(getContext()).guardarPropietario(creapropietario,
+                                telefono, email, latitudDatos[0], longitudDatos[0] );
+                        ProviderCrearDatosPropietario.getInstance( getContext() ).guardarPropietario( creapropietario,
                                 new ProviderCrearDatosPropietario.InterfaceCrearDatosPropietario() {
                                     @Override
                                     public void resolve(Codigos codigo) {
@@ -1084,13 +1506,13 @@ public class FragmentModificar extends Fragment implements
                                         if (codigo.getCodigo() == 200) {
 
                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                            a.show(getChildFragmentManager(), "child");
-                                            bindingPropietario.toolbar.guardar.setEnabled(true);
+                                            a.show( getChildFragmentManager(), "child" );
+                                            bindingPropietario.toolbar.guardar.setEnabled( true );
 
                                         } else {
-                                            bindingPropietario.toolbar.guardar.setEnabled(true);
-                                            Toast.makeText(getContext(), codigo.getMensaje(),
-                                                    Toast.LENGTH_SHORT).show();
+                                            bindingPropietario.toolbar.guardar.setEnabled( true );
+                                            Toast.makeText( getContext(), codigo.getMensaje(),
+                                                    Toast.LENGTH_SHORT ).show();
                                         }
 
                                     }
@@ -1099,36 +1521,36 @@ public class FragmentModificar extends Fragment implements
                                     public void reject(Exception e) {
 
                                     }
-                                });
+                                } );
 
                     }
 
                 }
-            });
+            } );
 
-            bindingPropietario.nombreBuscadoredt.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            bindingPropietario.nombreBuscadoredt.setOnEditorActionListener( new EditText.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        String usuarioId = preferences.getString("usuario", "");
+                        String usuarioId = preferences.getString( "usuario", "" );
                         InputMethodManager inputManager =
                                 (InputMethodManager) getContext().
-                                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        getSystemService( Context.INPUT_METHOD_SERVICE );
                         inputManager.hideSoftInputFromWindow(
                                 getActivity().getCurrentFocus().getWindowToken(),
-                                InputMethodManager.HIDE_NOT_ALWAYS);
+                                InputMethodManager.HIDE_NOT_ALWAYS );
                         String nombre = bindingPropietario.nombreBuscadoredt.getText().toString();
-                        ProviderBuscarPropietario.getInstance(getContext()).obtenerPropietario(usuarioId, nombre, new ProviderBuscarPropietario.ConsultaPropietario() {
+                        ProviderBuscarPropietario.getInstance( getContext() ).obtenerPropietario( usuarioId, nombre, new ProviderBuscarPropietario.ConsultaPropietario() {
                             @Override
                             public void resolve(PropietarioBusqueda propietario) {
                                 if (propietario.getCodigo() == 200) {
-                                    adapterListaPropietarios = new AdapterListaPropietarios(propietario.getListaPropietarios(), getContext(), clickPropietario);
-                                    bindingPropietario.recyclerPropietarios.setLayoutManager(new LinearLayoutManager(getContext()));
-                                    bindingPropietario.recyclerPropietarios.setAdapter(adapterListaPropietarios);
-                                    bindingPropietario.coincide.setVisibility(View.VISIBLE);
+                                    adapterListaPropietarios = new AdapterListaPropietarios( propietario.getListaPropietarios(), getContext(), clickPropietario );
+                                    bindingPropietario.recyclerPropietarios.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                    bindingPropietario.recyclerPropietarios.setAdapter( adapterListaPropietarios );
+                                    bindingPropietario.coincide.setVisibility( View.VISIBLE );
                                 } else {
-                                    Toast.makeText(getContext(), "No se encontraron coincidencias",
-                                            Toast.LENGTH_SHORT).show();
+                                    Toast.makeText( getContext(), "No se encontraron coincidencias",
+                                            Toast.LENGTH_SHORT ).show();
                                 }
                             }
 
@@ -1136,75 +1558,94 @@ public class FragmentModificar extends Fragment implements
                             public void reject(Exception e) {
 
                             }
-                        });
+                        } );
                         return true;
                     }
                     return false;
                 }
-            });
+            } );
 
-            bindingPropietario.buscarNombre.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingPropietario.buscarNombre.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        bindingPropietario.co.setVisibility(View.VISIBLE);
-                        bindingPropietario.nombreBuscador.setVisibility(View.VISIBLE);
-                        bindingPropietario.nombre.setEnabled(false);
-                        bindingPropietario.apellidoP.setEnabled(false);
-                        bindingPropietario.apellidoM.setEnabled(false);
-                        bindingPropietario.telefono.setEnabled(false);
-                        bindingPropietario.email.setEnabled(false);
+                        bindingPropietario.co.setVisibility( View.VISIBLE );
+                        bindingPropietario.nombreBuscador.setVisibility( View.VISIBLE );
+                        bindingPropietario.nombre.setEnabled( false );
+                        bindingPropietario.apellidoP.setEnabled( false );
+                        bindingPropietario.apellidoM.setEnabled( false );
+                        bindingPropietario.telefono.setEnabled( false );
+                        bindingPropietario.email.setEnabled( false );
                     } else {
-                        bindingPropietario.nombreBuscador.setVisibility(View.GONE);
-                        bindingPropietario.co.setVisibility(View.GONE);
-                        bindingPropietario.nombre.setEnabled(true);
-                        bindingPropietario.apellidoP.setEnabled(true);
-                        bindingPropietario.apellidoM.setEnabled(true);
-                        bindingPropietario.telefono.setEnabled(true);
-                        bindingPropietario.email.setEnabled(true);
+                        bindingPropietario.nombreBuscador.setVisibility( View.GONE );
+                        bindingPropietario.co.setVisibility( View.GONE );
+                        bindingPropietario.nombre.setEnabled( true );
+                        bindingPropietario.apellidoP.setEnabled( true );
+                        bindingPropietario.apellidoM.setEnabled( true );
+                        bindingPropietario.telefono.setEnabled( true );
+                        bindingPropietario.email.setEnabled( true );
                     }
                 }
-            });
+            } );
 
 
         } else if (position == 2) {
 
             final float[] area = {0};
 
-            bindingSuperficie = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_2, container, false);
+            bindingSuperficie = DataBindingUtil.inflate( inflater, R.layout.fragment_autoriza_2, container, false );
             view = bindingSuperficie.getRoot();
 
-            getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+            getContext().getSharedPreferences( "datosSuperficie", 0 ).edit().clear().apply();
 
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String[] usuario = {preferences.getString("usuario", "")};
-            String md = preferences.getString("mdIdterminar", "");
-            final String nombreSitio = preferences.getString("nombreSitio", "");
-            bindingSuperficie.robotoTextView2.setText(nombreSitio);
-            bindingSuperficie.frente.setText("");
-            bindingSuperficie.profundidad.setText("");
+            final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+            final String[] usuario = {preferences.getString( "usuario", "" )};
+            String md = preferences.getString( "mdIdterminar", "" );
+            final String nombreSitio = preferences.getString( "nombreSitio", "" );
+            bindingSuperficie.robotoTextView2.setText( nombreSitio );
+            bindingSuperficie.frente.setText( "" );
+            bindingSuperficie.profundidad.setText( "" );
 
-            mdLat = preferences.getFloat("latMd", 0);
-            mdLot = preferences.getFloat("lotMd", 0);
+            mdLat = preferences.getFloat( "latMd", 0 );
+            mdLot = preferences.getFloat( "lotMd", 0 );
 
-            bindingSuperficie.frente.setFilters(new InputFilter[]{new CustomTextWatcher(4, 1)});
-            bindingSuperficie.profundidad.setFilters(new InputFilter[]{new CustomTextWatcher(4, 1)});
+            bindingSuperficie.frente.setFilters( new InputFilter[]{new CustomTextWatcher( 4, 1 )} );
+            bindingSuperficie.profundidad.setFilters( new InputFilter[]{new CustomTextWatcher( 4, 1 )} );
+
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics( metrics );
+            int width = metrics.widthPixels;
+            System.out.println( "ancho absoluto en pixels " + width );
+            int height = metrics.heightPixels;
+            System.out.println( "alto absoluto en pixels " + height );
+
+            if (width <= 500) {
+
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        3.0f
+                );
+
+                bindingSuperficie.linearLayout6.setLayoutParams( param );
+            }
             //bindingSuperficie.areaterreno.setFilters(new InputFilter[] {new CustomTextWatcher(5,1)});
 
-            ProviderDatosPredial.getInstance(getContext()).obtenerDatosPredial(md, usuario[0], new ProviderDatosPredial.ConsultaDatosPredial() {
+            ProviderDatosPredial.getInstance( getContext() ).obtenerDatosPredial( md, usuario[0], new ProviderDatosPredial.ConsultaDatosPredial() {
                 @Override
                 public void resolve(DatosPredial datosPredial) {
                     if (datosPredial != null) {
-                        if (datosPredial.getCodigo().equals("200")) {
-                            if (datosPredial.getAplicaPredial().equals("1")) {
-                                bindingSuperficie.predial.setVisibility(View.VISIBLE);
+                        if (datosPredial.getCodigo().equals( "200" )) {
+                            if (datosPredial.getAplicaPredial().equals( "1" )) {
+                                bindingSuperficie.predial.setVisibility( View.VISIBLE );
                             } else {
-                                bindingSuperficie.predial.setVisibility(View.GONE);
+                                bindingSuperficie.predial.setVisibility( View.GONE );
                                 urlPredial = "";
                                 fechaPredial = "";
                             }
                         }
                     } else {
-                        bindingSuperficie.predial.setVisibility(View.GONE);
+                        bindingSuperficie.predial.setVisibility( View.GONE );
                         urlPredial = "";
                         fechaPredial = "";
                     }
@@ -1212,18 +1653,18 @@ public class FragmentModificar extends Fragment implements
 
                 @Override
                 public void reject(Exception e) {
-                    bindingSuperficie.predial.setVisibility(View.GONE);
+                    bindingSuperficie.predial.setVisibility( View.GONE );
                     urlPredial = "";
                     fechaPredial = "";
                 }
-            });
+            } );
 
             final int[] banderaCamara = {0};
             final String[] tipoEsquina = {"0"};
             final String[] conDrenaje = {"0"};
 
 
-            bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingSuperficie.escogeEsquina.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
                         tipoEsquina[0] = "1";
@@ -1231,7 +1672,7 @@ public class FragmentModificar extends Fragment implements
                         tipoEsquina[0] = "0";
                     }
                 }
-            });
+            } );
 
             /*bindingSuperficie.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1244,8 +1685,8 @@ public class FragmentModificar extends Fragment implements
             });*/
 
 
-            ProviderDatosSuperficie.getInstance(getContext())
-                    .obtenerDatosSuperficie(md, usuario[0], new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
+            ProviderDatosSuperficie.getInstance( getContext() )
+                    .obtenerDatosSuperficie( md, usuario[0], new ProviderDatosSuperficie.ConsultaDatosSuperficie() {
                         @Override
                         public void resolve(final Superficie superficie) {
 
@@ -1258,21 +1699,22 @@ public class FragmentModificar extends Fragment implements
                                 int valorDrenaje = 0;
 
                                 for (int i = 0; i < superficie.getNiveles().size(); i++) {
-                                    if (superficie.getNiveles().get(i).getNivel() == 4 ||
-                                            superficie.getNiveles().get(i).getNivel() == 5) {
-                                        Picasso.get().load(superficie.getNiveles().get(i).getImgFrenteId()).into(bindingSuperficie.imagen);
+                                    if (superficie.getNiveles().get( i ).getNivel() == 4 ||
+                                            superficie.getNiveles().get( i ).getNivel() == 5) {
+                                        Picasso.get().load( superficie.getNiveles().get( i ).getImgFrenteId() )
+                                                .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
                                         valorFoto = i;
                                         valorFondo = i;
 
 
-                                        fechaFrente = superficie.getNiveles().get(i).getFecha_fente();
-                                        fechaLateral1 = superficie.getNiveles().get(i).getFecha_lat1();
-                                        fechaLateral2 = superficie.getNiveles().get(i).getFecha_lat2();
-                                        fechaEntorno1 = superficie.getNiveles().get(i).getFecha_ent1();
-                                        fechaEntorno2 = superficie.getNiveles().get(i).getFecha_ent2();
-                                        fechaEntorno3 = superficie.getNiveles().get(i).getFecha_ent3();
-                                        if (!superficie.getNiveles().get(i).getFecha_pred().equals("")) {
-                                            fechaPredial = superficie.getNiveles().get(i).getFecha_pred();
+                                        fechaFrente = superficie.getNiveles().get( i ).getFecha_fente();
+                                        fechaLateral1 = superficie.getNiveles().get( i ).getFecha_lat1();
+                                        fechaLateral2 = superficie.getNiveles().get( i ).getFecha_lat2();
+                                        fechaEntorno1 = superficie.getNiveles().get( i ).getFecha_ent1();
+                                        fechaEntorno2 = superficie.getNiveles().get( i ).getFecha_ent2();
+                                        fechaEntorno3 = superficie.getNiveles().get( i ).getFecha_ent3();
+                                        if (!superficie.getNiveles().get( i ).getFecha_pred().equals( "" )) {
+                                            fechaPredial = superficie.getNiveles().get( i ).getFecha_pred();
                                         } else {
                                             fechaPredial = " ";
                                             urlPredial = " ";
@@ -1291,26 +1733,26 @@ public class FragmentModificar extends Fragment implements
                                         }*/
                                     }
 
-                                    if (superficie.getNiveles().get(i).getNivel() == 6 ||
-                                            superficie.getNiveles().get(i).getNivel() == 7) {
+                                    if (superficie.getNiveles().get( i ).getNivel() == 6 ||
+                                            superficie.getNiveles().get( i ).getNivel() == 7) {
                                         valorFrente = i;
                                     }
 
-                                    if (superficie.getNiveles().get(i).getNivel() == 8) {
+                                    if (superficie.getNiveles().get( i ).getNivel() == 8) {
                                         valorEsquina = i;
                                     }
 
-                                    if (superficie.getNiveles().get(i).getNivel() == 9) {
+                                    if (superficie.getNiveles().get( i ).getNivel() == 9) {
                                         valorDrenaje = i;
                                     }
                                 }
 
-                                Double esquina = superficie.getNiveles().get(valorEsquina).getValorreal();
+                                Double esquina = superficie.getNiveles().get( valorEsquina ).getValorreal();
                                 if (esquina == 1) {
-                                    bindingSuperficie.escogeEsquina.setChecked(true);
+                                    bindingSuperficie.escogeEsquina.setChecked( true );
                                     tipoEsquina[0] = "1";
                                 } else {
-                                    bindingSuperficie.escogeEsquina.setChecked(false);
+                                    bindingSuperficie.escogeEsquina.setChecked( false );
                                     tipoEsquina[0] = "0";
                                 }
 
@@ -1323,57 +1765,59 @@ public class FragmentModificar extends Fragment implements
                                     conDrenaje[0] = "0";
                                 }*/
 
-                                getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-                                String superficieS = String.valueOf(superficie.getNiveles().get(valorFrente).getValorreal());
-                                superficieS = superficieS.replace(" ", "");
+                                getContext().getSharedPreferences( "datosSuperficie", 0 ).edit().clear().apply();
+                                String superficieS = String.valueOf( superficie.getNiveles().get( valorFrente ).getValorreal() );
+                                superficieS = superficieS.replace( " ", "" );
 
-                                String fondoS = String.valueOf(superficie.getNiveles().get(valorFondo).getFondo());
-                                fondoS = fondoS.replace(" ", "");
+                                String fondoS = String.valueOf( superficie.getNiveles().get( valorFondo ).getFondo() );
+                                fondoS = fondoS.replace( " ", "" );
 
-                                bindingSuperficie.frente.setText(superficieS);
-                                bindingSuperficie.profundidad.setText(fondoS);
+                                bindingSuperficie.frente.setText( superficieS );
+                                bindingSuperficie.profundidad.setText( fondoS );
 
-                                String total = String.valueOf((Double.valueOf(superficieS)
-                                        * (Double.valueOf(fondoS))));
-                                bindingSuperficie.areaterreno.setText(total + "");
+                                String total = String.valueOf( (Double.valueOf( superficieS )
+                                        * (Double.valueOf( fondoS ))) );
+                                bindingSuperficie.areaterreno.setText( total + "" );
 
-                                bindingSuperficie.frontal.setAlpha(1.0f);
-                                bindingSuperficie.lateral1.setAlpha(0.35f);
-                                bindingSuperficie.lateral2.setAlpha(0.35f);
-                                bindingSuperficie.predial.setAlpha(0.35f);
+                                bindingSuperficie.frontal.setAlpha( 1.0f );
+                                bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                bindingSuperficie.predial.setAlpha( 0.35f );
 
-                                bindingSuperficie.robotoTextView2.setText(nombreSitio);
+                                bindingSuperficie.robotoTextView2.setText( nombreSitio );
 
                                 final int finalValorFoto = valorFoto;
 
-                                bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.predial.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
-                                        if (!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")) {
-                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                        if (!superficie.getNiveles().get( finalValorFoto ).getImgPredial().equals( " " )) {
+                                            Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgPredial() )
+                                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
                                         } else {
                                             if (urlPredial.length() > 3) {
-                                                Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                                                Picasso.get().load( urlPredial )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
                                             }
                                         }
 
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno1.setAlpha(0.35f);
-                                        bindingSuperficie.entorno2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno3.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(1.0f);
+                                        bindingSuperficie.frontal.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno1.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno3.setAlpha( 0.35f );
+                                        bindingSuperficie.predial.setAlpha( 1.0f );
                                         //bindingSuperficie.reciboAgua.setAlpha(0.35f);
                                         //bindingSuperficie.reciboLuz.setAlpha(0.35f);
-                                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno3.setVisibility( View.GONE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.VISIBLE );
                                         //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                                         //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
@@ -1381,44 +1825,48 @@ public class FragmentModificar extends Fragment implements
 
                                         if (urlPredial.length() > 3) {
                                             if (urlPredial.length() > 0) {
-                                                Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlPredial )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgPredial() )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             }
 
                                         } else {
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                            builder.setMessage("¿De donde quieres tomar la foto?")
-                                                    .setCancelable(false)
-                                                    .setPositiveButton("Desde galería", new DialogInterface.OnClickListener() {
+                                            bindingSuperficie.volver.setVisibility( View.GONE );
+                                            AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
+                                            builder.setMessage( "¿De donde quieres tomar la foto?" )
+                                                    .setCancelable( false )
+                                                    .setPositiveButton( "Desde galería", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            intentGaleria(PICK_IMAGE_REQUEST);
+                                                            intentGaleria( PICK_IMAGE_REQUEST );
                                                         }
-                                                    })
-                                                    .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                    } )
+                                                    .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            intentFoto(CAMERA_PREDIAL);
+                                                            intentFoto( CAMERA_PREDIAL );
                                                         }
-                                                    });
+                                                    } );
                                             AlertDialog alert = builder.create();
-                                            alert.setTitle("PREDIAL");
+                                            alert.setTitle( "PREDIAL" );
                                             alert.show();
                                         }
                                     }
-                                });
+                                } );
 
                                 /*bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
                                         if (!superficie.getNiveles().get(finalValorFoto).getImgAgua().equals(" ")) {
-                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial()).into(bindingSuperficie.imagen);
+                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgPredial())
+                                            .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                         } else {
                                             if (urlReciboAgua.length() > 3) {
-                                                Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(urlReciboAgua)
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                             }
                                         }
 
@@ -1445,10 +1893,12 @@ public class FragmentModificar extends Fragment implements
 
                                         if (urlReciboAgua.length() > 3) {
                                             if (urlReciboAgua.length() > 0) {
-                                                Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(urlReciboAgua)
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgAgua()).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgAgua())
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }
 
@@ -1479,10 +1929,12 @@ public class FragmentModificar extends Fragment implements
                                     public void onClick(View view) {
 
                                         if (!superficie.getNiveles().get(finalValorFoto).getImgLuz().equals(" ")) {
-                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLuz()).into(bindingSuperficie.imagen);
+                                            Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLuz())
+                                            .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                         } else {
                                             if (urlReciboLuz.length() > 3) {
-                                                Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(urlReciboLuz)
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                             }
                                         }
 
@@ -1509,10 +1961,12 @@ public class FragmentModificar extends Fragment implements
 
                                         if (urlReciboLuz.length() > 3) {
                                             if (urlReciboLuz.length() > 0) {
-                                                Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(urlReciboLuz)
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLuz()).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLuz())
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }
 
@@ -1538,99 +1992,105 @@ public class FragmentModificar extends Fragment implements
                                     }
                                 });*/
 
-                                bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.frontal.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
+                                        Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgFrenteId() )
+                                                .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
 
-                                        bindingSuperficie.frontal.setAlpha(1.0f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno1.setAlpha(0.35f);
-                                        bindingSuperficie.entorno2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno3.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(0.35f);
+                                        bindingSuperficie.frontal.setAlpha( 1.0f );
+                                        bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno1.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno3.setAlpha( 0.35f );
+                                        bindingSuperficie.predial.setAlpha( 0.35f );
                                         //bindingSuperficie.reciboAgua.setAlpha(0.35f);
                                         //bindingSuperficie.reciboLuz.setAlpha(0.35f);
-                                        bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.VISIBLE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno3.setVisibility( View.GONE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.GONE );
                                         //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                                         //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 1;
-                                        if (superficie.getNiveles().get(finalValorFoto).getImgFrenteId().length() > 0) {
+                                        if (superficie.getNiveles().get( finalValorFoto ).getImgFrenteId().length() > 0) {
                                             if (urlFrente.length() > 0) {
-                                                Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlFrente )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgFrenteId()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgFrenteId() )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             }
 
                                         } else {
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            intentFoto(CAMERA_FRONTAL);
+                                            bindingSuperficie.volver.setVisibility( View.GONE );
+                                            intentFoto( CAMERA_FRONTAL );
                                         }
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.lateral1.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.lateral1.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
+                                        Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgLateral1Id() )
+                                                .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
 
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(1.0f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno1.setAlpha(0.35f);
-                                        bindingSuperficie.entorno2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno3.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(0.35f);
+                                        bindingSuperficie.frontal.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral1.setAlpha( 1.0f );
+                                        bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno1.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno3.setAlpha( 0.35f );
+                                        bindingSuperficie.predial.setAlpha( 0.35f );
                                         //bindingSuperficie.reciboAgua.setAlpha(0.35f);
                                         //bindingSuperficie.reciboLuz.setAlpha(0.35f);
-                                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.VISIBLE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno3.setVisibility( View.GONE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.GONE );
                                         //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                                         //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 2;
 
-                                        if (superficie.getNiveles().get(finalValorFoto).getImgLateral1Id().length() > 0) {
+                                        if (superficie.getNiveles().get( finalValorFoto ).getImgLateral1Id().length() > 0) {
                                             if (urlLateral1.length() > 0) {
-                                                Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlLateral1 )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral1Id()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgLateral1Id() )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             }
                                         } else {
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            intentFoto(CAMERA_LATERAL_1);
+                                            bindingSuperficie.volver.setVisibility( View.GONE );
+                                            intentFoto( CAMERA_LATERAL_1 );
                                         }
                                     }
-                                });
+                                } );
 
 
-                                urlFrente = superficie.getNiveles().get(finalValorFoto).getImgFrenteId();
-                                urlLateral1 = superficie.getNiveles().get(finalValorFoto).getImgLateral1Id();
-                                urlLateral2 = superficie.getNiveles().get(finalValorFoto).getImgLateral2Id();
-                                urlEntorno1 = superficie.getNiveles().get(finalValorFoto).getImgEnt1();
-                                urlEntorno2 = superficie.getNiveles().get(finalValorFoto).getImgEnt2();
-                                urlEntorno3 = superficie.getNiveles().get(finalValorFoto).getImgEnt3();
+                                urlFrente = superficie.getNiveles().get( finalValorFoto ).getImgFrenteId();
+                                urlLateral1 = superficie.getNiveles().get( finalValorFoto ).getImgLateral1Id();
+                                urlLateral2 = superficie.getNiveles().get( finalValorFoto ).getImgLateral2Id();
+                                urlEntorno1 = superficie.getNiveles().get( finalValorFoto ).getImgEnt1();
+                                urlEntorno2 = superficie.getNiveles().get( finalValorFoto ).getImgEnt2();
+                                urlEntorno3 = superficie.getNiveles().get( finalValorFoto ).getImgEnt3();
 
-                                if (!superficie.getNiveles().get(finalValorFoto).getImgPredial().equals("") ||
-                                        !superficie.getNiveles().get(finalValorFoto).getImgPredial().equals(" ")) {
-                                    urlPredial = superficie.getNiveles().get(finalValorFoto).getImgPredial();
+                                if (!superficie.getNiveles().get( finalValorFoto ).getImgPredial().equals( "" ) ||
+                                        !superficie.getNiveles().get( finalValorFoto ).getImgPredial().equals( " " )) {
+                                    urlPredial = superficie.getNiveles().get( finalValorFoto ).getImgPredial();
                                 } else {
                                     urlPredial = " ";
                                 }
@@ -1648,159 +2108,167 @@ public class FragmentModificar extends Fragment implements
                                 }*/
 
 
-                                bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.lateral2.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(1.0f);
-                                        bindingSuperficie.entorno1.setAlpha(0.35f);
-                                        bindingSuperficie.entorno2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno3.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(0.35f);
+                                        bindingSuperficie.frontal.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral2.setAlpha( 1.0f );
+                                        bindingSuperficie.entorno1.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno3.setAlpha( 0.35f );
+                                        bindingSuperficie.predial.setAlpha( 0.35f );
                                         //bindingSuperficie.reciboAgua.setAlpha(0.35f);
                                         //bindingSuperficie.reciboLuz.setAlpha(0.35f);
-                                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
-                                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.VISIBLE );
+                                        bindingSuperficie.viewEntorno1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno3.setVisibility( View.GONE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.GONE );
                                         //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                                         //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 3;
-                                        if (superficie.getNiveles().get(finalValorFoto).getImgLateral2Id().length() > 0) {
+                                        if (superficie.getNiveles().get( finalValorFoto ).getImgLateral2Id().length() > 0) {
                                             if (urlLateral2.length() > 0) {
-                                                Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlLateral2 )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgLateral2Id()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgLateral2Id() )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             }
                                         } else {
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            intentFoto(CAMERA_LATERAL_2);
+                                            bindingSuperficie.volver.setVisibility( View.GONE );
+                                            intentFoto( CAMERA_LATERAL_2 );
                                         }
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.entorno1.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.entorno1.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno1.setAlpha(1.0f);
-                                        bindingSuperficie.entorno2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno3.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(0.35f);
+                                        bindingSuperficie.frontal.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno1.setAlpha( 1.0f );
+                                        bindingSuperficie.entorno2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno3.setAlpha( 0.35f );
+                                        bindingSuperficie.predial.setAlpha( 0.35f );
                                         //bindingSuperficie.reciboAgua.setAlpha(0.35f);
                                         //bindingSuperficie.reciboLuz.setAlpha(0.35f);
-                                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno1.setVisibility(View.VISIBLE);
-                                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno1.setVisibility( View.VISIBLE );
+                                        bindingSuperficie.viewEntorno2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno3.setVisibility( View.GONE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.GONE );
                                         //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                                         //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
-                                            banderaCamara[0] = 5;
-                                            if (superficie.getNiveles().get(finalValorFoto).getImgEnt1().length() > 0) {
-                                                if (urlEntorno1.length() > 0) {
-                                                    Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
-                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                                } else {
-                                                    Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEnt1()).into(bindingSuperficie.imagen);
-                                                    bindingSuperficie.volver.setVisibility(View.VISIBLE);
-                                                }
+                                        banderaCamara[0] = 5;
+                                        if (superficie.getNiveles().get( finalValorFoto ).getImgEnt1().length() > 0) {
+                                            if (urlEntorno1.length() > 0) {
+                                                Picasso.get().load( urlEntorno1 )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                intentFoto(CAMERA_ENTORNO_1);
+                                                Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgEnt1() )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             }
+                                        } else {
+                                            bindingSuperficie.volver.setVisibility( View.GONE );
+                                            intentFoto( CAMERA_ENTORNO_1 );
+                                        }
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.entorno2.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.entorno2.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno1.setAlpha(0.35f);
-                                        bindingSuperficie.entorno2.setAlpha(1.0f);
-                                        bindingSuperficie.entorno3.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(0.35f);
+                                        bindingSuperficie.frontal.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno1.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno2.setAlpha( 1.0f );
+                                        bindingSuperficie.entorno3.setAlpha( 0.35f );
+                                        bindingSuperficie.predial.setAlpha( 0.35f );
                                         //bindingSuperficie.reciboAgua.setAlpha(0.35f);
                                         //bindingSuperficie.reciboLuz.setAlpha(0.35f);
-                                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno2.setVisibility(View.VISIBLE);
-                                        bindingSuperficie.viewEntorno3.setVisibility(View.GONE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno2.setVisibility( View.VISIBLE );
+                                        bindingSuperficie.viewEntorno3.setVisibility( View.GONE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.GONE );
                                         //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                                         //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 6;
-                                        if (superficie.getNiveles().get(finalValorFoto).getImgEnt2().length() > 0) {
+                                        if (superficie.getNiveles().get( finalValorFoto ).getImgEnt2().length() > 0) {
                                             if (urlEntorno2.length() > 0) {
-                                                Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlEntorno2 )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEnt2()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgEnt2() )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             }
                                         } else {
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            intentFoto(CAMERA_ENTORNO_2);
+                                            bindingSuperficie.volver.setVisibility( View.GONE );
+                                            intentFoto( CAMERA_ENTORNO_2 );
                                         }
 
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.entorno3.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.entorno3.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno1.setAlpha(0.35f);
-                                        bindingSuperficie.entorno2.setAlpha(0.35f);
-                                        bindingSuperficie.entorno3.setAlpha(1.0f);
-                                        bindingSuperficie.predial.setAlpha(0.35f);
+                                        bindingSuperficie.frontal.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno1.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno2.setAlpha( 0.35f );
+                                        bindingSuperficie.entorno3.setAlpha( 1.0f );
+                                        bindingSuperficie.predial.setAlpha( 0.35f );
                                         //bindingSuperficie.reciboAgua.setAlpha(0.35f);
                                         //bindingSuperficie.reciboLuz.setAlpha(0.35f);
-                                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewEntorno3.setVisibility(View.VISIBLE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewEntorno3.setVisibility( View.VISIBLE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.GONE );
                                         //bindingSuperficie.viewReciboAgua.setVisibility(View.GONE);
                                         //bindingSuperficie.viewReciboLuz.setVisibility(View.GONE);
 
                                         banderaCamara[0] = 7;
-                                        if (superficie.getNiveles().get(finalValorFoto).getImgEnt3().length() > 0) {
+                                        if (superficie.getNiveles().get( finalValorFoto ).getImgEnt3().length() > 0) {
                                             if (urlEntorno3.length() > 0) {
-                                                Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlEntorno3 )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                Picasso.get().load(superficie.getNiveles().get(finalValorFoto).getImgEnt3()).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( superficie.getNiveles().get( finalValorFoto ).getImgEnt3() )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             }
                                         } else {
-                                            bindingSuperficie.volver.setVisibility(View.GONE);
-                                            intentFoto(CAMERA_ENTORNO_3);
+                                            bindingSuperficie.volver.setVisibility( View.GONE );
+                                            intentFoto( CAMERA_ENTORNO_3 );
                                         }
 
                                     }
-                                });
+                                } );
 
                                 /*bindingSuperficie.reciboAgua.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1827,7 +2295,8 @@ public class FragmentModificar extends Fragment implements
                                         banderaCamara[0] = 8;
                                         if(urlReciboAgua.length()>0){
                                             if(!urlReciboAgua.isEmpty()){
-                                                Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(urlReciboAgua)
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }else{
                                                 bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1925,7 +2394,8 @@ public class FragmentModificar extends Fragment implements
                                         banderaCamara[0] = 9;
                                         if(urlReciboLuz.length()>0){
                                             if(!urlReciboLuz.isEmpty()){
-                                                Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                                                Picasso.get().load(urlReciboLuz)
+                                                .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                                                 bindingSuperficie.volver.setVisibility(View.VISIBLE);
                                             }else{
                                                 bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1999,131 +2469,131 @@ public class FragmentModificar extends Fragment implements
                                 });*/
 //
                                 if (mdLat != null || mdLot != null) {
-                                    ServicioGPS n = new ServicioGPS(getContext());
-                                    final LatLng mds = new LatLng(mdLat, mdLot);
-                                    final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
-                                    final Boolean distancia = distanciaSuperficie(mds, gps);
-                                    Log.e("*****", distancia.toString());
+                                    ServicioGPS n = new ServicioGPS( getContext() );
+                                    final LatLng mds = new LatLng( mdLat, mdLot );
+                                    final LatLng gps = new LatLng( n.getLatitude(), n.getLongitude() );
+                                    final Boolean distancia = distanciaSuperficie( mds, gps );
+                                    Log.e( "*****", distancia.toString() );
 
 
-                                    bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
+                                    bindingSuperficie.volver.setOnClickListener( new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             if (banderaCamara[0] == 4) {
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
                                                 //Setting message manually and performing action on button click
-                                                builder.setMessage("Seleccionar archivo desde")
-                                                        .setCancelable(false)
-                                                        .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                                builder.setMessage( "Seleccionar archivo desde" )
+                                                        .setCancelable( false )
+                                                        .setPositiveButton( "El celular", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                intentGaleria(PICK_IMAGE_REQUEST);
+                                                                intentGaleria( PICK_IMAGE_REQUEST );
                                                             }
-                                                        })
-                                                        .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                        } )
+                                                        .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                intentFoto(CAMERA_PREDIAL);
+                                                                intentFoto( CAMERA_PREDIAL );
                                                             }
-                                                        });
+                                                        } );
 
                                                 //Creating dialog box
                                                 AlertDialog alert = builder.create();
                                                 //Setting the title manually
-                                                alert.setTitle("PREDIAL");
+                                                alert.setTitle( "PREDIAL" );
                                                 alert.show();
                                             } else if (distancia) {
                                                 if (banderaCamara[0] == 1) {
-                                                    intentFoto(CAMERA_FRONTAL);
+                                                    intentFoto( CAMERA_FRONTAL );
                                                 } else if (banderaCamara[0] == 2) {
-                                                    intentFoto(CAMERA_LATERAL_1);
+                                                    intentFoto( CAMERA_LATERAL_1 );
                                                 } else if (banderaCamara[0] == 3) {
-                                                    intentFoto(CAMERA_LATERAL_2);
-                                                } else if(banderaCamara[0] ==5){
-                                                    intentFoto(CAMERA_ENTORNO_1);
-                                                } else if(banderaCamara[0] ==6){
-                                                    intentFoto(CAMERA_ENTORNO_2);
-                                                } else if(banderaCamara[0] ==7){
-                                                    intentFoto(CAMERA_ENTORNO_3);
+                                                    intentFoto( CAMERA_LATERAL_2 );
+                                                } else if (banderaCamara[0] == 5) {
+                                                    intentFoto( CAMERA_ENTORNO_1 );
+                                                } else if (banderaCamara[0] == 6) {
+                                                    intentFoto( CAMERA_ENTORNO_2 );
+                                                } else if (banderaCamara[0] == 7) {
+                                                    intentFoto( CAMERA_ENTORNO_3 );
                                                 } else if (banderaCamara[0] == 8) {
-                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
                                                     //Setting message manually and performing action on button click
-                                                    builder.setMessage("Seleccionar archivo desde")
-                                                            .setCancelable(true)
-                                                            .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                                    builder.setMessage( "Seleccionar archivo desde" )
+                                                            .setCancelable( true )
+                                                            .setPositiveButton( "El celular", new DialogInterface.OnClickListener() {
                                                                 public void onClick(DialogInterface dialog, int id) {
-                                                                    intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                                                    intentGaleria( PICK_IMAGE_REQUEST_RECIBO_AGUA );
                                                                 }
-                                                            })
-                                                            .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                            } )
+                                                            .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                                 public void onClick(DialogInterface dialog, int id) {
-                                                                    intentFoto(CAMERA_RECIBO_AGUA);
+                                                                    intentFoto( CAMERA_RECIBO_AGUA );
                                                                 }
-                                                            });
+                                                            } );
                                                     AlertDialog alert = builder.create();
-                                                    alert.setTitle("RECIBO AGUA");
+                                                    alert.setTitle( "RECIBO AGUA" );
                                                     alert.show();
                                                 } else if (banderaCamara[0] == 9) {
-                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
                                                     //Setting message manually and performing action on button click
-                                                    builder.setMessage("Seleccionar archivo desde")
-                                                            .setCancelable(true)
-                                                            .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                                    builder.setMessage( "Seleccionar archivo desde" )
+                                                            .setCancelable( true )
+                                                            .setPositiveButton( "El celular", new DialogInterface.OnClickListener() {
                                                                 public void onClick(DialogInterface dialog, int id) {
-                                                                    intentGaleria(PICK_IMAGE_REQUEST_RECIBO_LUZ);
+                                                                    intentGaleria( PICK_IMAGE_REQUEST_RECIBO_LUZ );
                                                                 }
-                                                            })
-                                                            .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                            } )
+                                                            .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                                 public void onClick(DialogInterface dialog, int id) {
-                                                                    intentFoto(CAMERA_RECIBO_LUZ);
+                                                                    intentFoto( CAMERA_RECIBO_LUZ );
                                                                 }
-                                                            });
+                                                            } );
                                                     AlertDialog alert = builder.create();
-                                                    alert.setTitle("RECIBO LUZ");
+                                                    alert.setTitle( "RECIBO LUZ" );
                                                     alert.show();
                                                 }
                                             } else {
-                                                Toast.makeText(getContext(), R.string.no_estas,
-                                                        Toast.LENGTH_SHORT).show();
+                                                Toast.makeText( getContext(), R.string.no_estas,
+                                                        Toast.LENGTH_SHORT ).show();
                                             }
                                         }
-                                    });
+                                    } );
                                 }
 
-                                bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
+                                bindingSuperficie.toolbar.nombreTitulo.setText( getString( R.string.datossuperficie ) );
 
-                                final SharedPreferences preferencesExpansion = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                                final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences("datosSuperficie", Context.MODE_PRIVATE);
+                                final SharedPreferences preferencesExpansion = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+                                final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences( "datosSuperficie", Context.MODE_PRIVATE );
                                 final SharedPreferences.Editor editor = preferencesSuperficie.edit();
-                                mdLat = preferencesExpansion.getFloat("latMd", 0);
-                                mdLot = preferencesExpansion.getFloat("lotMd", 0);
-                                final String convertido = preferencesExpansion.getString("mdIdterminar", "");
+                                mdLat = preferencesExpansion.getFloat( "latMd", 0 );
+                                mdLot = preferencesExpansion.getFloat( "lotMd", 0 );
+                                final String convertido = preferencesExpansion.getString( "mdIdterminar", "" );
 
                                 final String finalUsuario = usuario[0];
                                 Timer timer = new Timer();
                                 hourlyTask = new TimerTask() {
                                     @Override
                                     public void run() {
-                                        getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+                                        getContext().getSharedPreferences( "datosSuperficie", 0 ).edit().clear().apply();
 
                                         final String frentes = bindingSuperficie.frente.getText().toString();
                                         final String profundidads = bindingSuperficie.profundidad.getText().toString();
 
-                                        if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")) {
-                                            getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
+                                        if (urlFrente.equals( "" ) || urlLateral1.equals( "" ) || urlLateral2.equals( "" ) || urlPredial.equals( "" )) {
+                                            getContext().getSharedPreferences( "datosGeneralidades", 0 ).edit().clear().apply();
                                         } else {
 
-                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], finalUsuario, convertido,
+                                            CrearDatosSuperficie datos = new CrearDatosSuperficie( tipoEsquina[0], finalUsuario, convertido,
                                                     frentes, profundidads, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
-                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
+                                                    String.valueOf( mdLat ), String.valueOf( mdLot ), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
                                                     fechaEntorno1, fechaEntorno2, fechaEntorno3,
-                                                    urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
-                                            salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
+                                                    urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0] );
+                                            salvarDatosSuperficie( getContext(), datos, editor, preferencesSuperficie );
                                         }
                                     }
                                 };
 
-                                timer.schedule(hourlyTask, 100, 700);
+                                timer.schedule( hourlyTask, 100, 700 );
 
-                                bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
+                                bindingSuperficie.frente.addTextChangedListener( new TextWatcher() {
                                     public void afterTextChanged(Editable s) {
                                     }
 
@@ -2134,15 +2604,15 @@ public class FragmentModificar extends Fragment implements
                                         //     Log.e("onTextChanged",s.toString());
                                         String frente = bindingSuperficie.frente.getText().toString();
                                         String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if (frente.equals("") || profundidad.equals("")) {
-                                            bindingSuperficie.areaterreno.setText("0mts");
+                                        if (frente.equals( "" ) || profundidad.equals( "" )) {
+                                            bindingSuperficie.areaterreno.setText( "0mts" );
                                         } else {
-                                            area[0] = Float.valueOf(frente) * Float.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "");
+                                            area[0] = Float.valueOf( frente ) * Float.valueOf( profundidad );
+                                            bindingSuperficie.areaterreno.setText( String.valueOf( area[0] ) + "" );
                                         }
                                     }
-                                });
-                                bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
+                                } );
+                                bindingSuperficie.profundidad.addTextChangedListener( new TextWatcher() {
 
                                     public void afterTextChanged(Editable s) {
                                     }
@@ -2153,84 +2623,84 @@ public class FragmentModificar extends Fragment implements
                                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                                         String frente = bindingSuperficie.frente.getText().toString();
                                         String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if (frente.equals("") || profundidad.equals("")) {
-                                            bindingSuperficie.areaterreno.setText("0mts");
+                                        if (frente.equals( "" ) || profundidad.equals( "" )) {
+                                            bindingSuperficie.areaterreno.setText( "0mts" );
                                         } else {
-                                            area[0] = Float.valueOf(frente) * Float.valueOf(profundidad);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "");
+                                            area[0] = Float.valueOf( frente ) * Float.valueOf( profundidad );
+                                            bindingSuperficie.areaterreno.setText( String.valueOf( area[0] ) + "" );
                                         }
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.cancelar.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.cancelar.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelar a = new FragmentDialogCancelar();
-                                        a.show(getChildFragmentManager(), "child");
+                                        a.show( getChildFragmentManager(), "child" );
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.toolbar.back.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(), "child");
+                                        a.show( getChildFragmentManager(), "child" );
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.toolbar.guardar.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        bindingSuperficie.toolbar.guardar.setEnabled(false);
+                                        bindingSuperficie.toolbar.guardar.setEnabled( false );
 
-                                        final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                                        String mdId = preferences.getString("mdIdterminar", "");
+                                        final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+                                        String mdId = preferences.getString( "mdIdterminar", "" );
 
                                         if (mdId.length() == 1) {
                                             mdId = "";
                                         }
                                         //Establece check de fotos tomadas
                                         //Frente
-                                        if(urlFrente.equals("")) {
-                                            bindingSuperficie.frontalText.setText(getResources().getString(R.string.frontal));
+                                        if (urlFrente.equals( "" )) {
+                                            bindingSuperficie.frontalText.setText( getResources().getString( R.string.frontal ) );
                                         } else {
-                                            bindingSuperficie.frontalText.setText(getResources().getString(R.string.frontal) + "\u2713");
+                                            bindingSuperficie.frontalText.setText( getResources().getString( R.string.frontal ) + "\u2713" );
                                         }
                                         //Lateral 1
-                                        if(urlLateral1.equals("")) {
-                                            bindingSuperficie.lateral1Text.setText(getResources().getString(R.string.lateral1));
+                                        if (urlLateral1.equals( "" )) {
+                                            bindingSuperficie.lateral1Text.setText( getResources().getString( R.string.lateral1 ) );
                                         } else {
-                                            bindingSuperficie.lateral1Text.setText(getResources().getString(R.string.lateral1) + "\u2713");
+                                            bindingSuperficie.lateral1Text.setText( getResources().getString( R.string.lateral1 ) + "\u2713" );
                                         }
                                         //Lateral 2
-                                        if(urlLateral2.equals("")) {
-                                            bindingSuperficie.lateral2Text.setText(getResources().getString(R.string.lateral2));
+                                        if (urlLateral2.equals( "" )) {
+                                            bindingSuperficie.lateral2Text.setText( getResources().getString( R.string.lateral2 ) );
                                         } else {
-                                            bindingSuperficie.lateral2Text.setText(getResources().getString(R.string.lateral2) + "\u2713");
+                                            bindingSuperficie.lateral2Text.setText( getResources().getString( R.string.lateral2 ) + "\u2713" );
                                         }
                                         //Entorno 1
-                                        if(urlEntorno1.equals("")) {
-                                            bindingSuperficie.entorno1Text.setText(getResources().getString(R.string.entorno1));
+                                        if (urlEntorno1.equals( "" )) {
+                                            bindingSuperficie.entorno1Text.setText( getResources().getString( R.string.entorno1 ) );
                                         } else {
-                                            bindingSuperficie.entorno1Text.setText(getResources().getString(R.string.entorno1) + "\u2713");
+                                            bindingSuperficie.entorno1Text.setText( getResources().getString( R.string.entorno1 ) + "\u2713" );
                                         }
                                         //Entorno 2
-                                        if(urlEntorno2.equals("")) {
-                                            bindingSuperficie.entorno2Text.setText(getResources().getString(R.string.entorno2));
+                                        if (urlEntorno2.equals( "" )) {
+                                            bindingSuperficie.entorno2Text.setText( getResources().getString( R.string.entorno2 ) );
                                         } else {
-                                            bindingSuperficie.entorno2Text.setText(getResources().getString(R.string.entorno2) + "\u2713");
+                                            bindingSuperficie.entorno2Text.setText( getResources().getString( R.string.entorno2 ) + "\u2713" );
                                         }
                                         //Entorno 3
-                                        if(urlEntorno3.equals("")) {
-                                            bindingSuperficie.entorno3Text.setText(getResources().getString(R.string.entorno3));
+                                        if (urlEntorno3.equals( "" )) {
+                                            bindingSuperficie.entorno3Text.setText( getResources().getString( R.string.entorno3 ) );
                                         } else {
-                                            bindingSuperficie.entorno3Text.setText(getResources().getString(R.string.entorno3) + "\u2713");
+                                            bindingSuperficie.entorno3Text.setText( getResources().getString( R.string.entorno3 ) + "\u2713" );
                                         }
                                         //Predial
-                                        if(urlPredial.equals("")) {
-                                            bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial));
+                                        if (urlPredial.equals( "" )) {
+                                            bindingSuperficie.predialText.setText( getResources().getString( R.string.reciboPredial ) );
                                         } else {
-                                            bindingSuperficie.predialText.setText(getResources().getString(R.string.reciboPredial) + "\u2713");
+                                            bindingSuperficie.predialText.setText( getResources().getString( R.string.reciboPredial ) + "\u2713" );
                                         }
                                         //Recibo agua
                                         /*if(urlReciboAgua.equals("")) {
@@ -2245,39 +2715,39 @@ public class FragmentModificar extends Fragment implements
                                             bindingSuperficie.reciboLuzText.setText(getResources().getString(R.string.reciboLuz) + "\u2713");
                                         }*/
 
-                                        if (!mdId.equals("") || mdId.equals("0")) {
-                                            mdLat = preferences.getFloat("latMd", 0);
-                                            mdLot = preferences.getFloat("lotMd", 0);
+                                        if (!mdId.equals( "" ) || mdId.equals( "0" )) {
+                                            mdLat = preferences.getFloat( "latMd", 0 );
+                                            mdLot = preferences.getFloat( "lotMd", 0 );
 
-                                            if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")) {
+                                            if (urlFrente.equals( "" ) || urlLateral1.equals( "" ) || urlLateral2.equals( "" ) || urlPredial.equals( "" )) {
 
-                                                Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
-                                                        Toast.LENGTH_SHORT).show();
+                                                Toast.makeText( getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
+                                                        Toast.LENGTH_SHORT ).show();
 
                                             } else {
-                                                String usuario = preferences.getString("usuario", "");
+                                                String usuario = preferences.getString( "usuario", "" );
 
                                                 String frenter = bindingSuperficie.frente.getText().toString();
                                                 String profundidadr = bindingSuperficie.profundidad.getText().toString();
 
-                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, mdId,
+                                                CrearDatosSuperficie datos = new CrearDatosSuperficie( tipoEsquina[0], usuario, mdId,
                                                         frenter, profundidadr, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
-                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
+                                                        String.valueOf( mdLat ), String.valueOf( mdLot ), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
                                                         fechaEntorno1, fechaEntorno2, fechaEntorno3,
-                                                        urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
+                                                        urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0] );
 
-                                                ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
+                                                ProviderCrearSuperficie.getInstance( getContext() ).guardarSuperficie( datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                     @Override
                                                     public void resolve(Codigos codigo) {
                                                         if (codigo.getCodigo() == 200) {
                                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                            a.show(getChildFragmentManager(), "child");
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                            a.show( getChildFragmentManager(), "child" );
+                                                            bindingSuperficie.toolbar.guardar.setEnabled( true );
 
                                                         } else {
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                            Toast.makeText(getContext(), codigo.getMensaje(),
-                                                                    Toast.LENGTH_SHORT).show();
+                                                            bindingSuperficie.toolbar.guardar.setEnabled( true );
+                                                            Toast.makeText( getContext(), codigo.getMensaje(),
+                                                                    Toast.LENGTH_SHORT ).show();
                                                         }
                                                     }
 
@@ -2285,24 +2755,24 @@ public class FragmentModificar extends Fragment implements
                                                     public void reject(Exception e) {
 
                                                     }
-                                                });
+                                                } );
 
                                             }
                                         }
                                     }
-                                });
+                                } );
                             } else {
 
-                                getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-                                bindingSuperficie.toolbar.nombreTitulo.setText(getString(R.string.datossuperficie));
-                                final SharedPreferences preferencesExpansion = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                                getContext().getSharedPreferences( "datosSuperficie", 0 ).edit().clear().apply();
+                                bindingSuperficie.toolbar.nombreTitulo.setText( getString( R.string.datossuperficie ) );
+                                final SharedPreferences preferencesExpansion = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
 
-                                final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences("datosSuperficie", Context.MODE_PRIVATE);
+                                final SharedPreferences preferencesSuperficie = getContext().getSharedPreferences( "datosSuperficie", Context.MODE_PRIVATE );
                                 final SharedPreferences.Editor editor = preferencesSuperficie.edit();
-                                mdLat = preferencesExpansion.getFloat("latMd", 0);
-                                mdLot = preferencesExpansion.getFloat("lotMd", 0);
-                                final String convertido = preferences.getString("mdIdterminar", "");
-                                usuario[0] = preferencesExpansion.getString("usuario", "");
+                                mdLat = preferencesExpansion.getFloat( "latMd", 0 );
+                                mdLot = preferencesExpansion.getFloat( "lotMd", 0 );
+                                final String convertido = preferences.getString( "mdIdterminar", "" );
+                                usuario[0] = preferencesExpansion.getString( "usuario", "" );
 
                                 urlFrente = new String();
                                 urlLateral1 = new String();
@@ -2310,7 +2780,7 @@ public class FragmentModificar extends Fragment implements
 
                                 final String[] tipoEsquina = {"0"};
 
-                                bindingSuperficie.escogeEsquina.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                bindingSuperficie.escogeEsquina.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                         if (isChecked) {
                                             tipoEsquina[0] = "1";
@@ -2318,7 +2788,7 @@ public class FragmentModificar extends Fragment implements
                                             tipoEsquina[0] = "0";
                                         }
                                     }
-                                });
+                                } );
 
 
                                 final String finalUsuario1 = usuario[0];
@@ -2326,26 +2796,26 @@ public class FragmentModificar extends Fragment implements
                                 hourlyTask = new TimerTask() {
                                     @Override
                                     public void run() {
-                                        getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+                                        getContext().getSharedPreferences( "datosSuperficie", 0 ).edit().clear().apply();
                                         String frente = bindingSuperficie.frente.getText().toString();
                                         String profundidad = bindingSuperficie.profundidad.getText().toString();
-                                        if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("")) {
-                                            getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
+                                        if (urlFrente.equals( "" ) || urlLateral1.equals( "" ) || urlLateral2.equals( "" )) {
+                                            getContext().getSharedPreferences( "datosSuperficie", 0 ).edit().clear().apply();
                                         } else {
-                                            CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], finalUsuario1, convertido,
+                                            CrearDatosSuperficie datos = new CrearDatosSuperficie( tipoEsquina[0], finalUsuario1, convertido,
                                                     frente, profundidad, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
-                                                    String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
+                                                    String.valueOf( mdLat ), String.valueOf( mdLot ), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
                                                     fechaEntorno1, fechaEntorno2, fechaEntorno3,
-                                                    urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
-                                            salvarDatosSuperficie(getContext(), datos, editor, preferencesSuperficie);
+                                                    urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0] );
+                                            salvarDatosSuperficie( getContext(), datos, editor, preferencesSuperficie );
 
                                         }
                                     }
                                 };
 
-                                timer.schedule(hourlyTask, 100, 700);
+                                timer.schedule( hourlyTask, 100, 700 );
 
-                                bindingSuperficie.frente.addTextChangedListener(new TextWatcher() {
+                                bindingSuperficie.frente.addTextChangedListener( new TextWatcher() {
                                     public void afterTextChanged(Editable s) {
                                     }
 
@@ -2354,25 +2824,25 @@ public class FragmentModificar extends Fragment implements
 
                                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                                         // Log.e("onTextChanged",s.toString());
-                                        String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
-                                        superficieS = superficieS.replace(" ", "");
+                                        String superficieS = String.valueOf( bindingSuperficie.frente.getText().toString() );
+                                        superficieS = superficieS.replace( " ", "" );
 
-                                        String fondoS = String.valueOf(bindingSuperficie.profundidad.getText().toString());
-                                        fondoS = fondoS.replace(" ", "");
+                                        String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString() );
+                                        fondoS = fondoS.replace( " ", "" );
 
-                                        if (superficieS.equals("") || fondoS.equals("")) {
+                                        if (superficieS.equals( "" ) || fondoS.equals( "" )) {
 
                                         } else {
-                                            area[0] = Float.valueOf(superficieS) * Float.valueOf(fondoS);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "m2");
+                                            area[0] = Float.valueOf( superficieS ) * Float.valueOf( fondoS );
+                                            bindingSuperficie.areaterreno.setText( String.valueOf( area[0] ) + "m2" );
                                         }
                                     }
-                                });
+                                } );
 
                                 final int[] banderaCamaraTermina = {0};
 
 
-                                bindingSuperficie.profundidad.addTextChangedListener(new TextWatcher() {
+                                bindingSuperficie.profundidad.addTextChangedListener( new TextWatcher() {
 
                                     public void afterTextChanged(Editable s) {
                                     }
@@ -2385,303 +2855,307 @@ public class FragmentModificar extends Fragment implements
                                         //String frente = bindingSuperficie.frente.getText().toString();
                                         // String profundidad = bindingSuperficie.profundidad.getText().toString();
 
-                                        String superficieS = String.valueOf(bindingSuperficie.frente.getText().toString());
-                                        superficieS = superficieS.replace(" ", "");
+                                        String superficieS = String.valueOf( bindingSuperficie.frente.getText().toString() );
+                                        superficieS = superficieS.replace( " ", "" );
 
-                                        String fondoS = String.valueOf(bindingSuperficie.profundidad.getText().toString());
-                                        fondoS = fondoS.replace(" ", "");
+                                        String fondoS = String.valueOf( bindingSuperficie.profundidad.getText().toString() );
+                                        fondoS = fondoS.replace( " ", "" );
 
-                                        if (superficieS.equals("") || fondoS.equals("")) {
+                                        if (superficieS.equals( "" ) || fondoS.equals( "" )) {
 
                                         } else {
-                                            area[0] = Float.valueOf(superficieS) * Float.valueOf(fondoS);
-                                            bindingSuperficie.areaterreno.setText(String.valueOf(area[0]) + "m2");
+                                            area[0] = Float.valueOf( superficieS ) * Float.valueOf( fondoS );
+                                            bindingSuperficie.areaterreno.setText( String.valueOf( area[0] ) + "m2" );
                                         }
                                     }
-                                });
+                                } );
 
-                                ServicioGPS n = new ServicioGPS(getContext());
-                                final LatLng mds = new LatLng(mdLat, mdLot);
-                                final LatLng gps = new LatLng(n.getLatitude(), n.getLongitude());
-                                final Boolean distancia = distanciaSuperficie(mds, gps);
+                                ServicioGPS n = new ServicioGPS( getContext() );
+                                final LatLng mds = new LatLng( mdLat, mdLot );
+                                final LatLng gps = new LatLng( n.getLatitude(), n.getLongitude() );
+                                final Boolean distancia = distanciaSuperficie( mds, gps );
 
-                                bindingSuperficie.predial.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.predial.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
-                                        bindingSuperficie.frontal.setAlpha(0.35f);
-                                        bindingSuperficie.lateral1.setAlpha(0.35f);
-                                        bindingSuperficie.lateral2.setAlpha(0.35f);
-                                        bindingSuperficie.predial.setAlpha(1.0f);
+                                        bindingSuperficie.frontal.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                        bindingSuperficie.lateral2.setAlpha( 0.35f );
+                                        bindingSuperficie.predial.setAlpha( 1.0f );
 
-                                        bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                        bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                        bindingSuperficie.viewpredial.setVisibility(View.VISIBLE);
+                                        bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                        bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                        bindingSuperficie.viewpredial.setVisibility( View.VISIBLE );
 
                                         banderaCamaraTermina[0] = 4;
                                         if (urlPredial.length() > 0) {
-                                            Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
-                                            bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                            Picasso.get().load( urlPredial )
+                                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                            bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                         } else {
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                            builder.setMessage("¿De donde quieres tomar la foto?")
-                                                    .setCancelable(false)
-                                                    .setPositiveButton("Desde el celular", new DialogInterface.OnClickListener() {
+                                            AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
+                                            builder.setMessage( "¿De donde quieres tomar la foto?" )
+                                                    .setCancelable( false )
+                                                    .setPositiveButton( "Desde el celular", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            intentGaleria(PICK_IMAGE_REQUEST);
+                                                            intentGaleria( PICK_IMAGE_REQUEST );
                                                         }
-                                                    })
-                                                    .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                    } )
+                                                    .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            intentFoto(CAMERA_PREDIAL);
+                                                            intentFoto( CAMERA_PREDIAL );
                                                         }
-                                                    });
+                                                    } );
                                             AlertDialog alert = builder.create();
-                                            alert.setTitle("FOTO");
+                                            alert.setTitle( "FOTO" );
                                             alert.show();
                                         }
 
 
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.frontal.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.frontal.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         if (distancia) {
-                                            bindingSuperficie.frontal.setAlpha(1.0f);
-                                            bindingSuperficie.lateral1.setAlpha(0.35f);
-                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.frontal.setAlpha( 1.0f );
+                                            bindingSuperficie.lateral1.setAlpha( 0.35f );
+                                            bindingSuperficie.lateral2.setAlpha( 0.35f );
 
-                                            bindingSuperficie.viewfrontal.setVisibility(View.VISIBLE);
-                                            bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                            bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                            bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                            bindingSuperficie.viewfrontal.setVisibility( View.VISIBLE );
+                                            bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                            bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                            bindingSuperficie.viewpredial.setVisibility( View.GONE );
 
                                             banderaCamaraTermina[0] = 1;
                                             if (urlFrente.length() > 0) {
-                                                Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlFrente )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                intentFoto(CAMERA_FRONTAL);
+                                                bindingSuperficie.volver.setVisibility( View.GONE );
+                                                intentFoto( CAMERA_FRONTAL );
                                             }
                                         } else {
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
+                                            Toast.makeText( getContext(), R.string.no_estas,
+                                                    Toast.LENGTH_SHORT ).show();
                                         }
 
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.lateral1.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.lateral1.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
                                         if (distancia) {
-                                            bindingSuperficie.lateral1.setAlpha(1.0f);
-                                            bindingSuperficie.frontal.setAlpha(0.35f);
-                                            bindingSuperficie.lateral2.setAlpha(0.35f);
+                                            bindingSuperficie.lateral1.setAlpha( 1.0f );
+                                            bindingSuperficie.frontal.setAlpha( 0.35f );
+                                            bindingSuperficie.lateral2.setAlpha( 0.35f );
 
-                                            bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                            bindingSuperficie.viewlateral1.setVisibility(View.VISIBLE);
-                                            bindingSuperficie.viewlateral2.setVisibility(View.GONE);
-                                            bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                            bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                            bindingSuperficie.viewlateral1.setVisibility( View.VISIBLE );
+                                            bindingSuperficie.viewlateral2.setVisibility( View.GONE );
+                                            bindingSuperficie.viewpredial.setVisibility( View.GONE );
 
                                             banderaCamaraTermina[0] = 2;
 
                                             if (urlLateral1.length() > 0) {
-                                                Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlLateral1 )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                intentFoto(CAMERA_LATERAL_1);
+                                                bindingSuperficie.volver.setVisibility( View.GONE );
+                                                intentFoto( CAMERA_LATERAL_1 );
                                             }
                                         } else {
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
+                                            Toast.makeText( getContext(), R.string.no_estas,
+                                                    Toast.LENGTH_SHORT ).show();
                                         }
 
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.lateral2.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.lateral2.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         if (distancia) {
-                                            bindingSuperficie.lateral2.setAlpha(1.0f);
-                                            bindingSuperficie.frontal.setAlpha(0.35f);
-                                            bindingSuperficie.lateral1.setAlpha(0.35f);
+                                            bindingSuperficie.lateral2.setAlpha( 1.0f );
+                                            bindingSuperficie.frontal.setAlpha( 0.35f );
+                                            bindingSuperficie.lateral1.setAlpha( 0.35f );
 
-                                            bindingSuperficie.viewfrontal.setVisibility(View.GONE);
-                                            bindingSuperficie.viewlateral1.setVisibility(View.GONE);
-                                            bindingSuperficie.viewlateral2.setVisibility(View.VISIBLE);
-                                            bindingSuperficie.viewpredial.setVisibility(View.GONE);
+                                            bindingSuperficie.viewfrontal.setVisibility( View.GONE );
+                                            bindingSuperficie.viewlateral1.setVisibility( View.GONE );
+                                            bindingSuperficie.viewlateral2.setVisibility( View.VISIBLE );
+                                            bindingSuperficie.viewpredial.setVisibility( View.GONE );
 
                                             banderaCamaraTermina[0] = 3;
                                             if (urlLateral2.length() > 0) {
-                                                Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                                                bindingSuperficie.volver.setVisibility(View.VISIBLE);
+                                                Picasso.get().load( urlLateral2 )
+                                                        .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                                                bindingSuperficie.volver.setVisibility( View.VISIBLE );
                                             } else {
-                                                bindingSuperficie.volver.setVisibility(View.GONE);
-                                                intentFoto(CAMERA_LATERAL_2);
+                                                bindingSuperficie.volver.setVisibility( View.GONE );
+                                                intentFoto( CAMERA_LATERAL_2 );
                                             }
                                         } else {
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
+                                            Toast.makeText( getContext(), R.string.no_estas,
+                                                    Toast.LENGTH_SHORT ).show();
                                         }
 
                                     }
-                                });
+                                } );
 
 
-                                bindingSuperficie.volver.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.volver.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         if (banderaCamaraTermina[0] == 4) {
 
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                            AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
                                             //Setting message manually and performing action on button click
-                                            builder.setMessage("Seleccionar archivo desde")
-                                                    .setCancelable(false)
-                                                    .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                            builder.setMessage( "Seleccionar archivo desde" )
+                                                    .setCancelable( false )
+                                                    .setPositiveButton( "El celular", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            intentGaleria(PICK_IMAGE_REQUEST);
+                                                            intentGaleria( PICK_IMAGE_REQUEST );
                                                         }
-                                                    })
-                                                    .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                    } )
+                                                    .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            intentFoto(CAMERA_PREDIAL);
+                                                            intentFoto( CAMERA_PREDIAL );
                                                         }
-                                                    });
+                                                    } );
 
                                             //Creating dialog box
                                             AlertDialog alert = builder.create();
                                             //Setting the title manually
-                                            alert.setTitle("PREDIAL");
+                                            alert.setTitle( "PREDIAL" );
                                             alert.show();
                                         } else if (distancia) {
                                             if (banderaCamaraTermina[0] == 1) {
-                                                intentFoto(CAMERA);
+                                                intentFoto( CAMERA );
                                             } else if (banderaCamaraTermina[0] == 2) {
-                                                intentFoto(CAMERA_LATERAL_1);
+                                                intentFoto( CAMERA_LATERAL_1 );
                                             } else if (banderaCamaraTermina[0] == 3) {
-                                                intentFoto(CAMERA_LATERAL_2);
-                                            } else if(banderaCamaraTermina[0] ==5){
-                                                intentFoto(CAMERA_ENTORNO_1);
-                                            } else if(banderaCamaraTermina[0] ==6){
-                                                intentFoto(CAMERA_ENTORNO_2);
-                                            } else if(banderaCamaraTermina[0] ==7){
-                                                intentFoto(CAMERA_ENTORNO_3);
+                                                intentFoto( CAMERA_LATERAL_2 );
+                                            } else if (banderaCamaraTermina[0] == 5) {
+                                                intentFoto( CAMERA_ENTORNO_1 );
+                                            } else if (banderaCamaraTermina[0] == 6) {
+                                                intentFoto( CAMERA_ENTORNO_2 );
+                                            } else if (banderaCamaraTermina[0] == 7) {
+                                                intentFoto( CAMERA_ENTORNO_3 );
                                             } else if (banderaCamaraTermina[0] == 8) {
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
                                                 //Setting message manually and performing action on button click
-                                                builder.setMessage("Seleccionar archivo desde")
-                                                        .setCancelable(true)
-                                                        .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                                builder.setMessage( "Seleccionar archivo desde" )
+                                                        .setCancelable( true )
+                                                        .setPositiveButton( "El celular", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                intentGaleria(PICK_IMAGE_REQUEST_RECIBO_AGUA);
+                                                                intentGaleria( PICK_IMAGE_REQUEST_RECIBO_AGUA );
                                                             }
-                                                        })
-                                                        .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                        } )
+                                                        .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                intentFoto(CAMERA_RECIBO_AGUA);
+                                                                intentFoto( CAMERA_RECIBO_AGUA );
                                                             }
-                                                        });
+                                                        } );
                                                 AlertDialog alert = builder.create();
-                                                alert.setTitle("RECIBO AGUA");
+                                                alert.setTitle( "RECIBO AGUA" );
                                                 alert.show();
                                             } else if (banderaCamaraTermina[0] == 9) {
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                AlertDialog.Builder builder = new AlertDialog.Builder( getContext() );
                                                 //Setting message manually and performing action on button click
-                                                builder.setMessage("Seleccionar archivo desde")
-                                                        .setCancelable(true)
-                                                        .setPositiveButton("El celular", new DialogInterface.OnClickListener() {
+                                                builder.setMessage( "Seleccionar archivo desde" )
+                                                        .setCancelable( true )
+                                                        .setPositiveButton( "El celular", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                intentGaleria(PICK_IMAGE_REQUEST_RECIBO_LUZ);
+                                                                intentGaleria( PICK_IMAGE_REQUEST_RECIBO_LUZ );
                                                             }
-                                                        })
-                                                        .setNegativeButton("Tomar foto", new DialogInterface.OnClickListener() {
+                                                        } )
+                                                        .setNegativeButton( "Tomar foto", new DialogInterface.OnClickListener() {
                                                             public void onClick(DialogInterface dialog, int id) {
-                                                                intentFoto(CAMERA_RECIBO_LUZ);
+                                                                intentFoto( CAMERA_RECIBO_LUZ );
                                                             }
-                                                        });
+                                                        } );
                                                 AlertDialog alert = builder.create();
-                                                alert.setTitle("RECIBO LUZ");
+                                                alert.setTitle( "RECIBO LUZ" );
                                                 alert.show();
                                             }
                                         } else {
-                                            Toast.makeText(getContext(), R.string.no_estas,
-                                                    Toast.LENGTH_SHORT).show();
+                                            Toast.makeText( getContext(), R.string.no_estas,
+                                                    Toast.LENGTH_SHORT ).show();
                                         }
 
 
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.cancelar.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.cancelar.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelar a = new FragmentDialogCancelar();
-                                        a.show(getChildFragmentManager(), "child");
+                                        a.show( getChildFragmentManager(), "child" );
                                     }
-                                });
+                                } );
 
 
-                                bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.toolbar.back.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(), "child");
+                                        a.show( getChildFragmentManager(), "child" );
                                     }
-                                });
+                                } );
 
-                                bindingSuperficie.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+                                bindingSuperficie.toolbar.guardar.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        bindingSuperficie.toolbar.guardar.setEnabled(false);
+                                        bindingSuperficie.toolbar.guardar.setEnabled( false );
 
-                                        final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                                        final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
 
-                                        String mdId = preferences.getString("mdIdterminar", "");
+                                        String mdId = preferences.getString( "mdIdterminar", "" );
 
                                         if (mdId.length() == 1) {
                                             mdId = "";
                                         }
 
 
-                                        if (!mdId.equals("") || mdId.equals("0")) {
-                                            mdLat = preferences.getFloat("latMd", 0);
-                                            mdLot = preferences.getFloat("lotMd", 0);
+                                        if (!mdId.equals( "" ) || mdId.equals( "0" )) {
+                                            mdLat = preferences.getFloat( "latMd", 0 );
+                                            mdLot = preferences.getFloat( "lotMd", 0 );
 
-                                            if (urlFrente.equals("") || urlLateral1.equals("") || urlLateral2.equals("") || urlPredial.equals("")) {
-                                                Toast.makeText(getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
-                                                        Toast.LENGTH_SHORT).show();
+                                            if (urlFrente.equals( "" ) || urlLateral1.equals( "" ) || urlLateral2.equals( "" ) || urlPredial.equals( "" )) {
+                                                Toast.makeText( getContext(), "Para mandar la superficie es necesario las fotografías y el area del terreno",
+                                                        Toast.LENGTH_SHORT ).show();
                                             } else {
-                                                String usuario = preferences.getString("usuario", "");
+                                                String usuario = preferences.getString( "usuario", "" );
 
                                                 String frente = bindingSuperficie.frente.getText().toString();
                                                 String profundidad = bindingSuperficie.profundidad.getText().toString();
 
-                                                CrearDatosSuperficie datos = new CrearDatosSuperficie(tipoEsquina[0], usuario, mdId,
+                                                CrearDatosSuperficie datos = new CrearDatosSuperficie( tipoEsquina[0], usuario, mdId,
                                                         frente, profundidad, urlLateral1, urlLateral2, urlFrente, urlEntorno1, urlEntorno2, urlEntorno3,
-                                                        String.valueOf(mdLat), String.valueOf(mdLot), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
+                                                        String.valueOf( mdLat ), String.valueOf( mdLot ), "", VERSION_APP, fechaFrente, fechaLateral1, fechaLateral2,
                                                         fechaEntorno1, fechaEntorno2, fechaEntorno3,
-                                                        urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0]);
+                                                        urlPredial, fechaPredial, urlReciboAgua, fechaReciboAgua, urlReciboLuz, fechaReciboLuz, conDrenaje[0] );
 
-                                                ProviderCrearSuperficie.getInstance(getContext()).guardarSuperficie(datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
+                                                ProviderCrearSuperficie.getInstance( getContext() ).guardarSuperficie( datos, new ProviderCrearSuperficie.InterfaceCrearDatosSuperficie() {
                                                     @Override
                                                     public void resolve(Codigos codigo) {
                                                         if (codigo.getCodigo() == 200) {
                                                             FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                            a.show(getChildFragmentManager(), "child");
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
+                                                            a.show( getChildFragmentManager(), "child" );
+                                                            bindingSuperficie.toolbar.guardar.setEnabled( true );
 
                                                         } else {
-                                                            bindingSuperficie.toolbar.guardar.setEnabled(true);
-                                                            Toast.makeText(getContext(), codigo.getMensaje(),
-                                                                    Toast.LENGTH_SHORT).show();
+                                                            bindingSuperficie.toolbar.guardar.setEnabled( true );
+                                                            Toast.makeText( getContext(), codigo.getMensaje(),
+                                                                    Toast.LENGTH_SHORT ).show();
                                                         }
                                                     }
 
@@ -2689,14 +3163,14 @@ public class FragmentModificar extends Fragment implements
                                                     public void reject(Exception e) {
 
                                                     }
-                                                });
+                                                } );
 
                                             }
                                         }
                                     }
-                                });
-                                String nombreMd = preferencesExpansion.getString("nombreSitio", "");
-                                bindingSuperficie.robotoTextView2.setText(nombreMd);
+                                } );
+                                String nombreMd = preferencesExpansion.getString( "nombreSitio", "" );
+                                bindingSuperficie.robotoTextView2.setText( nombreMd );
 
 
                                 //===================================================================//
@@ -2708,39 +3182,39 @@ public class FragmentModificar extends Fragment implements
                         @Override
                         public void reject(Exception e) {
                         }
-                    });
+                    } );
 
 
         } else if (position == 3) {
 
             mensaje = "fragment 2";
-            bindingZonificacion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_3, container, false);
+            bindingZonificacion = DataBindingUtil.inflate( inflater, R.layout.fragment_autoriza_3, container, false );
             view = bindingZonificacion.getRoot();
 
-            getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
+            getContext().getSharedPreferences( "datosZonificacion", 0 ).edit().clear().apply();
 
 
             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                    .findFragmentById(R.id.map);
+                    .findFragmentById( R.id.map );
 
-            mapFragment.getMapAsync(onMapReadyCallbackZonificacion);
+            mapFragment.getMapAsync( onMapReadyCallbackZonificacion );
 
 
-            final SharedPreferences[] preferences = {getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE)};
-            final String mdIdterminar = preferences[0].getString("mdIdterminar", "");
-            mdLat = preferences[0].getFloat("latMd", 0);
-            mdLot = preferences[0].getFloat("lotMd", 0);
-            final String usuario = preferences[0].getString("usuario", "");
+            final SharedPreferences[] preferences = {getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE )};
+            final String mdIdterminar = preferences[0].getString( "mdIdterminar", "" );
+            mdLat = preferences[0].getFloat( "latMd", 0 );
+            mdLot = preferences[0].getFloat( "lotMd", 0 );
+            final String usuario = preferences[0].getString( "usuario", "" );
 
-            String nombreMd = preferences[0].getString("nombreSitio", "");
-            bindingZonificacion.robotoTextView2.setText(nombreMd);
+            String nombreMd = preferences[0].getString( "nombreSitio", "" );
+            bindingZonificacion.robotoTextView2.setText( nombreMd );
 
-            bindingZonificacion.toolbar.nombreTitulo.setText(getString(R.string.zonifica));
+            bindingZonificacion.toolbar.nombreTitulo.setText( getString( R.string.zonifica ) );
 
 
             final SlideUp slideUp;
-            slideUp = new SlideUpBuilder(bindingZonificacion.slideRuralStart.slideViewRural)
-                    .withListeners(new SlideUp.Listener.Events() {
+            slideUp = new SlideUpBuilder( bindingZonificacion.slideRuralStart.slideViewRural )
+                    .withListeners( new SlideUp.Listener.Events() {
                         @Override
                         public void onSlide(float percent) {
                         }
@@ -2753,49 +3227,66 @@ public class FragmentModificar extends Fragment implements
                                 bindingZonificacion.fab.show();
                             }
                         }
-                    })
-                    .withStartGravity(Gravity.TOP)
-                    .withLoggingEnabled(true)
-                    .withStartState(SlideUp.State.HIDDEN)
+                    } )
+                    .withStartGravity( Gravity.TOP )
+                    .withLoggingEnabled( true )
+                    .withStartState( SlideUp.State.HIDDEN )
                     .build();
 
-            bindingZonificacion.fab.setOnClickListener(new View.OnClickListener() {
+            bindingZonificacion.fab.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     bindingZonificacion.fab.hide();
                     slideUp.show();
                 }
-            });
+            } );
 
 
             if (true) {
-                preferences[0] = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                ProviderDatosZonificacion.getInstance(getContext())
-                        .obtenerDatosZonificacion(mdIdterminar, usuario, new ProviderDatosZonificacion.ConsultaDatosZonificacion() {
+                preferences[0] = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+                ProviderDatosZonificacion.getInstance( getContext() )
+                        .obtenerDatosZonificacion( mdIdterminar, usuario, new ProviderDatosZonificacion.ConsultaDatosZonificacion() {
                             @Override
                             public void resolve(Zonificacion creaZonificacion) {
                                 if (creaZonificacion.getCodigo() == 200) {
 
-                                    getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
+                                    getContext().getSharedPreferences( "datosZonificacion", 0 ).edit().clear().apply();
                                     clearZoni();
-                                    LatLng mds = new LatLng(mdLat, mdLot);
+                                    LatLng mds = new LatLng( mdLat, mdLot );
                                     LatLng mdsNuevos = null;
 
                                     detallesCom = new ArrayList<>();
                                     detallesGen = new ArrayList<>();
+                                    generadoresArreglo = new ArrayList<>();
+                                    radiosArreglo = new ArrayList<>();
+                                    radiosLong = new ArrayList<>();
+                                    radiosLat = new ArrayList<>();
+                                    radiosAnillo = new ArrayList<>();
 
                                     for (int i = 0; i < creaZonificacion.getCompetencia().size(); i++) {
-                                        for (int j = 0; j < creaZonificacion.getCompetencia().get(i).getDetalle().size(); j++) {
-                                            detallesCom.add(creaZonificacion.getCompetencia().get(i).getDetalle().get(j));
+                                        for (int j = 0; j < creaZonificacion.getCompetencia().get( i ).getDetalle().size(); j++) {
+                                            detallesCom.add( creaZonificacion.getCompetencia().get( i ).getDetalle().get( j ) );
                                         }
                                     }
 
                                     for (int i = 0; i < creaZonificacion.getGeneradores().size(); i++) {
-                                        for (int j = 0; j < creaZonificacion.getGeneradores().get(i).getDetalle().size(); j++) {
-                                            detallesGen.add(creaZonificacion.getGeneradores().get(i).getDetalle().get(j));
+                                        for (int j = 0; j < creaZonificacion.getGeneradores().get( i ).getDetalle().size(); j++) {
+                                            detallesGen.add( creaZonificacion.getGeneradores().get( i ).getDetalle().get( j ) );
                                         }
                                     }
 
+                                    for (int i = 0; i < creaZonificacion.getArrayRadios().size(); i++) {
+                                        radiosLong.add( creaZonificacion.getArrayRadios().get( i ).getLongitud() );
+                                        radiosLat.add( creaZonificacion.getArrayRadios().get( i ).getLatitud() );
+                                        radiosAnillo.add( creaZonificacion.getArrayRadios().get( i ).getAnillo() );
+                                        for (int j = 0; j < creaZonificacion.getArrayRadios().get( i ).getGeneradores().size(); j++) {
+                                            radiosArreglo.add( creaZonificacion.getArrayRadios().get( i ).getGeneradores().get( j ) );
+                                        }
+                                    }
+
+                                    for (int i = 0; i < creaZonificacion.getArrayGenerador().size(); i++) {
+                                        generadoresArreglo.add( creaZonificacion.getArrayGenerador().get( i ) );
+                                    }
 
                                     if (detallesGen.size() == 0) {
                                         // mdsNuevos = new LatLng(0.0, 0.0);
@@ -2803,11 +3294,11 @@ public class FragmentModificar extends Fragment implements
                                         //    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
                                     } else {
                                         for (int j = 0; j < detallesGen.size(); j++) {
-                                            mdsNuevos = new LatLng(Double.valueOf(detallesGen.get(j).getLatitud()),
-                                                    Double.valueOf(detallesGen.get(j).getLongitud()));
+                                            mdsNuevos = new LatLng( Double.valueOf( detallesGen.get( j ).getLatitud() ),
+                                                    Double.valueOf( detallesGen.get( j ).getLongitud() ) );
 
-                                            colocarMarcadorZoni(mdsNuevos, mMapZona, detallesGen.get(j).getGeneradorId(),
-                                                    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, detallesGen.get(j).getNivelId());
+                                            colocarMarcadorZoni( mdsNuevos, mMapZona, detallesGen.get( j ).getGeneradorId(),
+                                                    usuario, mds, String.valueOf( mdIdterminar ), detallesGen, detallesCom, detallesGen.get( j ).getNivelId() );
                                         }
                                     }
 
@@ -2817,30 +3308,30 @@ public class FragmentModificar extends Fragment implements
                                         //usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
                                     } else {
                                         for (int j = 0; j < detallesCom.size(); j++) {
-                                            mdsNuevos = new LatLng(Double.valueOf(detallesCom.get(j).getLatitud()),
-                                                    Double.valueOf(detallesCom.get(j).getLongitud()));
-                                            colocarMarcadorZoni(mdsNuevos, mMapZona, detallesCom.get(j).getGeneradorId(),
-                                                    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, detallesCom.get(j).getNivelId());
+                                            mdsNuevos = new LatLng( Double.valueOf( detallesCom.get( j ).getLatitud() ),
+                                                    Double.valueOf( detallesCom.get( j ).getLongitud() ) );
+                                            colocarMarcadorZoni( mdsNuevos, mMapZona, detallesCom.get( j ).getGeneradorId(),
+                                                    usuario, mds, String.valueOf( mdIdterminar ), detallesGen, detallesCom, detallesCom.get( j ).getNivelId() );
                                         }
                                     }
 
                                     listGeneradores = new ArrayList<>();
 
                                 } else {
-                                    Toast.makeText(getContext(), "Error al obtener los datos",
-                                            Toast.LENGTH_LONG).show();
+                                    Toast.makeText( getContext(), "Error al obtener los datos",
+                                            Toast.LENGTH_LONG ).show();
                                 }
                             }
 
                             @Override
                             public void reject(Exception e) {
                             }
-                        });
+                        } );
 
 
-                slideUX(bindingZonificacion);
+                slideUX( bindingZonificacion );
 
-                ProviderDatosCompetencias.getInstance(getContext()).obtenerDatosCompetencias(usuario, mdIdterminar, new ProviderDatosCompetencias.ConsultaDatosCompetencia() {
+                ProviderDatosCompetencias.getInstance( getContext() ).obtenerDatosCompetencias( usuario, mdIdterminar, new ProviderDatosCompetencias.ConsultaDatosCompetencia() {
                     @Override
                     public void resolve(CompetenciasGeneradoresV2 competenciasGeneradores) {
 
@@ -2857,249 +3348,249 @@ public class FragmentModificar extends Fragment implements
                                 tianguiArrayList = new ArrayList<>();
 
                                 for (int i = 0; i < competenciasGeneradores.getCompetencias().getCompetencias().size(); i++) {
-                                    listCompetencia.add(competenciasGeneradores.getCompetencias().getCompetencias().get(i));
+                                    listCompetencia.add( competenciasGeneradores.getCompetencias().getCompetencias().get( i ) );
                                 }
 
                                 for (int i = 0; i < competenciasGeneradores.getCompetencias().getTiendaNeto().size(); i++) {
-                                    listCompetenciaTiendaNeto.add(competenciasGeneradores.getCompetencias().getTiendaNeto().get(i));
+                                    listCompetenciaTiendaNeto.add( competenciasGeneradores.getCompetencias().getTiendaNeto().get( i ) );
                                 }
 
                                 for (int i = 0; i < competenciasGeneradores.getGeneradores().getOtrosGeneradores().size(); i++) {
-                                    listGeneradores.add(competenciasGeneradores.getGeneradores().getOtrosGeneradores().get(i));
+                                    listGeneradores.add( competenciasGeneradores.getGeneradores().getOtrosGeneradores().get( i ) );
                                 }
 
                                 for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegocios().size(); i++) {
-                                    listGeneradoresNegocios.add(competenciasGeneradores.getGeneradores().getNegocios().get(i));
+                                    listGeneradoresNegocios.add( competenciasGeneradores.getGeneradores().getNegocios().get( i ) );
                                 }
 
                                 for (int i = 0; i < competenciasGeneradores.getGeneradores().getTransportePublico().size(); i++) {
-                                    listGeneradoresTransporte.add(competenciasGeneradores.getGeneradores().getTransportePublico().get(i));
+                                    listGeneradoresTransporte.add( competenciasGeneradores.getGeneradores().getTransportePublico().get( i ) );
                                 }
                                 ///////
                                 for (int i = 0; i < competenciasGeneradores.getGeneradores().getNegociosDeComida().size(); i++) {
-                                    negociosDeComidaArrayList.add(competenciasGeneradores.getGeneradores().getNegociosDeComida().get(i));
+                                    negociosDeComidaArrayList.add( competenciasGeneradores.getGeneradores().getNegociosDeComida().get( i ) );
                                 }
 
                                 for (int i = 0; i < competenciasGeneradores.getGeneradores().getMercadoPublico().size(); i++) {
-                                    mercadoPublicoArrayList.add(competenciasGeneradores.getGeneradores().getMercadoPublico().get(i));
+                                    mercadoPublicoArrayList.add( competenciasGeneradores.getGeneradores().getMercadoPublico().get( i ) );
                                 }
 
                                 for (int i = 0; i < competenciasGeneradores.getGeneradores().getTianguis().size(); i++) {
-                                    tianguiArrayList.add(competenciasGeneradores.getGeneradores().getTianguis().get(i));
+                                    tianguiArrayList.add( competenciasGeneradores.getGeneradores().getTianguis().get( i ) );
                                 }
 
 
                                 /****** transporte negocio comida *******/
 
-                                adapterListaGeneradoresNegociosComida = new AdapterListaGeneradoresNegociosComida(negociosDeComidaArrayList, getContext(), clickNegociosComida);
-                                bindingZonificacion.content2.contentListaComida.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.content2.contentListaComida.setAdapter(adapterListaGeneradoresNegociosComida);
-                                RecyclerView.LayoutManager mLayoutManagerNegociosComida = new GridLayoutManager(getContext(), 4);
+                                adapterListaGeneradoresNegociosComida = new AdapterListaGeneradoresNegociosComida( negociosDeComidaArrayList, getContext(), clickNegociosComida );
+                                bindingZonificacion.content2.contentListaComida.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.content2.contentListaComida.setAdapter( adapterListaGeneradoresNegociosComida );
+                                RecyclerView.LayoutManager mLayoutManagerNegociosComida = new GridLayoutManager( getContext(), 4 );
 
-                                bindingZonificacion.content2.contentListaComida.setLayoutManager(mLayoutManagerNegociosComida);
-                                bindingZonificacion.content2.contentListaComida.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(4, dpToPx(5), true));
-                                bindingZonificacion.content2.contentListaComida.setItemAnimator(new DefaultItemAnimator());
+                                bindingZonificacion.content2.contentListaComida.setLayoutManager( mLayoutManagerNegociosComida );
+                                bindingZonificacion.content2.contentListaComida.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 4, dpToPx( 5 ), true ) );
+                                bindingZonificacion.content2.contentListaComida.setItemAnimator( new DefaultItemAnimator() );
 
                                 /****** mercado publico *******/
-                                adapterListaGeneradoresMercadoPublico = new AdapterListaGeneradoresMercadoPublico(mercadoPublicoArrayList, getContext(), clickMercadoPublico);
-                                bindingZonificacion.content2.contentListaMercado.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.content2.contentListaMercado.setAdapter(adapterListaGeneradoresMercadoPublico);
-                                RecyclerView.LayoutManager mLayoutManagerMercado = new GridLayoutManager(getContext(), 4);
+                                adapterListaGeneradoresMercadoPublico = new AdapterListaGeneradoresMercadoPublico( mercadoPublicoArrayList, getContext(), clickMercadoPublico );
+                                bindingZonificacion.content2.contentListaMercado.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.content2.contentListaMercado.setAdapter( adapterListaGeneradoresMercadoPublico );
+                                RecyclerView.LayoutManager mLayoutManagerMercado = new GridLayoutManager( getContext(), 4 );
 
-                                bindingZonificacion.content2.contentListaMercado.setLayoutManager(mLayoutManagerMercado);
-                                bindingZonificacion.content2.contentListaMercado.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(4, dpToPx(5), true));
-                                bindingZonificacion.content2.contentListaMercado.setItemAnimator(new DefaultItemAnimator());
+                                bindingZonificacion.content2.contentListaMercado.setLayoutManager( mLayoutManagerMercado );
+                                bindingZonificacion.content2.contentListaMercado.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 4, dpToPx( 5 ), true ) );
+                                bindingZonificacion.content2.contentListaMercado.setItemAnimator( new DefaultItemAnimator() );
 
                                 /****** tianguis *******/
-                                adapterListaGeneradoresTianguis = new AdapterListaGeneradoresTianguis(tianguiArrayList, getContext(), clickTiaguis);
-                                bindingZonificacion.content2.contentListaTianguis.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.content2.contentListaTianguis.setAdapter(adapterListaGeneradoresTianguis);
+                                adapterListaGeneradoresTianguis = new AdapterListaGeneradoresTianguis( tianguiArrayList, getContext(), clickTiaguis );
+                                bindingZonificacion.content2.contentListaTianguis.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.content2.contentListaTianguis.setAdapter( adapterListaGeneradoresTianguis );
 
 
-                                RecyclerView.LayoutManager mLayoutManagerTianguis = new GridLayoutManager(getContext(), 4);
+                                RecyclerView.LayoutManager mLayoutManagerTianguis = new GridLayoutManager( getContext(), 4 );
 
-                                bindingZonificacion.content2.contentListaTianguis.setLayoutManager(mLayoutManagerTianguis);
-                                bindingZonificacion.content2.contentListaTianguis.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(4, dpToPx(5), true));
-                                bindingZonificacion.content2.contentListaTianguis.setItemAnimator(new DefaultItemAnimator());
+                                bindingZonificacion.content2.contentListaTianguis.setLayoutManager( mLayoutManagerTianguis );
+                                bindingZonificacion.content2.contentListaTianguis.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 4, dpToPx( 5 ), true ) );
+                                bindingZonificacion.content2.contentListaTianguis.setItemAnimator( new DefaultItemAnimator() );
 
 
                                 /****** transporte publico *******/
-                                adapterTransporte = new AdapterListaGeneradoresTransporte(listGeneradoresTransporte, getContext(), clickTransporte);
-                                bindingZonificacion.content2.contentListaTransporte.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.content2.contentListaTransporte.setAdapter(adapterTransporte);
+                                adapterTransporte = new AdapterListaGeneradoresTransporte( listGeneradoresTransporte, getContext(), clickTransporte );
+                                bindingZonificacion.content2.contentListaTransporte.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.content2.contentListaTransporte.setAdapter( adapterTransporte );
 
-                                RecyclerView.LayoutManager mLayoutManagerTransporte = new GridLayoutManager(getContext(), 4);
+                                RecyclerView.LayoutManager mLayoutManagerTransporte = new GridLayoutManager( getContext(), 4 );
 
-                                bindingZonificacion.content2.contentListaTransporte.setLayoutManager(mLayoutManagerTransporte);
-                                bindingZonificacion.content2.contentListaTransporte.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(4, dpToPx(5), true));
-                                bindingZonificacion.content2.contentListaTransporte.setItemAnimator(new DefaultItemAnimator());
-
-                                /****** otros generadores *******/
-                                adapterNegocios = new AdapterListaGeneradoresNegocios(listGeneradoresNegocios, getContext(), clickNegocio);
-                                bindingZonificacion.content2.contentListaNegocios.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.content2.contentListaNegocios.setAdapter(adapterNegocios);
-
-                                RecyclerView.LayoutManager mLayoutManagerNegocios = new GridLayoutManager(getContext(), 4);
-                                bindingZonificacion.content2.contentListaNegocios.setLayoutManager(mLayoutManagerNegocios);
-                                bindingZonificacion.content2.contentListaNegocios.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(4, dpToPx(5), true));
-                                bindingZonificacion.content2.contentListaNegocios.setItemAnimator(new DefaultItemAnimator());
+                                bindingZonificacion.content2.contentListaTransporte.setLayoutManager( mLayoutManagerTransporte );
+                                bindingZonificacion.content2.contentListaTransporte.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 4, dpToPx( 5 ), true ) );
+                                bindingZonificacion.content2.contentListaTransporte.setItemAnimator( new DefaultItemAnimator() );
 
                                 /****** otros generadores *******/
-                                adapter2 = new AdapterListaGeneradores(listGeneradores, getContext(), clicks);
-                                bindingZonificacion.content2.contentLista.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.content2.contentLista.setAdapter(adapter2);
+                                adapterNegocios = new AdapterListaGeneradoresNegocios( listGeneradoresNegocios, getContext(), clickNegocio );
+                                bindingZonificacion.content2.contentListaNegocios.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.content2.contentListaNegocios.setAdapter( adapterNegocios );
 
-                                RecyclerView.LayoutManager mLayoutManager2 = new GridLayoutManager(getContext(), 4);
-                                bindingZonificacion.content2.contentLista.setLayoutManager(mLayoutManager2);
-                                bindingZonificacion.content2.contentLista.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(4, dpToPx(5), true));
-                                bindingZonificacion.content2.contentLista.setItemAnimator(new DefaultItemAnimator());
+                                RecyclerView.LayoutManager mLayoutManagerNegocios = new GridLayoutManager( getContext(), 4 );
+                                bindingZonificacion.content2.contentListaNegocios.setLayoutManager( mLayoutManagerNegocios );
+                                bindingZonificacion.content2.contentListaNegocios.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 4, dpToPx( 5 ), true ) );
+                                bindingZonificacion.content2.contentListaNegocios.setItemAnimator( new DefaultItemAnimator() );
+
+                                /****** otros generadores *******/
+                                adapter2 = new AdapterListaGeneradores( listGeneradores, getContext(), clicks );
+                                bindingZonificacion.content2.contentLista.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.content2.contentLista.setAdapter( adapter2 );
+
+                                RecyclerView.LayoutManager mLayoutManager2 = new GridLayoutManager( getContext(), 4 );
+                                bindingZonificacion.content2.contentLista.setLayoutManager( mLayoutManager2 );
+                                bindingZonificacion.content2.contentLista.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 4, dpToPx( 5 ), true ) );
+                                bindingZonificacion.content2.contentLista.setItemAnimator( new DefaultItemAnimator() );
 
                                 /****** competencias *******/
-                                adapter = new AdapterListaCompetencia(listCompetencia, getContext(), click);
-                                bindingZonificacion.contenido.contentLista.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.contenido.contentLista.setAdapter(adapter);
+                                adapter = new AdapterListaCompetencia( listCompetencia, getContext(), click );
+                                bindingZonificacion.contenido.contentLista.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.contenido.contentLista.setAdapter( adapter );
 
-                                RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
-                                bindingZonificacion.contenido.contentLista.setLayoutManager(mLayoutManager);
-                                bindingZonificacion.contenido.contentLista.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(3, dpToPx(4), true));
-                                bindingZonificacion.contenido.contentLista.setItemAnimator(new DefaultItemAnimator());
+                                RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager( getContext(), 3 );
+                                bindingZonificacion.contenido.contentLista.setLayoutManager( mLayoutManager );
+                                bindingZonificacion.contenido.contentLista.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 3, dpToPx( 4 ), true ) );
+                                bindingZonificacion.contenido.contentLista.setItemAnimator( new DefaultItemAnimator() );
 
                                 /****** tiendas neto *******/
-                                adapterTiendaNeto = new AdapterListaTiendaNeto(listCompetenciaTiendaNeto, getContext(), clickTiendaNeto);
-                                bindingZonificacion.contenido.contentListaTienda.setLayoutManager(new LinearLayoutManager(getContext()));
-                                bindingZonificacion.contenido.contentListaTienda.setAdapter(adapterTiendaNeto);
+                                adapterTiendaNeto = new AdapterListaTiendaNeto( listCompetenciaTiendaNeto, getContext(), clickTiendaNeto );
+                                bindingZonificacion.contenido.contentListaTienda.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                bindingZonificacion.contenido.contentListaTienda.setAdapter( adapterTiendaNeto );
 
-                                RecyclerView.LayoutManager mLayoutManagerTienda = new GridLayoutManager(getContext(), 3);
-                                bindingZonificacion.contenido.contentListaTienda.setLayoutManager(mLayoutManagerTienda);
-                                bindingZonificacion.contenido.contentListaTienda.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(3, dpToPx(4), true));
-                                bindingZonificacion.contenido.contentListaTienda.setItemAnimator(new DefaultItemAnimator());
+                                RecyclerView.LayoutManager mLayoutManagerTienda = new GridLayoutManager( getContext(), 3 );
+                                bindingZonificacion.contenido.contentListaTienda.setLayoutManager( mLayoutManagerTienda );
+                                bindingZonificacion.contenido.contentListaTienda.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 3, dpToPx( 4 ), true ) );
+                                bindingZonificacion.contenido.contentListaTienda.setItemAnimator( new DefaultItemAnimator() );
 
                             }
                         }
 
 
                         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                                .findFragmentById(R.id.map);
-                        mapFragment.getMapAsync(onMapReadyCallbackZonificacion);
+                                .findFragmentById( R.id.map );
+                        mapFragment.getMapAsync( onMapReadyCallbackZonificacion );
                     }
 
                     @Override
                     public void reject(Exception e) {
 
                     }
-                });
+                } );
 
-                bindingZonificacion.competencia.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.competencia.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideCompetencia.show();
-                        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                        SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putInt("zonificacion", 0);
+                        editor.putInt( "zonificacion", 0 );
                         editor.apply();
                     }
-                });
+                } );
 
-                bindingZonificacion.generador.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.generador.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideGenerador.show();
-                        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                        SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putInt("zonificacion", 1);
+                        editor.putInt( "zonificacion", 1 );
                         editor.apply();
                     }
-                });
+                } );
 
-                bindingZonificacion.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.toolbar.back.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                        a.show(getChildFragmentManager(), "child");
+                        a.show( getChildFragmentManager(), "child" );
                     }
-                });
+                } );
 
-                bindingZonificacion.contenido.competencias.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.contenido.competencias.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideCompetencia.hide();
                     }
-                });
+                } );
 
-                bindingZonificacion.content2.generadores.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.content2.generadores.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideGenerador.hide();
                     }
-                });
+                } );
 
-                bindingZonificacion.content2.negocios.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.content2.negocios.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideGenerador.hide();
                     }
-                });
+                } );
 
-                bindingZonificacion.contenido.neto.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.contenido.neto.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideCompetencia.hide();
                     }
-                });
+                } );
 
                 ///////////////////////////////
 
-                bindingZonificacion.content2.transporte.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.content2.transporte.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideGenerador.hide();
-                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.GONE);
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility( View.GONE );
                     }
-                });
+                } );
 
-                bindingZonificacion.content2.negC.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.content2.negC.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideGenerador.hide();
-                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.GONE);
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility( View.GONE );
                     }
-                });
+                } );
 
-                bindingZonificacion.content2.merP.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.content2.merP.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideGenerador.hide();
-                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.GONE);
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility( View.GONE );
                     }
-                });
+                } );
 
-                bindingZonificacion.content2.tiand.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.content2.tiand.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         slideGenerador.hide();
-                        bindingZonificacion.content2.contentSlideUpView.setVisibility(View.GONE);
+                        bindingZonificacion.content2.contentSlideUpView.setVisibility( View.GONE );
                     }
-                });
+                } );
 
 
-                bindingZonificacion.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+                bindingZonificacion.toolbar.guardar.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        bindingZonificacion.toolbar.guardar.setEnabled(false);
+                        bindingZonificacion.toolbar.guardar.setEnabled( false );
 
-                        final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                        String mdId = preferences.getString("mdIdterminar", "");
+                        final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+                        String mdId = preferences.getString( "mdIdterminar", "" );
 
                         if (mdId.length() == 1) {
                             mdId = "";
                         }
 
-                        if (!mdId.equals("")) {
+                        if (!mdId.equals( "" )) {
 
-                            if(generadores != null && generadores.size() > 0 && generadores.get(0).getDetalles().size() >= 10) {
-                                loadingProgress(progressDialog, 0);
+                            if (generadores != null && generadores.size() > 0 && generadores.get( 0 ).getDetalles().size() >= 10) {
+                                loadingProgress( progressDialog, 0 );
 
-                                if (zonificacionJson.equals("")) {
+                                if (zonificacionJson.equals( "" )) {
 
 //                                detallesG = new ArrayList<>();;
 //
@@ -3140,67 +3631,67 @@ public class FragmentModificar extends Fragment implements
                                             mdIdterminar,
                                             competencia,
                                             generadores,
-                                            String.valueOf(mdLat),
-                                            String.valueOf(mdLot),
+                                            String.valueOf( mdLat ),
+                                            String.valueOf( mdLot ),
                                             NUM_TELEFONO,
                                             VERSION_APP
                                     );
 
-                                    zonificacionJson = getJsonString(zonificacion);
+                                    zonificacionJson = getJsonString( zonificacion );
 
-                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                    ProviderCrearZonificacion.getInstance( getContext() ).crearDatosZonificacion( zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
                                         @Override
                                         public void resolve(Codigos codigo) {
                                             if (codigo.getCodigo() == 200) {
                                                 FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                a.show(getChildFragmentManager(), "child");
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                a.show( getChildFragmentManager(), "child" );
+                                                bindingZonificacion.toolbar.guardar.setEnabled( true );
                                             } else {
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
-                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
+                                                bindingZonificacion.toolbar.guardar.setEnabled( true );
+                                                Toast.makeText( getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT ).show();
                                             }
                                         }
 
                                         @Override
                                         public void reject(Exception e) {
                                         }
-                                    });
+                                    } );
 
                                 } else {
-                                    ProviderCrearZonificacion.getInstance(getContext()).crearDatosZonificacion(zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
+                                    ProviderCrearZonificacion.getInstance( getContext() ).crearDatosZonificacion( zonificacionJson, new ProviderCrearZonificacion.InterfaceCrearDatosZonificacion() {
                                         @Override
                                         public void resolve(Codigos codigo) {
                                             if (codigo.getCodigo() == 200) {
                                                 FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                a.show(getChildFragmentManager(), "child");
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                a.show( getChildFragmentManager(), "child" );
+                                                bindingZonificacion.toolbar.guardar.setEnabled( true );
 
                                             } else {
-                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                                Toast.makeText( getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT ).show();
+                                                bindingZonificacion.toolbar.guardar.setEnabled( true );
                                             }
                                         }
 
                                         @Override
                                         public void reject(Exception e) {
                                         }
-                                    });
+                                    } );
                                 }
 
                             } else {
-                                bindingZonificacion.toolbar.guardar.setEnabled(true);
+                                bindingZonificacion.toolbar.guardar.setEnabled( true );
                                 FragmentDialogError405 a = new FragmentDialogError405();
                                 Bundle arguments = new Bundle();
-                                arguments.putString( "mensaje" , "ERROR: Debes capturar más generadores de tráfico");
-                                a.setArguments(arguments);
-                                a.show(getChildFragmentManager(),"child");
+                                arguments.putString( "mensaje", "ERROR: Debes capturar más generadores de tráfico" );
+                                a.setArguments( arguments );
+                                a.show( getChildFragmentManager(), "child" );
                             }
                         }
 
                     }
-                });
+                } );
 
-                final SharedPreferences preferencesZonifica = getContext().getSharedPreferences("datosZonificacion", Context.MODE_PRIVATE);
+                final SharedPreferences preferencesZonifica = getContext().getSharedPreferences( "datosZonificacion", Context.MODE_PRIVATE );
                 final SharedPreferences.Editor editor = null;
 
                 Timer timer = new Timer();
@@ -3208,15 +3699,15 @@ public class FragmentModificar extends Fragment implements
                     @Override
                     public void run() {
 
-                        getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
+                        getContext().getSharedPreferences( "datosZonificacion", 0 ).edit().clear().apply();
                         if (zonificacionJson.length() > 0) {
-                            salvarDatosZonificacion(getContext(), zonificacionJson, editor, preferencesZonifica);
+                            salvarDatosZonificacion( getContext(), zonificacionJson, editor, preferencesZonifica );
                         } else {
-                            salvarDatosZonificacion(getContext(), "", editor, preferencesZonifica);
+                            salvarDatosZonificacion( getContext(), "", editor, preferencesZonifica );
                         }
                     }
                 };
-                timer.schedule(hourlyTask, 100, 700);
+                timer.schedule( hourlyTask, 100, 700 );
 
             }
 
@@ -3225,20 +3716,20 @@ public class FragmentModificar extends Fragment implements
 
         } else if (position == 4) {
 
-            bindingConstruccion = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_4, container, false);
+            bindingConstruccion = DataBindingUtil.inflate( inflater, R.layout.fragment_autoriza_4, container, false );
             view = bindingConstruccion.getRoot();
 
-            getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
+            getContext().getSharedPreferences( "datosConstruccion", 0 ).edit().clear().apply();
 
-            SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String mdIdterminar = preferences.getString("mdIdterminar", "");
-            final String usuarioId = preferences.getString("usuario", "");
-            final String nombreSitio = preferences.getString("nombreSitio", "");
-            bindingConstruccion.titulo.setText(nombreSitio + "");
+            SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+            final String mdIdterminar = preferences.getString( "mdIdterminar", "" );
+            final String usuarioId = preferences.getString( "usuario", "" );
+            final String nombreSitio = preferences.getString( "nombreSitio", "" );
+            bindingConstruccion.titulo.setText( nombreSitio + "" );
 
-            bindingConstruccion.toolbar.nombreTitulo.setText(getString(R.string.construccion));
+            bindingConstruccion.toolbar.nombreTitulo.setText( getString( R.string.construccion ) );
 
-            ProviderDatosFactoresConstruccion.getInstance(getContext()).obtenerDatosContruccion(mdIdterminar,
+            ProviderDatosFactoresConstruccion.getInstance( getContext() ).obtenerDatosContruccion( mdIdterminar,
                     new ProviderDatosFactoresConstruccion.ConsultaFactoresConstruccion() {
                         @Override
                         public void resolve(final FactoresConstruccion factoresConstruccion) {
@@ -3246,12 +3737,12 @@ public class FragmentModificar extends Fragment implements
                             if (factoresConstruccion.getCodigo() == 200) {
                                 if (factoresConstruccion.getCatalogo() != null) {
 
-                                    ProviderDatosConstruccion.getInstance(getContext())
-                                            .obtenerDatosConstruccion(mdIdterminar, usuarioId, new ProviderDatosConstruccion.ConsultaDatosConstruccion() {
+                                    ProviderDatosConstruccion.getInstance( getContext() )
+                                            .obtenerDatosConstruccion( mdIdterminar, usuarioId, new ProviderDatosConstruccion.ConsultaDatosConstruccion() {
                                                 @Override
                                                 public void resolve(DatosConstruccions datosSitio) {
                                                     datosSitios = datosSitio;
-                                                    getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
+                                                    getContext().getSharedPreferences( "datosConstruccion", 0 ).edit().clear().apply();
 
                                                     if (datosSitio != null) {
                                                         if (datosSitio.getCodigo() == 200 && datosSitio.getConstruccion().size() > 0) {
@@ -3259,38 +3750,38 @@ public class FragmentModificar extends Fragment implements
                                                             generarConstruccion(
                                                                     bindingConstruccion,
                                                                     factoresConstruccion,
-                                                                    datosSitio);
+                                                                    datosSitio );
 
-                                                            generarDetalles(bindingConstruccion,
+                                                            generarDetalles( bindingConstruccion,
                                                                     factoresConstruccion,
-                                                                    datosSitio);
+                                                                    datosSitio );
 
-                                                            generarCondiciones(bindingConstruccion,
+                                                            generarCondiciones( bindingConstruccion,
                                                                     factoresConstruccion,
-                                                                    datosSitio);
+                                                                    datosSitio );
 
                                                             //datosConstruccion(mdIdterminar, usuarioId, datosSitios);
 
-                                                            generarChecklist(bindingConstruccion,factoresConstruccion,datosSitio);
+                                                            generarChecklist( bindingConstruccion, factoresConstruccion, datosSitio );
 
-                                                            bindingConstruccion.cargar.setVisibility(View.GONE);
+                                                            bindingConstruccion.cargar.setVisibility( View.GONE );
 
 
                                                         } else {
 
                                                             generarConstruccion(
                                                                     bindingConstruccion,
-                                                                    factoresConstruccion);
+                                                                    factoresConstruccion );
 
-                                                            generarDetalles(bindingConstruccion,
-                                                                    factoresConstruccion);
+                                                            generarDetalles( bindingConstruccion,
+                                                                    factoresConstruccion );
 
-                                                            generarCondiciones(bindingConstruccion,
-                                                                    factoresConstruccion);
+                                                            generarCondiciones( bindingConstruccion,
+                                                                    factoresConstruccion );
 
-                                                            generarChecklist(bindingConstruccion,factoresConstruccion,datosSitio);
+                                                            generarChecklist( bindingConstruccion, factoresConstruccion, datosSitio );
 
-                                                            bindingConstruccion.cargar.setVisibility(View.GONE);
+                                                            bindingConstruccion.cargar.setVisibility( View.GONE );
 
                                                         }
                                                     }
@@ -3300,10 +3791,10 @@ public class FragmentModificar extends Fragment implements
                                                 public void reject(Exception e) {
 
                                                 }
-                                            });
+                                            } );
                                 }
                             } else {
-                                Toast.makeText(getContext(), "Error al consultar factores de construcción", Toast.LENGTH_SHORT).show();
+                                Toast.makeText( getContext(), "Error al consultar factores de construcción", Toast.LENGTH_SHORT ).show();
                             }
                         }
 
@@ -3311,130 +3802,130 @@ public class FragmentModificar extends Fragment implements
                         public void reject(Exception e) {
 
                         }
-                    });
+                    } );
 
 
-            bindingConstruccion.toolbar.back.setOnClickListener(new View.OnClickListener() {
+            bindingConstruccion.toolbar.back.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(), "child");
+                    a.show( getChildFragmentManager(), "child" );
                 }
-            });
+            } );
 
-            bindingConstruccion.aceptar.setOnClickListener(new View.OnClickListener() {
+            bindingConstruccion.aceptar.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentDialogAceptar a = new FragmentDialogAceptar();
-                    a.show(getChildFragmentManager(), "child");
+                    a.show( getChildFragmentManager(), "child" );
                 }
-            });
+            } );
 
-            bindingConstruccion.cancelar.setOnClickListener(new View.OnClickListener() {
+            bindingConstruccion.cancelar.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelar a = new FragmentDialogCancelar();
-                    a.show(getChildFragmentManager(), "child");
+                    a.show( getChildFragmentManager(), "child" );
                 }
-            });
+            } );
 
-            bindingConstruccion.escogeAgua.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogeAgua.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaAguaConstruccion = "1";
-                    }else{
+                    } else {
                         banderaAguaConstruccion = "0";
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.escogeLuz.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogeLuz.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaLuzConstruccion = "1";
-                    }else{
+                    } else {
                         banderaLuzConstruccion = "0";
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.escogeDrenaje.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogeDrenaje.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaDrenajeConstruccion = "1";
-                    }else{
+                    } else {
                         banderaDrenajeConstruccion = "0";
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.escogeUsoSuelo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogeUsoSuelo.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaUsoSueloConstruccion = "1";
-                    }else{
+                    } else {
                         banderaUsoSueloConstruccion = "0";
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.escogePredial.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogePredial.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaPredialCorrienteConstruccion = "1";
-                    }else{
+                    } else {
                         banderaPredialCorrienteConstruccion = "0";
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.escogeEscrituras.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogeEscrituras.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaEscriturasConstruccion = "1";
-                    }else{
+                    } else {
                         banderaEscriturasConstruccion = "0";
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.escogeInah.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogeInah.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaInahConstruccion = "1";
-                    }else{
+                    } else {
                         banderaInahConstruccion = "0";
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.escogeConflictoLegal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            bindingConstruccion.escogeConflictoLegal.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         banderaConflictoConstruccion = "1";
-                        bindingConstruccion.conflictoText.setEnabled(true);
-                    }else{
+                        bindingConstruccion.conflictoText.setEnabled( true );
+                    } else {
                         banderaConflictoConstruccion = "0";
-                        bindingConstruccion.conflictoText.setText("");
-                        bindingConstruccion.conflictoText.setEnabled(false);
+                        bindingConstruccion.conflictoText.setText( "" );
+                        bindingConstruccion.conflictoText.setEnabled( false );
                     }
                 }
-            });
+            } );
 
-            bindingConstruccion.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+            bindingConstruccion.toolbar.guardar.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //bindingConstruccion.toolbar.guardar.setEnabled(false);
-                    loadingProgress(progressDialog, 0);
+                    loadingProgress( progressDialog, 0 );
 
-                    final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-                    String mdIdterminar = preferences.getString("mdIdterminar", "");
+                    final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+                    String mdIdterminar = preferences.getString( "mdIdterminar", "" );
 
                     if (mdIdterminar.length() == 1) {
                         mdIdterminar = "";
                     }
 
-                    if (!mdIdterminar.equals("")) {
+                    if (!mdIdterminar.equals( "" )) {
                         if (nivelId == 0 || nivelIdCondicion == 0) {
 
                         } else {
@@ -3446,9 +3937,9 @@ public class FragmentModificar extends Fragment implements
                                 detallesCondicion = new ArrayList<>();
 
                                 DatosConstruccion.Nivele detalleCondicion = new DatosConstruccion.Nivele(
-                                        nivelIdCondicion, "", detallesCondicion);
+                                        nivelIdCondicion, "", detallesCondicion );
 
-                                niveles.add(detalleCondicion);
+                                niveles.add( detalleCondicion );
 
                             }
 
@@ -3465,30 +3956,30 @@ public class FragmentModificar extends Fragment implements
                                         String check = entry.getValue();
 
                                         if (valor == 0 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
-                                            detallesContruccion.add(detalleConstruccion);
+                                            detalleConstruccion = new DatosConstruccion.Detalle( valor + 1, "" );
+                                            detallesContruccion.add( detalleConstruccion );
                                         }
 
                                         if (valor == 1 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
-                                            detallesContruccion.add(detalleConstruccion);
+                                            detalleConstruccion = new DatosConstruccion.Detalle( valor + 1, "" );
+                                            detallesContruccion.add( detalleConstruccion );
                                         }
 
                                         if (valor == 2 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
-                                            detallesContruccion.add(detalleConstruccion);
+                                            detalleConstruccion = new DatosConstruccion.Detalle( valor + 1, "" );
+                                            detallesContruccion.add( detalleConstruccion );
                                         }
 
                                         if (valor == 3 && check == "1") {
-                                            detalleConstruccion = new DatosConstruccion.Detalle(valor + 1, "");
-                                            detallesContruccion.add(detalleConstruccion);
+                                            detalleConstruccion = new DatosConstruccion.Detalle( valor + 1, "" );
+                                            detallesContruccion.add( detalleConstruccion );
                                         }
                                     }
                                 }
 
                                 DatosConstruccion.Nivele detalleConstruccion = new DatosConstruccion.Nivele(
-                                        nivelId, "", detallesContruccion);
-                                niveles.add(detalleConstruccion);
+                                        nivelId, "", detallesContruccion );
+                                niveles.add( detalleConstruccion );
 
                             }
 
@@ -3499,48 +3990,48 @@ public class FragmentModificar extends Fragment implements
 
                             //Agua
                             DatosConstruccion.Nivele detalleAgua = new DatosConstruccion.Nivele(
-                                    AGUA_ID, banderaAguaConstruccion, detallesCheck);
-                            nivelesTemp.add(detalleAgua);
+                                    AGUA_ID, banderaAguaConstruccion, detallesCheck );
+                            nivelesTemp.add( detalleAgua );
 
                             //Luz
                             DatosConstruccion.Nivele detalleLuz = new DatosConstruccion.Nivele(
-                                    LUZ_ID, banderaLuzConstruccion, detallesCheck);
-                            nivelesTemp.add(detalleLuz);
+                                    LUZ_ID, banderaLuzConstruccion, detallesCheck );
+                            nivelesTemp.add( detalleLuz );
 
                             //Drenaje
                             DatosConstruccion.Nivele detalleDrenaje = new DatosConstruccion.Nivele(
-                                    DRENAJE_ID, banderaDrenajeConstruccion, detallesCheck);
-                            nivelesTemp.add(detalleDrenaje);
+                                    DRENAJE_ID, banderaDrenajeConstruccion, detallesCheck );
+                            nivelesTemp.add( detalleDrenaje );
 
                             //Uso de suelo
                             DatosConstruccion.Nivele detalleUsoSuelo = new DatosConstruccion.Nivele(
-                                    USO_SUELO_ID, banderaUsoSueloConstruccion, detallesCheck);
-                            nivelesTemp.add(detalleUsoSuelo);
+                                    USO_SUELO_ID, banderaUsoSueloConstruccion, detallesCheck );
+                            nivelesTemp.add( detalleUsoSuelo );
 
                             //Predial al corriente
                             DatosConstruccion.Nivele detallePredialCorriente = new DatosConstruccion.Nivele(
-                                    PREDIAL_CORRIENTE_ID, banderaPredialCorrienteConstruccion, detallesCheck);
-                            nivelesTemp.add(detallePredialCorriente);
+                                    PREDIAL_CORRIENTE_ID, banderaPredialCorrienteConstruccion, detallesCheck );
+                            nivelesTemp.add( detallePredialCorriente );
 
                             //Escrituras públicas
                             DatosConstruccion.Nivele detalleEscrituras = new DatosConstruccion.Nivele(
-                                    ESCRITURAS_PUBLICAS_ID, banderaEscriturasConstruccion, detallesCheck);
-                            nivelesTemp.add(detalleEscrituras);
+                                    ESCRITURAS_PUBLICAS_ID, banderaEscriturasConstruccion, detallesCheck );
+                            nivelesTemp.add( detalleEscrituras );
 
                             //INAH
                             DatosConstruccion.Nivele detalleInah = new DatosConstruccion.Nivele(
-                                    INAH_ID, banderaInahConstruccion, detallesCheck);
-                            nivelesTemp.add(detalleInah);
+                                    INAH_ID, banderaInahConstruccion, detallesCheck );
+                            nivelesTemp.add( detalleInah );
 
                             //Conflictos
                             List detallesConflictos = new ArrayList<>();
-                            DatosConstruccion.Detalle detalle = new DatosConstruccion.Detalle(CONFLICTOS_ID, bindingConstruccion.conflictoText.getText().toString());
-                            detallesConflictos.add(detalle);
+                            DatosConstruccion.Detalle detalle = new DatosConstruccion.Detalle( CONFLICTOS_ID, bindingConstruccion.conflictoText.getText().toString() );
+                            detallesConflictos.add( detalle );
                             DatosConstruccion.Nivele detalleConflicto = new DatosConstruccion.Nivele(
-                                    CONFLICTOS_ID, banderaConflictoConstruccion, detallesConflictos);
-                            nivelesTemp.add(detalleConflicto);
+                                    CONFLICTOS_ID, banderaConflictoConstruccion, detallesConflictos );
+                            nivelesTemp.add( detalleConflicto );
 
-                            nivelesTemp.addAll(niveles);
+                            nivelesTemp.addAll( niveles );
 
                             DatosConstruccion datosConstruccionLocal = new DatosConstruccion(
                                     mdIdterminar,
@@ -3551,44 +4042,44 @@ public class FragmentModificar extends Fragment implements
                                     nivelesTemp
                             );
 
-                            final String datosConstruccionJsonLocal = getJsonString(datosConstruccionLocal);
+                            final String datosConstruccionJsonLocal = getJsonString( datosConstruccionLocal );
 
-                            ProviderCrearConstruccion.getInstance(getContext()).crearDatosConstruccion(datosConstruccionJson,
+                            ProviderCrearConstruccion.getInstance( getContext() ).crearDatosConstruccion( datosConstruccionJson,
                                     new ProviderCrearConstruccion.InterfaceCrearDatosConstruccion() {
                                         @Override
                                         public void resolve(Codigos codigo) {
                                             if (codigo.getCodigo() == 200) {
 
                                                 FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                a.show(getChildFragmentManager(), "child");
-                                                bindingConstruccion.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
+                                                a.show( getChildFragmentManager(), "child" );
+                                                bindingConstruccion.toolbar.guardar.setEnabled( true );
+                                                loadingProgress( progressDialog, 1 );
 
-                                                final SharedPreferences preferencesConstruccion = getContext().getSharedPreferences("datosConstruccion", Context.MODE_PRIVATE);
+                                                final SharedPreferences preferencesConstruccion = getContext().getSharedPreferences( "datosConstruccion", Context.MODE_PRIVATE );
                                                 final SharedPreferences.Editor editor = preferencesConstruccion.edit();
-                                                salvarDatosConstruccion(datosConstruccionJsonLocal, editor);
+                                                salvarDatosConstruccion( datosConstruccionJsonLocal, editor );
 
-                                            } else if(codigo.getCodigo()==1){
-                                                Toast.makeText(getContext(), getString(R.string.errorInternet), Toast.LENGTH_SHORT).show();
-                                                bindingConstruccion.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
-                                            } else{
-                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                                bindingConstruccion.toolbar.guardar.setEnabled(true);
-                                                loadingProgress(progressDialog, 1);
+                                            } else if (codigo.getCodigo() == 1) {
+                                                Toast.makeText( getContext(), getString( R.string.errorInternet ), Toast.LENGTH_SHORT ).show();
+                                                bindingConstruccion.toolbar.guardar.setEnabled( true );
+                                                loadingProgress( progressDialog, 1 );
+                                            } else {
+                                                Toast.makeText( getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT ).show();
+                                                bindingConstruccion.toolbar.guardar.setEnabled( true );
+                                                loadingProgress( progressDialog, 1 );
                                             }
                                         }
 
                                         @Override
                                         public void reject(Exception e) {
-                                            loadingProgress(progressDialog, 1);
+                                            loadingProgress( progressDialog, 1 );
                                         }
-                                    });
+                                    } );
                         }
                         datosConstruccion = null;
                     }
                 }
-            });
+            } );
 
 
             /*Timer timer = new Timer();
@@ -3612,34 +4103,34 @@ public class FragmentModificar extends Fragment implements
         } else if (position == 5) {
 
             final FragmentAutoriza5Binding binding;
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_5, container, false);
+            binding = DataBindingUtil.inflate( inflater, R.layout.fragment_autoriza_5, container, false );
             view = binding.getRoot();
 
-            getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
+            getContext().getSharedPreferences( "datosGeneralidades", 0 ).edit().clear().apply();
 
-            binding.toolbar.nombreTitulo.setText(getString(R.string.generalidades));
-            binding.datepicker.setMinDate(System.currentTimeMillis() - 1000);
+            binding.toolbar.nombreTitulo.setText( getString( R.string.generalidades ) );
+            binding.datepicker.setMinDate( System.currentTimeMillis() - 1000 );
 
-            binding.renta.setText("");
-            binding.amortizaciontotal.setText("");
+            binding.renta.setText( "" );
+            binding.amortizaciontotal.setText( "" );
 
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+            final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
             final String[] disponibilidad = new String[1];
 
-            String nombreMd = preferences.getString("nombreSitio", "");
-            binding.robotoTextView2.setText(nombreMd);
+            String nombreMd = preferences.getString( "nombreSitio", "" );
+            binding.robotoTextView2.setText( nombreMd );
 
-            final SharedPreferences preferencesGeneralidades = getContext().getSharedPreferences("datosGeneralidades", Context.MODE_PRIVATE);
+            final SharedPreferences preferencesGeneralidades = getContext().getSharedPreferences( "datosGeneralidades", Context.MODE_PRIVATE );
             final SharedPreferences.Editor editor = preferencesGeneralidades.edit();
 
-            String usuarioId = preferences.getString("usuario", "");
-            final String mdIdterminar = preferences.getString("mdIdterminar", "");
+            String usuarioId = preferences.getString( "usuario", "" );
+            final String mdIdterminar = preferences.getString( "mdIdterminar", "" );
 
-            binding.amortizaciontotal.setFilters(new InputFilter[]{new Util.InputFilterMinMax("0", "9999999")});
-            final int textColor = Color.parseColor("#254581");
+            binding.amortizaciontotal.setFilters( new InputFilter[]{new Util.InputFilterMinMax( "0", "9999999" )} );
+            final int textColor = Color.parseColor( "#254581" );
 
 
-            ProviderDatosAmortizacion.getInstance(getContext()).obtenerDatosAmortizacion(mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
+            ProviderDatosAmortizacion.getInstance( getContext() ).obtenerDatosAmortizacion( mdIdterminar, usuarioId, new ProviderDatosAmortizacion.ConsultaDatosAmortizacion() {
                 @Override
                 public void resolve(Amortizacion datosPredial) {
                     if (datosPredial != null) {
@@ -3647,24 +4138,24 @@ public class FragmentModificar extends Fragment implements
                         ArrayList<String> amortizacion = new ArrayList<>();
 
                         for (int i = 0; i < datosPredial.getAmortizacion().size(); i++) {
-                            amortizacion.add(datosPredial.getAmortizacion().get(i).getOpcion());
+                            amortizacion.add( datosPredial.getAmortizacion().get( i ).getOpcion() );
                         }
 
                         ArrayList<String> gracia = new ArrayList<>();
 
                         for (int j = 0; j < datosPredial.getGracia().size(); j++) {
-                            gracia.add(datosPredial.getGracia().get(j).getOpcion());
+                            gracia.add( datosPredial.getGracia().get( j ).getOpcion() );
                         }
 
-                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
-                                amortizacion);
-                        amortizacionSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodoamotizacion.setAdapter(amortizacionSpinner);
+                        ArrayAdapter<String> amortizacionSpinner = new ArrayAdapter<String>( getContext(), android.R.layout.simple_spinner_item,
+                                amortizacion );
+                        amortizacionSpinner.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item ); // The drop down view
+                        binding.periodoamotizacion.setAdapter( amortizacionSpinner );
 
-                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,
-                                gracia);
-                        graciaSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        binding.periodogracia.setAdapter(graciaSpinner);
+                        ArrayAdapter<String> graciaSpinner = new ArrayAdapter<String>( getContext(), android.R.layout.simple_spinner_item,
+                                gracia );
+                        graciaSpinner.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item ); // The drop down view
+                        binding.periodogracia.setAdapter( graciaSpinner );
 
                     }
                 }
@@ -3673,94 +4164,94 @@ public class FragmentModificar extends Fragment implements
                 public void reject(Exception e) {
 
                 }
-            });
+            } );
 
-            ProviderDatosGeneralidadesSitio.getInstance(getContext())
-                    .obtenerDatosGeneralidades(mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
+            ProviderDatosGeneralidadesSitio.getInstance( getContext() )
+                    .obtenerDatosGeneralidades( mdIdterminar, usuarioId, new ProviderDatosGeneralidadesSitio.ConsultaGeneralidadesSitio() {
                         @Override
                         public void resolve(GeneralidadesSitio datosSitio) {
                             if (datosSitio != null && datosSitio.getCodigo() == 200) {
 
-                                getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
+                                getContext().getSharedPreferences( "datosGeneralidades", 0 ).edit().clear().apply();
 
                                 if (datosSitio.getGeneralidades().size() > 0) {
-                                    String fecha = datosSitio.getGeneralidades().get(0).getFechadisponible();
+                                    String fecha = datosSitio.getGeneralidades().get( 0 ).getFechadisponible();
 
-                                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                    SimpleDateFormat formatter = new SimpleDateFormat( "dd/MM/yyyy" );
                                     Date d = null;
                                     try {
-                                        d = formatter.parse(fecha);
+                                        d = formatter.parse( fecha );
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
 
                                     Calendar thatDay = Calendar.getInstance();
-                                    thatDay.setTime(d);
+                                    thatDay.setTime( d );
 
-                                    int year = thatDay.get(Calendar.YEAR);
-                                    int month = thatDay.get(Calendar.MONTH);
-                                    int day = thatDay.get(Calendar.DAY_OF_MONTH);
+                                    int year = thatDay.get( Calendar.YEAR );
+                                    int month = thatDay.get( Calendar.MONTH );
+                                    int day = thatDay.get( Calendar.DAY_OF_MONTH );
 
-                                    binding.datepicker.updateDate(year, month, day);
+                                    binding.datepicker.updateDate( year, month, day );
 
-                                    getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
+                                    getContext().getSharedPreferences( "datosGeneralidades", 0 ).edit().clear().apply();
 
                                     for (int i = 0; i < datosSitio.getGeneralidades().size(); i++) {
 
-                                        if (datosSitio.getGeneralidades().get(i).getNivelid() == 7 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 8 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 9) {
+                                        if (datosSitio.getGeneralidades().get( i ).getNivelid() == 7 ||
+                                                datosSitio.getGeneralidades().get( i ).getNivelid() == 8 ||
+                                                datosSitio.getGeneralidades().get( i ).getNivelid() == 9) {
 
-                                            binding.renta.setText(datosSitio.getGeneralidades().get(i).getValor() + "");
+                                            binding.renta.setText( datosSitio.getGeneralidades().get( i ).getValor() + "" );
 
-                                            if (datosSitio.getGeneralidades().get(i).getDetalles()
-                                                    != null && datosSitio.getGeneralidades().get(i).getDetalles().size() > 0) {
-                                                int valor = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
+                                            if (datosSitio.getGeneralidades().get( i ).getDetalles()
+                                                    != null && datosSitio.getGeneralidades().get( i ).getDetalles().size() > 0) {
+                                                int valor = datosSitio.getGeneralidades().get( i ).getDetalles().get( 0 ).getValor();
                                                 switch (valor) {
                                                     case 0:
-                                                        binding.periodoamotizacion.setSelection(0);
+                                                        binding.periodoamotizacion.setSelection( 0 );
                                                         break;
                                                     case 1:
-                                                        binding.periodoamotizacion.setSelection(1);
+                                                        binding.periodoamotizacion.setSelection( 1 );
                                                         break;
                                                     case 2:
-                                                        binding.periodoamotizacion.setSelection(2);
+                                                        binding.periodoamotizacion.setSelection( 2 );
                                                         break;
                                                     case 3:
-                                                        binding.periodoamotizacion.setSelection(3);
+                                                        binding.periodoamotizacion.setSelection( 3 );
                                                         break;
                                                     case 6:
-                                                        binding.periodoamotizacion.setSelection(4);
+                                                        binding.periodoamotizacion.setSelection( 4 );
                                                         break;
                                                     case 9:
-                                                        binding.periodoamotizacion.setSelection(5);
+                                                        binding.periodoamotizacion.setSelection( 5 );
                                                         break;
                                                     case 12:
-                                                        binding.periodoamotizacion.setSelection(6);
+                                                        binding.periodoamotizacion.setSelection( 6 );
                                                         break;
                                                     case 18:
-                                                        binding.periodoamotizacion.setSelection(7);
+                                                        binding.periodoamotizacion.setSelection( 7 );
                                                         break;
                                                     case 24:
-                                                        binding.periodoamotizacion.setSelection(8);
+                                                        binding.periodoamotizacion.setSelection( 8 );
                                                         break;
                                                     case 30:
-                                                        binding.periodoamotizacion.setSelection(9);
+                                                        binding.periodoamotizacion.setSelection( 9 );
                                                         break;
                                                     case 36:
-                                                        binding.periodoamotizacion.setSelection(10);
+                                                        binding.periodoamotizacion.setSelection( 10 );
                                                         break;
                                                     case 42:
-                                                        binding.periodoamotizacion.setSelection(11);
+                                                        binding.periodoamotizacion.setSelection( 11 );
                                                         break;
                                                     case 48:
-                                                        binding.periodoamotizacion.setSelection(12);
+                                                        binding.periodoamotizacion.setSelection( 12 );
                                                         break;
                                                     case 54:
-                                                        binding.periodoamotizacion.setSelection(13);
+                                                        binding.periodoamotizacion.setSelection( 13 );
                                                         break;
                                                     case 60:
-                                                        binding.periodoamotizacion.setSelection(14);
+                                                        binding.periodoamotizacion.setSelection( 14 );
                                                         break;
                                                 }
 
@@ -3769,106 +4260,106 @@ public class FragmentModificar extends Fragment implements
 
                                         }
 
-                                        if (datosSitio.getGeneralidades().get(i).getNivelid() == 4 || datosSitio.getGeneralidades().get(i).getNivelid() == 5 || datosSitio.getGeneralidades().get(i).getNivelid() == 6) {
+                                        if (datosSitio.getGeneralidades().get( i ).getNivelid() == 4 || datosSitio.getGeneralidades().get( i ).getNivelid() == 5 || datosSitio.getGeneralidades().get( i ).getNivelid() == 6) {
 
-                                            if (datosSitio.getGeneralidades().get(i).getNivelid() == 4) {
-                                                binding.rinmediato.setChecked(true);
-                                                binding.rinmediato.setTextColor(Color.parseColor("#254581"));
-                                                binding.rinmediato.setButtonTintList(ColorStateList.valueOf(textColor));
+                                            if (datosSitio.getGeneralidades().get( i ).getNivelid() == 4) {
+                                                binding.rinmediato.setChecked( true );
+                                                binding.rinmediato.setTextColor( Color.parseColor( "#254581" ) );
+                                                binding.rinmediato.setButtonTintList( ColorStateList.valueOf( textColor ) );
                                                 disponibilidad[0] = "1";
-                                                binding.datepicker.setVisibility(View.GONE);
+                                                binding.datepicker.setVisibility( View.GONE );
                                             }
 
-                                            if (datosSitio.getGeneralidades().get(i).getNivelid() == 5) {
-                                                binding.rapartirde.setChecked(true);
-                                                binding.rapartirde.setTextColor(Color.parseColor("#254581"));
-                                                binding.rapartirde.setButtonTintList(ColorStateList.valueOf(textColor));
+                                            if (datosSitio.getGeneralidades().get( i ).getNivelid() == 5) {
+                                                binding.rapartirde.setChecked( true );
+                                                binding.rapartirde.setTextColor( Color.parseColor( "#254581" ) );
+                                                binding.rapartirde.setButtonTintList( ColorStateList.valueOf( textColor ) );
                                                 disponibilidad[0] = "3";
-                                                binding.datepicker.setVisibility(View.VISIBLE);
+                                                binding.datepicker.setVisibility( View.VISIBLE );
                                             }
 
-                                            if (datosSitio.getGeneralidades().get(i).getNivelid() == 6) {
-                                                binding.rocupado.setChecked(true);
-                                                binding.rocupado.setTextColor(Color.parseColor("#254581"));
-                                                binding.rocupado.setButtonTintList(ColorStateList.valueOf(textColor));
+                                            if (datosSitio.getGeneralidades().get( i ).getNivelid() == 6) {
+                                                binding.rocupado.setChecked( true );
+                                                binding.rocupado.setTextColor( Color.parseColor( "#254581" ) );
+                                                binding.rocupado.setButtonTintList( ColorStateList.valueOf( textColor ) );
 
                                                 disponibilidad[0] = "2";
-                                                binding.datepicker.setVisibility(View.GONE);
+                                                binding.datepicker.setVisibility( View.GONE );
                                             }
 
 
                                         }
 
-                                        if (datosSitio.getGeneralidades().get(i).getNivelid() == 1 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 2 ||
-                                                datosSitio.getGeneralidades().get(i).getNivelid() == 3) {
+                                        if (datosSitio.getGeneralidades().get( i ).getNivelid() == 1 ||
+                                                datosSitio.getGeneralidades().get( i ).getNivelid() == 2 ||
+                                                datosSitio.getGeneralidades().get( i ).getNivelid() == 3) {
 
-                                            String valor = datosSitio.getGeneralidades().get(i).getValor().toString();
-                                            binding.amortizaciontotal.setText(valor);
-                                            int valor2 = datosSitio.getGeneralidades().get(i).getDetalles().get(0).getValor();
+                                            String valor = datosSitio.getGeneralidades().get( i ).getValor().toString();
+                                            binding.amortizaciontotal.setText( valor );
+                                            int valor2 = datosSitio.getGeneralidades().get( i ).getDetalles().get( 0 ).getValor();
                                             switch (valor2) {
                                                 case 0:
-                                                    binding.periodogracia.setSelection(0);
+                                                    binding.periodogracia.setSelection( 0 );
                                                     break;
                                                 case 1:
-                                                    binding.periodogracia.setSelection(1);
+                                                    binding.periodogracia.setSelection( 1 );
                                                     break;
                                                 case 2:
-                                                    binding.periodogracia.setSelection(2);
+                                                    binding.periodogracia.setSelection( 2 );
                                                     break;
                                                 case 3:
-                                                    binding.periodogracia.setSelection(3);
+                                                    binding.periodogracia.setSelection( 3 );
                                                     break;
                                                 case 4:
-                                                    binding.periodogracia.setSelection(4);
+                                                    binding.periodogracia.setSelection( 4 );
                                                     break;
                                                 case 5:
-                                                    binding.periodogracia.setSelection(5);
+                                                    binding.periodogracia.setSelection( 5 );
                                                     break;
                                                 case 6:
-                                                    binding.periodogracia.setSelection(6);
+                                                    binding.periodogracia.setSelection( 6 );
                                                     break;
                                                 case 7:
-                                                    binding.periodogracia.setSelection(7);
+                                                    binding.periodogracia.setSelection( 7 );
                                                     break;
                                                 case 8:
-                                                    binding.periodogracia.setSelection(8);
+                                                    binding.periodogracia.setSelection( 8 );
                                                     break;
                                                 case 9:
-                                                    binding.periodogracia.setSelection(9);
+                                                    binding.periodogracia.setSelection( 9 );
                                                     break;
                                                 case 10:
-                                                    binding.periodogracia.setSelection(10);
+                                                    binding.periodogracia.setSelection( 10 );
                                                     break;
                                                 case 11:
-                                                    binding.periodogracia.setSelection(11);
+                                                    binding.periodogracia.setSelection( 11 );
                                                     break;
                                                 case 12:
-                                                    binding.periodogracia.setSelection(12);
+                                                    binding.periodogracia.setSelection( 12 );
                                                     break;
                                                 case 18:
-                                                    binding.periodogracia.setSelection(13);
+                                                    binding.periodogracia.setSelection( 13 );
                                                     break;
                                                 case 24:
-                                                    binding.periodogracia.setSelection(14);
+                                                    binding.periodogracia.setSelection( 14 );
                                                     break;
                                                 case 30:
-                                                    binding.periodogracia.setSelection(15);
+                                                    binding.periodogracia.setSelection( 15 );
                                                     break;
                                                 case 36:
-                                                    binding.periodogracia.setSelection(16);
+                                                    binding.periodogracia.setSelection( 16 );
                                                     break;
                                                 case 42:
-                                                    binding.periodogracia.setSelection(17);
+                                                    binding.periodogracia.setSelection( 17 );
                                                     break;
                                                 case 48:
-                                                    binding.periodogracia.setSelection(18);
+                                                    binding.periodogracia.setSelection( 18 );
                                                     break;
                                                 case 54:
-                                                    binding.periodogracia.setSelection(19);
+                                                    binding.periodogracia.setSelection( 19 );
                                                     break;
                                                 case 60:
-                                                    binding.periodogracia.setSelection(20);
+                                                    binding.periodogracia.setSelection( 20 );
                                                     break;
                                             }
                                         }
@@ -3882,19 +4373,19 @@ public class FragmentModificar extends Fragment implements
                                 hourlyTask = new TimerTask() {
                                     @Override
                                     public void run() {
-                                        getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
-                                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                        getContext().getSharedPreferences( "datosGeneralidades", 0 ).edit().clear().apply();
+                                        DateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
                                         int day = binding.datepicker.getDayOfMonth();
                                         int month = binding.datepicker.getMonth();
                                         int year = binding.datepicker.getYear();
 
                                         Calendar calendar = Calendar.getInstance();
-                                        calendar.set(year, month, day);
+                                        calendar.set( year, month, day );
 
-                                        String usuarioId = preferences.getString("usuario", "");
+                                        String usuarioId = preferences.getString( "usuario", "" );
                                         String renta = binding.renta.getText().toString() + "";
-                                        String fechadisponible = dateFormat.format(calendar.getTime());
+                                        String fechadisponible = dateFormat.format( calendar.getTime() );
                                         String porcentajeamortiza = binding.amortizaciontotal.getText().toString() + "";
 
                                         String periodoamortizacion = binding.periodoamotizacion.getSelectedItem().toString() + "";
@@ -3902,17 +4393,17 @@ public class FragmentModificar extends Fragment implements
                                         String numtelefono = NUM_TELEFONO;
                                         String versionapp = VERSION_APP;
 
-                                        String arr[] = periodoamortizacion.split(" ", 2);
+                                        String arr[] = periodoamortizacion.split( " ", 2 );
                                         periodoamortizacion = arr[0];
 
-                                        String arra[] = periodogracia.split(" ", 2);
+                                        String arra[] = periodogracia.split( " ", 2 );
                                         periodogracia = arra[0];
 
-                                        if (!renta.equals("") || !porcentajeamortiza.equals("")) {
+                                        if (!renta.equals( "" ) || !porcentajeamortiza.equals( "" )) {
                                             if (disponibilidad[0] != null) {
 
-                                                if (disponibilidad[0].equals("1")
-                                                        || disponibilidad[0].equals("2")) {
+                                                if (disponibilidad[0].equals( "1" )
+                                                        || disponibilidad[0].equals( "2" )) {
 
                                                     crearGeneralidades[0] = new CrearGeneralidades(
                                                             mdIdterminar,
@@ -3941,10 +4432,10 @@ public class FragmentModificar extends Fragment implements
                                                     );
                                                 }
 
-                                                if (!crearGeneralidades[0].getRenta().equals("") &&
-                                                        !crearGeneralidades[0].getPorcentajeamortiza().equals("")) {
-                                                    GuardarDatosGeneralidades.salvarDatosGeneralidades(getContext(),
-                                                            crearGeneralidades[0], editor, preferencesGeneralidades);
+                                                if (!crearGeneralidades[0].getRenta().equals( "" ) &&
+                                                        !crearGeneralidades[0].getPorcentajeamortiza().equals( "" )) {
+                                                    GuardarDatosGeneralidades.salvarDatosGeneralidades( getContext(),
+                                                            crearGeneralidades[0], editor, preferencesGeneralidades );
                                                     crearGeneralidades[0] = null;
                                                 }
                                             }
@@ -3954,29 +4445,29 @@ public class FragmentModificar extends Fragment implements
                                     }
                                 };
 
-                                timer.schedule(hourlyTask, 100, 700);
+                                timer.schedule( hourlyTask, 100, 700 );
 
 
-                                binding.toolbar.guardar.setOnClickListener(new View.OnClickListener() {
+                                binding.toolbar.guardar.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        binding.toolbar.guardar.setEnabled(false);
+                                        binding.toolbar.guardar.setEnabled( false );
 
-                                        final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+                                        final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
 
-                                        if (!mdIdterminar.equals("") || !mdIdterminar.equals("0")) {
-                                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                        if (!mdIdterminar.equals( "" ) || !mdIdterminar.equals( "0" )) {
+                                            DateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
                                             int day = binding.datepicker.getDayOfMonth();
                                             int month = binding.datepicker.getMonth();
                                             int year = binding.datepicker.getYear();
 
                                             Calendar calendar = Calendar.getInstance();
-                                            calendar.set(year, month, day);
+                                            calendar.set( year, month, day );
 
-                                            String usuarioId = preferences.getString("usuario", "");
+                                            String usuarioId = preferences.getString( "usuario", "" );
                                             String renta = binding.renta.getText().toString();
-                                            String fechadisponible = dateFormat.format(calendar.getTime());
+                                            String fechadisponible = dateFormat.format( calendar.getTime() );
                                             ;
                                             String porcentajeamortiza = binding.amortizaciontotal.getText().toString();
                                             ;
@@ -3987,15 +4478,15 @@ public class FragmentModificar extends Fragment implements
                                             String numtelefono = NUM_TELEFONO;
                                             String versionapp = VERSION_APP;
 
-                                            String arr[] = periodoamortizacion.split(" ", 2);
+                                            String arr[] = periodoamortizacion.split( " ", 2 );
                                             periodoamortizacion = arr[0];
 
-                                            String arra[] = periodogracia.split(" ", 2);
+                                            String arra[] = periodogracia.split( " ", 2 );
                                             periodogracia = arra[0];
 
-                                            if (disponibilidad[0] != null && !porcentajeamortiza.equals("")) {
-                                                if (disponibilidad[0].equals("1")
-                                                        || disponibilidad[0].equals("2")) {
+                                            if (disponibilidad[0] != null && !porcentajeamortiza.equals( "" )) {
+                                                if (disponibilidad[0].equals( "1" )
+                                                        || disponibilidad[0].equals( "2" )) {
 
                                                     crearGeneralidades[0] = new CrearGeneralidades(
                                                             mdIdterminar,
@@ -4024,19 +4515,19 @@ public class FragmentModificar extends Fragment implements
                                                     );
                                                 }
 
-                                                ProviderCrearGeneralidades.getInstance(getContext()).guardarGeneralidades(
+                                                ProviderCrearGeneralidades.getInstance( getContext() ).guardarGeneralidades(
                                                         crearGeneralidades[0], new ProviderCrearGeneralidades.InterfaceCrearDatosGeneralidades() {
                                                             @Override
                                                             public void resolve(Codigos codigo) {
                                                                 if (codigo.getCodigo() == 200) {
 
                                                                     FragmentDialogGuardar a = new FragmentDialogGuardar();
-                                                                    a.show(getChildFragmentManager(), "child");
-                                                                    binding.toolbar.guardar.setEnabled(true);
+                                                                    a.show( getChildFragmentManager(), "child" );
+                                                                    binding.toolbar.guardar.setEnabled( true );
 
                                                                 } else {
-                                                                    Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                                                    binding.toolbar.guardar.setEnabled(true);
+                                                                    Toast.makeText( getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT ).show();
+                                                                    binding.toolbar.guardar.setEnabled( true );
                                                                 }
                                                             }
 
@@ -4044,48 +4535,48 @@ public class FragmentModificar extends Fragment implements
                                                             public void reject(Exception e) {
 
                                                             }
-                                                        });
+                                                        } );
 
 
                                             } else {
-                                                Toast.makeText(getContext(), R.string.datos_faltantes, Toast.LENGTH_SHORT).show();
-                                                binding.toolbar.guardar.setEnabled(true);
+                                                Toast.makeText( getContext(), R.string.datos_faltantes, Toast.LENGTH_SHORT ).show();
+                                                binding.toolbar.guardar.setEnabled( true );
                                             }
                                         }
                                     }
-                                });
+                                } );
 
 
-                                binding.rdgGrupo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                                binding.rdgGrupo.setOnCheckedChangeListener( new RadioGroup.OnCheckedChangeListener() {
                                     @Override
                                     public void onCheckedChanged(RadioGroup group, int checkedId) {
                                         switch (checkedId) {
                                             case R.id.rinmediato:
                                                 disponibilidad[0] = "1";
                                                 //   Log.e("*****", "presione"+ disponibilidad[0]);
-                                                binding.datepicker.setVisibility(View.GONE);
+                                                binding.datepicker.setVisibility( View.GONE );
                                                 break;
                                             case R.id.rocupado:
                                                 disponibilidad[0] = "2";
-                                                binding.datepicker.setVisibility(View.GONE);
+                                                binding.datepicker.setVisibility( View.GONE );
                                                 //    Log.e("*****", "presione"+ disponibilidad[0]);
                                                 break;
                                             case R.id.rapartirde:
                                                 disponibilidad[0] = "3";
-                                                binding.datepicker.setVisibility(View.VISIBLE);
+                                                binding.datepicker.setVisibility( View.VISIBLE );
                                                 break;
                                         }
                                     }
-                                });
+                                } );
 
 
-                                binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                                binding.toolbar.back.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                        a.show(getChildFragmentManager(), "child");
+                                        a.show( getChildFragmentManager(), "child" );
                                     }
-                                });
+                                } );
 
                             }
                         }
@@ -4094,77 +4585,77 @@ public class FragmentModificar extends Fragment implements
                         public void reject(Exception e) {
 
                         }
-                    });
+                    } );
 
 
         } else {
 
             final FragmentAutoriza6Binding binding;
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_autoriza_6, container, false);
+            binding = DataBindingUtil.inflate( inflater, R.layout.fragment_autoriza_6, container, false );
             view = binding.getRoot();
             final ArrayList<String> horarios = new ArrayList<>();
 
-            final SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-            final String usuarioId = preferences.getString("usuario", "");
-            final String mdIdterminar = preferences.getString("mdIdterminar", "");
+            final SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+            final String usuarioId = preferences.getString( "usuario", "" );
+            final String mdIdterminar = preferences.getString( "mdIdterminar", "" );
 
-            binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
+            binding.toolbar.back.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                    a.show(getChildFragmentManager(), "child");
+                    a.show( getChildFragmentManager(), "child" );
                 }
-            });
+            } );
 
             final long[] tiempos = {0};
 
-            binding.peatonalConteo.presion.setAlpha(1f);
-            binding.peatonalConteo.presion.setEnabled(true);
+            binding.peatonalConteo.presion.setAlpha( 1f );
+            binding.peatonalConteo.presion.setEnabled( true );
 
-            binding.toolbar.guardar.setVisibility(View.GONE);
-            binding.peatonalConteo.cronometroPlay.setEnabled(false);
-            binding.peatonalConteo.cronometroStop.setEnabled(false);
-            binding.peatonalConteo.btnGuardar.setEnabled(false);
-            binding.peatonalConteo.btnGuardar.setAlpha(.4f);
+            binding.toolbar.guardar.setVisibility( View.GONE );
+            binding.peatonalConteo.cronometroPlay.setEnabled( false );
+            binding.peatonalConteo.cronometroStop.setEnabled( false );
+            binding.peatonalConteo.btnGuardar.setEnabled( false );
+            binding.peatonalConteo.btnGuardar.setAlpha( .4f );
 
             final int[] conteos = {0};
             final int[] tiempo = new int[1];
             final boolean[] hora = {false};
 
             final CountDownTimer[] downTimer = new CountDownTimer[1];
-            binding.peatonalConteo.presion.setOnClickListener(new View.OnClickListener() {
+            binding.peatonalConteo.presion.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     if (conteos[0] == 0) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            binding.peatonalConteo.chronometer1.setCountDown(true);
+                            binding.peatonalConteo.chronometer1.setCountDown( true );
                         }
 
                         int sec = 60 * tiempo[0];
                         //int sec = 60* 1;
 
-                        downTimer[0] = new CountDownTimer(1000 * sec, 1000) {
+                        downTimer[0] = new CountDownTimer( 1000 * sec, 1000 ) {
 
                             public void onTick(long millisUntilFinished) {
-                                String v = String.format("%02d", millisUntilFinished / 60000);
+                                String v = String.format( "%02d", millisUntilFinished / 60000 );
                                 int va = (int) ((millisUntilFinished % 60000) / 1000);
-                                binding.peatonalConteo.contador.setText(v + ":" + String.format("%02d", va));
+                                binding.peatonalConteo.contador.setText( v + ":" + String.format( "%02d", va ) );
                             }
 
                             public void onFinish() {
-                                binding.peatonalConteo.contador.setText("00:00");
-                                binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                binding.peatonalConteo.btnGuardar.setAlpha(1.f);
-                                binding.peatonalConteo.presion.setEnabled(false);
+                                binding.peatonalConteo.contador.setText( "00:00" );
+                                binding.peatonalConteo.btnGuardar.setEnabled( true );
+                                binding.peatonalConteo.btnGuardar.setAlpha( 1.f );
+                                binding.peatonalConteo.presion.setEnabled( false );
                             }
                         };
                         downTimer[0].start();
 
-                        binding.peatonalConteo.cronometroPlay.setEnabled(false);
-                        binding.peatonalConteo.cronometroStop.setEnabled(true);
-                        binding.peatonalConteo.btnGuardar.setEnabled(false);
-                        binding.peatonalConteo.btnGuardar.setAlpha(.4f);
+                        binding.peatonalConteo.cronometroPlay.setEnabled( false );
+                        binding.peatonalConteo.cronometroStop.setEnabled( true );
+                        binding.peatonalConteo.btnGuardar.setEnabled( false );
+                        binding.peatonalConteo.btnGuardar.setAlpha( .4f );
 
 
                     }
@@ -4172,189 +4663,189 @@ public class FragmentModificar extends Fragment implements
 
                     conteos[0]++;
                     if (conteos[0] <= 9) {
-                        binding.peatonalConteo.real.setText(conteos[0] + "");
+                        binding.peatonalConteo.real.setText( conteos[0] + "" );
                     }
 
                     if (conteos[0] > 9) {
-                        String real = String.valueOf(conteos[0]).substring(String.valueOf(conteos[0]).length() - 1);
-                        char first = String.valueOf(conteos[0]).charAt(0);
-                        binding.peatonalConteo.real.setText(real + "");
-                        binding.peatonalConteo.diez.setText(first + "");
+                        String real = String.valueOf( conteos[0] ).substring( String.valueOf( conteos[0] ).length() - 1 );
+                        char first = String.valueOf( conteos[0] ).charAt( 0 );
+                        binding.peatonalConteo.real.setText( real + "" );
+                        binding.peatonalConteo.diez.setText( first + "" );
                     }
 
                     if (conteos[0] > 99) {
-                        char primerNumero = String.valueOf(conteos[0]).charAt(0);
-                        char segundoNumero = String.valueOf(conteos[0]).charAt(1);
-                        char tercerNumero = String.valueOf(conteos[0]).charAt(2);
-                        binding.peatonalConteo.cien.setText(primerNumero + "");
-                        binding.peatonalConteo.diez.setText(segundoNumero + "");
-                        binding.peatonalConteo.real.setText(tercerNumero + "");
+                        char primerNumero = String.valueOf( conteos[0] ).charAt( 0 );
+                        char segundoNumero = String.valueOf( conteos[0] ).charAt( 1 );
+                        char tercerNumero = String.valueOf( conteos[0] ).charAt( 2 );
+                        binding.peatonalConteo.cien.setText( primerNumero + "" );
+                        binding.peatonalConteo.diez.setText( segundoNumero + "" );
+                        binding.peatonalConteo.real.setText( tercerNumero + "" );
                     }
 
                     if (conteos[0] > 999) {
 
-                        char primerNumero = String.valueOf(conteos[0]).charAt(0);
-                        char segundoNumero = String.valueOf(conteos[0]).charAt(1);
-                        char tercerNumero = String.valueOf(conteos[0]).charAt(2);
-                        char cuartoNumero = String.valueOf(conteos[0]).charAt(3);
+                        char primerNumero = String.valueOf( conteos[0] ).charAt( 0 );
+                        char segundoNumero = String.valueOf( conteos[0] ).charAt( 1 );
+                        char tercerNumero = String.valueOf( conteos[0] ).charAt( 2 );
+                        char cuartoNumero = String.valueOf( conteos[0] ).charAt( 3 );
 
-                        binding.peatonalConteo.mil.setText(primerNumero + "");
-                        binding.peatonalConteo.cien.setText(segundoNumero + "");
-                        binding.peatonalConteo.diez.setText(tercerNumero + "");
-                        binding.peatonalConteo.real.setText(cuartoNumero + "");
+                        binding.peatonalConteo.mil.setText( primerNumero + "" );
+                        binding.peatonalConteo.cien.setText( segundoNumero + "" );
+                        binding.peatonalConteo.diez.setText( tercerNumero + "" );
+                        binding.peatonalConteo.real.setText( cuartoNumero + "" );
 
                     }
 
 
                 }
-            });
+            } );
 
 
-            binding.peatonalConteo.reset.setOnClickListener(new View.OnClickListener() {
+            binding.peatonalConteo.reset.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    binding.peatonalConteo.btnGuardar.setEnabled(false);
-                    binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
+                    binding.peatonalConteo.btnGuardar.setEnabled( false );
+                    binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
 
                     conteos[0] = 0;
 
-                    binding.peatonalConteo.cien.setText("0");
-                    binding.peatonalConteo.real.setText("0");
-                    binding.peatonalConteo.mil.setText("0");
-                    binding.peatonalConteo.diez.setText("0");
-                    binding.peatonalConteo.contador.setText("00:00");
+                    binding.peatonalConteo.cien.setText( "0" );
+                    binding.peatonalConteo.real.setText( "0" );
+                    binding.peatonalConteo.mil.setText( "0" );
+                    binding.peatonalConteo.diez.setText( "0" );
+                    binding.peatonalConteo.contador.setText( "00:00" );
 
-                    binding.peatonalConteo.presion.setEnabled(true);
+                    binding.peatonalConteo.presion.setEnabled( true );
 
                     if (downTimer[0] != null) {
                         downTimer[0].cancel();
                     }
 
                 }
-            });
+            } );
 
-            String nombreMd = preferences.getString("nombreSitio", "");
-            binding.robotoTextView2.setText(nombreMd);
-            listaPeatonal(binding);
+            String nombreMd = preferences.getString( "nombreSitio", "" );
+            binding.robotoTextView2.setText( nombreMd );
+            listaPeatonal( binding );
 
-            ProviderHorasPeatonales.getInstance(getContext()).obtenerHoras(mdIdterminar, usuarioId,
+            ProviderHorasPeatonales.getInstance( getContext() ).obtenerHoras( mdIdterminar, usuarioId,
                     new ProviderHorasPeatonales.InterfaceObtieneHoras() {
                         @Override
                         public void resolve(final HorasPeatonales horasPeatonales) {
                             if (horasPeatonales.getCodigo() == 200) {
-                                tiempo[0] = Integer.parseInt(horasPeatonales.getTiempoConteos());
+                                tiempo[0] = Integer.parseInt( horasPeatonales.getTiempoConteos() );
 
-                                binding.peatonalConteo.chronometer1.setBase(SystemClock.elapsedRealtime() - (tiempo[0] * 60000 + 0 * 1000));
-                                tiempos[0] = TimeUnit.MINUTES.toMillis(tiempo[0]);
+                                binding.peatonalConteo.chronometer1.setBase( SystemClock.elapsedRealtime() - (tiempo[0] * 60000 + 0 * 1000) );
+                                tiempos[0] = TimeUnit.MINUTES.toMillis( tiempo[0] );
                                 if (horasPeatonales.getDetalle().size() < 0) {
-                                    binding.btnFinalizar.setAlpha(0.35f);
+                                    binding.btnFinalizar.setAlpha( 0.35f );
                                 } else {
-                                    binding.botones.setVisibility(View.VISIBLE);
-                                    binding.btnFinalizar.setEnabled(true);
+                                    binding.botones.setVisibility( View.VISIBLE );
+                                    binding.btnFinalizar.setEnabled( true );
                                 }
 
                                 for (int i = 0; i < horasPeatonales.getDetalle().size(); i++) {
-                                    horarios.add(horasPeatonales.getDetalle().get(i).getHoraMin() + " - " +
-                                            horasPeatonales.getDetalle().get(i).getHoraMax());
+                                    horarios.add( horasPeatonales.getDetalle().get( i ).getHoraMin() + " - " +
+                                            horasPeatonales.getDetalle().get( i ).getHoraMax() );
                                 }
 
 
-                                adapterHoras = new AdapterListaHoras(horasPeatonales.getDetalle(), getContext(), null, binding, "");
-                                binding.recyclerHoras.setLayoutManager(new LinearLayoutManager(getContext()));
-                                binding.recyclerHoras.setAdapter(adapterHoras);
+                                adapterHoras = new AdapterListaHoras( horasPeatonales.getDetalle(), getContext(), null, binding, "" );
+                                binding.recyclerHoras.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                                binding.recyclerHoras.setAdapter( adapterHoras );
 
-                                RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
-                                binding.recyclerHoras.setLayoutManager(mLayoutManager);
-                                binding.recyclerHoras.addItemDecoration(new FragmentModificar.GridSpacingItemDecoration(3, dpToPx(4), true));
-                                binding.recyclerHoras.setItemAnimator(new DefaultItemAnimator());
-                                binding.peatonalConteo.spinnerHora.setItems(horarios);
+                                RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager( getContext(), 3 );
+                                binding.recyclerHoras.setLayoutManager( mLayoutManager );
+                                binding.recyclerHoras.addItemDecoration( new FragmentModificar.GridSpacingItemDecoration( 3, dpToPx( 4 ), true ) );
+                                binding.recyclerHoras.setItemAnimator( new DefaultItemAnimator() );
+                                binding.peatonalConteo.spinnerHora.setItems( horarios );
 
-                                horaInicio = horasPeatonales.getDetalle().get(0).getHoraMin();
-                                horaFinal = horasPeatonales.getDetalle().get(0).getHoraMax();
+                                horaInicio = horasPeatonales.getDetalle().get( 0 ).getHoraMin();
+                                horaFinal = horasPeatonales.getDetalle().get( 0 ).getHoraMax();
 
                                 Calendar c = Calendar.getInstance();
-                                SimpleDateFormat sdf = new SimpleDateFormat("kk:mm");
-                                final String strDate = sdf.format(c.getTime());
+                                SimpleDateFormat sdf = new SimpleDateFormat( "kk:mm" );
+                                final String strDate = sdf.format( c.getTime() );
 
-                                binding.peatonalConteo.btnGuardar.setEnabled(false);
-                                binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
+                                binding.peatonalConteo.btnGuardar.setEnabled( false );
+                                binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
 
-                                binding.toolbar.nombreTitulo.setText(getString(R.string.flujopeatonal));
-                                binding.conteo.setOnClickListener(new View.OnClickListener() {
+                                binding.toolbar.nombreTitulo.setText( getString( R.string.flujopeatonal ) );
+                                binding.conteo.setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        binding.conteo.setAlpha(0.0f);
-                                        binding.conteo.setEnabled(false);
+                                        binding.conteo.setAlpha( 0.0f );
+                                        binding.conteo.setEnabled( false );
 
-                                        binding.ciudad.setVisibility(View.GONE);
-                                        binding.peatonalConteo.peatonales.setVisibility(View.VISIBLE);
+                                        binding.ciudad.setVisibility( View.GONE );
+                                        binding.peatonalConteo.peatonales.setVisibility( View.VISIBLE );
 
-                                        binding.peaton.setVisibility(View.VISIBLE);
-                                        binding.recyclerPeatonal.setVisibility(View.GONE);
-                                        binding.btnFinalizar.setVisibility(View.GONE);
-                                        binding.promedio.setVisibility(View.GONE);
-                                        binding.linearLayout.setVisibility(View.INVISIBLE);
+                                        binding.peaton.setVisibility( View.VISIBLE );
+                                        binding.recyclerPeatonal.setVisibility( View.GONE );
+                                        binding.btnFinalizar.setVisibility( View.GONE );
+                                        binding.promedio.setVisibility( View.GONE );
+                                        binding.linearLayout.setVisibility( View.INVISIBLE );
 
 
-                                        String hoI = horasPeatonales.getDetalle().get(0).getHoraMin();
-                                        String hoF = horasPeatonales.getDetalle().get(0).getHoraMax();
+                                        String hoI = horasPeatonales.getDetalle().get( 0 ).getHoraMin();
+                                        String hoF = horasPeatonales.getDetalle().get( 0 ).getHoraMax();
 
-                                        hoI = hoI.substring(0, 5);
-                                        hoF = hoF.substring(0, 5);
+                                        hoI = hoI.substring( 0, 5 );
+                                        hoF = hoF.substring( 0, 5 );
 
-                                        hora[0] = isHourInInterval(strDate, hoI, hoF);
+                                        hora[0] = isHourInInterval( strDate, hoI, hoF );
                                         if (hora[0] != false) {
-                                            binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                            binding.peatonalConteo.btnGuardar.setEnabled(true);
+                                            binding.peatonalConteo.btnGuardar.setAlpha( 1.0f );
+                                            binding.peatonalConteo.btnGuardar.setEnabled( true );
                                             horaInicio = hoI;
                                             horaFinal = hoF;
                                         } else {
-                                            binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                            binding.peatonalConteo.btnGuardar.setEnabled(false);
+                                            binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
+                                            binding.peatonalConteo.btnGuardar.setEnabled( false );
                                             hora[0] = false;
                                         }
 
-                                        listaPeatonal(binding);
+                                        listaPeatonal( binding );
 
-                                        binding.toolbar.guardar.setVisibility(View.GONE);
-                                        binding.peatonalConteo.fechaHoy.setText(Util.getFechita());
+                                        binding.toolbar.guardar.setVisibility( View.GONE );
+                                        binding.peatonalConteo.fechaHoy.setText( Util.getFechita() );
 
                                         final String finalHoI = hoI;
                                         final String finalHoF = hoF;
-                                        binding.peatonalConteo.spinnerHora.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+                                        binding.peatonalConteo.spinnerHora.setOnItemSelectedListener( new MaterialSpinner.OnItemSelectedListener<String>() {
                                             @Override
                                             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
 
                                                 if (position == 0) {
-                                                    hora[0] = isHourInInterval(strDate, finalHoI, finalHoF);
+                                                    hora[0] = isHourInInterval( strDate, finalHoI, finalHoF );
                                                     if (hora[0] != false) {
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(true);
+                                                        binding.peatonalConteo.btnGuardar.setAlpha( 1.0f );
+                                                        binding.peatonalConteo.btnGuardar.setEnabled( true );
                                                         horaInicio = finalHoI;
                                                         horaFinal = finalHoF;
                                                     } else {
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(false);
+                                                        binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
+                                                        binding.peatonalConteo.btnGuardar.setEnabled( false );
                                                         hora[0] = false;
                                                     }
                                                 }
 
                                                 if (position == 1) {
 
-                                                    String hoI = horasPeatonales.getDetalle().get(1).getHoraMin();
-                                                    String hoF = horasPeatonales.getDetalle().get(1).getHoraMax();
+                                                    String hoI = horasPeatonales.getDetalle().get( 1 ).getHoraMin();
+                                                    String hoF = horasPeatonales.getDetalle().get( 1 ).getHoraMax();
 
-                                                    hora[0] = isHourInInterval(strDate, hoI, hoF);
+                                                    hora[0] = isHourInInterval( strDate, hoI, hoF );
 
                                                     if (hora[0] != false) {
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(true);
+                                                        binding.peatonalConteo.btnGuardar.setAlpha( 1.0f );
+                                                        binding.peatonalConteo.btnGuardar.setEnabled( true );
                                                         horaInicio = hoI;
                                                         horaFinal = hoF;
                                                     } else {
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(false);
+                                                        binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
+                                                        binding.peatonalConteo.btnGuardar.setEnabled( false );
                                                         hora[0] = false;
                                                     }
                                                 }
@@ -4363,148 +4854,148 @@ public class FragmentModificar extends Fragment implements
                                                     String hoI;
                                                     String hoF;
                                                     if (horarios.size() > 1) {
-                                                        hoI = horasPeatonales.getDetalle().get(2).getHoraMin();
-                                                        hoF = horasPeatonales.getDetalle().get(2).getHoraMax();
+                                                        hoI = horasPeatonales.getDetalle().get( 2 ).getHoraMin();
+                                                        hoF = horasPeatonales.getDetalle().get( 2 ).getHoraMax();
                                                     } else {
                                                         hoI = "";
                                                         hoF = "";
                                                     }
 
-                                                    hora[0] = isHourInInterval(strDate, hoI, hoF);
+                                                    hora[0] = isHourInInterval( strDate, hoI, hoF );
                                                     if (hora[0] != false) {
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(1.0f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(true);
+                                                        binding.peatonalConteo.btnGuardar.setAlpha( 1.0f );
+                                                        binding.peatonalConteo.btnGuardar.setEnabled( true );
                                                         horaInicio = hoI;
                                                         horaFinal = hoF;
                                                     } else {
-                                                        binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
-                                                        binding.peatonalConteo.btnGuardar.setEnabled(false);
+                                                        binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
+                                                        binding.peatonalConteo.btnGuardar.setEnabled( false );
                                                         hora[0] = false;
                                                     }
                                                 }
                                             }
-                                        });
+                                        } );
 
-                                        binding.peatonalConteo.cronometroPlay.setAlpha(0.35f);
-                                        binding.peatonalConteo.cronometroStop.setAlpha(0.35f);
+                                        binding.peatonalConteo.cronometroPlay.setAlpha( 0.35f );
+                                        binding.peatonalConteo.cronometroStop.setAlpha( 0.35f );
 
 
-                                        binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
+                                        binding.toolbar.back.setOnClickListener( new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
-                                                a.show(getChildFragmentManager(), "child");
+                                                a.show( getChildFragmentManager(), "child" );
                                             }
-                                        });
+                                        } );
 
-                                        binding.peatonalConteo.btnGuardar.setOnClickListener(new View.OnClickListener() {
+                                        binding.peatonalConteo.btnGuardar.setOnClickListener( new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                binding.peatonalConteo.btnGuardar.setEnabled(false);
+                                                binding.peatonalConteo.btnGuardar.setEnabled( false );
                                                 if (conteos[0] > 0 && hora[0]) {
 
-                                                    ServicioGPS n = new ServicioGPS(getContext());
+                                                    ServicioGPS n = new ServicioGPS( getContext() );
                                                     CrearPeatonal crearPeatonal = new CrearPeatonal(
                                                             usuarioId,
                                                             mdIdterminar,
                                                             Util.getFechita(),
                                                             horaInicio,
                                                             horaFinal,
-                                                            String.valueOf(conteos[0]),
-                                                            String.valueOf(n.getLatitude()),
-                                                            String.valueOf(n.getLongitude()),
+                                                            String.valueOf( conteos[0] ),
+                                                            String.valueOf( n.getLatitude() ),
+                                                            String.valueOf( n.getLongitude() ),
                                                             "1.0.1",
                                                             "5555555555",
                                                             "0"
                                                     );
 
-                                                    ProviderCrearPeatonal.getInstance(getContext()).guardarPeatonal(crearPeatonal, new ProviderCrearPeatonal.InterfaceCrearDatosPeatonal() {
+                                                    ProviderCrearPeatonal.getInstance( getContext() ).guardarPeatonal( crearPeatonal, new ProviderCrearPeatonal.InterfaceCrearDatosPeatonal() {
                                                         @Override
                                                         public void resolve(Codigos codigo) {
                                                             if (codigo.getCodigo() == 200) {
-                                                                Toast.makeText(getContext(), "Flujo peatonal guardado con éxito", Toast.LENGTH_SHORT).show();
-                                                                binding.peaton.setVisibility(View.GONE);
-                                                                binding.recyclerPeatonal.setVisibility(View.VISIBLE);
-                                                                listaPeatonal(binding);
-                                                                binding.peatonalConteo.etTotal.setText("");
-                                                                binding.btnFinalizar.setVisibility(View.VISIBLE);
-                                                                binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                                                binding.promedio.setVisibility(View.VISIBLE);
+                                                                Toast.makeText( getContext(), "Flujo peatonal guardado con éxito", Toast.LENGTH_SHORT ).show();
+                                                                binding.peaton.setVisibility( View.GONE );
+                                                                binding.recyclerPeatonal.setVisibility( View.VISIBLE );
+                                                                listaPeatonal( binding );
+                                                                binding.peatonalConteo.etTotal.setText( "" );
+                                                                binding.btnFinalizar.setVisibility( View.VISIBLE );
+                                                                binding.peatonalConteo.btnGuardar.setEnabled( true );
+                                                                binding.promedio.setVisibility( View.VISIBLE );
                                                                 binding.peatonalConteo.chronometer1.stop();
                                                                 //binding.peatonalConteo.chronometer1.setBase(SystemClock.elapsedRealtime()- tiempo *1000);
-                                                                binding.peatonalConteo.cronometroStop.setAlpha(1.0f);
-                                                                binding.peatonalConteo.cronometroPlay.setAlpha(0.35f);
+                                                                binding.peatonalConteo.cronometroStop.setAlpha( 1.0f );
+                                                                binding.peatonalConteo.cronometroPlay.setAlpha( 0.35f );
 
-                                                                binding.peatonalConteo.spinnerHora.setItems(horarios);
+                                                                binding.peatonalConteo.spinnerHora.setItems( horarios );
 
-                                                                binding.linearLayout.setVisibility(View.VISIBLE);
-                                                                binding.conteo.setAlpha(1f);
-                                                                binding.conteo.setEnabled(true);
+                                                                binding.linearLayout.setVisibility( View.VISIBLE );
+                                                                binding.conteo.setAlpha( 1f );
+                                                                binding.conteo.setEnabled( true );
 
-                                                                binding.peatonalConteo.btnGuardar.setEnabled(false);
-                                                                binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
+                                                                binding.peatonalConteo.btnGuardar.setEnabled( false );
+                                                                binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
 
                                                                 conteos[0] = 0;
 
-                                                                binding.peatonalConteo.cien.setText("0");
-                                                                binding.peatonalConteo.real.setText("0");
-                                                                binding.peatonalConteo.mil.setText("0");
-                                                                binding.peatonalConteo.diez.setText("0");
-                                                                binding.peatonalConteo.presion.setEnabled(true);
+                                                                binding.peatonalConteo.cien.setText( "0" );
+                                                                binding.peatonalConteo.real.setText( "0" );
+                                                                binding.peatonalConteo.mil.setText( "0" );
+                                                                binding.peatonalConteo.diez.setText( "0" );
+                                                                binding.peatonalConteo.presion.setEnabled( true );
 
                                                                 if (downTimer[0] != null) {
                                                                     downTimer[0].cancel();
                                                                 }
                                                             } else {
-                                                                Toast.makeText(getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT).show();
-                                                                binding.peatonalConteo.btnGuardar.setEnabled(true);
+                                                                Toast.makeText( getContext(), codigo.getMensaje(), Toast.LENGTH_SHORT ).show();
+                                                                binding.peatonalConteo.btnGuardar.setEnabled( true );
                                                             }
                                                         }
 
                                                         @Override
                                                         public void reject(Exception e) {
                                                         }
-                                                    });
+                                                    } );
                                                 } else {
-                                                    binding.peatonalConteo.btnGuardar.setEnabled(true);
-                                                    Toast.makeText(getContext(), R.string.horarios, Toast.LENGTH_SHORT).show();
+                                                    binding.peatonalConteo.btnGuardar.setEnabled( true );
+                                                    Toast.makeText( getContext(), R.string.horarios, Toast.LENGTH_SHORT ).show();
                                                 }
                                             }
-                                        });
+                                        } );
 
 
-                                        binding.peatonalConteo.regresar.setOnClickListener(new View.OnClickListener() {
+                                        binding.peatonalConteo.regresar.setOnClickListener( new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
 
-                                                binding.peaton.setVisibility(View.GONE);
-                                                binding.conteo.setEnabled(true);
-                                                binding.btnFinalizar.setVisibility(View.VISIBLE);
-                                                binding.recyclerPeatonal.setVisibility(View.VISIBLE);
-                                                binding.btnFinalizar.setVisibility(View.VISIBLE);
-                                                binding.promedio.setVisibility(View.VISIBLE);
-                                                binding.linearLayout.setVisibility(View.VISIBLE);
-                                                binding.conteo.setAlpha(1f);
-                                                binding.conteo.setEnabled(true);
+                                                binding.peaton.setVisibility( View.GONE );
+                                                binding.conteo.setEnabled( true );
+                                                binding.btnFinalizar.setVisibility( View.VISIBLE );
+                                                binding.recyclerPeatonal.setVisibility( View.VISIBLE );
+                                                binding.btnFinalizar.setVisibility( View.VISIBLE );
+                                                binding.promedio.setVisibility( View.VISIBLE );
+                                                binding.linearLayout.setVisibility( View.VISIBLE );
+                                                binding.conteo.setAlpha( 1f );
+                                                binding.conteo.setEnabled( true );
 
-                                                binding.peatonalConteo.btnGuardar.setEnabled(false);
-                                                binding.peatonalConteo.btnGuardar.setAlpha(0.4f);
+                                                binding.peatonalConteo.btnGuardar.setEnabled( false );
+                                                binding.peatonalConteo.btnGuardar.setAlpha( 0.4f );
 
                                                 conteos[0] = 0;
 
-                                                binding.peatonalConteo.cien.setText("0");
-                                                binding.peatonalConteo.real.setText("0");
-                                                binding.peatonalConteo.mil.setText("0");
-                                                binding.peatonalConteo.diez.setText("0");
-                                                binding.peatonalConteo.presion.setEnabled(true);
-                                                binding.peatonalConteo.contador.setText("00:00");
+                                                binding.peatonalConteo.cien.setText( "0" );
+                                                binding.peatonalConteo.real.setText( "0" );
+                                                binding.peatonalConteo.mil.setText( "0" );
+                                                binding.peatonalConteo.diez.setText( "0" );
+                                                binding.peatonalConteo.presion.setEnabled( true );
+                                                binding.peatonalConteo.contador.setText( "00:00" );
                                                 if (downTimer[0] != null) {
                                                     downTimer[0].cancel();
                                                 }
                                             }
-                                        });
+                                        } );
                                     }
-                                });
+                                } );
 
 
                             }
@@ -4514,19 +5005,19 @@ public class FragmentModificar extends Fragment implements
                         public void reject(Exception e) {
 
                         }
-                    });
+                    } );
 
-            binding.btnFinalizar.setOnClickListener(new View.OnClickListener() {
+            binding.btnFinalizar.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    Intent intent = new Intent(getContext(), ActivityFinalizaTerminar.class);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    Intent intent = new Intent( getContext(), ActivityFinalizaTerminar.class );
+                    intent.addCategory( Intent.CATEGORY_HOME );
+                    intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+                    startActivity( intent );
 
                 }
-            });
+            } );
 
 
         }
@@ -4534,7 +5025,7 @@ public class FragmentModificar extends Fragment implements
     }
 
     public static boolean isHourInInterval(String target, String start, String end) {
-        return ((target.compareTo(start) >= 0) && (target.compareTo(end) <= 0));
+        return ((target.compareTo( start ) >= 0) && (target.compareTo( end ) <= 0));
     }
 
 
@@ -4544,66 +5035,66 @@ public class FragmentModificar extends Fragment implements
 
         Resources resource = getContext().getResources();
         binding.factores.removeAllViews();
-        TableRow rowPlomo = new TableRow(getContext());
-        rowPlomo.setBackgroundColor(resource.getColor(R.color.blanco));
-        binding.factores.addView(rowPlomo);
+        TableRow rowPlomo = new TableRow( getContext() );
+        rowPlomo.setBackgroundColor( resource.getColor( R.color.blanco ) );
+        binding.factores.addView( rowPlomo );
 
         checks = new HashMap<Integer, String>();
 
 
         for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
-            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
-                for (int j = 0; j < factoresConstruccion.getCatalogo().get(i).getDetalles().size(); j++) {
+            if (factoresConstruccion.getCatalogo().get( i ).getNivelid() == 2) {
+                for (int j = 0; j < factoresConstruccion.getCatalogo().get( i ).getDetalles().size(); j++) {
 
-                    TableRow tbrow = new TableRow(getContext());
-                    tbrow.setBackgroundColor(resource.getColor(R.color.blanco));
+                    TableRow tbrow = new TableRow( getContext() );
+                    tbrow.setBackgroundColor( resource.getColor( R.color.blanco ) );
 
-                    final CheckBox check = new CheckBox(getContext());
-                    check.setTextColor(resource.getColor(R.color.azul));
-                    int niv = factoresConstruccion.getCatalogo().get(1).getDetalles().get(j).getDetalleid();
-                    check.setId(niv);
-                    check.setGravity(Gravity.CENTER);
+                    final CheckBox check = new CheckBox( getContext() );
+                    check.setTextColor( resource.getColor( R.color.azul ) );
+                    int niv = factoresConstruccion.getCatalogo().get( 1 ).getDetalles().get( j ).getDetalleid();
+                    check.setId( niv );
+                    check.setGravity( Gravity.CENTER );
 
                     for (int n = 0; n < datosConstruccion.getConstruccion().size(); n++) {
-                        for (int m = 0; m < datosConstruccion.getConstruccion().get(n).getDetalles().size(); m++) {
-                            int nivelId = datosConstruccion.getConstruccion().get(0).getDetalles().get(m).getDetalleid();
+                        for (int m = 0; m < datosConstruccion.getConstruccion().get( n ).getDetalles().size(); m++) {
+                            int nivelId = datosConstruccion.getConstruccion().get( 0 ).getDetalles().get( m ).getDetalleid();
                             int factor = check.getId();
                             if (factor == nivelId) {
-                                check.setChecked(true);
+                                check.setChecked( true );
                             }
 
                         }
                     }
-                    tbrow.addView(check);
+                    tbrow.addView( check );
                     final boolean checked = check.isChecked();
                     if (checked) {
-                        checks.put(j, "1");
+                        checks.put( j, "1" );
                     } else {
-                        checks.put(j, "0");
+                        checks.put( j, "0" );
                     }
 
                     final int finalI = j;
                     int finalJ = j;
 
-                    check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    check.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                             if (isChecked) {
-                                checks.put(finalI, "1");
+                                checks.put( finalI, "1" );
                             } else {
-                                checks.put(finalI, "0");
+                                checks.put( finalI, "0" );
                             }
 
                         }
-                    });
+                    } );
 
-                    TextView t1v1 = new TextView(getContext());
-                    t1v1.setText(factoresConstruccion.getCatalogo().get(i).getDetalles().get(finalJ).getDescripcion());
-                    t1v1.setTextColor(resource.getColor(R.color.azul));
-                    t1v1.setGravity(Gravity.CENTER_VERTICAL);
-                    tbrow.addView(t1v1);
-                    binding.factores.addView(tbrow);
+                    TextView t1v1 = new TextView( getContext() );
+                    t1v1.setText( factoresConstruccion.getCatalogo().get( i ).getDetalles().get( finalJ ).getDescripcion() );
+                    t1v1.setTextColor( resource.getColor( R.color.azul ) );
+                    t1v1.setGravity( Gravity.CENTER_VERTICAL );
+                    tbrow.addView( t1v1 );
+                    binding.factores.addView( tbrow );
                 }
 
             }
@@ -4622,61 +5113,61 @@ public class FragmentModificar extends Fragment implements
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        final String mdIdterminar = preferences.getString("mdIdterminar", "");
+        super.onActivityResult( requestCode, resultCode, data );
+        SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+        final String mdIdterminar = preferences.getString( "mdIdterminar", "" );
         if (requestCode == CAMERA_FRONTAL && resultCode == -1) {
             fechaFrente = getFechaHora();
             //obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imageFilePath));
             final FragmentEditPhoto fep = new FragmentEditPhoto();
-            fep.setDirecionFile(imageFilePath);
-            fep.show(getChildFragmentManager(),"child");
-            fep.setListener(new FragmentEditPhoto.FragmentEditPhotoInterface() {
+            fep.setDirecionFile( imageFilePath );
+            fep.show( getChildFragmentManager(), "child" );
+            fep.setListener( new FragmentEditPhoto.FragmentEditPhotoInterface() {
                 @Override
                 public void guardarFoto(String imgCuadro) {
-                    obtenerUrl(String.valueOf(mdIdterminar), random() + "_frente", "png", "1", Uri.parse(imgCuadro));
+                    obtenerUrl( String.valueOf( mdIdterminar ), random() + "_frente", "png", "1", Uri.parse( imgCuadro ) );
                     fep.dismiss();
                 }
-            });
+            } );
         } else if (requestCode == CAMERA_LATERAL_1 && resultCode == -1) {
             fechaLateral1 = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_lateral1", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_lateral1", "png", "1", Uri.parse( imageFilePath ) );
         } else if (requestCode == CAMERA_PREDIAL && resultCode == -1) {
             fechaPredial = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "6", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_predial", "png", "6", Uri.parse( imageFilePath ) );
         } else if (requestCode == CAMERA_LATERAL_2 && resultCode == -1) {
             fechaLateral2 = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_lateral2", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_lateral2", "png", "1", Uri.parse( imageFilePath ) );
         } else if (requestCode == CAMERA_ENTORNO_1 && resultCode == -1) {
             fechaEntorno1 = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_entorno1", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_entorno1", "png", "1", Uri.parse( imageFilePath ) );
         } else if (requestCode == CAMERA_ENTORNO_2 && resultCode == -1) {
             fechaEntorno2 = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_entorno2", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_entorno2", "png", "1", Uri.parse( imageFilePath ) );
         } else if (requestCode == CAMERA_ENTORNO_3 && resultCode == -1) {
             fechaEntorno3 = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_entorno3", "png", "1", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_entorno3", "png", "1", Uri.parse( imageFilePath ) );
         } else if (requestCode == CAMERA_RECIBO_AGUA && resultCode == -1) {
             fechaReciboAgua = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboAgua", "png", "6", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_reciboAgua", "png", "6", Uri.parse( imageFilePath ) );
         } else if (requestCode == CAMERA_RECIBO_LUZ && resultCode == -1) {
             fechaReciboLuz = getFechaHora();
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboLuz", "png", "6", Uri.parse(imageFilePath));
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_reciboLuz", "png", "6", Uri.parse( imageFilePath ) );
         } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             fechaPredial = getFechaHora();
-            String filePathUri = saveFile(filePath,random() + "_predial" );
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_predial", "png", "6", Uri.parse(filePathUri));
+            String filePathUri = saveFile( filePath, random() + "_predial" );
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_predial", "png", "6", Uri.parse( filePathUri ) );
         } else if (requestCode == PICK_IMAGE_REQUEST_RECIBO_AGUA && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             fechaReciboAgua = getFechaHora();
-            String filePathUri = saveFile(filePath,random() + "_reciboAgua" );
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboAgua", "png", "6", Uri.parse(filePathUri));
+            String filePathUri = saveFile( filePath, random() + "_reciboAgua" );
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_reciboAgua", "png", "6", Uri.parse( filePathUri ) );
         } else if (requestCode == PICK_IMAGE_REQUEST_RECIBO_LUZ && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             fechaReciboLuz = getFechaHora();
-            String filePathUri = saveFile(filePath,random() + "_reciboLuz" );
-            obtenerUrl(String.valueOf(mdIdterminar), random() + "_reciboLuz", "png", "6", Uri.parse(filePathUri));
+            String filePathUri = saveFile( filePath, random() + "_reciboLuz" );
+            obtenerUrl( String.valueOf( mdIdterminar ), random() + "_reciboLuz", "png", "6", Uri.parse( filePathUri ) );
         }
 
     }
@@ -4685,77 +5176,85 @@ public class FragmentModificar extends Fragment implements
 
     //public void obtenerUrl(String foto, String b64, String mdId){
     public void obtenerUrl(final String mdId, final String nombreImg, final String formato, final String tipoArchivo, final Uri uri) {
-        loadingProgress(progressDialog, 0);
+        loadingProgress( progressDialog, 0 );
         //ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, foto, b64 , new ProviderObtenerUrl.ConsultaUrl() {
-        ProviderObtenerUrl.getInstance(getContext()).obtenerUrl(mdId, nombreImg, formato, tipoArchivo, uri, new ProviderObtenerUrl.ConsultaUrl() {
+        ProviderObtenerUrl.getInstance( getContext() ).obtenerUrl( mdId, nombreImg, formato, tipoArchivo, uri, new ProviderObtenerUrl.ConsultaUrl() {
             @Override
             public void resolve(Codigos codigo) {
                 if (codigo.getCodigo() == 200) {
                     if (codigo != null && codigo.getResultado().getSecureUrl() != null) {
-                        if (codigo.getResultado().getSecureUrl().contains("frente")) {
-                            bindingSuperficie.frontal.setEnabled(false);
+                        if (codigo.getResultado().getSecureUrl().contains( "frente" )) {
+                            bindingSuperficie.frontal.setEnabled( false );
                             urlFrente = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
-                            bindingSuperficie.frontal.setEnabled(true);
+                            Picasso.get().load( urlFrente )
+                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                            bindingSuperficie.frontal.setEnabled( true );
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            loadingProgress( progressDialog, 1 );
 
-                        } else if (codigo.getResultado().getSecureUrl().contains("lateral1")) {
-                            bindingSuperficie.lateral1.setEnabled(false);
+                        } else if (codigo.getResultado().getSecureUrl().contains( "lateral1" )) {
+                            bindingSuperficie.lateral1.setEnabled( false );
                             urlLateral1 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
-                            bindingSuperficie.lateral1.setEnabled(true);
+                            Picasso.get().load( urlLateral1 )
+                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                            bindingSuperficie.lateral1.setEnabled( true );
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            loadingProgress( progressDialog, 1 );
 
-                        } else if (codigo.getResultado().getSecureUrl().contains("predial")) {
-                            bindingSuperficie.predial.setEnabled(false);
+                        } else if (codigo.getResultado().getSecureUrl().contains( "predial" )) {
+                            bindingSuperficie.predial.setEnabled( false );
                             urlPredial = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
-                            bindingSuperficie.predial.setEnabled(true);
+                            Picasso.get().load( urlPredial )
+                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                            bindingSuperficie.predial.setEnabled( true );
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            loadingProgress( progressDialog, 1 );
 
-                        } else if (codigo.getResultado().getSecureUrl().contains("lateral2")) {
-                            bindingSuperficie.lateral2.setEnabled(false);
+                        } else if (codigo.getResultado().getSecureUrl().contains( "lateral2" )) {
+                            bindingSuperficie.lateral2.setEnabled( false );
                             urlLateral2 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
-                            bindingSuperficie.lateral2.setEnabled(true);
+                            Picasso.get().load( urlLateral2 )
+                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                            bindingSuperficie.lateral2.setEnabled( true );
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            loadingProgress( progressDialog, 1 );
 
-                        } else if (codigo.getResultado().getSecureUrl().contains("entorno1")) {
-                            bindingSuperficie.entorno1.setEnabled(false);
+                        } else if (codigo.getResultado().getSecureUrl().contains( "entorno1" )) {
+                            bindingSuperficie.entorno1.setEnabled( false );
                             urlEntorno1 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
-                            bindingSuperficie.entorno1.setEnabled(true);
+                            Picasso.get().load( urlEntorno1 )
+                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                            bindingSuperficie.entorno1.setEnabled( true );
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
-                        } else if (codigo.getResultado().getSecureUrl().contains("entorno2")) {
-                            bindingSuperficie.entorno2.setEnabled(false);
+                            loadingProgress( progressDialog, 1 );
+                        } else if (codigo.getResultado().getSecureUrl().contains( "entorno2" )) {
+                            bindingSuperficie.entorno2.setEnabled( false );
                             urlEntorno2 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
-                            bindingSuperficie.entorno2.setEnabled(true);
+                            Picasso.get().load( urlEntorno2 )
+                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                            bindingSuperficie.entorno2.setEnabled( true );
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
-                        } else if (codigo.getResultado().getSecureUrl().contains("entorno3")) {
-                            bindingSuperficie.entorno3.setEnabled(false);
+                            loadingProgress( progressDialog, 1 );
+                        } else if (codigo.getResultado().getSecureUrl().contains( "entorno3" )) {
+                            bindingSuperficie.entorno3.setEnabled( false );
                             urlEntorno3 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
-                            bindingSuperficie.entorno3.setEnabled(true);
+                            Picasso.get().load( urlEntorno3 )
+                                    .placeholder( R.drawable.cargando_imagen ).into( bindingSuperficie.imagen );
+                            bindingSuperficie.entorno3.setEnabled( true );
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
-                            loadingProgress(progressDialog, 1);
+                            loadingProgress( progressDialog, 1 );
                         } /*else if (codigo.getResultado().getSecureUrl().contains("reciboAgua")) {
                             bindingSuperficie.reciboAgua.setEnabled(false);
                             urlReciboAgua = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlReciboAgua)
+                            .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.reciboAgua.setEnabled(true);
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
@@ -4763,40 +5262,41 @@ public class FragmentModificar extends Fragment implements
                         } else if (codigo.getResultado().getSecureUrl().contains("reciboLuz")) {
                             bindingSuperficie.reciboLuz.setEnabled(false);
                             urlReciboLuz = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlReciboLuz)
+                            .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.reciboLuz.setEnabled(true);
                             hourlyTask.run();
                             hourlyTask.scheduledExecutionTime();
                             loadingProgress(progressDialog, 1);
                         }*/
                     } else {
-                        loadingProgress(progressDialog, 1);
+                        loadingProgress( progressDialog, 1 );
                         //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
                         //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
-                        bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
+                        bindingSuperficie.imagen.setImageResource( R.drawable.no_image );
                         FragmentDialogError405 a = new FragmentDialogError405();
                         Bundle arguments = new Bundle();
-                        arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
-                        a.setArguments(arguments);
-                        a.show(getChildFragmentManager(),"child");
+                        arguments.putString( "mensaje", "ERROR: al subir la foto, vuelve a intentarlo" );
+                        a.setArguments( arguments );
+                        a.show( getChildFragmentManager(), "child" );
                     }
                 } else {
-                    loadingProgress(progressDialog, 1);
+                    loadingProgress( progressDialog, 1 );
                     //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
                     //Toast.makeText(getContext(), R.string.err_foto, Toast.LENGTH_SHORT).show();
-                    bindingSuperficie.imagen.setImageResource(R.drawable.no_image);
+                    bindingSuperficie.imagen.setImageResource( R.drawable.no_image );
                     FragmentDialogError405 a = new FragmentDialogError405();
                     Bundle arguments = new Bundle();
-                    arguments.putString( "mensaje" , "ERROR: al subir la foto, vuelve a intentarlo");
-                    a.setArguments(arguments);
-                    a.show(getChildFragmentManager(),"child");
+                    arguments.putString( "mensaje", "ERROR: al subir la foto, vuelve a intentarlo" );
+                    a.setArguments( arguments );
+                    a.show( getChildFragmentManager(), "child" );
                 }
             }
 
             @Override
             public void reject(Exception e) {
             }
-        });
+        } );
     }
 /*
     public void obtenerUrl(String tipoPredial, String foto, String b64, String mdId){
@@ -4808,7 +5308,8 @@ public class FragmentModificar extends Fragment implements
                     if(codigo.getResultado().getSecureUrl().contains("frente")){
                         bindingSuperficie.frontal.setEnabled(false);
                         urlFrente = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                        Picasso.get().load(urlFrente)
+                        .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                         bindingSuperficie.frontal.setEnabled(true);
                         hourlyTask.run();
                         hourlyTask.scheduledExecutionTime();
@@ -4817,7 +5318,8 @@ public class FragmentModificar extends Fragment implements
                     }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
                         bindingSuperficie.lateral1.setEnabled(false);
                         urlLateral1 = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                        Picasso.get().load(urlLateral1)
+                        .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                         bindingSuperficie.lateral1.setEnabled(true);
                         hourlyTask.run();
                         hourlyTask.scheduledExecutionTime();
@@ -4826,7 +5328,8 @@ public class FragmentModificar extends Fragment implements
                     }else if(codigo.getResultado().getSecureUrl().contains("predial")){
                         bindingSuperficie.predial.setEnabled(false);
                         urlPredial = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                        Picasso.get().load(urlPredial)
+                        .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                         bindingSuperficie.predial.setEnabled(true);
                         hourlyTask.run();
                         hourlyTask.scheduledExecutionTime();
@@ -4835,7 +5338,8 @@ public class FragmentModificar extends Fragment implements
                     } else{
                         bindingSuperficie.lateral2.setEnabled(false);
                         urlLateral2 = codigo.getResultado().getSecureUrl();
-                        Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                        Picasso.get().load(urlLateral2)
+                        .placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                         bindingSuperficie.lateral2.setEnabled(true);
                         hourlyTask.run();
                         hourlyTask.scheduledExecutionTime();
@@ -4856,10 +5360,10 @@ public class FragmentModificar extends Fragment implements
 
     private File createImageFile(Context c) throws IOException {
         String timeStamp =
-                new SimpleDateFormat("yyyyMMdd_HHmmss",
-                        Locale.getDefault()).format(new Date());
+                new SimpleDateFormat( "yyyyMMdd_HHmmss",
+                        Locale.getDefault() ).format( new Date() );
         String imageFileName = "IMG_" + timeStamp + "_";
-        File storageDir = c.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = c.getExternalFilesDir( Environment.DIRECTORY_PICTURES );
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -4878,27 +5382,27 @@ public class FragmentModificar extends Fragment implements
 
     private String b64(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        bitmap.compress( Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream );
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        return Base64.encodeToString( byteArray, Base64.DEFAULT );
     }
 
     public static String encodeTobase64(Bitmap image) {
         Bitmap immagex = image;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immagex.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        immagex.compress( Bitmap.CompressFormat.PNG, 100, baos );
         byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        String imageEncoded = Base64.encodeToString( b, Base64.DEFAULT );
         return imageEncoded;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_usuario, menu);
-        menu.add(0, 1, 1, Util.menuIcon(getResources().getDrawable(R.drawable.ic_vpn_key_black_24dp),
-                getResources().getString(R.string.cambiarContra)));
-        menu.add(0, 2, 2, Util.menuIcon(getResources().getDrawable(R.drawable.ic_exit_to_app_black_24dp),
-                getResources().getString(R.string.salir)));
+        inflater.inflate( R.menu.menu_usuario, menu );
+        menu.add( 0, 1, 1, Util.menuIcon( getResources().getDrawable( R.drawable.ic_vpn_key_black_24dp ),
+                getResources().getString( R.string.cambiarContra ) ) );
+        menu.add( 0, 2, 2, Util.menuIcon( getResources().getDrawable( R.drawable.ic_exit_to_app_black_24dp ),
+                getResources().getString( R.string.salir ) ) );
     }
 
     /**
@@ -4917,20 +5421,20 @@ public class FragmentModificar extends Fragment implements
 
                 return true;
             case 2:
-                Util.cerrarSesion(getActivity());
+                Util.cerrarSesion( getActivity() );
                 return true;
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected( item );
     }
 
     String mensaje = null;
 
     public void slideUX(final FragmentAutoriza3Binding binding) {
-        slideGenerador = new SlideUpBuilder(binding.content2.slideView)
-                .withListeners(new SlideUp.Listener.Events() {
+        slideGenerador = new SlideUpBuilder( binding.content2.slideView )
+                .withListeners( new SlideUp.Listener.Events() {
                     @Override
                     public void onSlide(float percent) {
-                        binding.dim.setAlpha(1 - (percent / 100));
+                        binding.dim.setAlpha( 1 - (percent / 100) );
                     }
 
                     @Override
@@ -4939,17 +5443,17 @@ public class FragmentModificar extends Fragment implements
 
                         }
                     }
-                }).withStartGravity(Gravity.BOTTOM).withLoggingEnabled(false).withGesturesEnabled(false)
-                .withStartState(SlideUp.State.HIDDEN).withSlideFromOtherView(binding.rootView)
-                .withTouchableAreaPx(100)
-                .withTouchableAreaDp(100)
+                } ).withStartGravity( Gravity.BOTTOM ).withLoggingEnabled( false ).withGesturesEnabled( false )
+                .withStartState( SlideUp.State.HIDDEN ).withSlideFromOtherView( binding.rootView )
+                .withTouchableAreaPx( 100 )
+                .withTouchableAreaDp( 100 )
                 .build();
 
-        slideCompetencia = new SlideUpBuilder(binding.contenido.slideView)
-                .withListeners(new SlideUp.Listener.Events() {
+        slideCompetencia = new SlideUpBuilder( binding.contenido.slideView )
+                .withListeners( new SlideUp.Listener.Events() {
                     @Override
                     public void onSlide(float percent) {
-                        binding.dim2.setAlpha(1 - (percent / 100));
+                        binding.dim2.setAlpha( 1 - (percent / 100) );
                     }
 
                     @Override
@@ -4960,10 +5464,10 @@ public class FragmentModificar extends Fragment implements
                             }
                         }
                     }
-                }).withStartGravity(Gravity.BOTTOM).withLoggingEnabled(false).withGesturesEnabled(false)
-                .withStartState(SlideUp.State.HIDDEN).withSlideFromOtherView(binding.rootView2)
-                .withTouchableAreaPx(100)
-                .withTouchableAreaDp(100)
+                } ).withStartGravity( Gravity.BOTTOM ).withLoggingEnabled( false ).withGesturesEnabled( false )
+                .withStartState( SlideUp.State.HIDDEN ).withSlideFromOtherView( binding.rootView2 )
+                .withTouchableAreaPx( 100 )
+                .withTouchableAreaDp( 100 )
                 .build();
 
     }
@@ -4971,68 +5475,68 @@ public class FragmentModificar extends Fragment implements
     ArrayList<Peatonal> peatonales;
 
     public void listaPeatonal(final FragmentAutoriza6Binding binding) {
-        SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
-        String mdid = preferences.getString("mdIdterminar", "");
-        String usuario = preferences.getString("usuario", "");
-        ProviderDatosPeatonal.getInstance(getContext()).obtenerDatosPeatonal(mdid, usuario, new ProviderDatosPeatonal.ConsultaPeatonal() {
+        SharedPreferences preferences = getContext().getSharedPreferences( "datosExpansion", Context.MODE_PRIVATE );
+        String mdid = preferences.getString( "mdIdterminar", "" );
+        String usuario = preferences.getString( "usuario", "" );
+        ProviderDatosPeatonal.getInstance( getContext() ).obtenerDatosPeatonal( mdid, usuario, new ProviderDatosPeatonal.ConsultaPeatonal() {
             @Override
             public void resolve(Peatonales peatonal) {
                 peatonales = new ArrayList<>();
                 if (peatonal != null && peatonal.getCodigo() == 200) {
                     if (peatonal.getConteos().size() > 0) {
                         for (int i = 0; i < peatonal.getConteos().size(); i++) {
-                            if (peatonal.getConteos().get(i).getDetalle().size() >= 3) {
-                                binding.btnFinalizar.setAlpha(1.0f);
-                                binding.btnFinalizar.setEnabled(true);
+                            if (peatonal.getConteos().get( i ).getDetalle().size() >= 3) {
+                                binding.btnFinalizar.setAlpha( 1.0f );
+                                binding.btnFinalizar.setEnabled( true );
                             } else {
-                                binding.btnFinalizar.setAlpha(0.35f);
-                                binding.btnFinalizar.setEnabled(false);
+                                binding.btnFinalizar.setAlpha( 0.35f );
+                                binding.btnFinalizar.setEnabled( false );
                             }
 
-                            for (int j = 0; j < peatonal.getConteos().get(i).getDetalle().size(); j++) {
-                                peatonales.add(new Peatonal(j,
-                                        peatonal.getConteos().get(i).getDetalle().get(j).getFecha(),
-                                        Integer.valueOf(peatonal.getConteos().get(i).getDetalle().get(j).getValor()),
-                                        0.0, 0.0, peatonal.getConteos().get(i).getDetalle().get(j).getNombreGenerador()));
+                            for (int j = 0; j < peatonal.getConteos().get( i ).getDetalle().size(); j++) {
+                                peatonales.add( new Peatonal( j,
+                                        peatonal.getConteos().get( i ).getDetalle().get( j ).getFecha(),
+                                        Integer.valueOf( peatonal.getConteos().get( i ).getDetalle().get( j ).getValor() ),
+                                        0.0, 0.0, peatonal.getConteos().get( i ).getDetalle().get( j ).getNombreGenerador() ) );
                             }
                         }
-                        binding.ciudad.setVisibility(View.VISIBLE);
-                        binding.promedio.setText("Promedio peatonal " + peatonal.getConteos().get(0).getPromedioPeatonal() + "");
-                        binding.recyclerPeatonal.setHasFixedSize(true);
-                        AdapterAutorizaPeatonal adapter = new AdapterAutorizaPeatonal(getContext(), ALPHABETICAL_COMPARATOR, n);
-                        binding.recyclerPeatonal.setLayoutManager(new LinearLayoutManager(getContext()));
-                        binding.recyclerPeatonal.setAdapter(adapter);
-                        adapter.edit().replaceAll(peatonales).commit();
-                        adapter.notifyItemRangeRemoved(0, adapter.getItemCount());
+                        binding.ciudad.setVisibility( View.VISIBLE );
+                        binding.promedio.setText( "Promedio peatonal " + peatonal.getConteos().get( 0 ).getPromedioPeatonal() + "" );
+                        binding.recyclerPeatonal.setHasFixedSize( true );
+                        AdapterAutorizaPeatonal adapter = new AdapterAutorizaPeatonal( getContext(), ALPHABETICAL_COMPARATOR, n );
+                        binding.recyclerPeatonal.setLayoutManager( new LinearLayoutManager( getContext() ) );
+                        binding.recyclerPeatonal.setAdapter( adapter );
+                        adapter.edit().replaceAll( peatonales ).commit();
+                        adapter.notifyItemRangeRemoved( 0, adapter.getItemCount() );
 
                         int i = binding.peaton.getVisibility();
                         if (i == 8) {
-                            binding.ciudad.setVisibility(View.VISIBLE);
+                            binding.ciudad.setVisibility( View.VISIBLE );
                         } else {
-                            binding.ciudad.setVisibility(View.GONE);
+                            binding.ciudad.setVisibility( View.GONE );
                         }
 
                     } else {
-                        binding.btnFinalizar.setAlpha(0.35f);
-                        binding.btnFinalizar.setEnabled(false);
+                        binding.btnFinalizar.setAlpha( 0.35f );
+                        binding.btnFinalizar.setEnabled( false );
                     }
                 } else {
-                    binding.ciudad.setVisibility(View.GONE);
-                    binding.btnFinalizar.setAlpha(0.35f);
-                    binding.btnFinalizar.setEnabled(false);
+                    binding.ciudad.setVisibility( View.GONE );
+                    binding.btnFinalizar.setAlpha( 0.35f );
+                    binding.btnFinalizar.setEnabled( false );
                 }
             }
 
             @Override
             public void reject(Exception e) {
             }
-        });
+        } );
     }
 
     private static final Comparator<Peatonal> ALPHABETICAL_COMPARATOR = new Comparator<Peatonal>() {
         @Override
         public int compare(Peatonal a, Peatonal b) {
-            return a.getNumConteo().compareTo(b.getNumConteo());
+            return a.getNumConteo().compareTo( b.getNumConteo() );
         }
     };
 
@@ -5058,7 +5562,7 @@ public class FragmentModificar extends Fragment implements
 
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view); // item position
+            int position = parent.getChildAdapterPosition( view ); // item position
             int column = position % spanCount; // item column
 
             if (includeEdge) {
@@ -5084,26 +5588,26 @@ public class FragmentModificar extends Fragment implements
      */
     private int dpToPx(int dp) {
         Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+        return Math.round( TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics() ) );
     }
 
     private BitmapDescriptor getBitmapDescriptor(int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            VectorDrawable vectorDrawable = (VectorDrawable) getContext().getDrawable(id);
+            VectorDrawable vectorDrawable = (VectorDrawable) getContext().getDrawable( id );
 
             int h = vectorDrawable.getIntrinsicHeight();
             int w = vectorDrawable.getIntrinsicWidth();
 
-            vectorDrawable.setBounds(0, 0, w, h);
+            vectorDrawable.setBounds( 0, 0, w, h );
 
-            Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bm);
-            vectorDrawable.draw(canvas);
+            Bitmap bm = Bitmap.createBitmap( w, h, Bitmap.Config.ARGB_8888 );
+            Canvas canvas = new Canvas( bm );
+            vectorDrawable.draw( canvas );
 
-            return BitmapDescriptorFactory.fromBitmap(bm);
+            return BitmapDescriptorFactory.fromBitmap( bm );
 
         } else {
-            return BitmapDescriptorFactory.fromResource(id);
+            return BitmapDescriptorFactory.fromResource( id );
         }
     }
 
@@ -5116,16 +5620,16 @@ public class FragmentModificar extends Fragment implements
         Ubicacion ubicacion;
         latitudeLast = latitude;
         longitudeLast = longitude;
-        gpsUbicas = new ServicioGPS(getContext());
+        gpsUbicas = new ServicioGPS( getContext() );
         if (gpsUbicas.canGetLocation()) {
             latitude = gpsUbicas.getLatitude();
             longitude = gpsUbicas.getLongitude();
-            ubicacion = new Ubicacion(latitude, longitude, true);
+            ubicacion = new Ubicacion( latitude, longitude, true );
         } else {
             if (latitudeLast != null) {
-                ubicacion = new Ubicacion(latitudeLast, longitudeLast, false);
+                ubicacion = new Ubicacion( latitudeLast, longitudeLast, false );
             } else {
-                ubicacion = new Ubicacion(0.0, 0.0, false);
+                ubicacion = new Ubicacion( 0.0, 0.0, false );
             }
         }
         return ubicacion;
@@ -5134,39 +5638,39 @@ public class FragmentModificar extends Fragment implements
     public void setDireccion(FragmentAutorizaPorterminarBinding binding, Double lat, Double lng, String no) {
         Geocoder geocoder;
         List<Address> addresses = null;
-        geocoder = new Geocoder(getContext(), Locale.getDefault());
+        geocoder = new Geocoder( getContext(), Locale.getDefault() );
         try {
             if (mCenterLatLong != null) {
-                if(no.equals("no")){
-                    addresses = geocoder.getFromLocation(lat, lng, 1);
-                    String address = addresses.get(0).getAddressLine(0);
+                if (no.equals( "no" )) {
+                    addresses = geocoder.getFromLocation( lat, lng, 1 );
+                    String address = addresses.get( 0 ).getAddressLine( 0 );
                     // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                    String city = addresses.get(0).getLocality();
-                    String state = addresses.get(0).getAdminArea();
-                    String country = addresses.get(0).getCountryName();
-                    municipio = addresses.get(0).getLocality();
-                    String postalCode = addresses.get(0).getPostalCode();
+                    String city = addresses.get( 0 ).getLocality();
+                    String state = addresses.get( 0 ).getAdminArea();
+                    String country = addresses.get( 0 ).getCountryName();
+                    municipio = addresses.get( 0 ).getLocality();
+                    String postalCode = addresses.get( 0 ).getPostalCode();
                     //binding.direccionsitio.setText(address);
-                    binding.ciudadsitio.setText(city);
-                    binding.estadositio.setText(state);
-                    binding.municipiositio.setText(municipio);
-                    binding.pais.setText(country);
-                    binding.codigopostalsitio.setText(postalCode);
-                }else{
-                    addresses = geocoder.getFromLocation(lat, lng, 1);
-                    String address = addresses.get(0).getAddressLine(0);
+                    binding.ciudadsitio.setText( city );
+                    binding.estadositio.setText( state );
+                    binding.municipiositio.setText( municipio );
+                    binding.pais.setText( country );
+                    binding.codigopostalsitio.setText( postalCode );
+                } else {
+                    addresses = geocoder.getFromLocation( lat, lng, 1 );
+                    String address = addresses.get( 0 ).getAddressLine( 0 );
                     // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                    String city = addresses.get(0).getLocality();
-                    String state = addresses.get(0).getAdminArea();
-                    String country = addresses.get(0).getCountryName();
-                    municipio = addresses.get(0).getLocality();
-                    String postalCode = addresses.get(0).getPostalCode();
-                    binding.direccionsitio.setText(address);
-                    binding.ciudadsitio.setText(city);
-                    binding.estadositio.setText(state);
-                    binding.municipiositio.setText(municipio);
-                    binding.pais.setText(country);
-                    binding.codigopostalsitio.setText(postalCode);
+                    String city = addresses.get( 0 ).getLocality();
+                    String state = addresses.get( 0 ).getAdminArea();
+                    String country = addresses.get( 0 ).getCountryName();
+                    municipio = addresses.get( 0 ).getLocality();
+                    String postalCode = addresses.get( 0 ).getPostalCode();
+                    binding.direccionsitio.setText( address );
+                    binding.ciudadsitio.setText( city );
+                    binding.estadositio.setText( state );
+                    binding.municipiositio.setText( municipio );
+                    binding.pais.setText( country );
+                    binding.codigopostalsitio.setText( postalCode );
                 }
 
             }
@@ -5198,66 +5702,66 @@ public class FragmentModificar extends Fragment implements
                                 ArrayList<Zonificacion.Detalle> detallesGene, ArrayList<Zonificacion.Detalle> detallesCompe) {
 
         if (valor == 1) {
-            icon = getBitmapDescriptor(R.drawable.bbb);
+            icon = getBitmapDescriptor( R.drawable.bbb );
         } else if (valor == 2) {
-            icon = getBitmapDescriptor(R.drawable.oxxo);
+            icon = getBitmapDescriptor( R.drawable.oxxo );
         } else if (valor == 3) {
-            icon = getBitmapDescriptor(R.drawable.bodegaa);
+            icon = getBitmapDescriptor( R.drawable.bodegaa );
         } else if (valor == 4) {
-            icon = getBitmapDescriptor(R.drawable.abarrotes);
+            icon = getBitmapDescriptor( R.drawable.abarrotes );
         } else if (valor == 5) {
-            icon = getBitmapDescriptor(R.drawable.g_iglesia);
+            icon = getBitmapDescriptor( R.drawable.g_iglesia );
         } else if (valor == 6) {
-            icon = getBitmapDescriptor(R.drawable.g_mercado);
+            icon = getBitmapDescriptor( R.drawable.g_mercado );
         } else if (valor == 7) {
-            icon = getBitmapDescriptor(R.drawable.escuela);
+            icon = getBitmapDescriptor( R.drawable.escuela );
         } else if (valor == 8) {
-            icon = getBitmapDescriptor(R.drawable.g_busstop);
+            icon = getBitmapDescriptor( R.drawable.g_busstop );
         } else if (valor == 9) {
-            icon = getBitmapDescriptor(R.drawable.otros);
+            icon = getBitmapDescriptor( R.drawable.otros );
         } else if (valor == 10) {
-            icon = getBitmapDescriptor(R.drawable.netos);
+            icon = getBitmapDescriptor( R.drawable.netos );
         } else if (valor == 11) {
-            icon = getBitmapDescriptor(R.drawable.g_recauderia);
+            icon = getBitmapDescriptor( R.drawable.g_recauderia );
         } else if (valor == 12) {
-            icon = getBitmapDescriptor(R.drawable.g_comida);
+            icon = getBitmapDescriptor( R.drawable.g_comida );
         } else if (valor == 13) {
-            icon = getBitmapDescriptor(R.drawable.g_mercado);
+            icon = getBitmapDescriptor( R.drawable.g_mercado );
         } else if (valor == 14) {
-            icon = getBitmapDescriptor(R.drawable.g_tianguis);
+            icon = getBitmapDescriptor( R.drawable.g_tianguis );
         } else if (valor == 15) {
-            icon = getBitmapDescriptor(R.drawable.g_tortilleria);
+            icon = getBitmapDescriptor( R.drawable.g_tortilleria );
         } else if (valor == 16) {
-            icon = getBitmapDescriptor(R.drawable.g_carniceria);
+            icon = getBitmapDescriptor( R.drawable.g_carniceria );
         } else if (valor == 17) {
-            icon = getBitmapDescriptor(R.drawable.g_busstop);
+            icon = getBitmapDescriptor( R.drawable.g_busstop );
         }
 
         if (mMap != null) {
-            market = mMap.addMarker(new
+            market = mMap.addMarker( new
                     MarkerOptions().
-                    position(latLng).
-                    title("").snippet("")
-                    .icon(icon));
-            market.setVisible(true);
-            markers.add(market);
+                    position( latLng ).
+                    title( "" ).snippet( "" )
+                    .icon( icon ) );
+            market.setVisible( true );
+            markers.add( market );
 
             if (valor == 1 || valor == 2 || valor == 3
                     || valor == 4 || valor == 10) {
 
                 detalleC = new CrearZonificacion.Detalle(
-                        String.valueOf(valor),
-                        String.valueOf(market.getPosition().latitude),
-                        String.valueOf(market.getPosition().longitude),
-                        String.valueOf(nivel)
+                        String.valueOf( valor ),
+                        String.valueOf( market.getPosition().latitude ),
+                        String.valueOf( market.getPosition().longitude ),
+                        String.valueOf( nivel )
                 );
 
-                detallesC.add(detalleC);
+                detallesC.add( detalleC );
 
 
-                zonificacionC.setDetalles(detallesC);
+                zonificacionC.setDetalles( detallesC );
                 competencia = new ArrayList<>();
-                competencia.add(zonificacionC);
+                competencia.add( zonificacionC );
 
             } else if (valor == 5 || valor == 6 || valor == 7 ||
                     valor == 8 || valor == 9 ||
@@ -5265,18 +5769,18 @@ public class FragmentModificar extends Fragment implements
                     || valor == 15 || valor == 16 || valor == 17) {
 
                 detalleG = new CrearZonificacion.Detalle(
-                        String.valueOf(valor),
-                        String.valueOf(market.getPosition().latitude),
-                        String.valueOf(market.getPosition().longitude),
-                        String.valueOf(nivel)
+                        String.valueOf( valor ),
+                        String.valueOf( market.getPosition().latitude ),
+                        String.valueOf( market.getPosition().longitude ),
+                        String.valueOf( nivel )
                 );
 
 
-                detallesG.add(detalleG);
+                detallesG.add( detalleG );
 
-                zonificacionG.setDetalles(detallesG);
+                zonificacionG.setDetalles( detallesG );
                 generadores = new ArrayList<>();
-                generadores.add(zonificacionG);
+                generadores.add( zonificacionG );
             }
 
             if (generadores == null) {
@@ -5338,13 +5842,13 @@ public class FragmentModificar extends Fragment implements
                     mdIdZ,
                     competencia,
                     generadores,
-                    String.valueOf(mdLat),
-                    String.valueOf(mdLot),
+                    String.valueOf( mdLat ),
+                    String.valueOf( mdLot ),
                     NUM_TELEFONO,
                     VERSION_APP
             );
 
-            zonificacionJson = getJsonString(zonificacion);
+            zonificacionJson = getJsonString( zonificacion );
         }
 
     }
@@ -5354,9 +5858,9 @@ public class FragmentModificar extends Fragment implements
     public void getIdConstruccion(DatosConstruccions construccion) {
 
         for (int i = 0; i < construccion.getConstruccion().size(); i++) {
-            for (int j = 0; j < construccion.getConstruccion().get(i).getDetalles().size(); j++) {
+            for (int j = 0; j < construccion.getConstruccion().get( i ).getDetalles().size(); j++) {
 
-                if (construccion.getConstruccion().get(i).getDetalles().size() == 4) {
+                if (construccion.getConstruccion().get( i ).getDetalles().size() == 4) {
 
                 }
             }
@@ -5365,17 +5869,17 @@ public class FragmentModificar extends Fragment implements
 
 
     public String distancia(LatLng latLng, LatLng mdId, String tipo) {
-        Location loc1 = new Location("");
-        loc1.setLatitude(latLng.latitude);
-        loc1.setLongitude(latLng.longitude);
+        Location loc1 = new Location( "" );
+        loc1.setLatitude( latLng.latitude );
+        loc1.setLongitude( latLng.longitude );
 
-        Location loc2 = new Location("");
-        loc2.setLatitude(mdId.latitude);
-        loc2.setLongitude(mdId.longitude);
+        Location loc2 = new Location( "" );
+        loc2.setLatitude( mdId.latitude );
+        loc2.setLongitude( mdId.longitude );
 
-        float distanciaMetros = loc1.distanceTo(loc2);
+        float distanciaMetros = loc1.distanceTo( loc2 );
 
-        if (tipo.equals("competencia")) {
+        if (tipo.equals( "competencia" )) {
             if (distanciaMetros <= 500) {
                 return "8";
             } else if (distanciaMetros >= 500 && distanciaMetros <= 1500) {
@@ -5399,7 +5903,7 @@ public class FragmentModificar extends Fragment implements
     private String getJsonString(CrearZonificacion zonificacion) {
 
         Gson gson = new Gson();
-        String json = gson.toJson(zonificacion);
+        String json = gson.toJson( zonificacion );
         return json;
     }
 
@@ -5408,67 +5912,67 @@ public class FragmentModificar extends Fragment implements
                                     ArrayList<Zonificacion.Detalle> detallesGene, ArrayList<Zonificacion.Detalle> detallesCompe, String nivel) {
 
         if (valor == 1) {
-            icon = getBitmapDescriptor(R.drawable.bbb);
+            icon = getBitmapDescriptor( R.drawable.bbb );
         } else if (valor == 2) {
-            icon = getBitmapDescriptor(R.drawable.oxxo);
+            icon = getBitmapDescriptor( R.drawable.oxxo );
         } else if (valor == 3) {
-            icon = getBitmapDescriptor(R.drawable.bodegaa);
+            icon = getBitmapDescriptor( R.drawable.bodegaa );
         } else if (valor == 4) {
-            icon = getBitmapDescriptor(R.drawable.abarrotes);
+            icon = getBitmapDescriptor( R.drawable.abarrotes );
         } else if (valor == 5) {
-            icon = getBitmapDescriptor(R.drawable.g_iglesia);
+            icon = getBitmapDescriptor( R.drawable.g_iglesia );
         } else if (valor == 6) {
-            icon = getBitmapDescriptor(R.drawable.g_mercado);
+            icon = getBitmapDescriptor( R.drawable.g_mercado );
         } else if (valor == 7) {
-            icon = getBitmapDescriptor(R.drawable.g_escuela);
+            icon = getBitmapDescriptor( R.drawable.g_escuela );
         } else if (valor == 8) {
-            icon = getBitmapDescriptor(R.drawable.g_busstop);
+            icon = getBitmapDescriptor( R.drawable.g_busstop );
         } else if (valor == 9) {
-            icon = getBitmapDescriptor(R.drawable.otros);
+            icon = getBitmapDescriptor( R.drawable.otros );
         } else if (valor == 10) {
-            icon = getBitmapDescriptor(R.drawable.netos);
+            icon = getBitmapDescriptor( R.drawable.netos );
         } else if (valor == 11) {
-            icon = getBitmapDescriptor(R.drawable.g_recauderia);
+            icon = getBitmapDescriptor( R.drawable.g_recauderia );
         } else if (valor == 12) {
-            icon = getBitmapDescriptor(R.drawable.g_comida);
+            icon = getBitmapDescriptor( R.drawable.g_comida );
         } else if (valor == 13) {
-            icon = getBitmapDescriptor(R.drawable.g_mercado);
+            icon = getBitmapDescriptor( R.drawable.g_mercado );
         } else if (valor == 14) {
-            icon = getBitmapDescriptor(R.drawable.g_tianguis);
+            icon = getBitmapDescriptor( R.drawable.g_tianguis );
         } else if (valor == 15) {
-            icon = getBitmapDescriptor(R.drawable.g_tortilleria);
+            icon = getBitmapDescriptor( R.drawable.g_tortilleria );
         } else if (valor == 16) {
-            icon = getBitmapDescriptor(R.drawable.g_carniceria);
+            icon = getBitmapDescriptor( R.drawable.g_carniceria );
         } else if (valor == 17) {
-            icon = getBitmapDescriptor(R.drawable.g_busstop);
+            icon = getBitmapDescriptor( R.drawable.g_busstop );
         }
 
         if (mMap != null) {
-            market = mMap.addMarker(new
+            market = mMap.addMarker( new
                     MarkerOptions().
-                    position(latLng).
-                    title("").snippet("")
-                    .icon(icon));
-            market.setVisible(true);
-            markers.add(market);
+                    position( latLng ).
+                    title( "" ).snippet( "" )
+                    .icon( icon ) );
+            market.setVisible( true );
+            markers.add( market );
 
 
             if (valor == 1 || valor == 2 || valor == 3
                     || valor == 4 || valor == 10) {
 
                 detalleC = new CrearZonificacion.Detalle(
-                        String.valueOf(valor),
-                        String.valueOf(market.getPosition().latitude),
-                        String.valueOf(market.getPosition().longitude),
+                        String.valueOf( valor ),
+                        String.valueOf( market.getPosition().latitude ),
+                        String.valueOf( market.getPosition().longitude ),
                         nivel
                 );
 
-                detallesC.add(detalleC);
+                detallesC.add( detalleC );
 
 
-                zonificacionC.setDetalles(detallesC);
+                zonificacionC.setDetalles( detallesC );
                 competencia = new ArrayList<>();
-                competencia.add(zonificacionC);
+                competencia.add( zonificacionC );
 
             } else if (valor == 5 || valor == 6 || valor == 7 ||
                     valor == 8 || valor == 9 ||
@@ -5476,18 +5980,18 @@ public class FragmentModificar extends Fragment implements
                     || valor == 15 || valor == 16 || valor == 17) {
 
                 detalleG = new CrearZonificacion.Detalle(
-                        String.valueOf(valor),
-                        String.valueOf(market.getPosition().latitude),
-                        String.valueOf(market.getPosition().longitude),
+                        String.valueOf( valor ),
+                        String.valueOf( market.getPosition().latitude ),
+                        String.valueOf( market.getPosition().longitude ),
                         nivel
                 );
 
 
-                detallesG.add(detalleG);
+                detallesG.add( detalleG );
 
-                zonificacionG.setDetalles(detallesG);
+                zonificacionG.setDetalles( detallesG );
                 generadores = new ArrayList<>();
-                generadores.add(zonificacionG);
+                generadores.add( zonificacionG );
             }
 
             if (generadores == null) {
@@ -5549,13 +6053,13 @@ public class FragmentModificar extends Fragment implements
                     mdIdZ,
                     competencia,
                     generadores,
-                    String.valueOf(mdLat),
-                    String.valueOf(mdLot),
+                    String.valueOf( mdLat ),
+                    String.valueOf( mdLot ),
                     "5555555555",
                     VERSION_APP
             );
 
-            zonificacionJson = getJsonString(zonificacion);
+            zonificacionJson = getJsonString( zonificacion );
         }
 
     }
@@ -5565,7 +6069,7 @@ public class FragmentModificar extends Fragment implements
 
     private String getJsonString(DatosConstruccion zonificacion) {
         Gson gson = new Gson();
-        String json = gson.toJson(zonificacion);
+        String json = gson.toJson( zonificacion );
         return json;
     }
 
@@ -5584,57 +6088,57 @@ public class FragmentModificar extends Fragment implements
                                     DatosConstruccions listaSubfactores) {
         if (factoresConstruccion != null) {
             final RadioButton[] rb = new RadioButton[2];
-            RadioGroup rg = new RadioGroup(getContext());
-            rg.setOrientation(RadioGroup.VERTICAL);
+            RadioGroup rg = new RadioGroup( getContext() );
+            rg.setOrientation( RadioGroup.VERTICAL );
             for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
-                if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 1
-                        || factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
+                if (factoresConstruccion.getCatalogo().get( i ).getNivelid() == 1
+                        || factoresConstruccion.getCatalogo().get( i ).getNivelid() == 2) {
 
-                    rb[i] = new RadioButton(getContext());
-                    rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                    rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
+                    rb[i] = new RadioButton( getContext() );
+                    rb[i].setText( " " + factoresConstruccion.getCatalogo().get( i ).getDescripcion() );
+                    rb[i].setId( factoresConstruccion.getCatalogo().get( i ).getNivelid() );
 
-                    rg.addView(rb[i]);
+                    rg.addView( rb[i] );
                 }
             }
 
 
-            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            rg.setOnCheckedChangeListener( new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
                     int radioButtonID = group.getCheckedRadioButtonId();
-                    View radioButton = group.findViewById(radioButtonID);
-                    nivelId = group.indexOfChild(radioButton);
+                    View radioButton = group.findViewById( radioButtonID );
+                    nivelId = group.indexOfChild( radioButton );
                     if (checkedId == 1) {
                         nivelId = 1;
-                        binding.linearLayout.setVisibility(View.GONE);
+                        binding.linearLayout.setVisibility( View.GONE );
                     } else if (checkedId == 2) {
                         nivelId = 2;
-                        binding.linearLayout.setVisibility(View.VISIBLE);
+                        binding.linearLayout.setVisibility( View.VISIBLE );
 
                     }
                 }
-            });
+            } );
 
-            if(!rb[0].isChecked() && !rb[1].isChecked()){
-                rb[1].setChecked(true);
+            if (!rb[0].isChecked() && !rb[1].isChecked()) {
+                rb[1].setChecked( true );
                 nivelId = 2;
-                binding.linearLayout.setVisibility(View.VISIBLE);
+                binding.linearLayout.setVisibility( View.VISIBLE );
             }
 
-            binding.local.addView(rg);
+            binding.local.addView( rg );
 
             if (listaSubfactores.getConstruccion() != null) {
-                if (listaSubfactores.getConstruccion().get(0).getNivelid() == 1) {
-                    rb[0].setChecked(true);
+                if (listaSubfactores.getConstruccion().get( 0 ).getNivelid() == 1) {
+                    rb[0].setChecked( true );
                     //nivelId = 1;
-                } else if (listaSubfactores.getConstruccion().get(0).getNivelid() == 2) {
-                    rb[1].setChecked(true);
+                } else if (listaSubfactores.getConstruccion().get( 0 ).getNivelid() == 2) {
+                    rb[1].setChecked( true );
                     //nivelId = 1;
                 } else {
-                    binding.linearLayout.setVisibility(View.VISIBLE);
+                    binding.linearLayout.setVisibility( View.VISIBLE );
                     //nivelId = 2;
-                    rb[1].setChecked(true);
+                    rb[1].setChecked( true );
                 }
             }
         }
@@ -5643,43 +6147,43 @@ public class FragmentModificar extends Fragment implements
 
     public void generarConstruccion(final FragmentAutoriza4Binding binding, final FactoresConstruccion factoresConstruccion) {
         final RadioButton[] rb = new RadioButton[2];
-        RadioGroup rg = new RadioGroup(getContext());
-        rg.setOrientation(RadioGroup.VERTICAL);
+        RadioGroup rg = new RadioGroup( getContext() );
+        rg.setOrientation( RadioGroup.VERTICAL );
         for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
-            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 1
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
-                rb[i] = new RadioButton(getContext());
-                rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
-                rg.addView(rb[i]);
+            if (factoresConstruccion.getCatalogo().get( i ).getNivelid() == 1
+                    || factoresConstruccion.getCatalogo().get( i ).getNivelid() == 2) {
+                rb[i] = new RadioButton( getContext() );
+                rb[i].setText( " " + factoresConstruccion.getCatalogo().get( i ).getDescripcion() );
+                rb[i].setId( factoresConstruccion.getCatalogo().get( i ).getNivelid() );
+                rg.addView( rb[i] );
             }
         }
 
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        rg.setOnCheckedChangeListener( new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 int radioButtonID = group.getCheckedRadioButtonId();
-                View radioButton = group.findViewById(radioButtonID);
-                nivelId = group.indexOfChild(radioButton);
+                View radioButton = group.findViewById( radioButtonID );
+                nivelId = group.indexOfChild( radioButton );
                 if (checkedId == 1) {
                     nivelId = 1;
-                    binding.linearLayout.setVisibility(View.GONE);
+                    binding.linearLayout.setVisibility( View.GONE );
                 } else if (checkedId == 2) {
                     nivelId = 2;
-                    binding.linearLayout.setVisibility(View.VISIBLE);
+                    binding.linearLayout.setVisibility( View.VISIBLE );
 
                 }
             }
-        });
+        } );
 
-        if(!rb[0].isChecked() && !rb[1].isChecked()){
-            rb[1].setChecked(true);
+        if (!rb[0].isChecked() && !rb[1].isChecked()) {
+            rb[1].setChecked( true );
             nivelId = 2;
-            binding.linearLayout.setVisibility(View.VISIBLE);
+            binding.linearLayout.setVisibility( View.VISIBLE );
         }
 
-        binding.local.addView(rg);
+        binding.local.addView( rg );
     }
 
     int nivelIdCondicion;
@@ -5689,49 +6193,49 @@ public class FragmentModificar extends Fragment implements
                                    DatosConstruccions datosConstruccion) {
 
         final RadioButton[] rb = new RadioButton[factoresConstruccion.getCatalogo().size()];
-        RadioGroup rg = new RadioGroup(getContext());
-        rg.setOrientation(RadioGroup.VERTICAL);
-        final int textColor = Color.parseColor("#254581");
+        RadioGroup rg = new RadioGroup( getContext() );
+        rg.setOrientation( RadioGroup.VERTICAL );
+        final int textColor = Color.parseColor( "#254581" );
         for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
-            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 3
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 4
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 5) {
+            if (factoresConstruccion.getCatalogo().get( i ).getNivelid() == 3
+                    || factoresConstruccion.getCatalogo().get( i ).getNivelid() == 4
+                    || factoresConstruccion.getCatalogo().get( i ).getNivelid() == 5) {
 
-                rb[i] = new RadioButton(getContext());
-                rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                int niv = factoresConstruccion.getCatalogo().get(i).getNivelid();
-                rb[i].setId(niv);
-                rg.addView(rb[i]);
+                rb[i] = new RadioButton( getContext() );
+                rb[i].setText( " " + factoresConstruccion.getCatalogo().get( i ).getDescripcion() );
+                int niv = factoresConstruccion.getCatalogo().get( i ).getNivelid();
+                rb[i].setId( niv );
+                rg.addView( rb[i] );
 
-                if (rb[i].getId() == datosConstruccion.getConstruccion().get(1).getNivelid()) {
+                if (rb[i].getId() == datosConstruccion.getConstruccion().get( 1 ).getNivelid()) {
                     // nivelIdCondicion = 3;
-                    rb[i].setChecked(true);
-                    rb[i].setTextColor(Color.parseColor("#254581"));
-                    rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
+                    rb[i].setChecked( true );
+                    rb[i].setTextColor( Color.parseColor( "#254581" ) );
+                    rb[i].setButtonTintList( ColorStateList.valueOf( textColor ) );
                 }
 
-                if (rb[i].getId() == datosConstruccion.getConstruccion().get(1).getNivelid()) {
+                if (rb[i].getId() == datosConstruccion.getConstruccion().get( 1 ).getNivelid()) {
                     //nivelIdCondicion = 4;
-                    rb[i].setChecked(true);
-                    rb[i].setTextColor(Color.parseColor("#254581"));
-                    rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
+                    rb[i].setChecked( true );
+                    rb[i].setTextColor( Color.parseColor( "#254581" ) );
+                    rb[i].setButtonTintList( ColorStateList.valueOf( textColor ) );
                 }
 
-                if (rb[i].getId() == datosConstruccion.getConstruccion().get(1).getNivelid()) {
+                if (rb[i].getId() == datosConstruccion.getConstruccion().get( 1 ).getNivelid()) {
                     // nivelIdCondicion = 5;
-                    rb[i].setChecked(true);
-                    rb[i].setTextColor(Color.parseColor("#254581"));
-                    rb[i].setButtonTintList(ColorStateList.valueOf(textColor));
+                    rb[i].setChecked( true );
+                    rb[i].setTextColor( Color.parseColor( "#254581" ) );
+                    rb[i].setButtonTintList( ColorStateList.valueOf( textColor ) );
                 }
             }
         }
 
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        rg.setOnCheckedChangeListener( new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 int radioBttonID = group.getCheckedRadioButtonId();
-                View radioButton = group.findViewById(radioBttonID);
-                int nivelId = group.indexOfChild(radioButton);
+                View radioButton = group.findViewById( radioBttonID );
+                int nivelId = group.indexOfChild( radioButton );
                 if (checkedId == 3) {
                     nivelIdCondicion = 3;
                 } else if (checkedId == 4) {
@@ -5740,38 +6244,38 @@ public class FragmentModificar extends Fragment implements
                     nivelIdCondicion = 5;
                 }
             }
-        });
+        } );
 
-        binding.condiciones.addView(rg);
+        binding.condiciones.addView( rg );
 
     }
 
     public void generarCondiciones(final FragmentAutoriza4Binding binding, final FactoresConstruccion factoresConstruccion) {
         final RadioButton[] rb = new RadioButton[factoresConstruccion.getCatalogo().size()];
-        RadioGroup rg = new RadioGroup(getContext());
-        rg.setOrientation(RadioGroup.VERTICAL);
+        RadioGroup rg = new RadioGroup( getContext() );
+        rg.setOrientation( RadioGroup.VERTICAL );
         for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
 
-            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 3
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 4
-                    || factoresConstruccion.getCatalogo().get(i).getNivelid() == 5) {
+            if (factoresConstruccion.getCatalogo().get( i ).getNivelid() == 3
+                    || factoresConstruccion.getCatalogo().get( i ).getNivelid() == 4
+                    || factoresConstruccion.getCatalogo().get( i ).getNivelid() == 5) {
 
-                rb[i] = new RadioButton(getContext());
-                rb[i].setText(" " + factoresConstruccion.getCatalogo().get(i).getDescripcion());
-                rb[i].setId(factoresConstruccion.getCatalogo().get(i).getNivelid());
-                rg.addView(rb[i]);
+                rb[i] = new RadioButton( getContext() );
+                rb[i].setText( " " + factoresConstruccion.getCatalogo().get( i ).getDescripcion() );
+                rb[i].setId( factoresConstruccion.getCatalogo().get( i ).getNivelid() );
+                rg.addView( rb[i] );
 
             }
 
         }
 
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        rg.setOnCheckedChangeListener( new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 int radioBttonID = group.getCheckedRadioButtonId();
-                View radioButton = group.findViewById(radioBttonID);
-                int nivelId = group.indexOfChild(radioButton);
+                View radioButton = group.findViewById( radioBttonID );
+                int nivelId = group.indexOfChild( radioButton );
                 if (checkedId == 3) {
                     nivelIdCondicion = 3;
                 } else if (checkedId == 4) {
@@ -5780,9 +6284,9 @@ public class FragmentModificar extends Fragment implements
                     nivelIdCondicion = 5;
                 }
             }
-        });
+        } );
 
-        binding.condiciones.addView(rg);
+        binding.condiciones.addView( rg );
 
     }
 
@@ -5790,54 +6294,54 @@ public class FragmentModificar extends Fragment implements
 
         Resources resource = getContext().getResources();
         binding.factores.removeAllViews();
-        TableRow rowPlomo = new TableRow(getContext());
-        rowPlomo.setBackgroundColor(resource.getColor(R.color.blanco));
-        binding.factores.addView(rowPlomo);
+        TableRow rowPlomo = new TableRow( getContext() );
+        rowPlomo.setBackgroundColor( resource.getColor( R.color.blanco ) );
+        binding.factores.addView( rowPlomo );
 
         checks = new HashMap<Integer, String>();
 
         for (int i = 0; i < factoresConstruccion.getCatalogo().size(); i++) {
-            if (factoresConstruccion.getCatalogo().get(i).getNivelid() == 2) {
-                for (int j = 0; j < factoresConstruccion.getCatalogo().get(i).getDetalles().size(); j++) {
+            if (factoresConstruccion.getCatalogo().get( i ).getNivelid() == 2) {
+                for (int j = 0; j < factoresConstruccion.getCatalogo().get( i ).getDetalles().size(); j++) {
 
-                    TableRow tbrow = new TableRow(getContext());
-                    tbrow.setBackgroundColor(resource.getColor(R.color.blanco));
+                    TableRow tbrow = new TableRow( getContext() );
+                    tbrow.setBackgroundColor( resource.getColor( R.color.blanco ) );
 
-                    final CheckBox check = new CheckBox(getContext());
-                    check.setTextColor(resource.getColor(R.color.azul));
-                    check.setGravity(Gravity.CENTER);
-                    tbrow.addView(check);
+                    final CheckBox check = new CheckBox( getContext() );
+                    check.setTextColor( resource.getColor( R.color.azul ) );
+                    check.setGravity( Gravity.CENTER );
+                    tbrow.addView( check );
 
                     final boolean checked = check.isChecked();
 
                     if (checked) {
-                        checks.put(j, "1");
+                        checks.put( j, "1" );
                     } else {
-                        checks.put(j, "0");
+                        checks.put( j, "0" );
                     }
 
                     final int finalI = j;
                     int finalJ = j;
 
-                    check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    check.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                             if (isChecked) {
-                                checks.put(finalI, "1");
+                                checks.put( finalI, "1" );
                             } else {
-                                checks.put(finalI, "0");
+                                checks.put( finalI, "0" );
                             }
 
                         }
-                    });
+                    } );
 
-                    TextView t1v1 = new TextView(getContext());
-                    t1v1.setText(factoresConstruccion.getCatalogo().get(i).getDetalles().get(finalJ).getDescripcion());
-                    t1v1.setTextColor(resource.getColor(R.color.azul));
-                    t1v1.setGravity(Gravity.CENTER_VERTICAL);
-                    tbrow.addView(t1v1);
-                    binding.factores.addView(tbrow);
+                    TextView t1v1 = new TextView( getContext() );
+                    t1v1.setText( factoresConstruccion.getCatalogo().get( i ).getDetalles().get( finalJ ).getDescripcion() );
+                    t1v1.setTextColor( resource.getColor( R.color.azul ) );
+                    t1v1.setGravity( Gravity.CENTER_VERTICAL );
+                    tbrow.addView( t1v1 );
+                    binding.factores.addView( tbrow );
                 }
 
             }
@@ -5847,10 +6351,10 @@ public class FragmentModificar extends Fragment implements
     public String getFechaHora() {
         long timeInMillis = System.currentTimeMillis();
         Calendar cal1 = Calendar.getInstance();
-        cal1.setTimeInMillis(timeInMillis);
+        cal1.setTimeInMillis( timeInMillis );
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd kk:mm:ss");
-        String dateforrow = dateFormat.format(cal1.getTime());
+                "yyyy-MM-dd kk:mm:ss" );
+        String dateforrow = dateFormat.format( cal1.getTime() );
         return dateforrow;
     }
 
@@ -6012,83 +6516,83 @@ public class FragmentModificar extends Fragment implements
                                  final FactoresConstruccion factoresConstruccion,
                                  DatosConstruccions datosConstruccion) {
 
-        if(datosConstruccion.getConstruccion() != null && datosConstruccion.getConstruccion().size() > 0) {
-            for(int i = 0; i < datosConstruccion.getConstruccion().size(); i++) {
-                switch(datosConstruccion.getConstruccion().get(i).getNivelid()) {
+        if (datosConstruccion.getConstruccion() != null && datosConstruccion.getConstruccion().size() > 0) {
+            for (int i = 0; i < datosConstruccion.getConstruccion().size(); i++) {
+                switch (datosConstruccion.getConstruccion().get( i ).getNivelid()) {
                     case AGUA_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
-                            binding.escogeAgua.setChecked(true);
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
+                            binding.escogeAgua.setChecked( true );
                             banderaAguaConstruccion = "1";
                         } else {
-                            binding.escogeAgua.setChecked(false);
+                            binding.escogeAgua.setChecked( false );
                             banderaAguaConstruccion = "0";
                         }
                         break;
                     case LUZ_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
-                            binding.escogeLuz.setChecked(true);
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
+                            binding.escogeLuz.setChecked( true );
                             banderaLuzConstruccion = "1";
                         } else {
-                            binding.escogeLuz.setChecked(false);
+                            binding.escogeLuz.setChecked( false );
                             banderaLuzConstruccion = "0";
                         }
                         break;
                     case DRENAJE_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
-                            binding.escogeDrenaje.setChecked(true);
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
+                            binding.escogeDrenaje.setChecked( true );
                             banderaDrenajeConstruccion = "1";
                         } else {
-                            binding.escogeDrenaje.setChecked(false);
+                            binding.escogeDrenaje.setChecked( false );
                             banderaDrenajeConstruccion = "0";
                         }
                         break;
                     case USO_SUELO_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
-                            binding.escogeUsoSuelo.setChecked(true);
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
+                            binding.escogeUsoSuelo.setChecked( true );
                             banderaUsoSueloConstruccion = "1";
                         } else {
-                            binding.escogeUsoSuelo.setChecked(false);
+                            binding.escogeUsoSuelo.setChecked( false );
                             banderaUsoSueloConstruccion = "0";
                         }
                         break;
                     case PREDIAL_CORRIENTE_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
-                            binding.escogePredial.setChecked(true);
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
+                            binding.escogePredial.setChecked( true );
                             banderaPredialCorrienteConstruccion = "1";
                         } else {
-                            binding.escogePredial.setChecked(false);
+                            binding.escogePredial.setChecked( false );
                             banderaPredialCorrienteConstruccion = "0";
                         }
                         break;
                     case ESCRITURAS_PUBLICAS_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
-                            binding.escogeEscrituras.setChecked(true);
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
+                            binding.escogeEscrituras.setChecked( true );
                             banderaEscriturasConstruccion = "1";
                         } else {
-                            binding.escogeEscrituras.setChecked(false);
+                            binding.escogeEscrituras.setChecked( false );
                             banderaEscriturasConstruccion = "0";
                         }
                         break;
                     case INAH_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
-                            binding.escogeInah.setChecked(true);
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
+                            binding.escogeInah.setChecked( true );
                             banderaInahConstruccion = "1";
                         } else {
-                            binding.escogeInah.setChecked(false);
+                            binding.escogeInah.setChecked( false );
                             banderaInahConstruccion = "0";
                         }
                         break;
                     case CONFLICTOS_ID:
-                        if(datosConstruccion.getConstruccion().get(i).getValor().equals("1")) {
+                        if (datosConstruccion.getConstruccion().get( i ).getValor().equals( "1" )) {
                             String conflicto = "";
-                            if(datosConstruccion.getConstruccion().get(i).getDetalles() != null && datosConstruccion.getConstruccion().get(i).getDetalles().size() > 0) {
-                                conflicto = datosConstruccion.getConstruccion().get(i).getDetalles().get(0).getComentario();
+                            if (datosConstruccion.getConstruccion().get( i ).getDetalles() != null && datosConstruccion.getConstruccion().get( i ).getDetalles().size() > 0) {
+                                conflicto = datosConstruccion.getConstruccion().get( i ).getDetalles().get( 0 ).getComentario();
                             }
-                            binding.escogeConflictoLegal.setChecked(true);
-                            binding.conflictoText.setText(conflicto);
+                            binding.escogeConflictoLegal.setChecked( true );
+                            binding.conflictoText.setText( conflicto );
                             banderaConflictoConstruccion = "1";
                         } else {
-                            binding.escogeConflictoLegal.setChecked(false);
+                            binding.escogeConflictoLegal.setChecked( false );
                             banderaConflictoConstruccion = "0";
                         }
                         break;
@@ -6102,25 +6606,25 @@ public class FragmentModificar extends Fragment implements
         super.onStop();
         if (hourlyTask != null) {
             hourlyTask.cancel();
-            getContext().getSharedPreferences("datosConstruccion", 0).edit().clear().apply();
-            getContext().getSharedPreferences("datosGeneralidades", 0).edit().clear().apply();
-            getContext().getSharedPreferences("datosPropietario", 0).edit().clear().apply();
-            getContext().getSharedPreferences("datosSitio", 0).edit().clear().apply();
-            getContext().getSharedPreferences("datosSuperficie", 0).edit().clear().apply();
-            getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
+            getContext().getSharedPreferences( "datosConstruccion", 0 ).edit().clear().apply();
+            getContext().getSharedPreferences( "datosGeneralidades", 0 ).edit().clear().apply();
+            getContext().getSharedPreferences( "datosPropietario", 0 ).edit().clear().apply();
+            getContext().getSharedPreferences( "datosSitio", 0 ).edit().clear().apply();
+            getContext().getSharedPreferences( "datosSuperficie", 0 ).edit().clear().apply();
+            getContext().getSharedPreferences( "datosZonificacion", 0 ).edit().clear().apply();
 
         }
     }
 
     public void clearZoni() {
-        zonificacion = new CrearZonificacion(null,
+        zonificacion = new CrearZonificacion( null,
                 null,
                 null,
                 null,
                 null,
                 null,
                 null,
-                null);
+                null );
 
         zonificacionJson = "";
 
@@ -6139,21 +6643,22 @@ public class FragmentModificar extends Fragment implements
         zonificacionC = new CrearZonificacion.Zonificacion();
         zonificacionG = new CrearZonificacion.Zonificacion();
     }
+
     private String saveFile(Uri pdfUri, String nombreImagenPdf) {
         try {
-            InputStream is = getActivity().getContentResolver().openInputStream(pdfUri);
+            InputStream is = getActivity().getContentResolver().openInputStream( pdfUri );
             byte[] bytesArray = new byte[is.available()];
-            int read = is.read(bytesArray);
+            int read = is.read( bytesArray );
             //write to sdcard
 
-            File dir = new File(Environment.getExternalStorageDirectory(), "/pdfneto");
+            File dir = new File( Environment.getExternalStorageDirectory(), "/pdfneto" );
             boolean mkdirs = dir.mkdirs();
-            File myPdf = new File(Environment.getExternalStorageDirectory(), "/pdfneto/" + nombreImagenPdf + ".pdf");
+            File myPdf = new File( Environment.getExternalStorageDirectory(), "/pdfneto/" + nombreImagenPdf + ".pdf" );
             if (read == -1 && mkdirs) {
 
             }
-            FileOutputStream fos = new FileOutputStream(myPdf.getPath());
-            fos.write(bytesArray);
+            FileOutputStream fos = new FileOutputStream( myPdf.getPath() );
+            fos.write( bytesArray );
             fos.close();
             //            System.out.println(fileString);
             return myPdf.getPath();
@@ -6164,50 +6669,51 @@ public class FragmentModificar extends Fragment implements
         }
         return null;
     }
-    public void intentGaleria(int NumerodePikect){
+
+    public void intentGaleria(int NumerodePikect) {
         Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+        intent.setType( "image/*" );
+        intent.setAction( Intent.ACTION_GET_CONTENT );
+        if (intent.resolveActivity( getContext().getPackageManager() ) != null) {
             File photoFile = null;
             try {
-                photoFile = createImageFile(getContext());
+                photoFile = createImageFile( getContext() );
             } catch (IOException ex) {
                 FragmentDialogError405 a = new FragmentDialogError405();
                 Bundle arguments = new Bundle();
-                arguments.putString( "mensaje" , "Ocurrió un error al subir la imagen, vuelve a intentarlo");
-                a.setArguments(arguments);
-                a.show(getChildFragmentManager(),"child");
+                arguments.putString( "mensaje", "Ocurrió un error al subir la imagen, vuelve a intentarlo" );
+                a.setArguments( arguments );
+                a.show( getChildFragmentManager(), "child" );
             }
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(intent, NumerodePikect);
+                Uri photoURI = FileProvider.getUriForFile( getContext(), getString( R.string.file_provider_authority ), photoFile );
+                intent.putExtra( MediaStore.EXTRA_OUTPUT, photoURI );
+                startActivityForResult( intent, NumerodePikect );
             }
         }
     }
 
-    public void intentFoto(int lugarFoto){
-        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (pictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+    public void intentFoto(int lugarFoto) {
+        Intent pictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE );
+        if (pictureIntent.resolveActivity( getContext().getPackageManager() ) != null) {
             File photoFile = null;
             try {
-                photoFile = createImageFile(getContext());
+                photoFile = createImageFile( getContext() );
             } catch (IOException ex) {
                 FragmentDialogError405 a = new FragmentDialogError405();
                 Bundle arguments = new Bundle();
-                arguments.putString( "mensaje" , "Ocurrió un error al subir la imagen, vuelve a intentarlo");
-                a.setArguments(arguments);
-                a.show(getChildFragmentManager(),"child");
+                arguments.putString( "mensaje", "Ocurrió un error al subir la imagen, vuelve a intentarlo" );
+                a.setArguments( arguments );
+                a.show( getChildFragmentManager(), "child" );
             }
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(getContext(), getString(R.string.file_provider_authority), photoFile);
-                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(pictureIntent, lugarFoto);
+                Uri photoURI = FileProvider.getUriForFile( getContext(), getString( R.string.file_provider_authority ), photoFile );
+                pictureIntent.putExtra( MediaStore.EXTRA_OUTPUT, photoURI );
+                startActivityForResult( pictureIntent, lugarFoto );
             }
         }
     }
 
-    public void intentCameraAPi(){
+    public void intentCameraAPi() {
     }
 }

@@ -44,6 +44,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -71,6 +72,7 @@ import expansion.neto.com.mx.jefeapp.databinding.FragmentDetalleGenBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDetallePropietarioBinding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentDetalleSitioBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentProceso.FragmentDialogCancelarMdProceso;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentModificar;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosSitio;
@@ -118,6 +120,13 @@ import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAu
 
 public class FragmentDetalleRechazadas extends Fragment implements
          AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
+
+
+    ArrayList<Zonificacion.GeneradoresArregloInt> radiosArreglo = null;
+    ArrayList<String> radiosLong = null;
+    ArrayList<String> radiosLat = null;
+    ArrayList<String> radiosAnillo = null;
+    ArrayList<Zonificacion.GeneradoresArregloInt> generadoresArreglo = null;
 
     private View view;
     private static final String ARG_POSITION = "position";
@@ -243,6 +252,216 @@ public class FragmentDetalleRechazadas extends Fragment implements
                     .icon(icon)
             );
 
+            System.out.println( "~~~~~~~~~~~~~~~~~~~ Este sera el mapa 🤔 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" );
+            Resources resource = FragmentDetalleRechazadas.this.getResources();
+            googleMap.addCircle(new CircleOptions()
+                    .center(mds)
+                    .radius(500)
+                    .strokeColor(resource.getColor(R.color.radios))
+                    .fillColor(resource.getColor(R.color.radios)));
+
+
+                if (radiosLat != null){
+                    for (int i = 0; i< radiosLat.size();i++){
+                        googleMap.addCircle( new CircleOptions()
+                            .center( new LatLng(Double.parseDouble( radiosLat.get( i )),Double.parseDouble( radiosLong.get( i ))))
+                                .radius( Double.parseDouble( radiosAnillo.get( i ) ) )
+                                .strokeColor( resource.getColor( R.color.radiosReferencia ) )
+                                .fillColor( resource.getColor( R.color.radiosReferencia ) )
+                        );}
+                }
+
+                if (radiosArreglo != null){
+                    for (int i = 0; i< radiosArreglo.size();i++){
+
+                    switch (radiosArreglo.get( i ).getGenerador()){
+                case "PANADERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                    break;
+                case "TORTILLERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                    break;
+                case "ABARROTES":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                    break;
+                case "CARNICERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                    break;
+                case "POLLERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                    break;
+                case "HOSPITAL":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                    break;
+                case "ESCUELA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                    break;
+                case "MERCADO":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                    break;
+                case "OFICINA DE GOBIERNO":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                    break;
+                case "RECAUDERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                    break;
+                case "IGLESIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                    break;
+                default:
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                    break;
+
+
+            }
+
+                    }
+                }
+
+                if (generadoresArreglo != null){
+
+
+                for (int i = 0; i<generadoresArreglo.size();i++){
+
+                    switch (generadoresArreglo.get( i ).getGenerador()){
+                        case "PANADERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                            break;
+                        case "TORTILLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                            break;
+                        case "ABARROTES":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                            break;
+                        case "CARNICERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                            break;
+                        case "POLLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                            break;
+                        case "HOSPITAL":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                            break;
+                        case "ESCUELA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                            break;
+                        case "MERCADO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                            break;
+                        case "OFICINA DE GOBIERNO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                            break;
+                        case "RECAUDERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                            break;
+                        case "IGLESIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                            break;
+                        default:
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                            break;
+
+
+                    }
+                }
+            }
+
             mCenterLatLong = new LatLng(mdLat, mdLot);
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(mCenterLatLong));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCenterLatLong, 15));
@@ -325,7 +544,214 @@ public class FragmentDetalleRechazadas extends Fragment implements
                     .title("")
                     .icon(icon)
             );
+            Resources resource = FragmentDetalleRechazadas.this.getResources();
+            googleMap.addCircle(new CircleOptions()
+                    .center(mds)
+                    .radius(500)
+                    .strokeColor(resource.getColor(R.color.radios))
+                    .fillColor(resource.getColor(R.color.radios)));
 
+
+                if (radiosLat != null){
+                    for (int i = 0; i< radiosLat.size();i++){
+                        googleMap.addCircle( new CircleOptions()
+                            .center( new LatLng(Double.parseDouble( radiosLat.get( i )),Double.parseDouble( radiosLong.get( i ))))
+                                .radius( Double.parseDouble( radiosAnillo.get( i ) ) )
+                                .strokeColor( resource.getColor( R.color.radiosReferencia ) )
+                                .fillColor( resource.getColor( R.color.radiosReferencia ) )
+                        );}
+                }
+
+                if (radiosArreglo != null){
+                    for (int i = 0; i< radiosArreglo.size();i++){
+
+                    switch (radiosArreglo.get( i ).getGenerador()){
+                case "PANADERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                    break;
+                case "TORTILLERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                    break;
+                case "ABARROTES":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                    break;
+                case "CARNICERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                    break;
+                case "POLLERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                    break;
+                case "HOSPITAL":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                    break;
+                case "ESCUELA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                    break;
+                case "MERCADO":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                    break;
+                case "OFICINA DE GOBIERNO":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                    break;
+                case "RECAUDERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                    break;
+                case "IGLESIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                    break;
+                default:
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                    break;
+
+
+            }
+
+                    }
+                }
+
+                if (generadoresArreglo != null){
+
+
+                for (int i = 0; i<generadoresArreglo.size();i++){
+
+                    switch (generadoresArreglo.get( i ).getGenerador()){
+                        case "PANADERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                            break;
+                        case "TORTILLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                            break;
+                        case "ABARROTES":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                            break;
+                        case "CARNICERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                            break;
+                        case "POLLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                            break;
+                        case "HOSPITAL":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                            break;
+                        case "ESCUELA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                            break;
+                        case "MERCADO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                            break;
+                        case "OFICINA DE GOBIERNO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                            break;
+                        case "RECAUDERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                            break;
+                        case "IGLESIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                            break;
+                        default:
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                            break;
+
+
+                    }
+                }
+            }
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(mds));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mds, 15));
             googleMap.animateCamera(CameraUpdateFactory.zoomIn());
@@ -346,6 +772,215 @@ public class FragmentDetalleRechazadas extends Fragment implements
                         .title("")
                         .icon(icon)
                 );
+
+                googleMap.addCircle(new CircleOptions()
+                        .center(mds)
+                        .radius(500)
+                        .strokeColor(resource.getColor(R.color.radios))
+                        .fillColor(resource.getColor(R.color.radios)));
+
+
+                if (radiosLat != null){
+                    for (int i = 0; i< radiosLat.size();i++){
+                        googleMap.addCircle( new CircleOptions()
+                            .center( new LatLng(Double.parseDouble( radiosLat.get( i )),Double.parseDouble( radiosLong.get( i ))))
+                                .radius( Double.parseDouble( radiosAnillo.get( i ) ) )
+                                .strokeColor( resource.getColor( R.color.radiosReferencia ) )
+                                .fillColor( resource.getColor( R.color.radiosReferencia ) )
+                        );}
+                }
+
+                if (radiosArreglo != null){
+                    for (int i = 0; i< radiosArreglo.size();i++){
+
+                    switch (radiosArreglo.get( i ).getGenerador()){
+                case "PANADERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                    break;
+                case "TORTILLERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                    break;
+                case "ABARROTES":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                    break;
+                case "CARNICERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                    break;
+                case "POLLERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                    break;
+                case "HOSPITAL":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                    break;
+                case "ESCUELA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                    break;
+                case "MERCADO":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                    break;
+                case "OFICINA DE GOBIERNO":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                    break;
+                case "RECAUDERIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                    break;
+                case "IGLESIA":
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                    break;
+                default:
+                    googleMap.addMarker( new MarkerOptions()
+                            .anchor( 0.5f,0.5f )
+                            .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                            .title( radiosArreglo.get( i ).getGenerador() )
+                            .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                    break;
+
+
+            }
+
+                    }
+                }
+
+                if (generadoresArreglo != null){
+
+
+                for (int i = 0; i<generadoresArreglo.size();i++){
+
+                    switch (generadoresArreglo.get( i ).getGenerador()){
+                        case "PANADERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                            break;
+                        case "TORTILLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                            break;
+                        case "ABARROTES":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                            break;
+                        case "CARNICERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                            break;
+                        case "POLLERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                            break;
+                        case "HOSPITAL":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                            break;
+                        case "ESCUELA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                            break;
+                        case "MERCADO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                            break;
+                        case "OFICINA DE GOBIERNO":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                            break;
+                        case "RECAUDERIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                            break;
+                        case "IGLESIA":
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                            break;
+                        default:
+                            googleMap.addMarker( new MarkerOptions()
+                                    .anchor( 0.5f,0.5f )
+                                    .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                    .title( generadoresArreglo.get( i ).getGenerador() )
+                                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                            break;
+
+
+                    }
+                }
+            }
+
 
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(mds));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mds, 15));
@@ -791,6 +1426,12 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                     detallesCom = new ArrayList<>();
                                     detallesGen = new ArrayList<>();
 
+                                    generadoresArreglo = new ArrayList<>(  );
+                                    radiosArreglo = new ArrayList<>(  );
+                                    radiosLong = new ArrayList<>(  );
+                                    radiosLat = new ArrayList<>(  );
+                                    radiosAnillo = new ArrayList<>(  );
+
                                     for(int i=0;i<creaZonificacion.getCompetencia().size();i++){
                                         for(int j=0;j<creaZonificacion.getCompetencia().get(i).getDetalle().size();j++){
                                             detallesCom.add(creaZonificacion.getCompetencia().get(i).getDetalle().get(j));
@@ -801,6 +1442,19 @@ public class FragmentDetalleRechazadas extends Fragment implements
                                         for(int j=0;j<creaZonificacion.getGeneradores().get(i).getDetalle().size();j++){
                                             detallesGen.add(creaZonificacion.getGeneradores().get(i).getDetalle().get(j));
                                         }
+                                    }
+
+                                    for(int i=0;i<creaZonificacion.getArrayRadios().size();i++){
+                                        radiosLong.add( creaZonificacion.getArrayRadios().get( i ).getLongitud() );
+                                        radiosLat.add( creaZonificacion.getArrayRadios().get( i ).getLatitud() );
+                                        radiosAnillo.add( creaZonificacion.getArrayRadios().get( i ).getAnillo() );
+                                        for(int j=0;j<creaZonificacion.getArrayRadios().get(i).getGeneradores().size();j++){
+                                            radiosArreglo.add(creaZonificacion.getArrayRadios().get(i).getGeneradores().get(j));
+                                        }
+                                    }
+
+                                    for(int i=0;i<creaZonificacion.getArrayGenerador().size();i++){
+                                        generadoresArreglo.add( creaZonificacion.getArrayGenerador().get( i ) );
                                     }
 
 

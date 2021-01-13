@@ -7,6 +7,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,8 +63,26 @@ public class FragmentDialogCancelarMdRechazadas extends DialogFragment {
 
     public void onResume() {
         super.onResume();
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        System.out.println( "ancho absoluto en pixels "+ width );
+        int height = metrics.heightPixels;
+        System.out.println( "alto absoluto en pixels " + height );
+
         Window window = getDialog().getWindow();
-        window.setLayout(1064, 420);
+
+
+        if (width <= 400 && height <= 400){
+
+            window.setLayout(240, 120);
+        }else if (width <= 500){
+            window.setLayout( 450, 240);
+        }else{
+            window.setLayout(1064, 420);
+        }
+
         window.setGravity(Gravity.CENTER);
     }
     

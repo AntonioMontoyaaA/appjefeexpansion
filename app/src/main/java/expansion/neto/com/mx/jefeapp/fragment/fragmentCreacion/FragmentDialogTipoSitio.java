@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,8 +63,19 @@ public class FragmentDialogTipoSitio extends DialogFragment {
 
     public void onResume() {
         super.onResume();
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        System.out.println( "ancho absoluto en pixels "+ width );
+        int height = metrics.heightPixels;
+        System.out.println( "alto absoluto en pixels " + height );
         Window window = getDialog().getWindow();
-        window.setLayout(1068, 1933);
+        window.setBackgroundDrawableResource( R.drawable.background );
+        if (width <= 400 && height <= 400){
+            window.setLayout( width-50 , height-50 );
+        }else {
+            window.setLayout( width - 100, height - 150 );
+        }
         window.setGravity(Gravity.CENTER);
     }
 

@@ -62,4 +62,6 @@
 
     <color name="atrasadas">#E4B163</color>
     <color name="radios">#1D2B4A20</color>
+
+    <color name="radiosReferencia">#450BF884</color>
 </resources>

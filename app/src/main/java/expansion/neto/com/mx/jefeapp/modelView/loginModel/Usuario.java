@@ -73,8 +73,10 @@ public class Usuario {
                 binding.entrar.setAlpha(0.45f);
                 binding.entrar.setEnabled(false);
                 Usuario user = new Usuario(usuario, contra, context, binding);
-                String imei = Util.getImei(context);
-                compruebaUsuario(user, imei);
+                //String imei = Util.getImei(context);
+                //compruebaUsuario(user, imei);
+                String idAndroid = Settings.Secure.getString( context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                compruebaUsuario(user, idAndroid);
             }else{
                 binding.entrar.setEnabled(true);
                 binding.entrar.setAlpha(1f);
@@ -100,8 +102,8 @@ public class Usuario {
      * Método que regresa el objeto usuario según se encuentre en la BD, también existe condición para saber si el usuario tiene acceso
      * @param usuario
      */
-    public void compruebaUsuario(final Usuario usuario, String imei) {
-        ProviderLogin.getInstance(context).compruebaLogin(imei, usuario,
+    public void compruebaUsuario(final Usuario usuario, String idAndroid) {
+        ProviderLogin.getInstance(context).compruebaLogin(idAndroid, usuario,
                 new ProviderLogin.ConsultaUsuario() {
                     @Override
                     public void resolve(UsuarioLogin usuarioLogin) {

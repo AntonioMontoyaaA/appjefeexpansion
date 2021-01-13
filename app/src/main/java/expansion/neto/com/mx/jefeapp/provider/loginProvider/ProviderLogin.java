@@ -42,7 +42,7 @@ public class ProviderLogin {
         return instance;
     }
 
-    public void compruebaLogin(final String imei, final Usuario usuario, final ConsultaUsuario promise){
+    public void compruebaLogin(final String idAndroid, final Usuario usuario, final ConsultaUsuario promise){
         final OkHttpClient client = new OkHttpClient();
         (new AsyncTask<Void, Void, UsuarioLogin>() {
             @Override
@@ -57,7 +57,9 @@ public class ProviderLogin {
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("usuarioId", usuario.getUsuario())
                             .add("contrasena", md5(usuario.getContra()))
-                            .add("numImei", imei)
+                            .add("numImei", "0")
+                            .add("androidId", idAndroid)
+                            //.add("androidId", "7602296bffcaff1a")
                             .add("versionapp", VERSION_APP)
                             .add("tipoapp", TIPO_APP)
                             .add("tipoLog", TIPO_LOG);

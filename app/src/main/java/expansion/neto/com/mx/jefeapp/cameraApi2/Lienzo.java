@@ -11,14 +11,18 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import expansion.neto.com.mx.jefeapp.R;
 
 public class Lienzo extends View {
+
+    public static boolean bandera_logo;
 
     private static Path drawPath;                              // trazo del que vamos pintando
     private static Paint drawPaint, canvasPaint;        // es como el pincel,
@@ -43,7 +47,7 @@ public class Lienzo extends View {
     public Lienzo(Context context, AttributeSet attrs) {
         super(context, attrs);
         setUpDrawing();
-        marco = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.marquesina);
+        marco = BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.marquesina2_foreground);
         marco = Bitmap.createScaledBitmap(marco, 600, 150, true);
     }
 
@@ -68,7 +72,19 @@ public class Lienzo extends View {
         //canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         //drawCanvas = new Canvas(canvasBitmap);
         //Toast.makeText(getContext(), "ancho: "+ canvasBitmap.getWidth()+ " alto:"+canvasBitmap.getHeight(), Toast.LENGTH_SHORT).show();
-        canvasBitmap = Bitmap.createScaledBitmap(canvasBitmap, 1100, 1100, true);
+
+
+        if (FragmentEditPhoto.width <= 400 && FragmentEditPhoto.height <= 400){
+
+            canvasBitmap = Bitmap.createScaledBitmap(canvasBitmap, 240, 240, true);
+
+        }else if (FragmentEditPhoto.width <= 500){
+            canvasBitmap = Bitmap.createScaledBitmap(canvasBitmap, 450, 450, true);
+
+        }else{
+            canvasBitmap = Bitmap.createScaledBitmap(canvasBitmap, 1100, 1100, true);
+        }
+
         Bitmap mutableBitmap = canvasBitmap.copy(Bitmap.Config.ARGB_8888, true);
         drawCanvas = new Canvas(mutableBitmap);
         drawCanvas.setBitmap(mutableBitmap);
@@ -99,6 +115,7 @@ public class Lienzo extends View {
     public boolean onTouchEvent(MotionEvent event) {
         touchX = event.getX();
         touchY = event.getY();
+        bandera_logo = true;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 drawPath.moveTo(touchX, touchY);
@@ -123,6 +140,11 @@ public class Lienzo extends View {
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
         canvas.drawRect(iniciotouchX, iniciotouchY, touchX, touchY,drawPaint);
+        System.out.println( "tamaños: " + iniciotouchX + " "+ touchX  +" "+ iniciotouchY  +" "+  touchY );
+
+        if ((touchX - iniciotouchX) <= 200 /*|| (touchY - iniciotouchY) <= 100  */){
+            bandera_logo = false;
+        }
 
         xMArcoInt = xMArcoInt <1 ? 1: xMArcoInt;
         marco2 = Bitmap.createScaledBitmap(marco, xMArcoInt, 150, true);

@@ -8,6 +8,9 @@ import java.util.List;
 
 public class Radios {
 
+    /*@SerializedName("detalleRadios")
+    @Expose
+    private List<RadioLista> radiosLista = null;*/
     @SerializedName("detalleRadios")
     @Expose
     private List<DetalleRadio> detalleRadios = null;
@@ -20,6 +23,19 @@ public class Radios {
     @SerializedName("estatusRadios")
     @Expose
     private List<EstatusRadio> estatusRadios = null;
+
+
+
+
+    /*public List<RadioLista> getRadiosLista() {
+        return radiosLista;
+    }
+
+    public void setRadiosLista(List<RadioLista> radiosLista) {
+        this.radiosLista = radiosLista;
+    }*/
+
+
 
     public List<DetalleRadio> getDetalleRadios() {
         return detalleRadios;
@@ -52,5 +68,12 @@ public class Radios {
     public void setEstatusRadios(List<EstatusRadio> estatusRadios) {
         this.estatusRadios = estatusRadios;
     }
+    /*public List<EstatusRadio> getEstatusRadios() {
+        return estatusRadios;
+    }
+
+    public void setEstatusRadios(List<EstatusRadio> estatusRadios) {
+        this.estatusRadios = estatusRadios;
+    }*/
 
 }

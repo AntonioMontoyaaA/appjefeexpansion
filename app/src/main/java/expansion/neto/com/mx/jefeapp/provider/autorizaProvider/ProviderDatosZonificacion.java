@@ -45,6 +45,7 @@ public class ProviderDatosZonificacion {
                     FormBody.Builder formBuilder = new FormBody.Builder()
                             .add("mdId", mdId)
                             .add("usuarioId", usuarioId);
+                    System.out.println( "mdId:  " + mdId + "usuarioId: "+ usuarioId );
 
                     RequestBody formBody = formBuilder.build();
                     Request request = new Request.Builder()
@@ -56,7 +57,7 @@ public class ProviderDatosZonificacion {
                     respuesta = response.body().string();
                     Gson gson = new Gson();
                     String jsonInString = respuesta;
-
+                    System.out.println( "respuesta Zonificacion: " + respuesta);
 
                     return callback = gson.fromJson(jsonInString, Zonificacion.class);
 

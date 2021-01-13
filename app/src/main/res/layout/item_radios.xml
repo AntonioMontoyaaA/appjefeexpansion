@@ -37,14 +37,69 @@
 
                     <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
                         android:id="@+id/tvNombreRadio"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="7dp"
                         android:layout_marginTop="2dp"
                         android:paddingLeft="5dp"
                         android:text=""
                         android:textSize="14sp"
-                        app:typeface="robotoBold" />
+                        app:typeface="robotoBold"
+                        android:layout_weight="1"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/tv_veces_sin_sitios"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textColor="@color/rojo"
+                                android:layout_weight="6"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="veces solicitado sin Sitios"
+                                android:layout_weight="1"
+                                android:textSize="12dp"
+                                android:layout_gravity="start"
+                                android:gravity="center|left"/>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/tv_veces_cancelado"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textColor="@color/rojo"
+                                android:layout_weight="6"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="veces Cancelado"
+                                android:layout_weight="1"
+                                android:textSize="12dp"
+                                android:layout_gravity="start"
+                                android:gravity="center|left"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -53,13 +108,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:weightSum="6">
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
@@ -83,7 +137,7 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
+                    <!--LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -107,12 +161,12 @@
                             android:textSize="12sp"
                             app:typeface="robotoRegular" />
 
-                    </LinearLayout>
+                    </LinearLayout-->
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView

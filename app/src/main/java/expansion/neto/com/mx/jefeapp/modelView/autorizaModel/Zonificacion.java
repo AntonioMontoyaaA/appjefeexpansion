@@ -16,14 +16,39 @@ public class Zonificacion implements SortedListAdapter.ViewModel {
     @SerializedName("competencia")
     @Expose
     private List<Competencium> competencia = null;
+    @SerializedName("arrayRadios")
+    @Expose
+    private List<RadiosArreglo> arrayRadios = null;
+    @SerializedName("arrayGenerador")
+    @Expose
+    private List<GeneradoresArregloInt> arrayGenerador = null;
     @SerializedName("codigo")
     @Expose
     private Integer codigo;
     @SerializedName("mensaje")
     @Expose
     private String mensaje;
+
+    public List<RadiosArreglo> getArrayRadios() {
+        return arrayRadios;
+    }
+
+    public void setArrayRadios(List<RadiosArreglo> arrayRadios) {
+        this.arrayRadios = arrayRadios;
+    }
+
+    public List<GeneradoresArregloInt> getArrayGenerador() {
+        return arrayGenerador;
+    }
+
+    public void setArrayGenerador(List<GeneradoresArregloInt> arrayGenerador) {
+        this.arrayGenerador = arrayGenerador;
+    }
+
     @SerializedName("detallesValidacion")
     @Expose
+
+
     private List<DatosConstruccions.DetallesValidacion> detallesValidacion = null;
 
     public List<DatosConstruccions.DetallesValidacion> getDetallesValidacion() {
@@ -288,7 +313,138 @@ public class Zonificacion implements SortedListAdapter.ViewModel {
             this.unidadMedicion = unidadMedicion;
         }
 
+
+
     }
 
+    public class RadiosArreglo {
+        @SerializedName("latitud")
+        @Expose
+        private String latitud;
+        @SerializedName("generadores")
+        @Expose
+        private List<GeneradoresArregloInt> generadores = null;
+        @SerializedName("anillo")
+        @Expose
+        private String anillo;
+        @SerializedName("radioId")
+        @Expose
+        private String radioId;
+        @SerializedName("longitud")
+        @Expose
+        private String longitud;
+
+        public String getLatitud() {
+            return latitud;
+        }
+
+        public void setLatitud(String latitud) {
+            this.latitud = latitud;
+        }
+
+        public List<GeneradoresArregloInt> getGeneradores() {
+            return generadores;
+        }
+
+        public void setGeneradores(List<GeneradoresArregloInt> generadores) {
+            this.generadores = generadores;
+        }
+
+        public String getAnillo() {
+            return anillo;
+        }
+
+        public void setAnillo(String anillo) {
+            this.anillo = anillo;
+        }
+
+        public String getRadioId() {
+            return radioId;
+        }
+
+        public void setRadioId(String radioId) {
+            this.radioId = radioId;
+        }
+
+        public String getLongitud() {
+            return longitud;
+        }
+
+        public void setLongitud(String longitud) {
+            this.longitud = longitud;
+        }
+    }
+
+
+
+    public class GeneradoresArregloInt {
+
+        @SerializedName("latitud")
+        @Expose
+        private String latitud;
+        @SerializedName("tipoGenerador")
+        @Expose
+        private String tipoGenerador;
+        @SerializedName("generadorId")
+        @Expose
+        private String generadorId;
+        @SerializedName("generador")
+        @Expose
+        private String generador;
+        @SerializedName("tipogeneradorId")
+        @Expose
+        private String tipogeneradorId;
+        @SerializedName("longitud")
+        @Expose
+        private String longitud;
+
+        public String getLatitud() {
+            return latitud;
+        }
+
+        public void setLatitud(String latitud) {
+            this.latitud = latitud;
+        }
+
+        public String getTipoGenerador() {
+            return tipoGenerador;
+        }
+
+        public void setTipoGenerador(String tipoGenerador) {
+            this.tipoGenerador = tipoGenerador;
+        }
+
+        public String getGeneradorId() {
+            return generadorId;
+        }
+
+        public void setGeneradorId(String generadorId) {
+            this.generadorId = generadorId;
+        }
+
+        public String getGenerador() {
+            return generador;
+        }
+
+        public void setGenerador(String generador) {
+            this.generador = generador;
+        }
+
+        public String getTipogeneradorId() {
+            return tipogeneradorId;
+        }
+
+        public void setTipogeneradorId(String tipogeneradorId) {
+            this.tipogeneradorId = tipogeneradorId;
+        }
+
+        public String getLongitud() {
+            return longitud;
+        }
+
+        public void setLongitud(String longitud) {
+            this.longitud = longitud;
+        }
+    }
 
 }

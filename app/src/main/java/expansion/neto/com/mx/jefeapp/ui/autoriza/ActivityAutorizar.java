@@ -58,6 +58,8 @@ public class ActivityAutorizar extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences preferences = getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
+        System.out.println("preferencesSharedPreferencesActivityAutorizar: "+ preferences.getAll());
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         initDataBinding();

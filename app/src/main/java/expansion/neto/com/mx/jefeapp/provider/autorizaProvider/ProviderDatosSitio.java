@@ -45,6 +45,7 @@ public class ProviderDatosSitio {
                             .add("mdId", mdId)
                             .add("usuarioId", usuarioId);
 
+                    System.out.println( "prueba mdid: " + mdId );
                     RequestBody formBody = formBuilder.build();
                     Request request = new Request.Builder()
                             .url(RestUrl.REST_ACTION_CONSULTAR_DATOS_SITIO)

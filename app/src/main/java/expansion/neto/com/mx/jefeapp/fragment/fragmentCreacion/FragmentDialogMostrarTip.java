@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -53,8 +54,18 @@ public class FragmentDialogMostrarTip extends DialogFragment {
 
     public void onResume() {
         super.onResume();
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        System.out.println( "ancho absoluto en pixels "+ width );
+        int height = metrics.heightPixels;
+        System.out.println( "alto absoluto en pixels " + height );
         Window window = getDialog().getWindow();
-        window.setLayout(1064, 800);
+        if (width <= 400 && height <= 400){
+            window.setLayout( width-50 , height-50 );
+        }else {
+            window.setLayout( width - 100, height - 150 );
+        }
         window.setGravity(Gravity.CENTER);
 
         SharedPreferences preferences = getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);

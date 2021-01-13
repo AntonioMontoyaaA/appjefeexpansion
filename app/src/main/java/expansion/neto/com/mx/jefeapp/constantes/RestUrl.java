@@ -10,21 +10,21 @@ public class RestUrl {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public static String dominioImagenesWS = "voksedesfiles"; // desarrollo
+    //public static String dominioImagenesWS = "voksedesfiles"; // desarrollo
 
-    //public static String dominioImagenesWS = "voksefiles"; // produccion
+    public static String dominioImagenesWS = "voksefiles"; // produccion
 
-    public static String ip = "206.189.68.177"; // desarrollo
+    //public static String ip = "206.189.68.177"; // desarrollo
     //public static String ip = "167.99.102.173"; // QA 36
-    //public static String ip = "206.189.223.154"; // produccion
+    public static String ip = "206.189.223.154"; // produccion
 
-    public static String dominio = "voksedesapi"; // desarrollo
+    //public static String dominio = "voksedesapi"; // desarrollo
     //public static String dominio = "vokseqaapi"; // QA
-    //public static String dominio = "vokseapi"; // produccion
+    public static String dominio = "vokseapi"; // produccion
 
     public static String NUM_TELEFONO = "0";
 
-    public static String VERSION_APP = "2.0.1";
+    public static String VERSION_APP = "2.1.0";
 
     public static String TIPO_APP = "1";
 
@@ -136,9 +136,18 @@ public class RestUrl {
 
     public static String REST_CONSULTA_TOTALES = "http://"+ ip +"/"+ dominio +"/consultamdstotales/";
 
-    public static String REST_ACTION_CONSULTAR_RADIOS = "http://"+ ip +"/"+ dominio +"/consultaRadiosAsignados/";
+    //public static String REST_ACTION_CONSULTAR_RADIOS = "http://"+ ip +"/"+ dominio +"/consultaRadiosAsignados/";
 
-    public static String REST_ACTION_CAMBIA_ESTATUS_RADIOS = "http://"+ ip +"/"+ dominio +"/cambiaestatusradio/";
+
+    public static String REST_ACTION_CONSULTAR_RADIOS = "http://"+ ip +"/"+ dominio +"/consultaRadioxUsr/";
+
+    public static String REST_ACTION_CAMBIA_ESTATUS_RADIOS = "http://"+ ip +"/"+ dominio +"/rechazoRadioJefe/";
+
+    //public static String REST_ACTION_CAMBIA_ESTATUS_RADIOS = "http://"+ ip +"/"+ dominio +"/cambiaestatusradio/";
+
+    public static String REST_ACTION_VALIDAR_UBICACION = "http://"+ ip +"/"+ dominio +"/validaRadioMD/";
+
+    public static String REST_ACTION_GUARDAR_VISITA = "http://"+ ip +"/"+ dominio +"/guardaVisitaRadio/";
 
     public static String REST_ACTION_NUM_MENSAJES = "http://"+ ip +"/"+ dominio +"/obtienenummensajes/";
 

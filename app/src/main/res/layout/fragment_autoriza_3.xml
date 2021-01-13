@@ -42,7 +42,7 @@
                         android:layout_marginTop="10dp"
                         android:padding="0dp"
                         android:layout_width="match_parent"
-                        android:layout_height="600dp"
+                        android:layout_height="@dimen/alto_map"
                         android:orientation="horizontal">
                         <!--android:background="@{String.valueOf(validacion).equals(@string/valida) ? @drawable/estilo_boton_blanco : @drawable/estilo_boton_borde_rojo}"-->
                         <android.support.constraint.ConstraintLayout

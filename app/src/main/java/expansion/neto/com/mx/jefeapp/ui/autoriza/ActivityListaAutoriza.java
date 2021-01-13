@@ -24,7 +24,8 @@ import expansion.neto.com.mx.jefeapp.sorted.autoriza.AutorizaHolder;
  * Created by marcosmarroquin on 23/03/18.
  */
 
-public class ActivityListaAutoriza extends AppCompatActivity
+public class
+ActivityListaAutoriza extends AppCompatActivity
         implements AutorizaHolder.Listener{
 
 

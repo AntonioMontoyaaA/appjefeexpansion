@@ -46,6 +46,7 @@ public class ProviderCrearDatosSitio {
             @Override
             protected Codigos doInBackground(Void... voids) {
                 //TODO CONNECT AND GET DATA
+                String nombreSitioFormat = "vacio";
                 try {
 
                     final SharedPreferences preferences = context.getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
@@ -54,8 +55,12 @@ public class ProviderCrearDatosSitio {
                         mdIdZ = "0";
                     }
 
+                    if (datosSitio.getMunicipio() == null){
+                        datosSitio.setMunicipio( "" );
+                    }
 
-                    String nombreSitioFormat = datosSitio.getNombreSitio().substring(0, 1).toUpperCase() + datosSitio.getNombreSitio().substring(1);
+
+                    nombreSitioFormat = datosSitio.getNombreSitio().substring(0, 1).toUpperCase() + datosSitio.getNombreSitio().substring(1);
 
 
                     FormBody.Builder formBuilder = new FormBody.Builder()
@@ -73,6 +78,8 @@ public class ProviderCrearDatosSitio {
                             .add("municipio", datosSitio.getMunicipio())
                             .add("mdId", String.valueOf(mdIdZ))
                             .add("radioid", datosSitio.getRadio());
+
+                    System.out.println( "Verificacion del Radio ID creado: radioId " + datosSitio.getRadio() + " mdID: " + String.valueOf( mdIdZ )  );
 
                     RequestBody formBody = formBuilder.build();
                     Request request = new Request.Builder()
@@ -95,6 +102,9 @@ public class ProviderCrearDatosSitio {
                     }else{
                         codigo = new Codigos();
                         codigo.setCodigo(404);
+                        if (nombreSitioFormat.equals( "vacio" )){
+                            codigo.setMensaje( "Nombre vacio" );
+                        }
                         return codigo;
                     }
                 }

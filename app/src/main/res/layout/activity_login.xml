@@ -25,18 +25,14 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="@dimen/espaciado_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <View style="@style/vertical_separator"/>
-                <View style="@style/vertical_separator"/>
-                <View style="@style/vertical_separator"/>
-                <View style="@style/vertical_separator"/>
 
                 <ImageView
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="@dimen/espaciado_login2"
                     android:layout_width="150dp"
                     android:layout_height="90dp"
                     android:scrollbars="none"
@@ -192,8 +188,38 @@
                     android:textColor="@color/blanco"
                     android:textSize="8dp"
                     android:layout_marginEnd="24dp"
-                    android:layout_marginTop="120dp"
+                    android:layout_marginTop="@dimen/espaciado_login3"
                     app:typeface="robotoLight" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_idAndroid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/blanco"
+                        android:text="ID:"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_share"
+                        android:background="@android:color/transparent"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="15dp"
+                        android:onClick="compartir"/>
+
+                </LinearLayout>
+
 
             </LinearLayout>
 

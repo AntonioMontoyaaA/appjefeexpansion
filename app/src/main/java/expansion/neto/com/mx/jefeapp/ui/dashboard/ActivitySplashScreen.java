@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -295,8 +296,9 @@ public class ActivitySplashScreen extends AppCompatActivity {
 	 * @param usuario
 	 */
 	public void compruebaUsuario(final Usuario usuario) {
-		String imei = Util.getImei(getApplicationContext());
-		ProviderLogin.getInstance(this).compruebaLogin(imei,usuario,
+		//String imei = Util.getImei(getApplicationContext());
+		String idAndroid = Settings.Secure.getString( getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+		ProviderLogin.getInstance(this).compruebaLogin(idAndroid,usuario,
 				new ProviderLogin.ConsultaUsuario() {
 					@Override
 					public void resolve(UsuarioLogin usuarioLogin) {

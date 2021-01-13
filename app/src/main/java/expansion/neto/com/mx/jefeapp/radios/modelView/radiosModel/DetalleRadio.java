@@ -6,38 +6,55 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradores;
+
 public class DetalleRadio {
 
     @SerializedName("latitud")
     @Expose
     private String latitud;
-    @SerializedName("poblacion")
+    @SerializedName("estatusRadioId")
     @Expose
-    private List<Poblacion> poblacion = null;
+    private String estatusRadioId;
+    @SerializedName("sinSitio")
+    @Expose
+    private String sinSitio;
+    @SerializedName("datosRadio")
+    @Expose
+    private DatosRadio datosRadio;
     @SerializedName("fechaAsignado")
     @Expose
     private String fechaAsignado;
+    @SerializedName("usuarioAsignado")
+    @Expose
+    private String usuarioAsignado;
     @SerializedName("radioId")
     @Expose
     private String radioId;
-    @SerializedName("longitud")
-    @Expose
-    private String longitud;
-    @SerializedName("estatusRadioId")
-    @Expose
-    private Integer estatusRadioId;
     @SerializedName("generadores")
     @Expose
-    private List<Generadore> generadores = null;
-    @SerializedName("tipoEstrategia")
+    private List<GeneradoresRadio> generadores = null;
+    @SerializedName("rechazado")
     @Expose
-    private String tipoEstrategia;
-    @SerializedName("ubicacion")
+    private String rechazado;
+    @SerializedName("longRadio")
     @Expose
-    private List<Ubicacion> ubicacion = null;
+    private String longRadio;
+    @SerializedName("cancelado")
+    @Expose
+    private String cancelado;
+    @SerializedName("competencia")
+    @Expose
+    private List<Competencia> competencia = null;
     @SerializedName("estatusRadio")
     @Expose
     private String estatusRadio;
+    @SerializedName("visitasRadio")
+    @Expose
+    private String visitasRadio;
+    @SerializedName("longitud")
+    @Expose
+    private String longitud;
     @SerializedName("nombreRadio")
     @Expose
     private String nombreRadio;
@@ -50,13 +67,7 @@ public class DetalleRadio {
         this.latitud = latitud;
     }
 
-    public List<Poblacion> getPoblacion() {
-        return poblacion;
-    }
 
-    public void setPoblacion(List<Poblacion> poblacion) {
-        this.poblacion = poblacion;
-    }
 
     public String getFechaAsignado() {
         return fechaAsignado;
@@ -64,6 +75,14 @@ public class DetalleRadio {
 
     public void setFechaAsignado(String fechaAsignado) {
         this.fechaAsignado = fechaAsignado;
+    }
+
+    public String getUsuarioAsignado() {
+        return usuarioAsignado;
+    }
+
+    public void setUsuarioAsignado(String usuarioAsignado) {
+        this.usuarioAsignado = usuarioAsignado;
     }
 
     public String getRadioId() {
@@ -74,6 +93,14 @@ public class DetalleRadio {
         this.radioId = radioId;
     }
 
+    public String getRechazado() {
+        return rechazado;
+    }
+
+    public void setRechazado(String rechazado) {
+        this.rechazado = rechazado;
+    }
+
     public String getLongitud() {
         return longitud;
     }
@@ -82,36 +109,53 @@ public class DetalleRadio {
         this.longitud = longitud;
     }
 
-    public Integer getEstatusRadioId() {
+    public List<Competencia> getCompetencia() {
+        return competencia;
+    }
+
+    public void setCompetencia(List<Competencia> competencia) {
+        this.competencia = competencia;
+    }
+
+    public String getEstatusRadioId() {
         return estatusRadioId;
     }
 
-    public void setEstatusRadioId(Integer estatusRadioId) {
+    public void setEstatusRadioId(String estatusRadioId) {
         this.estatusRadioId = estatusRadioId;
     }
 
-    public List<Generadore> getGeneradores() {
+
+    public DatosRadio getDatosRadio() {
+        return datosRadio;
+    }
+
+    public void setDatosRadio(DatosRadio datosRadio) {
+        this.datosRadio = datosRadio;
+    }
+
+    public String getVisitasRadio() {
+        return visitasRadio;
+    }
+
+    public void setVisitasRadio(String visitasRadio) {
+        this.visitasRadio = visitasRadio;
+    }
+
+    public String getLongRadio() {
+        return longRadio;
+    }
+
+    public void setLongRadio(String longRadio) {
+        this.longRadio = longRadio;
+    }
+
+    public List<GeneradoresRadio> getGeneradores() {
         return generadores;
     }
 
-    public void setGeneradores(List<Generadore> generadores) {
+    public void setGeneradores(List<GeneradoresRadio> generadores) {
         this.generadores = generadores;
-    }
-
-    public String getTipoEstrategia() {
-        return tipoEstrategia;
-    }
-
-    public void setTipoEstrategia(String tipoEstrategia) {
-        this.tipoEstrategia = tipoEstrategia;
-    }
-
-    public List<Ubicacion> getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(List<Ubicacion> ubicacion) {
-        this.ubicacion = ubicacion;
     }
 
     public String getEstatusRadio() {
@@ -130,4 +174,19 @@ public class DetalleRadio {
         this.nombreRadio = nombreRadio;
     }
 
+    public String getSinSitio() {
+        return sinSitio;
+    }
+
+    public void setSinSitio(String sinSitio) {
+        this.sinSitio = sinSitio;
+    }
+
+    public String getCancelado() {
+        return cancelado;
+    }
+
+    public void setCancelado(String cancelado) {
+        this.cancelado = cancelado;
+    }
 }

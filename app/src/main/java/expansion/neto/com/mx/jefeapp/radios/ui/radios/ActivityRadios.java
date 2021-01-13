@@ -22,6 +22,8 @@ import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityRadiosBinding;
 import expansion.neto.com.mx.jefeapp.radios.fragment.radios.FragmentAceptar;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.DetalleRadio;
+import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.Radio;
+import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.RadioLista;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.Radios;
 import expansion.neto.com.mx.jefeapp.radios.provider.radiosProvider.ProvaiderDatosRadios;
 import expansion.neto.com.mx.jefeapp.radios.sorted.radios.adapter.AdapterRadios;
@@ -32,9 +34,10 @@ import static expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.FragmentAu
 public class ActivityRadios extends AppCompatActivity {
 
     private ActivityRadiosBinding binding;
-    ProgressDialog progressDialog;
+        ProgressDialog progressDialog;
     AdapterRadios adpt = null;
     List<DetalleRadio> detalleRadio = null;
+    //List<RadioLista> detalleRadio = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class ActivityRadios extends AppCompatActivity {
 
                 String texto = binding.buscar.getText().toString();
                 List<DetalleRadio> listaTemporal = new ArrayList<DetalleRadio>();
+                //List<RadioLista> listaTemporal = new ArrayList<RadioLista>();
 
                 binding.rcRadios.removeAllViews();
 
@@ -76,6 +80,15 @@ public class ActivityRadios extends AppCompatActivity {
                             binding.rcRadios.setAdapter(adpt);
                         }
                     }
+                    /*for(RadioLista nombreRadio : detalleRadio) {
+                        if(nombreRadio.getNombre().toLowerCase().contains(texto.toLowerCase()) ) {
+                            listaTemporal.add(nombreRadio);
+                            adpt = new AdapterRadios(ActivityRadios.this, listaTemporal);
+                            binding.rcRadios.setLayoutManager(new LinearLayoutManager(ActivityRadios.this));
+                            //dRecylerView.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
+                            binding.rcRadios.setAdapter(adpt);
+                        }
+                    }*/
                 }
 
             }
@@ -110,8 +123,14 @@ public class ActivityRadios extends AppCompatActivity {
             @Override
             public void resolve(Radios datosSitio) {
                 if(datosSitio!=null){
+                    System.out.println( "datosSitio codigo " + datosSitio.getCodigo() + "datosSitio mensaje " + datosSitio.getMensaje() );
                     if(datosSitio.getCodigo()==200){
                         loadingProgress(progressDialog, 1);
+
+                        /*setRadiosAdapter(datosSitio.getRadiosLista());
+                        int tamano = datosSitio.getRadiosLista().size();
+                        if(tamano >0 ){
+                            detalleRadio = datosSitio.getRadiosLista();*/
                         setRadiosAdapter(datosSitio.getDetalleRadios());
                         int tamano = datosSitio.getDetalleRadios().size();
                         if(tamano >0 ){
@@ -145,8 +164,14 @@ public class ActivityRadios extends AppCompatActivity {
     }
 
 
+    /*public void setRadiosAdapter(List<RadioLista> listItems){
+        adpt = new AdapterRadios(this, listItems);
+        binding.rcRadios.setLayoutManager(new LinearLayoutManager(this));
+        //dRecylerView.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
+        binding.rcRadios.setAdapter(adpt);
+    }*/
     public void setRadiosAdapter(List<DetalleRadio> listItems){
-         adpt = new AdapterRadios(this, listItems);
+        adpt = new AdapterRadios(this, listItems);
         binding.rcRadios.setLayoutManager(new LinearLayoutManager(this));
         //dRecylerView.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
         binding.rcRadios.setAdapter(adpt);

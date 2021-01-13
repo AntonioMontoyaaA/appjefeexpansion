@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +80,17 @@ public class FragmentDashboard extends Fragment {
         Date hoy = Calendar.getInstance().getTime();
         String upperString = Util.getFechaDay(hoy).substring(0, 1).toUpperCase() + Util.getFechaDay(hoy).substring(1);
         binding.dia.setText("Hoy " + upperString + ", " + Util.getFechaFormat(hoy));
+
+        //centramos LinearLayout para vistas muy grandes
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        System.out.println( "ancho absoluto en pixels "+ width );
+        int height = metrics.heightPixels;
+        System.out.println( "alto absoluto en pixels " + height );
+        if (height >= 2000) {
+            binding.linearLayoutCentrar.setGravity( Gravity.CENTER );
+        }
 
         getContext().getSharedPreferences("datosExpansion", Context.MODE_PRIVATE);
         Calendar fecha = Calendar.getInstance();

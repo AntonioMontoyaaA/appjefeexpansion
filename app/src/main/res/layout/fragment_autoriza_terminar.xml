@@ -37,7 +37,7 @@
                     android:layout_marginTop="2dp"
                     android:padding="18dp"
                     android:layout_width="match_parent"
-                    android:layout_height="610dp"
+                    android:layout_height="@dimen/alto_map"
                     android:orientation="horizontal">
                     <!--android:background="@{String.valueOf(validacion).equals(@string/valida) ? @drawable/estilo_boton_blanco : @drawable/estilo_boton_borde_rojo}"-->
 

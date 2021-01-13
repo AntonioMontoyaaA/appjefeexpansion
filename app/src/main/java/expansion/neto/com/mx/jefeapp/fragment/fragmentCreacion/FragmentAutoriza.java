@@ -34,6 +34,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -49,6 +50,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableRow;
@@ -65,6 +67,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -104,12 +107,14 @@ import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza5Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutoriza6Binding;
 import expansion.neto.com.mx.jefeapp.databinding.FragmentAutorizaBinding;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentCreacion.modulos.guardarDatos.GuardarDatosGeneralidades;
+import expansion.neto.com.mx.jefeapp.fragment.fragmentRechazadas.FragmentModificar;
 import expansion.neto.com.mx.jefeapp.fragment.fragmentTerminar.FragmentDialogCancelarMdTerminar;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosConstruccions;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.DatosPredial;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonal;
 import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Peatonales;
+import expansion.neto.com.mx.jefeapp.modelView.autorizaModel.Zonificacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Amortizacion;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.Codigos;
 import expansion.neto.com.mx.jefeapp.modelView.crearModel.CompetenciasGeneradoresV2;
@@ -127,6 +132,7 @@ import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosAmor
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPeatonal;
 import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosPredial;
+import expansion.neto.com.mx.jefeapp.provider.autorizaProvider.ProviderDatosZonificacion;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderBuscarPropietario;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderCrearConstruccion;
 import expansion.neto.com.mx.jefeapp.provider.crearProvider.ProviderCrearDatosPropietario;
@@ -175,6 +181,13 @@ import static expansion.neto.com.mx.jefeapp.utils.Util.random;
 
 public class FragmentAutoriza extends Fragment implements
         AutorizaHolderPeatonal.Listener, com.google.android.gms.location.LocationListener {
+
+
+    ArrayList<Zonificacion.GeneradoresArregloInt> radiosArreglo = null;
+    ArrayList<String> radiosLong = null;
+    ArrayList<String> radiosLat = null;
+    ArrayList<String> radiosAnillo = null;
+    ArrayList<Zonificacion.GeneradoresArregloInt> generadoresArreglo = null;
 
     String urlFrente = "";
     String urlLateral1 = "";
@@ -459,6 +472,213 @@ public class FragmentAutoriza extends Fragment implements
                 markerOptions.position(mds);
                 markerOptions.icon(icon);
 
+                Resources resource = FragmentAutoriza.this.getResources();
+                googleMap.addCircle(new CircleOptions()
+                        .center(mds)
+                        .radius(500)
+                        .strokeColor(resource.getColor(R.color.radios))
+                        .fillColor(resource.getColor(R.color.radios))
+                        .zIndex( 1.0f ));
+
+
+                if (radiosLat != null){
+                    for (int i = 0; i< radiosLat.size();i++){
+                        googleMap.addCircle( new CircleOptions()
+                                .center( new LatLng(Double.parseDouble( radiosLat.get( i )),Double.parseDouble( radiosLong.get( i ))))
+                                .radius( Double.parseDouble( radiosAnillo.get( i ) ) )
+                                .strokeColor( resource.getColor( R.color.radiosReferencia ) )
+                                .fillColor( resource.getColor( R.color.radiosReferencia ) )
+                        );}
+                }
+
+                if (radiosArreglo != null){
+                    for (int i = 0; i< radiosArreglo.size();i++){
+                        switch (radiosArreglo.get( i ).getGenerador()){
+                            case "PANADERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                        .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                                break;
+                            case "TORTILLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                                break;
+                            case "ABARROTES":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                                break;
+                            case "CARNICERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                                break;
+                            case "POLLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                                break;
+                            case "HOSPITAL":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                                break;
+                            case "ESCUELA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                                break;
+                            case "MERCADO":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                                break;
+                            case "OFICINA DE GOBIERNO":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                                break;
+                            case "RECAUDERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                                break;
+                            case "IGLESIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                                break;
+                            default:
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(radiosArreglo.get( i ).getLatitud()),Double.parseDouble(radiosArreglo.get( i ).getLongitud() )))
+                                        .title( radiosArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                                break;
+
+
+                        }
+
+                    }
+                }
+
+                if (generadoresArreglo != null){
+                    for (int i = 0; i<generadoresArreglo.size();i++){
+
+                        switch (generadoresArreglo.get( i ).getGenerador()){
+                            case "PANADERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_panaderia2_foreground ) ));
+                                break;
+                            case "TORTILLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_tortilleria2_foreground ) ));
+                                break;
+                            case "ABARROTES":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_abarrotes2_foreground ) ));
+                                break;
+                            case "CARNICERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_carniceria2_foreground ) ));
+                                break;
+                            case "POLLERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_polleria2_foreground ) ));
+                                break;
+                            case "HOSPITAL":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_hospital2_foreground ) ));
+                                break;
+                            case "ESCUELA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_escuela2_foreground ) ));
+                                break;
+                            case "MERCADO":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_mercado2_foreground ) ));
+                                break;
+                            case "OFICINA DE GOBIERNO":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_ofgobierno2_foreground ) ));
+                                break;
+                            case "RECAUDERIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_recauderia2_foreground ) ));
+                                break;
+                            case "IGLESIA":
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.pin_templo2_foreground ) ));
+                                break;
+                            default:
+                                googleMap.addMarker( new MarkerOptions()
+                                .anchor( 0.5f,0.5f )
+                                        .position( new LatLng( Double.parseDouble(generadoresArreglo.get( i ).getLatitud()),Double.parseDouble(generadoresArreglo.get( i ).getLongitud() )))
+                                        .title( generadoresArreglo.get( i ).getGenerador() )
+                                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.icon_templo ) ));
+                                break;
+
+
+                        }
+                    }
+                }
+
                 googleMap.animateCamera(CameraUpdateFactory.newLatLng(mds));
                 googleMap.addMarker(markerOptions);
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(mds));
@@ -656,6 +876,8 @@ public class FragmentAutoriza extends Fragment implements
             binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    cleanShared(getContext());
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
                     a.show(getChildFragmentManager(),"child");
                 }
@@ -790,8 +1012,14 @@ public class FragmentAutoriza extends Fragment implements
                                             loadingProgress(progressDialog, 1);
                                         }else{
                                             binding.toolbar.guardar.setEnabled(true);
-                                            Toast.makeText(getContext(), codigo.getMensaje(),
-                                                    Toast.LENGTH_SHORT).show();
+                                            if (codigo.getMensaje() != null && codigo.getMensaje().equals( "Nombre vacio" )){
+                                                Toast.makeText( getContext(), getString( R.string.errorFaltaNombre ),
+                                                        Toast.LENGTH_SHORT ).show();
+
+                                            }else {
+                                                Toast.makeText( getContext(), codigo.getMensaje(),
+                                                        Toast.LENGTH_SHORT ).show();
+                                            }
                                             loadingProgress(progressDialog, 1);
                                         }
                                     }else{
@@ -861,6 +1089,8 @@ public class FragmentAutoriza extends Fragment implements
             bindingPropietario.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    cleanShared(getContext());
                     FragmentDialogCancelarMd a = new FragmentDialogCancelarMd();
                     a.show(getChildFragmentManager(),"child");
                 }
@@ -1115,6 +1345,24 @@ public class FragmentAutoriza extends Fragment implements
             bindingSuperficie.toolbar.guardar.setEnabled(true);
             bindingSuperficie.frente.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
             bindingSuperficie.profundidad.setFilters(new InputFilter[] {new CustomTextWatcher(4,1)});
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int width = metrics.widthPixels;
+            System.out.println( "ancho absoluto en pixels "+ width );
+            int height = metrics.heightPixels;
+            System.out.println( "alto absoluto en pixels " + height );
+
+            if (width <= 500){
+
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        3.0f
+                );
+
+                bindingSuperficie.linearLayout6.setLayoutParams( param );
+            }
             // bindingSuperficie.areaterreno.setFilters(new InputFilter[] {new CustomTextWatcher(5,1)});
 
             ProviderDatosPredial.getInstance(getContext()).obtenerDatosPredial(convertido, usuario, new ProviderDatosPredial.ConsultaDatosPredial() {
@@ -1256,7 +1504,7 @@ public class FragmentAutoriza extends Fragment implements
                     banderaCamara[0] = 4;
                     if(urlPredial.length()>0){
                         if(!urlPredial.isEmpty()){
-                            Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlPredial).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1354,7 +1602,7 @@ public class FragmentAutoriza extends Fragment implements
                     banderaCamara[0] = 8;
                     if(urlReciboAgua.length()>0){
                         if(!urlReciboAgua.isEmpty()){
-                            Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlReciboAgua).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1452,7 +1700,7 @@ public class FragmentAutoriza extends Fragment implements
                     banderaCamara[0] = 9;
                     if(urlReciboLuz.length()>0){
                         if(!urlReciboLuz.isEmpty()){
-                            Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlReciboLuz).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1551,7 +1799,7 @@ public class FragmentAutoriza extends Fragment implements
 
                         banderaCamara[0] = 1;
                         if(urlFrente.length()>0){
-                            Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlFrente).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1591,7 +1839,7 @@ public class FragmentAutoriza extends Fragment implements
                         banderaCamara[0] = 2;
 
                         if(urlLateral1.length()>0){
-                            Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlLateral1).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1633,7 +1881,7 @@ public class FragmentAutoriza extends Fragment implements
 
                         banderaCamara[0] = 3;
                         if(urlLateral2.length()>0){
-                            Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlLateral2).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1673,7 +1921,7 @@ public class FragmentAutoriza extends Fragment implements
 
                         banderaCamara[0] = 5;
                         if(urlEntorno1.length()>0){
-                            Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlEntorno1).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1713,7 +1961,7 @@ public class FragmentAutoriza extends Fragment implements
 
                         banderaCamara[0] = 6;
                         if(urlEntorno2.length()>0){
-                            Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlEntorno2).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1753,7 +2001,7 @@ public class FragmentAutoriza extends Fragment implements
 
                         banderaCamara[0] = 7;
                         if(urlEntorno3.length()>0){
-                            Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlEntorno3).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.volver.setVisibility(View.VISIBLE);
                         }else{
                             bindingSuperficie.volver.setVisibility(View.GONE);
@@ -1857,6 +2105,8 @@ public class FragmentAutoriza extends Fragment implements
             bindingSuperficie.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    cleanShared(getContext());
                     FragmentDialogCancelarMd a = new FragmentDialogCancelarMd();
                     a.show(getChildFragmentManager(),"child");
                 }
@@ -2074,6 +2324,90 @@ public class FragmentAutoriza extends Fragment implements
                 }
             });
 
+            if (true){
+                ProviderDatosZonificacion.getInstance(getContext())
+                        .obtenerDatosZonificacion(mdId, usuario, new ProviderDatosZonificacion.ConsultaDatosZonificacion() {
+                            @Override
+                            public void resolve(Zonificacion creaZonificacion) {
+                                if (creaZonificacion.getCodigo() == 200) {
+
+                                    getContext().getSharedPreferences("datosZonificacion", 0).edit().clear().apply();
+                                    //clearZoni();
+                                    LatLng mds = new LatLng(mdLat, mdLot);
+                                    LatLng mdsNuevos = null;
+
+                                    generadoresArreglo = new ArrayList<>(  );
+                                    radiosArreglo = new ArrayList<>(  );
+                                    radiosLong = new ArrayList<>(  );
+                                    radiosLat = new ArrayList<>(  );
+                                    radiosAnillo = new ArrayList<>(  );
+
+                                    /*for (int i = 0; i < creaZonificacion.getCompetencia().size(); i++) {
+                                        for (int j = 0; j < creaZonificacion.getCompetencia().get(i).getDetalle().size(); j++) {
+                                            detallesCom.add(creaZonificacion.getCompetencia().get(i).getDetalle().get(j));
+                                        }
+                                    }
+
+                                    for (int i = 0; i < creaZonificacion.getGeneradores().size(); i++) {
+                                        for (int j = 0; j < creaZonificacion.getGeneradores().get(i).getDetalle().size(); j++) {
+                                            detallesGen.add(creaZonificacion.getGeneradores().get(i).getDetalle().get(j));
+                                        }
+                                    }*/
+
+                                    for(int i=0;i<creaZonificacion.getArrayRadios().size();i++){
+                                        radiosLong.add( creaZonificacion.getArrayRadios().get( i ).getLongitud() );
+                                        radiosLat.add( creaZonificacion.getArrayRadios().get( i ).getLatitud() );
+                                        radiosAnillo.add( creaZonificacion.getArrayRadios().get( i ).getAnillo() );
+                                        for(int j=0;j<creaZonificacion.getArrayRadios().get(i).getGeneradores().size();j++){
+                                            radiosArreglo.add(creaZonificacion.getArrayRadios().get(i).getGeneradores().get(j));
+                                        }
+                                    }
+
+                                    for(int i=0;i<creaZonificacion.getArrayGenerador().size();i++){
+                                        generadoresArreglo.add( creaZonificacion.getArrayGenerador().get( i ) );
+                                    }
+
+                                    /*if (detallesGen.size() == 0) {
+                                        // mdsNuevos = new LatLng(0.0, 0.0);
+                                        // colocarMarcadorZoni(mdsNuevos, mMapZona, 1,
+                                        //    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
+                                    } else {
+                                        for (int j = 0; j < detallesGen.size(); j++) {
+                                            mdsNuevos = new LatLng(Double.valueOf(detallesGen.get(j).getLatitud()),
+                                                    Double.valueOf(detallesGen.get(j).getLongitud()));
+
+                                            colocarMarcadorZoni(mdsNuevos, mMapZona, detallesGen.get(j).getGeneradorId(),
+                                                    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, detallesGen.get(j).getNivelId());
+                                        }
+                                    }
+
+                                    if (detallesCom.size() == 0) {
+                                        // mdsNuevos = new LatLng(0.0, 0.0);
+                                        //  colocarMarcadorZoni(mdsNuevos, mMapZona, 1,
+                                        //usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, "");
+                                    } else {
+                                        for (int j = 0; j < detallesCom.size(); j++) {
+                                            mdsNuevos = new LatLng(Double.valueOf(detallesCom.get(j).getLatitud()),
+                                                    Double.valueOf(detallesCom.get(j).getLongitud()));
+                                            colocarMarcadorZoni(mdsNuevos, mMapZona, detallesCom.get(j).getGeneradorId(),
+                                                    usuario, mds, String.valueOf(mdIdterminar), detallesGen, detallesCom, detallesCom.get(j).getNivelId());
+                                        }
+                                    }
+
+                                    listGeneradores = new ArrayList<>();*/
+
+                                } else {
+                                    Toast.makeText(getContext(), "Error al obtener los datos",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+                            @Override
+                            public void reject(Exception e) {
+                            }
+                        });
+            }
+
             ProviderDatosCompetencias.getInstance(getContext()).obtenerDatosCompetencias(usuario, mdId, new ProviderDatosCompetencias.ConsultaDatosCompetencia() {
                 @Override
                 public void resolve(CompetenciasGeneradoresV2 competenciasGeneradores) {
@@ -2256,6 +2590,8 @@ public class FragmentAutoriza extends Fragment implements
             bindingZonificacion.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    cleanShared(getContext());
                     FragmentDialogCancelarMd a = new FragmentDialogCancelarMd();
                     a.show(getChildFragmentManager(),"child");
                 }
@@ -2561,6 +2897,8 @@ public class FragmentAutoriza extends Fragment implements
             bindingConstruccion.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    cleanShared(getContext());
                     FragmentDialogCancelarMd a = new FragmentDialogCancelarMd();
                     a.show(getChildFragmentManager(),"child");
                 }
@@ -3123,6 +3461,8 @@ public class FragmentAutoriza extends Fragment implements
             binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    cleanShared(getContext());
                     FragmentDialogCancelarMd a = new FragmentDialogCancelarMd();
                     a.show(getChildFragmentManager(),"child");
                 }
@@ -3393,6 +3733,8 @@ public class FragmentAutoriza extends Fragment implements
                                             binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
+
+                                                    cleanShared(getContext());
                                                     FragmentDialogCancelarMd a = new FragmentDialogCancelarMd();
                                                     a.show(getChildFragmentManager(),"child");
                                                 }
@@ -3574,6 +3916,8 @@ public class FragmentAutoriza extends Fragment implements
             binding.toolbar.back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    cleanShared(getContext());
                     FragmentDialogCancelarMdTerminar a = new FragmentDialogCancelarMdTerminar();
                     a.show(getChildFragmentManager(),"child");
                 }
@@ -3749,7 +4093,7 @@ public class FragmentAutoriza extends Fragment implements
                         if(codigo.getResultado().getSecureUrl().contains("frente")){
                             bindingSuperficie.frontal.setEnabled(false);
                             urlFrente = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlFrente).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.frontal.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3758,7 +4102,7 @@ public class FragmentAutoriza extends Fragment implements
                         }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
                             bindingSuperficie.lateral1.setEnabled(false);
                             urlLateral1 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlLateral1).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.lateral1.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3767,7 +4111,7 @@ public class FragmentAutoriza extends Fragment implements
                         }else if(codigo.getResultado().getSecureUrl().contains("predial")){
                             bindingSuperficie.predial.setEnabled(false);
                             urlPredial = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlPredial).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.predial.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3776,7 +4120,7 @@ public class FragmentAutoriza extends Fragment implements
                         } else if(codigo.getResultado().getSecureUrl().contains("lateral2")){
                             bindingSuperficie.lateral2.setEnabled(false);
                             urlLateral2 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlLateral2).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.lateral2.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3785,7 +4129,7 @@ public class FragmentAutoriza extends Fragment implements
                         } else if(codigo.getResultado().getSecureUrl().contains("entorno1")){
                             bindingSuperficie.entorno1.setEnabled(false);
                             urlEntorno1 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlEntorno1).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlEntorno1).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.entorno1.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3794,7 +4138,7 @@ public class FragmentAutoriza extends Fragment implements
                         } else if(codigo.getResultado().getSecureUrl().contains("entorno2")){
                             bindingSuperficie.entorno2.setEnabled(false);
                             urlEntorno2 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlEntorno2).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlEntorno2).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.entorno2.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3803,7 +4147,7 @@ public class FragmentAutoriza extends Fragment implements
                         } else if(codigo.getResultado().getSecureUrl().contains("entorno3")){
                             bindingSuperficie.entorno3.setEnabled(false);
                             urlEntorno3 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlEntorno3).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlEntorno3).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.entorno3.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3812,7 +4156,7 @@ public class FragmentAutoriza extends Fragment implements
                         } /*else if(codigo.getResultado().getSecureUrl().contains("reciboAgua")){
                             bindingSuperficie.reciboAgua.setEnabled(false);
                             urlReciboAgua = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlReciboAgua).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlReciboAgua).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.reciboAgua.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3821,7 +4165,7 @@ public class FragmentAutoriza extends Fragment implements
                         } else if(codigo.getResultado().getSecureUrl().contains("reciboLuz")){
                             bindingSuperficie.reciboLuz.setEnabled(false);
                             urlReciboLuz = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlReciboLuz).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlReciboLuz).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.reciboLuz.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3868,7 +4212,7 @@ public class FragmentAutoriza extends Fragment implements
                         if(codigo.getResultado().getSecureUrl().contains("frente")){
                             bindingSuperficie.frontal.setEnabled(false);
                             urlFrente = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlFrente).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlFrente).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.frontal.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3877,7 +4221,7 @@ public class FragmentAutoriza extends Fragment implements
                         }else if(codigo.getResultado().getSecureUrl().contains("lateral1")){
                             bindingSuperficie.lateral1.setEnabled(false);
                             urlLateral1 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral1).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlLateral1).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.lateral1.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3886,7 +4230,7 @@ public class FragmentAutoriza extends Fragment implements
                         }else if(codigo.getResultado().getSecureUrl().contains("predial")){
                             bindingSuperficie.predial.setEnabled(false);
                             urlPredial = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlPredial).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlPredial).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.predial.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -3895,7 +4239,7 @@ public class FragmentAutoriza extends Fragment implements
                         } else{
                             bindingSuperficie.lateral2.setEnabled(false);
                             urlLateral2 = codigo.getResultado().getSecureUrl();
-                            Picasso.get().load(urlLateral2).into(bindingSuperficie.imagen);
+                            Picasso.get().load(urlLateral2).placeholder(R.drawable.cargando_imagen).into(bindingSuperficie.imagen);
                             bindingSuperficie.lateral2.setEnabled(true);
                             hourlyTaskSuperficie.run();
                             hourlyTaskSuperficie.scheduledExecutionTime();
@@ -4952,4 +5296,5 @@ public class FragmentAutoriza extends Fragment implements
             }
         }
     }
+
 }

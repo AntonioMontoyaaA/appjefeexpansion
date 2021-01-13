@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Elige el tipo de sitio"
-            android:layout_marginTop="-10dp"
             android:textColor="@color/blanco"
             android:textSize="14sp"
             app:typeface="robotoRegular" />
@@ -29,8 +28,8 @@
             android:id="@+id/ciudad"
             android:layout_gravity="center"
             android:background="@drawable/estilo_boton_blanco_borde"
-            android:layout_width="300dp"
-            android:layout_height="210dp">
+            android:layout_width="@dimen/alto_card_ciudad"
+            android:layout_height="@dimen/ancho_card_ciudad">
 
             <LinearLayout
                 android:background="@color/gris_borde"
@@ -50,8 +49,8 @@
                 <ImageView
                     android:layout_marginTop="10dp"
                     android:layout_gravity="center"
-                    android:layout_width="230dp"
-                    android:layout_height="130dp"
+                    android:layout_width="@dimen/tamaño_ciudad"
+                    android:layout_height="@dimen/tamaño_ciudad2"
                     android:src="@drawable/city"/>
 
                 <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView
@@ -79,8 +78,8 @@
             android:id="@+id/rural"
             android:layout_gravity="center"
             android:background="@drawable/estilo_boton_blanco_borde"
-            android:layout_width="300dp"
-            android:layout_height="210dp">
+            android:layout_width="@dimen/alto_card_ciudad"
+            android:layout_height="@dimen/ancho_card_ciudad">
 
             <LinearLayout
                 android:background="@color/gris_borde"
@@ -100,8 +99,8 @@
                 <ImageView
                     android:layout_marginTop="10dp"
                     android:layout_gravity="center"
-                    android:layout_width="230dp"
-                    android:layout_height="130dp"
+                    android:layout_width="@dimen/tamaño_ciudad"
+                    android:layout_height="@dimen/tamaño_ciudad2"
                     android:src="@drawable/rural"/>
 
                 <expansion.neto.com.mx.jefeapp.utils.font.RobotoTextView

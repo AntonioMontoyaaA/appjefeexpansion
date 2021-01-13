@@ -26,6 +26,7 @@
             android:id="@+id/scroll_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scrollbars="vertical"
             >
 
             <LinearLayout
@@ -38,7 +39,7 @@
                     android:layout_marginTop="2dp"
                     android:padding="18dp"
                     android:layout_width="match_parent"
-                    android:layout_height="610dp"
+                    android:layout_height="@dimen/alto_map"
                     android:orientation="vertical">
 
                     <android.support.constraint.ConstraintLayout
