@@ -64,6 +64,14 @@ public class FragmentDashboard extends Fragment {
     int mesRestaInt = 0;
     String mesResta;
 
+    private static final int MODULO_DASHBOARD = 7;
+    private static final int MODULO_CREAR_MD_ID = 1;
+    private static final int MODULO_POR_TERMINAR_ID = 2;
+    private static final int MODULO_EN_PROCESO_ID = 3;
+    private static final int MODULO_RECHAZADAS_ID = 4;
+    private static final int MODULO_AUTORIZADAS_ID = 5;
+    private static final int MODULO_AGENDA_ID = 6;
+    private static final int MODULO_RADIOS_ID = 12;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -280,7 +288,7 @@ public class FragmentDashboard extends Fragment {
         });
 
         ReminderUtilities.scheduleCronReminder(getContext());
-        ReminderUtilitiesJob.scheduleCronReminder(getContext());
+        //ReminderUtilitiesJob.scheduleCronReminder(getContext());
 
         return v;
     }
@@ -579,11 +587,12 @@ public class FragmentDashboard extends Fragment {
 
     ArrayList<Permiso> permisosJefe;
 
+
     public void getPermisos(ArrayList<Permiso> permiso, FragmentDashboardBinding binding) {
         permisosJefe = new ArrayList<>();
         if (permiso != null && permiso.size() > 0) {
             for (int i = 0; i < permiso.size(); i++) {
-                if (permiso.get(i).getFimoduloid() == 7) {
+                if (permiso.get(i).getFimoduloid() == MODULO_DASHBOARD) {
                     permisosJefe.add(permiso.get(i));
                 }
             }
@@ -591,46 +600,53 @@ public class FragmentDashboard extends Fragment {
             for (int j = 0; j < permisosJefe.size(); j++) {
                 int valor = permisosJefe.get(j).getFisubmodulo();
                 switch (valor) {
-                    case 1:
+                    case MODULO_CREAR_MD_ID:
                         if (permisosJefe.get(j).getFiestatus() == 1) {
                             binding.crearMD.setVisibility(View.VISIBLE);
                         } else {
                             binding.crearMD.setVisibility(View.GONE);
                         }
                         break;
-                    case 2:
+                    case MODULO_POR_TERMINAR_ID:
                         if (permisosJefe.get(j).getFiestatus() == 1) {
                             binding.autorizar.setVisibility(View.VISIBLE);
                         } else {
                             binding.autorizar.setVisibility(View.GONE);
                         }
                         break;
-                    case 3:
+                    case MODULO_EN_PROCESO_ID:
                         if (permisosJefe.get(j).getFiestatus() == 1) {
                             binding.proceso.setVisibility(View.VISIBLE);
                         } else {
                             binding.proceso.setVisibility(View.GONE);
                         }
                         break;
-                    case 4:
+                    case MODULO_RECHAZADAS_ID:
                         if (permisosJefe.get(j).getFiestatus() == 1) {
                             binding.rechazadas.setVisibility(View.VISIBLE);
                         } else {
                             binding.rechazadas.setVisibility(View.GONE);
                         }
                         break;
-                    case 5:
+                    case MODULO_AUTORIZADAS_ID:
                         if (permisosJefe.get(j).getFiestatus() == 1) {
                             binding.autorizadas.setVisibility(View.VISIBLE);
                         } else {
                             binding.autorizadas.setVisibility(View.GONE);
                         }
                         break;
-                    case 6:
+                    case MODULO_AGENDA_ID:
                         if (permisosJefe.get(j).getFiestatus() == 1) {
                             binding.agenda.setVisibility(View.VISIBLE);
                         } else {
-                            binding.agenda.setVisibility(View.INVISIBLE);
+                            binding.agenda.setVisibility(View.GONE);
+                        }
+                        break;
+                    case MODULO_RADIOS_ID:
+                        if (permisosJefe.get(j).getFiestatus() == 1) {
+                            binding.clradio.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.clradio.setVisibility(View.GONE);
                         }
                         break;
                 }

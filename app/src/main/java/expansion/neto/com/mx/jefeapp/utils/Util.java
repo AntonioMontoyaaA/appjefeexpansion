@@ -230,15 +230,15 @@ public class Util {
     }
 
     public static String getNumero(Context context) {
-        TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        String deviceid = mTelephonyManager.getLine1Number();
-        return deviceid;
+        /*TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String deviceid = mTelephonyManager.getLine1Number();*/
+        return "";
     }
 
     public static String getImei(Context context) {
-        TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("MissingPermission") String imei = mTelephonyManager.getImei();
-        return imei;
+        /*TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        @SuppressLint("MissingPermission") String imei = mTelephonyManager.getImei();*/
+        return "0";
     }
 
     /*
