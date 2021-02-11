@@ -51,7 +51,9 @@ public class FragmentAceptar extends DialogFragment {
                     startActivity(main);
                 }else if (mensaje.equals("sin_radios_asignados")){
                     getActivity().finish();
-                }else if (mensaje.equals( "cancelado" )){
+                } else if (mensaje.equals("sin_visitas")){
+
+                } else if (mensaje.equals( "cancelado" )){
                     getActivity().finish();
                     Intent main = new Intent(getContext(), ActivityRadios.class);
                     startActivity(main);
@@ -64,6 +66,8 @@ public class FragmentAceptar extends DialogFragment {
             binding.textoMensaje.setText(getString(R.string.sin_radios));
         }else if (mensaje.equals("sin_radios_asignados")){
             binding.textoMensaje.setText(getString(R.string.sin_radios_asignados));
+        }else if (mensaje.equals("sin_visitas")){
+            binding.textoMensaje.setText(getString(R.string.sin_visitas));
         }else if (mensaje.equals( "cancelado" )){
             binding.textoMensaje.setText(getString(R.string.cancelado));
 

@@ -42,7 +42,7 @@ import java.util.List;
 
 import expansion.neto.com.mx.jefeapp.R;
 import expansion.neto.com.mx.jefeapp.databinding.ActivityDetalleRadiosBinding;
-import expansion.neto.com.mx.jefeapp.databinding.FragmentFinalizaBindingImpl;
+//import expansion.neto.com.mx.jefeapp.databinding.FragmentFinalizaBindingImpl;
 import expansion.neto.com.mx.jefeapp.modelView.Ubicacion;
 import expansion.neto.com.mx.jefeapp.radios.fragment.radios.FragmentAceptar;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.Competencia;
@@ -679,6 +679,10 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
                                 FragmentAceptar a = new FragmentAceptar();
                                 a.setMensaje("sin_radios");
                                 a.show(getSupportFragmentManager(),"child");
+                            } else if(sinSitios.getCodigo()== 205){
+                                FragmentAceptar a = new FragmentAceptar();
+                                a.setMensaje("sin_visitas");
+                                a.show(getSupportFragmentManager(),"child");
                             }
 
                         }
@@ -853,6 +857,10 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
                             if(sinSitios.getCodigo()== 200){
                                 FragmentAceptar a = new FragmentAceptar();
                                 a.setMensaje("cancelado");
+                                a.show(getSupportFragmentManager(),"child");
+                            } else if(sinSitios.getCodigo()== 205){
+                                FragmentAceptar a = new FragmentAceptar();
+                                a.setMensaje("sin_visitas");
                                 a.show(getSupportFragmentManager(),"child");
                             }
 

@@ -325,6 +325,7 @@
     <string name="sin_radios">Se ha marcado este radio sin sitios disponibles</string>
     <string name="cancelado">Se ha marcado este radio como Cancelado</string>
     <string name="sin_radios_asignados">No tienes radios asignados</string>
+    <string name="sin_visitas">Sin visitas registradas</string>
     <string name="predial">Seleccionar archivo desde</string>
     <string name="celular">El celular</string>
     <string name="foto">Tomar foto</string>
