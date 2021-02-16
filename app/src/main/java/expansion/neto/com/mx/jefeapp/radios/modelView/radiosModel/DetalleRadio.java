@@ -59,6 +59,14 @@ public class DetalleRadio {
     @Expose
     private String nombreRadio;
 
+    @SerializedName("tiendas")
+    @Expose
+    private List<TiendasVO> tiendas = null;
+
+    @SerializedName("mds")
+    @Expose
+    private List<MdsVO> mds = null;
+
     public String getLatitud() {
         return latitud;
     }
@@ -188,5 +196,21 @@ public class DetalleRadio {
 
     public void setCancelado(String cancelado) {
         this.cancelado = cancelado;
+    }
+
+    public List<TiendasVO> getTiendas() {
+        return tiendas;
+    }
+
+    public void setTiendas(List<TiendasVO> tiendas) {
+        this.tiendas = tiendas;
+    }
+
+    public List<MdsVO> getMds() {
+        return mds;
+    }
+
+    public void setMds(List<MdsVO> mds) {
+        this.mds = mds;
     }
 }
