@@ -50,7 +50,9 @@ import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.DatosRadio;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.Generadore;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.GeneradoresRadio;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.GuardarV;
+import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.MdsVO;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.SinSitios;
+import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.TiendasVO;
 import expansion.neto.com.mx.jefeapp.radios.modelView.radiosModel.ValidaUb;
 import expansion.neto.com.mx.jefeapp.radios.provider.radiosProvider.ProvaiderDatosRadios;
 import expansion.neto.com.mx.jefeapp.ui.autoriza.ActivityAutorizar;
@@ -71,6 +73,10 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
     public static final String SIN_SITIO = "sin_sitio";
     public static final String CANCELADO = "cancelado";
     public static final String COMPETENCIA = "competencia";
+
+    public static final String TIENDAS = "tiendas";
+    public static final String MDS = "mds";
+
     public static final String LONGITUD = "longitud";
     public static final String STATUSID = "tvStatusId";
     public static final String fcTotalCompetencia = "fcTotalCompetencia";
@@ -136,6 +142,9 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
     private ArrayList<Marker> marcadoresOGobierno = new ArrayList<>();
     private ArrayList<Marker> marcadoresRecauderias = new ArrayList<>();
     private ArrayList<Marker> marcadoresIglesias = new ArrayList<>();
+
+    private ArrayList<Marker> marcadoresTiendas = new ArrayList<>();
+    private ArrayList<Marker> marcadoresMds = new ArrayList<>();
 
 
     private ImageView ivMenu,ivMenu2 ;
@@ -277,6 +286,10 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
         Bundle bundle = getIntent().getExtras();
         List<Competencia> listaCompetencia = bundle.getParcelableArrayList( COMPETENCIA );
         List<GeneradoresRadio> listaGeneradores = bundle.getParcelableArrayList( GENERADORES_RADIOS );
+
+        List<TiendasVO> listaTiendas = bundle.getParcelableArrayList( TIENDAS );
+        List<MdsVO> listaMds = bundle.getParcelableArrayList( MDS );
+
         Double latitud = Double.parseDouble(bundle.getString(LATITUD));
         Double longitud = Double.parseDouble(bundle.getString(LONGITUD));
         Resources resource = ActivityDetalleRadios.this.getResources();
@@ -290,7 +303,7 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
                 .radius(500)
                 .strokeColor(resource.getColor(R.color.radios))
                 .fillColor(resource.getColor(R.color.radios)));
-        PintarMarcadores( googleMap, listaCompetencia, listaGeneradores );
+        PintarMarcadores( googleMap, listaCompetencia, listaGeneradores, listaTiendas, listaMds);
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -302,7 +315,32 @@ public class ActivityDetalleRadios extends AppCompatActivity implements OnMapRea
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    private void PintarMarcadores(GoogleMap googleMap, List<Competencia> listaCompetencia, List<GeneradoresRadio> listaGeneradores) {
+    private void PintarMarcadores(GoogleMap googleMap, List<Competencia> listaCompetencia, List<GeneradoresRadio> listaGeneradores, List<TiendasVO> listaTiendas, List<MdsVO> listaMds) {
+
+        if(listaTiendas != null && listaTiendas.size() > 0) {
+            for(int i = 0; i < listaTiendas.size(); i++) {
+                marcadoresTiendas.add( googleMap.addMarker( new MarkerOptions()
+                    .anchor( 0.5f,0.5f )
+                    .position( new LatLng( listaTiendas.get( i ).getLatitud(), listaTiendas.get( i ).getLongitud() ))
+                    .zIndex( 1.0f )
+                    .title( listaTiendas.get( i ).getNombre() )
+                    .icon( BitmapDescriptorFactory.fromResource( R.mipmap.ic_tiendas_neto_foreground  ) ) ));
+                binding.checkTiendas.setChecked( true );
+            }
+        }
+
+        if(listaMds != null && listaMds.size() > 0) {
+            for(int i = 0; i < listaMds.size(); i++) {
+                marcadoresMds.add( googleMap.addMarker( new MarkerOptions()
+                        .anchor( 0.5f,0.5f )
+                        .position( new LatLng( listaMds.get( i ).getLatitud(), listaMds.get( i ).getLongitud() ))
+                        .zIndex( 1.0f )
+                        .title( listaMds.get( i ).getNombre() )
+                        .icon( BitmapDescriptorFactory.fromResource( R.mipmap.ic_mds_neto_foreground  ) ) ));
+                binding.checkMds.setChecked( true );
+            }
+        }
+
         for (int i = 0; i<listaCompetencia.size();i++){
             switch (listaCompetencia.get( i ).getGenerador()){
                 case "Tiendas 3B":

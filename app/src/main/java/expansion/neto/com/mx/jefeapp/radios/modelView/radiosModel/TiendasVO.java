@@ -28,15 +28,15 @@ public class TiendasVO implements Parcelable {
         longitud = in.readDouble();
     }
 
-    public static final Creator<GeneradoresRadio> CREATOR = new Creator<GeneradoresRadio>() {
+    public static final Creator<TiendasVO> CREATOR = new Creator<TiendasVO>() {
         @Override
-        public GeneradoresRadio createFromParcel(Parcel in) {
-            return new GeneradoresRadio( in );
+        public TiendasVO createFromParcel(Parcel in) {
+            return new TiendasVO( in );
         }
 
         @Override
-        public GeneradoresRadio[] newArray(int size) {
-            return new GeneradoresRadio[size];
+        public TiendasVO[] newArray(int size) {
+            return new TiendasVO[size];
         }
     };
 

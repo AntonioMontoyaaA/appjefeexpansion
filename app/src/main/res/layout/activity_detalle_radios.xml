@@ -1705,6 +1705,44 @@
                             android:layout_width="25dp"
                             android:layout_height="25dp"/>
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@android:color/transparent"
+                        android:gravity="center">
+                        <CheckBox
+                            android:textColor="@android:color/white"
+                            android:onClick="verMacador"
+                            style="@style/Platform.MaterialComponents.Light"
+                            android:id="@+id/checkTiendas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tiendas Neto"/>
+                        <ImageView
+                            android:src="@mipmap/ic_tiendas_neto_foreground"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@android:color/transparent"
+                        android:gravity="center">
+                        <CheckBox
+                            android:textColor="@android:color/white"
+                            android:onClick="verMacador"
+                            style="@style/Platform.MaterialComponents.Light"
+                            android:id="@+id/checkMds"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MD's"/>
+                        <ImageView
+                            android:src="@mipmap/ic_mds_neto_foreground"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"/>
+                    </LinearLayout>
 
                     <Button
                         android:layout_gravity="center"

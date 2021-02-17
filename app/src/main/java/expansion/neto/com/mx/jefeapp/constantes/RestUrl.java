@@ -10,21 +10,21 @@ public class RestUrl {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    //public static String dominioImagenesWS = "voksedesfiles"; // desarrollo
+    public static String dominioImagenesWS = "voksedesfiles"; // desarrollo
 
-    public static String dominioImagenesWS = "voksefiles"; // produccion
+    //public static String dominioImagenesWS = "voksefiles"; // produccion
 
-    //public static String ip = "206.189.68.177"; // desarrollo
+    public static String ip = "206.189.68.177"; // desarrollo
     //public static String ip = "167.99.102.173"; // QA 36
-    public static String ip = "206.189.223.154"; // produccion
+    //public static String ip = "206.189.223.154"; // produccion
 
-    //public static String dominio = "voksedesapi"; // desarrollo
+    public static String dominio = "voksedesapi"; // desarrollo
     //public static String dominio = "vokseqaapi"; // QA
-    public static String dominio = "vokseapi"; // produccion
+    //public static String dominio = "vokseapi"; // produccion
 
     public static String NUM_TELEFONO = "0";
 
-    public static String VERSION_APP = "2.1.0";
+    public static String VERSION_APP = "2.1.1";
 
     public static String TIPO_APP = "1";
 

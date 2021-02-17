@@ -28,15 +28,15 @@ public class MdsVO implements Parcelable {
         longitud = in.readDouble();
     }
 
-    public static final Creator<GeneradoresRadio> CREATOR = new Creator<GeneradoresRadio>() {
+    public static final Creator<MdsVO> CREATOR = new Creator<MdsVO>() {
         @Override
-        public GeneradoresRadio createFromParcel(Parcel in) {
-            return new GeneradoresRadio( in );
+        public MdsVO createFromParcel(Parcel in) {
+            return new MdsVO( in );
         }
 
         @Override
-        public GeneradoresRadio[] newArray(int size) {
-            return new GeneradoresRadio[size];
+        public MdsVO[] newArray(int size) {
+            return new MdsVO[size];
         }
     };
 
